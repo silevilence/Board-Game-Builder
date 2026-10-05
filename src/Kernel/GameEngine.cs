@@ -8,7 +8,8 @@ public sealed partial class GameEngine
     private readonly string fingerprint;
     private readonly uint seed;
     private readonly List<LogEntry> entries = [];
-    private readonly IGameRules? rules;
+    private IGameRules? rules;
+    public void ReplaceRules(IGameRules replacement) => rules=replacement;
     private readonly List<Diagnostic> diagnostics = [];
     public IReadOnlyList<Diagnostic> ExportDiagnostics() => Wire.Copy(diagnostics);
     public IReadOnlyList<ActionOffer> Actions(string actor)

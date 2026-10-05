@@ -20,6 +20,12 @@ public static class LuaEvaluator
                 return DynValue.NewNumber(SeededRandom.Index(ref random,(int)count)+1);
             }));
             var module=Run(script,script.LoadString(source,null,path));
+            if(entry is "__validate_rules" or "__validate_cpu")
+            {
+                foreach(var required in entry=="__validate_rules"?new[]{"actions","decide"}:new[]{"decide"})
+                    if(module.Type!=DataType.Table || module.Table.Get(required).Type!=DataType.Function) throw new InvalidDataException("Missing entry function: "+required);
+                return "true";
+            }
             if(module.Type!=DataType.Table || module.Table.Get(entry).Type!=DataType.Function) throw new InvalidDataException("Missing entry function.");
             using var document=JsonDocument.Parse(input);
             var output=Run(script,module.Table.Get(entry),FromJson(script,document.RootElement));

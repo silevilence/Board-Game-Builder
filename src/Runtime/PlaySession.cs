@@ -5,7 +5,9 @@ namespace BoardGame.Runtime;
 public sealed record SessionFault(string Code,string Seat,string Detail);
 public sealed class PlaySession : IDisposable
 {
-    private readonly LoadedModule module;
+    private LoadedModule module;
+    private readonly Dictionary<string,LoadedModule> versions=new(StringComparer.Ordinal);
+    private readonly List<ScriptSwitch> switches=[];
     private readonly GameEngine engine;
     private readonly Dictionary<string,string> controllers;
     private readonly uint seed;
@@ -21,6 +23,7 @@ public sealed class PlaySession : IDisposable
     {
         if(maxSteps<1) throw new ArgumentOutOfRangeException(nameof(maxSteps));
         this.module=Wire.Copy(module);this.seed=seed;this.maxSteps=maxSteps;
+        versions.Add(module.Fingerprint,Wire.Copy(module)); switches.Add(new(0,module.Fingerprint));
         this.controllers=module.Initial.Seats.ToDictionary(s=>s.Id,s=>s.Controller);
         if(controllers!=null) foreach(var c in controllers)
         {
@@ -77,5 +80,23 @@ public sealed class PlaySession : IDisposable
     public ReplayLog ExportAuthorityLog() => engine.ExportLog();
     public IReadOnlyList<Diagnostic> ExportDiagnostics() => engine.ExportDiagnostics();
     public string AuthorityStateHash() => Wire.Hash(Wire.Json(engine.ExportAuthorityState()));
+    // The owner serializes this with commands. A successful switch affects the next submission.
+    public void ReloadScripts(LoadedModule candidate)
+    {
+        ObjectDisposedException.ThrowIf(disposed,this);
+        if(Fault!=null || Ended) throw new InvalidOperationException("Session ended or faulted; restart required.");
+        if(Wire.Json(candidate.Initial)!=Wire.Json(module.Initial) || Wire.Json(candidate.ResourceHashes)!=Wire.Json(module.ResourceHashes) || Wire.Json(candidate.RuntimeHashes)!=Wire.Json(module.RuntimeHashes) || candidate.Id!=module.Id)
+            throw new InvalidOperationException("Configuration, resources or dependencies changed; restart required.");
+        if(candidate.Fingerprint!=BoardGame.Modules.ModuleSnapshot.Fingerprint(candidate)) throw new InvalidDataException("Script version fingerprint mismatch");
+        using(var probe=new LuaWorkerSession())
+        {
+            probe.Invoke(candidate.Rules,candidate.RulesPath,"__validate_rules","{}",seed);
+            probe.Invoke(candidate.Cpu,candidate.CpuPath,"__validate_cpu","{}",seed);
+        }
+        var next=Wire.Copy(candidate);
+        engine.ReplaceRules(new LuaRules(next.Rules,next.RulesPath,seed,worker)); module=next;
+        versions[next.Fingerprint]=Wire.Copy(next); switches.Add(new(engine.ExportLog().EntryCount,next.Fingerprint));
+    }
+    public SessionRecording ExportRecording() => SessionRecording.Create(engine.ExportLog(),switches,versions);
     public void Dispose() { disposed=true; worker.Dispose(); }
 }

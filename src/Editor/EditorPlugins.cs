@@ -12,7 +12,7 @@ public sealed partial class EditorWindow
     private void InitializePlugins()
     {
         plugins.RegistrationsChanged+=RefreshPlugins;
-        plugins.Install(Wire.Json(new PluginManifest("official.workspace",1,["workspace"],[])),()=>new WorkspacePlugin());
+        plugins.Install(Wire.Json(new PluginManifest("official.workspace",1,["workspace"],[])),()=>new WorkspacePlugin(ReloadScripts));
         Add("启用工作区插件",()=>Run(()=>plugins.Enable("official.workspace")));
         Add("停用工作区插件",()=>Run(()=>plugins.Disable("official.workspace")));
         Add("重载工作区插件",()=>Run(()=>plugins.Reload("official.workspace")));
@@ -38,7 +38,9 @@ public sealed partial class EditorWindow
             }
         }
     }
-    private sealed class WorkspacePlugin : IEditorPlugin
+    private Func<LoadedModule,Task<string>>? scriptReload=null;
+    private Task<string> ReloadScripts(LoadedModule module) => scriptReload?.Invoke(module) ?? Task.FromResult("尚未试玩；脚本将在新对局开始时生效。");
+    private sealed class WorkspacePlugin(Func<LoadedModule,Task<string>> reload) : IEditorPlugin
     {
         public void Activate(PluginContext context)
         {
@@ -61,6 +63,7 @@ public sealed partial class EditorWindow
             context.Register(ExtensionKind.Inspector,"原型与 YAML",new AuthorPanel(context));
             context.Register(ExtensionKind.Inspector,"媒介组件",new MediaInspector(context));
             context.Register(ExtensionKind.Panel,"席位与阶段",new TurnPanel(context));
+            context.Register(ExtensionKind.Panel,"Lua 脚本",new ScriptPanel(context,reload));
             var layout=new LayoutPanel(context); context.Own(layout); context.Register(ExtensionKind.Panel,"布局视口",layout);
             context.OnDocumentChanged(Refresh); Refresh();
         }
