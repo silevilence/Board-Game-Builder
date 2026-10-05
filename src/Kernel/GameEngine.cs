@@ -73,9 +73,9 @@ public sealed partial class GameEngine
     private static AppliedCommand Execute(GameState state, string actor, Command command, bool ruleEffect = false)
     {
         Apply(state,actor,command,ruleEffect:ruleEffect);
-        return new(Wire.Copy(command),ruleEffect,command.Kind == "shuffle" ? [..state.Entities[command.Entity!].Contents] : null,state.RandomState);
+        return new(Wire.Copy(command),ruleEffect,command.Kind == "shuffle" ? [..state.Entities[command.Entity!].Contents] : null,state.RandomState,command.Kind=="roll"?state.Entities[command.Entity!].Properties["value"]:null);
     }
-    private static void Apply(GameState state, string actor, Command command, List<string>? recordedOrder = null, bool ruleEffect = false)
+    private static void Apply(GameState state, string actor, Command command, List<string>? recordedOrder = null, bool ruleEffect = false,int? recordedRoll=null)
     {
         if (state.Ended) throw new CommandRejected("operation-not-allowed");
         if (command.Kind is "next" or "phase" or "finish")
@@ -94,6 +94,13 @@ public sealed partial class GameEngine
         var entity = Access(state, actor, command.Entity,ruleEffect);
         switch (command.Kind)
         {
+            case "roll":
+                if(entity.DiceFaces.Count==0) throw new CommandRejected("invalid-dice");
+                var diceRandom=state.RandomState;
+                var roll=recordedRoll ?? entity.DiceFaces[SeededRandom.Index(ref diceRandom,entity.DiceFaces.Count)];
+                if(!entity.DiceFaces.Contains(roll)) throw new CommandRejected("invalid-roll-result");
+                if(entity.CounterBounds.TryGetValue("value",out var rollBounds) && (roll<rollBounds.Min || roll>rollBounds.Max)) throw new CommandRejected("counter-out-of-bounds");
+                entity.Properties["value"]=roll; state.RandomState=diceRandom; break;
             case "shuffle":
                 if (!entity.IsContainer || !entity.Ordered) throw new CommandRejected("invalid-container");
                 if (recordedOrder != null)
@@ -121,6 +128,8 @@ public sealed partial class GameEngine
                 entity.Face = command.Value; entity.FaceUp = !entity.FaceUp; break;
             case "set":
                 if (command.Property == null || !entity.Properties.ContainsKey(command.Property)) throw new CommandRejected("invalid-property");
+                if(entity.CounterBounds.TryGetValue(command.Property,out var bounds) && (command.Value<bounds.Min || command.Value>bounds.Max)) throw new CommandRejected("counter-out-of-bounds");
+                if(command.Property=="value" && entity.DiceFaces.Count>0 && !entity.DiceFaces.Contains(command.Value)) throw new CommandRejected("invalid-dice-value");
                 entity.Properties[command.Property] = command.Value; break;
             case "reveal":
                 if (command.Visibility is not ("public" or "owner" or "hidden")) throw new CommandRejected("invalid-visibility");

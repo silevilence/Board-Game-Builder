@@ -68,6 +68,11 @@ public static class DirectoryModule
                             break;
                         case "position": entity.X = data.GetProperty("x").GetDouble(); entity.Y = data.GetProperty("y").GetDouble(); break;
                         case "properties": foreach (var property in data.EnumerateObject()) entity.Properties.Add(property.Name, property.Value.GetInt32()); break;
+                        case "counter":
+                            var name=Text(data,"property"); entity.CounterBounds.Add(name,new(data.GetProperty("min").GetInt32(),data.GetProperty("max").GetInt32())); break;
+                        case "dice":
+                            entity.DiceFaces=data.GetProperty("values").EnumerateArray().Select(v=>v.GetInt32()).ToList();
+                            if(entity.DiceFaces.Count==0) Fail($"{entity.Id}.dice: empty values"); break;
                         default:
                             if (!component.TryGetProperty("required", out var required) || required.GetBoolean()) Fail($"$.entities[{entity.Id}].components: unknown required component {Text(component, "type")}");
                             break;

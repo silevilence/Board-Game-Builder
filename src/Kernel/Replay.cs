@@ -37,8 +37,9 @@ public sealed partial class GameEngine
                     foreach (var effect in entry.Effects)
                     {
                         if ((effect.Command.Kind=="shuffle") != (effect.Order!=null)) throw new InvalidDataException("Missing or unexpected random outcome.");
-                        Apply(engine.state,s.Actor,effect.Command,effect.Order,effect.RuleEffect);
-                        if (effect.RandomAfter==0 || (effect.Command.Kind!="shuffle" && effect.RandomAfter!=engine.state.RandomState)) throw new InvalidDataException("Invalid random state.");
+                        if((effect.Command.Kind=="roll")!=(effect.Roll!=null)) throw new InvalidDataException("Missing or unexpected dice outcome.");
+                        Apply(engine.state,s.Actor,effect.Command,effect.Order,effect.RuleEffect,effect.Roll);
+                        if (effect.RandomAfter==0 || (effect.Command.Kind is not ("shuffle" or "roll") && effect.RandomAfter!=engine.state.RandomState)) throw new InvalidDataException("Invalid random state.");
                         engine.state.RandomState=effect.RandomAfter;
                     }
                 }

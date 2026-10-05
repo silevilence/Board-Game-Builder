@@ -17,6 +17,7 @@ public sealed class MediaInspector : UserControl
     private readonly TextBox newId=new() {Watermark="新实体标识"};
     private readonly List<Action<JsonObject>> readers=[];
     public static readonly Dictionary<string,string> Defaults=new() {
+        ["dice"]="{\"values\":[1,2,3,4,5,6]}", ["counter"]="{\"property\":\"value\",\"min\":0,\"max\":10}",
         ["position"]="{\"x\":0,\"y\":0}", ["owner"]="{\"seat\":\"p1\"}", ["visibility"]="{\"mode\":\"public\"}",
         ["container"]="{\"capacity\":12,\"ordered\":false,\"contents\":[]}",
         ["faces"]="{\"names\":[\"正面\",\"背面\"],\"resources\":[],\"up\":true,\"index\":0}", ["properties"]="{\"value\":0}"

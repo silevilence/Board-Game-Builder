@@ -60,6 +60,7 @@ public sealed partial class EditorWindow
             context.Register(ExtensionKind.Panel,"资源树",tree);
             context.Register(ExtensionKind.Inspector,"原型与 YAML",new AuthorPanel(context));
             context.Register(ExtensionKind.Inspector,"媒介组件",new MediaInspector(context));
+            context.Register(ExtensionKind.Panel,"席位与阶段",new TurnPanel(context));
             var layout=new LayoutPanel(context); context.Own(layout); context.Register(ExtensionKind.Panel,"布局视口",layout);
             context.OnDocumentChanged(Refresh); Refresh();
         }

@@ -21,6 +21,8 @@ public static class StateValidation
             if(e.Faces==null || e.Faces.Any(string.IsNullOrWhiteSpace) || e.Face<0 || (e.Faces.Count==0?e.Face!=0:e.Face>=e.Faces.Count)) Fail("faces");
             if(e.FaceResources==null || (e.FaceResources.Count!=0 && e.FaceResources.Count!=e.Faces!.Count) || e.FaceResources.Any(string.IsNullOrWhiteSpace)) Fail("face resources");
             if(e.Properties==null || e.Properties.Keys.Any(string.IsNullOrWhiteSpace)) Fail("properties");
+            if(e.CounterBounds==null || e.CounterBounds.Any(p=>p.Value==null || p.Value.Min>p.Value.Max || !e.Properties!.TryGetValue(p.Key,out var value) || value<p.Value.Min || value>p.Value.Max)) Fail("counter");
+            if(e.DiceFaces==null || e.DiceFaces.Count>256 || (e.DiceFaces.Count>0 && (!e.Properties!.TryGetValue("value",out var roll) || !e.DiceFaces.Contains(roll)))) Fail("dice");
             if(e.Contents==null) throw new InvalidDataException($"entities[{e.Id}].contents: required");
             if(e.Capacity<0 || e.Contents.Count>e.Capacity || e.Contents.Distinct().Count()!=e.Contents.Count || (!e.IsContainer && (e.Contents.Count!=0 || e.Capacity!=0 || e.Ordered))) Fail("capacity/contents");
             foreach(var child in e.Contents)

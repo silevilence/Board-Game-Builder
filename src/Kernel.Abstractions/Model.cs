@@ -12,6 +12,7 @@ public static class Wire
     public static string Hash(string text) => Convert.ToHexString(SHA256.HashData(Encoding.UTF8.GetBytes(text)));
 }
 public sealed record Seat(string Id, string Team, string Controller = "human");
+public sealed record CounterBounds(int Min,int Max);
 public sealed class Entity
 {
     public string Id { get; set; } = "";
@@ -29,6 +30,8 @@ public sealed class Entity
     public double X { get; set; }
     public double Y { get; set; }
     public SortedDictionary<string, int> Properties { get; set; } = new(StringComparer.Ordinal);
+    public SortedDictionary<string,CounterBounds> CounterBounds { get; set; } = new(StringComparer.Ordinal);
+    public List<int> DiceFaces { get; set; }=[];
 }
 public sealed class GameState
 {
