@@ -1,0 +1,6 @@
+<Project Sdk="Microsoft.NET.Sdk">
+  <ItemGroup>
+    <ProjectReference Include="../Runtime/Runtime.csproj" />
+    <ProjectReference Include="../View.MonoGame/View.MonoGame.csproj" />
+  </ItemGroup>
+</Project>

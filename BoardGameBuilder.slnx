@@ -1,0 +1,16 @@
+<Solution>
+  <Folder Name="/src/">
+    <Project Path="src/Editor/Editor.csproj" />
+    <Project Path="src/Kernel.Abstractions/Kernel.Abstractions.csproj" />
+    <Project Path="src/Kernel/Kernel.csproj" />
+    <Project Path="src/Lua/Lua.csproj" />
+    <Project Path="src/Modules/Modules.csproj" />
+    <Project Path="src/Player/Player.csproj" />
+    <Project Path="src/Runtime/Runtime.csproj" />
+    <Project Path="src/View.Abstractions/View.Abstractions.csproj" />
+    <Project Path="src/View.MonoGame/View.MonoGame.csproj" />
+  </Folder>
+  <Folder Name="/tests/">
+    <Project Path="tests/Engine.Tests/Engine.Tests.csproj" />
+  </Folder>
+</Solution>

@@ -1,0 +1,7 @@
+<Project Sdk="Microsoft.NET.Sdk">
+  <ItemGroup>
+    <ProjectReference Include="../Kernel/Kernel.csproj" />
+    <ProjectReference Include="../Modules/Modules.csproj" />
+    <ProjectReference Include="../Lua/Lua.csproj" />
+  </ItemGroup>
+</Project>
