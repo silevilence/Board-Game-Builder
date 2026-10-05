@@ -14,5 +14,5 @@ Get-ChildItem -LiteralPath $target -File -Recurse | Sort-Object FullName | ForEa
     if ($relative -match '(^|/)Editor|\.pdb$|\.csproj$') { throw "Unexpected editor/development content: $relative" }
     $files[$relative] = (Get-FileHash -LiteralPath $_.FullName -Algorithm SHA256).Hash
 }
-@{ api=1; version='0.1.0'; platform='win-x64'; files=$files } | ConvertTo-Json -Depth 5 | Set-Content -LiteralPath "$target/release.json" -Encoding utf8NoBOM
+@{ api=1; version='0.2.0'; platform='win-x64'; files=$files; guiEntry=$true; editorDebug=$false } | ConvertTo-Json -Depth 5 | Set-Content -LiteralPath "$target/release.json" -Encoding utf8NoBOM
 Write-Output "Precompiled Player: $target"

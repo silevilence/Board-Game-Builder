@@ -28,6 +28,7 @@ public sealed partial class EditorWindow : Window
         Add("应用配置",()=>Run(ApplySource));
         tabs.Items.Add(new TabItem { Header="模块配置",Content=new ScrollViewer {Content=source} });
         tabs.Items.Add(new TabItem {Header="试玩",Content=play});
+        tabs.Items.Add(new TabItem {Header="独立导出",Content=new ExportPanel(()=> {ApplySource();return document;},plugins)});
         Closed+=(_,_)=>play.Dispose();
         var root=new DockPanel(); DockPanel.SetDock(toolbar,Dock.Top); DockPanel.SetDock(status,Dock.Bottom);
         root.Children.Add(toolbar); root.Children.Add(status); root.Children.Add(tabs); Content=root;

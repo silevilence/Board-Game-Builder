@@ -22,9 +22,9 @@ public sealed class PlayPanel : UserControl,IDisposable
     private bool busy;
     private int generation;
     private readonly CheckBox external=new() {Content="独立 Player"};
-    private readonly TextBox executable=new() {Text=Path.GetFullPath("src/Player/bin/Release/net10.0-windows/Player.exe"),Width=260,Watermark="调试 Player.exe 路径"};
+    private readonly TextBox executable=new() {Text=EditorPaths.InWorkspace("src/Player/bin/Release/net10.0-windows/Player.exe"),Width=260,Watermark="调试 Player.exe 路径"};
     private readonly TextBox timeline=new() {IsReadOnly=true,AcceptsReturn=true,Height=170};
-    private readonly TextBox logPath=new() {Text="artifacts/debug-session.json",Width=260};
+    private readonly TextBox logPath=new() {Text=EditorPaths.InWorkspace("artifacts/debug-session.json"),Width=260};
     private readonly CheckBox authorityLog=new() {Content="显示作者命令与 CPU 诊断（含私有数据）",IsChecked=false};
     private DebugReply? lastReply;
     private readonly ComboBox observer=new() {Width=100};
