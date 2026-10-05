@@ -16,6 +16,8 @@ public sealed class PlayBoard : UserControl,IDisposable
     private readonly PlayerSession session;
     private readonly LoadedModule module;
     private bool disposed;
+    private bool pumping;
+    private string? hostError;
     private SoundEffect? tone;
     public SessionFrame Frame=>session.Frame;
     public PlayBoard(PlayerSession session,LoadedModule module)
@@ -32,7 +34,7 @@ public sealed class PlayBoard : UserControl,IDisposable
         if(disposed) return;
         var frame=session.Frame; var v=frame.View;
         table.Show(TableScene.From(v,module.ResourceData)); table.InputEnabled=!session.Busy && !v.Ended && frame.Fault==null && !frame.Cpu;
-        status.Text=$"席位 {v.Seat} · 当前 {v.CurrentSeat}\n阶段 {v.Phase} · 行动 {v.Turn}\n"+
+        status.Text=hostError ?? $"席位 {v.Seat} · 当前 {v.CurrentSeat}\n阶段 {v.Phase} · 行动 {v.Turn}\n"+
             (frame.Fault!=null?$"对局故障：{frame.Fault.Code}\n{frame.Fault.Detail}":v.Ended?$"对局结束\n胜者：{string.Join(", ",v.Winners)}":session.LastMessage);
         actions.Children.Clear();
         foreach(var offer in frame.Actions)
@@ -44,7 +46,7 @@ public sealed class PlayBoard : UserControl,IDisposable
             Add("翻面所选对象",()=>Act(new("flip",table.Selected),frame.Revision));
             Add("从所选牌堆抽牌",()=>Act(new("draw",table.Selected,v.Entities.FirstOrDefault(e=>e.IsContainer && e.Owner==v.Seat)?.Id),frame.Revision));
         }
-        if(frame.Cpu && !v.Ended && frame.Fault==null) Add("继续 CPU 行动",AdvanceCpu);
+        if(frame.Cpu && !v.Ended && frame.Fault==null) status.Text+="\nCPU 正在行动…";
     }
     private void Add(string label,Func<Task> action)
     {
@@ -60,16 +62,24 @@ public sealed class PlayBoard : UserControl,IDisposable
             var result=await session.SubmitAsync(revision,intent);
             if(sound.IsChecked==true && !disposed) PlayTone(result.Accepted);
         }
-        catch(Exception e) { session.Stop(); status.Text="对局故障："+e.Message; }
+        catch(Exception e) { session.Stop(); hostError="对局故障："+e.Message; }
         finally { Refresh(); }
+        await PumpCpu();
     }
     public async Task AdvanceCpu()
     {
         if(disposed || session.Busy) return;
         SetBusy("CPU 正在思考…");
         try { await session.StepCpuAsync(); }
-        catch(Exception e) { session.Stop(); status.Text="CPU 故障："+e.Message; }
+        catch(Exception e) { session.Stop(); hostError="CPU 故障："+e.Message; }
         finally { Refresh(); }
+    }
+    public async Task PumpCpu()
+    {
+        if(pumping) return;
+        pumping=true;
+        try { while(!disposed && hostError==null && Frame.Cpu && !Frame.View.Ended && Frame.Fault==null) { await AdvanceCpu(); await Task.Delay(100); } }
+        finally { pumping=false; }
     }
     private void SetBusy(string message) { status.Text=message; actions.Children.Clear(); table.InputEnabled=false; }
     private void PlayTone(bool accepted)
