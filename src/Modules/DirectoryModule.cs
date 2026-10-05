@@ -59,6 +59,7 @@ public static class DirectoryModule
                             entity.IsContainer = true; entity.Capacity = data.GetProperty("capacity").GetInt32(); entity.Ordered = data.GetProperty("ordered").GetBoolean();
                             entity.Contents = data.GetProperty("contents").EnumerateArray().Select(v => v.GetString()!).ToList(); break;
                         case "faces":
+                            entity.Face = data.TryGetProperty("index",out var faceIndex)?faceIndex.GetInt32():0;
                             entity.Faces = data.GetProperty("names").EnumerateArray().Select(v => v.GetString()!).ToList(); entity.FaceUp = data.GetProperty("up").GetBoolean();
                             entity.FaceResources=data.GetProperty("resources").EnumerateArray().Select(v=>v.GetString()!).ToList();
                             foreach (var asset in data.GetProperty("resources").EnumerateArray())

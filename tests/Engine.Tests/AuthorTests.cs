@@ -3,6 +3,19 @@ using BoardGame.Kernel;
 namespace Engine.Tests;
 public static class AuthorTests
 {
+    public static void Media()
+    {
+        var doc=ModuleDocument.Open("samples/quick-cards"); var original=doc.Snapshot();
+        foreach(var entity in doc.Configuration["entities"]!.AsArray().ToArray())
+            foreach(var component in entity!["components"]!.AsArray().ToArray())
+                Authoring.SetComponent(doc,"entities",entity["id"]!.GetValue<string>(),component!["type"]!.GetValue<string>(),component["data"]!.AsObject());
+        Check.That(doc.Snapshot().Fingerprint==original.Fingerprint,"Inspector reconstruction differs");
+        Authoring.SetComponent(doc,"entities","deck","container",new(){["capacity"]=1,["ordered"]=true,["contents"]=new System.Text.Json.Nodes.JsonArray("absent")});
+        Check.Throws(()=>doc.Snapshot(),"invalid reference"); doc.Undo();
+        Authoring.SetComponent(doc,"entities","deck","container",new(){["capacity"]=1,["ordered"]=true,["contents"]=original.Initial.Entities["deck"].Contents.Aggregate(new System.Text.Json.Nodes.JsonArray(),(a,s)=>{a.Add(s);return a;})});
+        Check.Throws(()=>doc.Snapshot(),"capacity"); doc.Undo();
+        Authoring.SetComponent(doc,"entities","deck","visibility",new(){["mode"]="everyone"}); Check.Throws(()=>doc.Snapshot(),"visibility");
+    }
     public static void Prototypes()
     {
         var doc=ModuleDocument.Create(); Authoring.CreatePrototype(doc,"pawn");

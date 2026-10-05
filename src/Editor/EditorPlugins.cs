@@ -59,6 +59,7 @@ public sealed partial class EditorWindow
             }
             context.Register(ExtensionKind.Panel,"资源树",tree);
             context.Register(ExtensionKind.Inspector,"原型与 YAML",new AuthorPanel(context));
+            context.Register(ExtensionKind.Inspector,"媒介组件",new MediaInspector(context));
             context.OnDocumentChanged(Refresh); Refresh();
         }
     }
