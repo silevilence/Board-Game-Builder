@@ -5,7 +5,7 @@ using System.Text.Json.Serialization;
 namespace BoardGame.Kernel;
 public static class Wire
 {
-    public static readonly JsonSerializerOptions Options = new() { PropertyNamingPolicy = JsonNamingPolicy.CamelCase, UnmappedMemberHandling = JsonUnmappedMemberHandling.Disallow };
+    public static readonly JsonSerializerOptions Options = new() { PropertyNamingPolicy = JsonNamingPolicy.CamelCase, UnmappedMemberHandling = JsonUnmappedMemberHandling.Disallow, NumberHandling = JsonNumberHandling.AllowNamedFloatingPointLiterals };
     public static string Json<T>(T value) => JsonSerializer.Serialize(value, Options);
     public static T Read<T>(string json) => JsonSerializer.Deserialize<T>(json, Options) ?? throw new InvalidDataException("Empty JSON value.");
     public static T Copy<T>(T value) => Read<T>(Json(value));
@@ -42,4 +42,4 @@ public sealed class GameState
     public uint RandomState { get; set; } = 1;
 }
 public sealed record LoadedModule(string Id, string Version, string Fingerprint, GameState Initial,
-    string Rules, string Cpu, string RulesPath, string CpuPath);
+    string Rules, string Cpu, string RulesPath, string CpuPath, SortedDictionary<string,string>? ResourceHashes = null);

@@ -229,6 +229,8 @@
 
 目标：不依赖编辑器、图形界面或网络，命令行即可运行真人 + CPU 卡牌对局，并自动验证整局。
 
+状态：11 项任务已完成并逐项本地提交；条目按本轮要求保留原位。整体审核与验收记录见 [M0 审核记录](docs/validation/m0-review.md)。
+
 - [x] **建立 C# 工程边界与最小 Player**（约 1～2 天）
     - [x] 建立 Kernel 抽象、Kernel、Lua 适配、View 抽象、MonoGame View、Player 与 Editor 的项目边界；命令行 Player 能启动、退出并报告错误。
     - [x] 共享运行能力不放进 Editor 或 Player 私有实现，Kernel 不引用宿主、UI、渲染或编辑器插件管理类型。
@@ -287,7 +289,7 @@
 
 ## ✅ 已完成 (Completed)
 
-暂无。需求拆分不代表功能已经实现。
+M0 的 11 项任务已实现、原位勾选并完成验收；具体记录见 [M0 审核记录](docs/validation/m0-review.md)。
 
 ## 后续待明确与暂不纳入
 

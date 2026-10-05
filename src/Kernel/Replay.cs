@@ -1,15 +1,18 @@
 namespace BoardGame.Kernel;
 public sealed partial class GameEngine
 {
-    public ReplayLog ExportLog() => Wire.Copy(new ReplayLog(1,EngineVersion.Api,fingerprint,seed,initial,entries));
+    public ReplayLog ExportLog() => Wire.Copy(new ReplayLog(1,EngineVersion.Api,fingerprint,seed,initial,entries,entries.Count,entries.Count==0?Wire.Hash(Wire.Json(initial)):entries[^1].Hash,HeaderHash(fingerprint,seed,initial)));
+    private static string HeaderHash(string fingerprint,uint seed,GameState initial) => Wire.Hash(Wire.Json(new { fingerprint,seed,initial }));
     private static string EntryHash(Submission submission,List<AppliedCommand> effects,string stateHash,string previousHash) =>
         Wire.Hash(Wire.Json(new { submission,effects,stateHash,previousHash }));
-    private void Record(Submission submission,List<AppliedCommand> effects)
+    private void Record(Submission submission,List<AppliedCommand> effects,GameState? candidate=null)
     {
         var previous = entries.Count == 0 ? Wire.Hash(Wire.Json(initial)) : entries[^1].Hash;
-        var hash = Wire.Hash(Wire.Json(state));
+        var hash = Wire.Hash(Wire.Json(candidate ?? state));
+        var entry = new LogEntry(submission,effects,hash,previous,EntryHash(submission,effects,hash,previous));
         submissions.Add(submission);
-        entries.Add(new(submission,effects,hash,previous,EntryHash(submission,effects,hash,previous)));
+        entries.Add(entry);
+        if(candidate!=null) state=candidate;
     }
     public static GameEngine Replay(LoadedModule module,ReplayLog log)
     {
@@ -19,6 +22,8 @@ public sealed partial class GameEngine
                 throw new InvalidDataException("Replay format/API/module or script version mismatch.");
             var engine = new GameEngine(module.Initial,log.Seed,module.Fingerprint);
             if (Wire.Json(engine.initial) != Wire.Json(log.Initial)) throw new InvalidDataException("Replay initial state mismatch.");
+            if(log.HeaderHash!=HeaderHash(log.ModuleFingerprint,log.Seed,log.Initial)) throw new InvalidDataException("Replay header checksum mismatch.");
+            if(log.EntryCount!=log.Entries.Count || log.FinalHash!=(log.Entries.Count==0?Wire.Hash(Wire.Json(log.Initial)):log.Entries[^1].Hash)) throw new InvalidDataException("Replay footer/count mismatch.");
             var previous=Wire.Hash(Wire.Json(log.Initial));
             foreach (var entry in log.Entries)
             {
@@ -28,12 +33,12 @@ public sealed partial class GameEngine
                 if (!s.Accepted && entry.Effects.Count != 0) throw new InvalidDataException("Rejected command has effects.");
                 if (s.Accepted)
                 {
-                    if (!engine.state.Seats.Any(seat=>seat.Id==s.Actor) || engine.state.Ended || entry.Effects.Count==0) throw new InvalidDataException("Invalid replay actor/effects.");
+                    if (!engine.state.Seats.Any(seat=>seat.Id==s.Actor) || engine.state.Seats[engine.state.CurrentSeat].Id!=s.Actor || engine.state.Ended || entry.Effects.Count is < 1 or > 64) throw new InvalidDataException("Invalid replay actor/effects.");
                     foreach (var effect in entry.Effects)
                     {
                         if ((effect.Command.Kind=="shuffle") != (effect.Order!=null)) throw new InvalidDataException("Missing or unexpected random outcome.");
                         Apply(engine.state,s.Actor,effect.Command,effect.Order,effect.RuleEffect);
-                        if (effect.RandomAfter==0) throw new InvalidDataException("Invalid random state.");
+                        if (effect.RandomAfter==0 || (effect.Command.Kind!="shuffle" && effect.RandomAfter!=engine.state.RandomState)) throw new InvalidDataException("Invalid random state.");
                         engine.state.RandomState=effect.RandomAfter;
                     }
                 }

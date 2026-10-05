@@ -34,8 +34,13 @@ public static class LuaWorker
             while(!process.HasExited)
             {
                 if(clock.ElapsedMilliseconds>5000) throw new InvalidDataException("Lua wall-time limit exceeded.");
-                process.Refresh();
-                if(process.PrivateMemorySize64>268435456) throw new InvalidDataException("Lua memory limit exceeded.");
+                try
+                {
+                    process.Refresh();
+                    if(process.PrivateMemorySize64>268435456) throw new InvalidDataException("Lua memory limit exceeded.");
+                }
+                catch(InvalidOperationException) when(process.HasExited) { break; }
+                catch(System.ComponentModel.Win32Exception) when(process.HasExited) { break; }
                 if(output.IsFaulted || errors.IsFaulted) throw new InvalidDataException("Lua output budget exceeded.");
                 await Task.Delay(10);
             }

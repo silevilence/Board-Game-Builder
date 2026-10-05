@@ -19,3 +19,5 @@ dotnet run --project src/Player -- batch samples/quick-cards --seed 1 --count 20
 ```
 
 批量入口强制所有席位为 CPU；每个成功对局自动重跑并回放，核对完整状态和各席位投影。失败时退出码为 1，保留每局日志、诊断、种子和含原始脚本及初始局面的 module.snapshot.json。将该快照传给 batch 可重现原版本；replay 同时支持目录或快照。参数或加载错误退出码为 2。`--max-steps` 设置步数上限。
+
+接口与边界见 [M0 运行时说明](docs/m0-runtime.md)，验证结果和审核修复见 [M0 验收记录](docs/validation/m0-review.md)。

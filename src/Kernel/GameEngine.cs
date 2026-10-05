@@ -15,11 +15,18 @@ public sealed partial class GameEngine
     {
         var view = Project(actor);
         if (state.Ended || view.CurrentSeat != actor) return [];
-        try { return Wire.Copy((rules?.Actions(view) ?? []).ToList()); }
+        try
+        {
+            var actions=(rules?.Actions(view) ?? []).ToList();
+            if(actions.Count>256 || actions.Any(a=>a==null || string.IsNullOrWhiteSpace(a.Id) || string.IsNullOrWhiteSpace(a.Label) || a.Command==null || string.IsNullOrWhiteSpace(a.Command.Kind)) || actions.Select(a=>a.Id).Distinct().Count()!=actions.Count)
+                throw new InvalidDataException("Invalid rule action schema or action limit exceeded.");
+            return Wire.Copy(actions);
+        }
         catch (Exception error) { diagnostics.Add(new(submissions.Count+1,actor,"actions",error.Message)); throw new InvalidDataException("Rule actions failed.",error); }
     }
     public GameEngine(GameState initial, uint seed = 1, string fingerprint = "development", IGameRules? rules = null)
     {
+        StateValidation.Validate(initial);
         state = Wire.Copy(initial); state.RandomState = seed == 0 ? 0x9E3779B9 : seed;
         this.rules = rules; this.initial = Wire.Copy(state); this.seed = seed; this.fingerprint = fingerprint;
     }
@@ -41,8 +48,7 @@ public sealed partial class GameEngine
                 if (decision.Commands.Count is < 1 or > 64) throw new CommandRejected("rule-command-limit");
                 foreach (var effect in decision.Commands) effects.Add(Execute(candidate,actor,effect,true));
             }
-            state = candidate;
-            Record(new(sequence, actor, Wire.Copy(command), true, "accepted"), effects);
+            Record(new(sequence, actor, Wire.Copy(command), true, "accepted"), effects, candidate);
             return new(sequence, true, "accepted");
         }
         catch (CommandRejected error)
@@ -71,9 +77,9 @@ public sealed partial class GameEngine
     }
     private static void Apply(GameState state, string actor, Command command, List<string>? recordedOrder = null, bool ruleEffect = false)
     {
+        if (state.Ended) throw new CommandRejected("operation-not-allowed");
         if (command.Kind is "next" or "phase" or "finish")
         {
-            if (state.Ended) throw new CommandRejected("operation-not-allowed");
             if (command.Kind == "finish")
             {
                 if (command.Winners == null || command.Winners.Distinct().Count() != command.Winners.Count || command.Winners.Any(w=>!state.Seats.Any(s=>s.Id==w))) throw new CommandRejected("invalid-winners");

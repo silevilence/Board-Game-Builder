@@ -80,8 +80,9 @@ public static class DirectoryModule
                 for (var parent = entity.Container; parent != null; parent = state.Entities[parent].Container)
                     if (!visited.Add(parent)) Fail($"{entity.Id}.container: cycle");
             }
-            var fingerprint = Wire.Hash(Wire.Json(new { id, version, state, rules, cpu, resources }));
-            return new(id, version, fingerprint, state, rules, cpu, rulesPath, cpuPath);
+            StateValidation.Validate(state);
+            var module = new LoadedModule(id,version,"",state,rules,cpu,rulesPath,cpuPath,resources);
+            return module with { Fingerprint=ModuleSnapshot.Fingerprint(module) };
         }
         catch (Exception error) when (error is InvalidDataException or JsonException or IOException or InvalidOperationException or KeyNotFoundException or ArgumentException or OverflowException)
         { throw new InvalidDataException($"{file}: {error.Message}", error); }
@@ -104,7 +105,7 @@ public static class DirectoryModule
     }
     private static string SafeFile(string directory, string relative)
     {
-        var root = Path.GetFullPath(directory); var path = Path.GetFullPath(Path.Combine(root, relative));
+        var root = Path.TrimEndingDirectorySeparator(Path.GetFullPath(directory)); var path = Path.GetFullPath(Path.Combine(root, relative));
         if (Path.IsPathRooted(relative) || !path.StartsWith(root + Path.DirectorySeparatorChar, StringComparison.OrdinalIgnoreCase)) Fail($"{relative}: path escapes module");
         if (!File.Exists(path)) Fail($"{relative}: missing file");
         for (FileSystemInfo? current = new FileInfo(path); current != null && current.FullName != root; current = Directory.GetParent(current.FullName))

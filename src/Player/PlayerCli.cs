@@ -16,7 +16,7 @@ public static class PlayerCli
             if(args[0]=="quit") return 0;
             if(args[0] is not ("play" or "replay" or "batch")) throw new ArgumentException("Unknown command. Use --help.");
             if(args.Length<2) throw new ArgumentException("Module directory required.");
-            var module=File.Exists(args[1]) ? Wire.Read<LoadedModule>(File.ReadAllText(args[1])) : DirectoryModule.Load(args[1]);
+            var module=File.Exists(args[1]) ? ModuleSnapshot.Load(args[1]) : DirectoryModule.Load(args[1]);
             if(args[0]=="batch")
             {
                 var options=Options(args,2,["--seed","--count","--out","--max-steps"]);
@@ -40,11 +40,12 @@ public static class PlayerCli
                 if(flags.TryGetValue("--"+kind,out var seats)) foreach(var seat in seats.Split(','))
                     if(!controllers.TryAdd(seat,kind)) throw new ArgumentException("Duplicate seat override.");
             var session=new PlaySession(module,seed,controllers,int.Parse(flags.GetValueOrDefault("--max-steps","500")));
+            string? observer=module.Initial.Seats.FirstOrDefault(s=>controllers.GetValueOrDefault(s.Id,s.Controller)=="human")?.Id;
             var logPath=flags.GetValueOrDefault("--log",Path.Combine("artifacts","sessions",Guid.NewGuid()+".json"));
             while(!session.Ended && session.Fault==null)
             {
                 if(session.IsCpu) { Console.WriteLine($"CPU {session.CurrentSeat} 正在行动…");session.StepCpu();continue; }
-                var seat=session.CurrentSeat;Display(session.View(seat));var actions=session.Actions();
+                var seat=session.CurrentSeat;observer=seat;Display(session.View(seat));var actions=session.Actions();
                 if(session.Fault!=null) break;
                 if(actions.Count==0) { Console.Error.WriteLine("Rules offer no actions. Session stopped.");Save(session,logPath);return 1; }
                 for(var i=0;i<actions.Count;i++) Console.WriteLine($"{i+1}. {actions[i].Label}");
@@ -56,7 +57,7 @@ public static class PlayerCli
             }
             Save(session,logPath);
             if(session.Fault!=null) { Console.Error.WriteLine("Session failed: "+session.Fault.Code);return 1; }
-            Display(session.View(module.Initial.Seats[0].Id));return 0;
+            Display(session.View(observer ?? module.Initial.Seats[0].Id),observer!=null);return 0;
         }
         catch(Exception e) when(e is not OutOfMemoryException) { Console.Error.WriteLine(e.Message);return 2; }
     }
@@ -74,13 +75,13 @@ public static class PlayerCli
         File.WriteAllText(full+".diagnostics.json",Wire.Json(new { session.Fault,diagnostics=session.ExportDiagnostics() }));
         Console.WriteLine("诊断日志: "+full);
     }
-    private static void Display(SeatView view)
+    private static void Display(SeatView view,bool showHand=true)
     {
         Console.WriteLine($"席位 {view.Seat} | 当前 {view.CurrentSeat} | 阶段 {view.Phase} | 行动 {view.Turn}");
         foreach(var e in view.Entities)
         {
             if(e.Id.StartsWith("score-")) Console.WriteLine(e.Id+": "+e.Properties.GetValueOrDefault("score"));
-            if(e.Container=="hand-"+view.Seat) Console.WriteLine($"手牌 {e.Id}: {e.Face ?? "背面"}");
+            if(showHand && e.Container=="hand-"+view.Seat) Console.WriteLine($"手牌 {e.Id}: {e.Face ?? "背面"}");
             if(e.IsContainer) Console.WriteLine($"{e.Id}: {e.Count} 张");
         }
         if(view.Ended) Console.WriteLine("对局结束。胜者: "+(view.Winners.Count==0?"平局":string.Join(", ",view.Winners)));

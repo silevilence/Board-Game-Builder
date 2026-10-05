@@ -25,7 +25,7 @@ public sealed class PlaySession
             if(!this.controllers.ContainsKey(c.Key) || c.Value is not ("human" or "cpu")) throw new ArgumentException("Invalid seat/controller configuration.");
             this.controllers[c.Key]=c.Value;
         }
-        engine=new GameEngine(module.Initial,seed,module.Fingerprint,new LuaRules(module.Rules,module.RulesPath));
+        engine=new GameEngine(module.Initial,seed,module.Fingerprint,new LuaRules(module.Rules,module.RulesPath,seed));
     }
     public SeatView View(string seat) => engine.Project(seat);
     public IReadOnlyList<ActionOffer> Actions()

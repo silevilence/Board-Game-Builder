@@ -23,6 +23,16 @@ public static class ModuleTests
                 json.Replace("\"seat\":\"p1\"", "\"seat\":\"missing\""), json.Replace("\"id\":\"test\"", "\"id\":\"test\",\"id\":\"duplicate\""),
                 json.Replace("\"rules.lua\"", "\"../outside.lua\"") })
             { Save(broken); Check.Throws(() => DirectoryModule.Load(dir), "module.json"); }
+            var duplicate=JsonNode.Parse(json)!;duplicate["entities"]!.AsArray().Add(duplicate["entities"]![0]!.DeepClone());
+            Save(duplicate.ToJsonString());Check.Throws(()=>DirectoryModule.Load(dir),"duplicate identity");
+            var invalidContainer=JsonNode.Parse(json)!;
+            invalidContainer["entities"]![0]!["components"]!.AsArray().Add(JsonNode.Parse("""{"type":"container","data":{"capacity":1,"ordered":false,"contents":["absent"]}}"""));
+            Save(invalidContainer.ToJsonString());Check.Throws(()=>DirectoryModule.Load(dir),"invalid reference");
+            var cycle=JsonNode.Parse(invalidContainer.ToJsonString().Replace("absent","card"))!;
+            Save(cycle.ToJsonString());Check.Throws(()=>DirectoryModule.Load(dir),"cycle");
+            var asset=JsonNode.Parse(json)!;
+            asset["entities"]![0]!["components"]!.AsArray().Add(JsonNode.Parse("""{"type":"faces","data":{"names":["face"],"up":true,"resources":["missing"]}}"""));
+            Save(asset.ToJsonString());Check.Throws(()=>DirectoryModule.Load(dir),"unknown resource");
         }
         finally { Directory.Delete(dir, true); }
     }

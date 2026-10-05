@@ -15,7 +15,7 @@ public static class BatchTests
         };
         foreach(var fault in faults)
         {
-            var modified=fault.Value with { Fingerprint=Wire.Hash(Wire.Json(fault.Value)) };
+            var modified=fault.Value with { Fingerprint=ModuleSnapshot.Fingerprint(fault.Value) };
             var result=BatchRunner.Run(modified,123,1,Path.Combine(root,fault.Key)).Single();
             Check.That(!result.Success && result.Error==fault.Key && File.Exists(result.LogPath),Wire.Json(result));
             Check.That(File.Exists(Path.Combine(Path.GetDirectoryName(result.LogPath)!,"module.snapshot.json")));
