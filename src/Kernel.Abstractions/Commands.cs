@@ -1,0 +1,17 @@
+namespace BoardGame.Kernel;
+public sealed record Command
+{
+    public string Kind { get; init; } = "";
+    public string? Entity { get; init; }
+    public string? Target { get; init; }
+    public string? Property { get; init; }
+    public int Value { get; init; }
+    public double X { get; init; }
+    public double Y { get; init; }
+    public string? Seat { get; init; }
+    public string? Phase { get; init; }
+    public string? Visibility { get; init; }
+    public List<string>? Winners { get; init; }
+}
+public sealed record Submission(long Sequence, string Actor, Command Command, bool Accepted, string Reason);
+public sealed record CommandResult(long Sequence, bool Accepted, string Reason);
