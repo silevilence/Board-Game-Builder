@@ -61,28 +61,76 @@ public sealed class PluginHost : IDisposable
     public void Install(string manifest,Func<IEditorPlugin> factory)
     {
         var value=Wire.Read<PluginManifest>(manifest);
-        if(string.IsNullOrWhiteSpace(value.Id) || value.Api!=1 || value.Provides==null || value.Requires==null) throw new InvalidDataException("Invalid plugin identity/API manifest");
+        if(string.IsNullOrWhiteSpace(value.Id) || value.Api!=1 || value.Provides==null || value.Requires==null || value.Provides.Concat(value.Requires).Any(string.IsNullOrWhiteSpace) || value.Provides.Distinct().Count()!=value.Provides.Length) throw new InvalidDataException("Invalid plugin identity/API manifest");
+        if(catalog.Values.Any(p=>p.Manifest.Provides.Intersect(value.Provides).Any())) throw new InvalidDataException("Ambiguous capability provider: "+value.Id);
         if(!catalog.TryAdd(value.Id,(value,factory))) throw new InvalidDataException("Duplicate plugin: "+value.Id);
     }
     public void Enable(string id)
     {
-        if(active.ContainsKey(id)) return;
+        var order=Order([id]); var added=new List<string>();
+        try { foreach(var next in order) if(!active.ContainsKey(next)) { Activate(next); added.Add(next); } }
+        catch { foreach(var next in added.AsEnumerable().Reverse()) Deactivate(next); throw; }
+        finally { RegistrationsChanged?.Invoke(); }
+    }
+    private void Activate(string id)
+    {
         var context=new PluginContext(this,id);
         try { catalog[id].Factory().Activate(context); active.Add(id,context); }
         catch { context.Dispose(); throw; }
-        finally { RegistrationsChanged?.Invoke(); }
     }
     public void Disable(string id)
     {
-        if(active.Remove(id,out var context)) context.Dispose();
+        var affected=Dependents(id);
+        foreach(var next in Order(affected).AsEnumerable().Reverse()) if(affected.Contains(next)) Deactivate(next);
         RegistrationsChanged?.Invoke();
     }
-    public void Reload(string id) { Disable(id); Enable(id); }
+    private void Deactivate(string id) { if(active.Remove(id,out var context)) context.Dispose(); }
+    public void Reload(string id)
+    {
+        var affected=Dependents(id); var order=Order(affected);
+        foreach(var next in order.AsEnumerable().Reverse()) if(affected.Contains(next)) Deactivate(next);
+        var added=new List<string>();
+        try { foreach(var next in order) if(!active.ContainsKey(next)) { Activate(next); added.Add(next); } }
+        catch { foreach(var next in added.AsEnumerable().Reverse()) Deactivate(next); throw; }
+        finally { RegistrationsChanged?.Invoke(); }
+    }
+    private HashSet<string> Dependents(string id)
+    {
+        if(!catalog.ContainsKey(id)) throw new InvalidDataException("Unknown plugin: "+id);
+        var affected=new HashSet<string>(StringComparer.Ordinal) {id};
+        bool changed;
+        do
+        {
+            changed=false;
+            var capabilities=affected.SelectMany(i=>catalog[i].Manifest.Provides).ToHashSet();
+            foreach(var next in active.Keys) if(catalog[next].Manifest.Requires.Any(capabilities.Contains)) changed|=affected.Add(next);
+        } while(changed);
+        return affected;
+    }
+    private List<string> Order(IEnumerable<string> roots)
+    {
+        var result=new List<string>(); var visiting=new HashSet<string>(); var done=new HashSet<string>();
+        foreach(var root in roots.Order(StringComparer.Ordinal)) Visit(root);
+        return result;
+        void Visit(string id)
+        {
+            if(done.Contains(id)) return;
+            if(!visiting.Add(id)) throw new InvalidDataException("Plugin dependency cycle: "+string.Join(" -> ",visiting)+" -> "+id);
+            if(!catalog.TryGetValue(id,out var plugin)) throw new InvalidDataException("Unknown plugin: "+id);
+            foreach(var capability in plugin.Manifest.Requires)
+            {
+                var provider=catalog.Values.SingleOrDefault(p=>p.Manifest.Provides.Contains(capability));
+                if(provider.Manifest==null) throw new InvalidDataException($"{id}: missing capability {capability}");
+                Visit(provider.Manifest.Id);
+            }
+            visiting.Remove(id); done.Add(id); result.Add(id);
+        }
+    }
     internal void Register(EditorExtension extension)
     {
         if(extensions.Any(e=>e.Kind==extension.Kind && e.Id==extension.Id)) throw new InvalidDataException($"Duplicate {extension.Kind}: {extension.Id}");
         extensions.Add(extension);
     }
     internal void Remove(EditorExtension extension) => extensions.Remove(extension);
-    public void Dispose() { foreach(var id in active.Keys.Reverse().ToArray()) Disable(id); SetDocument(null); }
+    public void Dispose() { foreach(var id in Order(active.Keys).AsEnumerable().Reverse()) Deactivate(id); SetDocument(null); RegistrationsChanged?.Invoke(); }
 }
