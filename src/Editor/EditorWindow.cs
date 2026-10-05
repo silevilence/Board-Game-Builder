@@ -27,6 +27,7 @@ public sealed partial class EditorWindow : Window
         tabs.Items.Add(new TabItem { Header="模块配置",Content=new ScrollViewer {Content=source} });
         var root=new DockPanel(); DockPanel.SetDock(toolbar,Dock.Top); DockPanel.SetDock(status,Dock.Bottom);
         root.Children.Add(toolbar); root.Children.Add(status); root.Children.Add(tabs); Content=root;
+        InitializePlugins();
         source.TextChanged+=(_,_)=>UpdateTitle();
         Closing+=async (_,e)=> { if(allowClose) return; e.Cancel=true; try { if(await CanLeave()) { allowClose=true; Close(); } } catch(Exception error) { status.Text=error.Message; } };
         if(initial!=null) { try { SetDocument(ModuleDocument.Open(initial)); } catch(Exception e) { status.Text=e.Message; } }
@@ -44,6 +45,7 @@ public sealed partial class EditorWindow : Window
     {
         if(document!=null) document.Changed-=RefreshDocument;
         document=value;
+        plugins.SetDocument(value);
         location.Text=value?.DirectoryPath;
         if(document!=null) document.Changed+=RefreshDocument;
         RefreshDocument();
