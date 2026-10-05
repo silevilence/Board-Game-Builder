@@ -32,7 +32,7 @@ public sealed partial class GameEngine
                     foreach (var effect in entry.Effects)
                     {
                         if ((effect.Command.Kind=="shuffle") != (effect.Order!=null)) throw new InvalidDataException("Missing or unexpected random outcome.");
-                        Apply(engine.state,s.Actor,effect.Command,effect.Order);
+                        Apply(engine.state,s.Actor,effect.Command,effect.Order,effect.RuleEffect);
                         if (effect.RandomAfter==0) throw new InvalidDataException("Invalid random state.");
                         engine.state.RandomState=effect.RandomAfter;
                     }
