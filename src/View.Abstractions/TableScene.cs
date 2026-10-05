@@ -5,7 +5,10 @@ public sealed record TableRect(float X,float Y,float Width,float Height)
 {
     public bool Contains(float x,float y) => x>=X && y>=Y && x<X+Width && y<Y+Height;
 }
-public sealed record TableItem(string? Entity, string Kind, string Label, TableRect Bounds, string? Resource=null);
+public sealed record TableItem(string? Entity, string Kind, string Label, TableRect Bounds, string? Resource=null,double PositionX=0,double PositionY=0)
+{
+    public (double X,double Y) MoveBy(float dx,float dy)=>(PositionX+dx,PositionY+dy);
+}
 public sealed record TableScene(IReadOnlyList<TableItem> Items, IReadOnlyDictionary<string,byte[]> Resources)
 {
     public TableItem? Hit(float x,float y) => Items.LastOrDefault(i=>i.Entity!=null && i.Bounds.Contains(x,y));
@@ -36,7 +39,7 @@ public sealed record TableScene(IReadOnlyList<TableItem> Items, IReadOnlyDiction
             var label=e.Face ?? e.Id;
             if(e.Properties.Count>0) label+="  "+string.Join(" ",e.Properties.Select(p=>$"{p.Key}:{p.Value}"));
             if(e.Resource!=null && resources!=null && resources.TryGetValue(e.Resource,out var bytes)) used[e.Resource]=bytes;
-            items.Add(new(e.Id,"piece",label,new((float)e.X+30,(float)e.Y+40+(regions.Length+1)/2*235+loose++*48,360,40),e.Resource));
+            items.Add(new(e.Id,"piece",label,new((float)e.X+30,(float)e.Y+40+(regions.Length+1)/2*235+loose++*48,360,40),e.Resource,e.X,e.Y));
         }
         return new(items,used);
     }

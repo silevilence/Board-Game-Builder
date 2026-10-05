@@ -13,8 +13,9 @@ MonoGame 3.8.4.1、Avalonia 11.3.10，Windows x64；没有替换既定渲染器�
 首次验证发现缺少 Windows supportedOS manifest 与延迟 ContentPresenter 卸载导致检查时资源仍在，均已修复。
 
 限制：仅 Windows HWND 集成；原生视口存在 airspace 限制，Avalonia 控件放在视口外，不能覆盖原生区域。
-字体使用 Windows Microsoft YaHei UI；DPI 下目前按物理像素绘制，缩放由视口相机控制。
+字体使用 Windows Microsoft YaHei UI；初始相机采用宿主 DPI 缩放，后续缩放由视口相机控制。
 设备创建失败停止渲染并提供错误；不自动切换另一种渲染器。
+Player 与测试视口提供显式缩放按钮，已通过后台实际操作验证；当前自动化滚轮未观察到缩放，物理滚轮需人工复核。
 
 参考：[Avalonia NativeControlHost](https://docs.avaloniaui.net/docs/platform-specific-guides/windows/)、
 [MonoGame PresentationParameters](https://docs.monogame.net/api/Microsoft.Xna.Framework.Graphics.PresentationParameters.html)。

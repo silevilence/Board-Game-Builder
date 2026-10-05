@@ -27,17 +27,18 @@ public sealed class PlayBoard : UserControl,IDisposable
         DockPanel.SetDock(sound,Dock.Bottom); side.Children.Add(sound); side.Children.Add(new ScrollViewer { Content=actions });
         var panel=new DockPanel(); DockPanel.SetDock(side,Dock.Right); panel.Children.Add(side); panel.Children.Add(table); Content=panel;
         table.Gesture+=g=> { _=Act(new(g.Kind,g.Entity,g.Target,g.X,g.Y),session.Frame.Revision); };
+        table.RenderingError+=error=> { session.Stop(); hostError="渲染设备故障："+error+"\n请结束对局后重新开始。"; Refresh(); };
         Refresh();
     }
     private void Refresh()
     {
         if(disposed) return;
         var frame=session.Frame; var v=frame.View;
-        table.Show(TableScene.From(v,module.ResourceData)); table.InputEnabled=!session.Busy && !v.Ended && frame.Fault==null && !frame.Cpu;
+        table.Show(TableScene.From(v,module.ResourceData)); table.InputEnabled=hostError==null && !session.Busy && !v.Ended && frame.Fault==null && !frame.Cpu;
         status.Text=hostError ?? $"席位 {v.Seat} · 当前 {v.CurrentSeat}\n阶段 {v.Phase} · 行动 {v.Turn}\n"+
             (frame.Fault!=null?$"对局故障：{frame.Fault.Code}\n{frame.Fault.Detail}":v.Ended?$"对局结束\n胜者：{string.Join(", ",v.Winners)}":session.LastMessage);
         actions.Children.Clear();
-        foreach(var offer in frame.Actions)
+        foreach(var offer in hostError==null?frame.Actions:[])
         {
             var revision=frame.Revision; Add(offer.Label,()=>Act(new("action",Action:offer.Id),revision));
         }

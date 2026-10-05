@@ -28,7 +28,10 @@ public sealed class PlayerSession
     {
         var actions=session.Actions();
         // Never pass a CPU's private action list to the observing human.
-        return new(revision,session.View(observer),session.IsCpu?[]:actions,session.IsCpu,session.Fault);
+        var fault=session.Fault;
+        if(fault!=null) fault=fault with { Detail="规则或 CPU 执行失败。请结束对局并重新开始；详细诊断仅供作者调试。" };
+        if(fault==null && !session.Ended && actions.Count==0) fault=new("no-actions",session.CurrentSeat,"规则没有提供可执行动作，请结束对局或修正规则后重开。");
+        return new(revision,session.View(observer),session.IsCpu?[]:actions,session.IsCpu,fault);
     }
     public async Task<CommandResult> SubmitAsync(long revision,InteractionIntent intent)
     {
@@ -38,7 +41,7 @@ public sealed class PlayerSession
             if(stopped || revision!=Frame.Revision || Frame.Cpu || Frame.View.Ended || Frame.Fault!=null) return new(0,false,"stale-or-inactive");
             var command=Resolve(Frame.Actions,intent);
             var result=await Task.Run(()=>session.SubmitHuman(observer,command));
-            LastMessage=result.Accepted?"操作已提交":$"操作被拒绝：{result.Reason}";
+            LastMessage=result.Accepted?"操作已提交":result.Reason=="rule-rejected"?"当前规则不允许此操作，请使用右侧可用动作。":$"操作被拒绝：{result.Reason}";
             Frame=await Task.Run(()=>ReadFrame(Frame.Revision+1));
             return result;
         }

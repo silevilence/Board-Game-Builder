@@ -1,0 +1,242 @@
+[
+  {
+    "seed": 1,
+    "success": true,
+    "winners": [
+      "p2"
+    ],
+    "steps": 7,
+    "error": null,
+    "stateHash": "C7C9562282EAF8603DE22C10DBC899075AD2FDD91081A6EB9CD318EA42AC8CCE",
+    "rerunEqual": true,
+    "replayEqual": true
+  },
+  {
+    "seed": 2,
+    "success": true,
+    "winners": [
+      "p1"
+    ],
+    "steps": 7,
+    "error": null,
+    "stateHash": "37B40FE9D14FE892E151CE0D4084A25F1F1F4D9AD270A6CE570B989E461FE058",
+    "rerunEqual": true,
+    "replayEqual": true
+  },
+  {
+    "seed": 3,
+    "success": true,
+    "winners": [
+      "p1"
+    ],
+    "steps": 7,
+    "error": null,
+    "stateHash": "7AFA548046670C3D38A82A74760E3F7DF317D8CC7D05AC2D1BEDC55C26E72F90",
+    "rerunEqual": true,
+    "replayEqual": true
+  },
+  {
+    "seed": 4,
+    "success": true,
+    "winners": [
+      "p2"
+    ],
+    "steps": 7,
+    "error": null,
+    "stateHash": "EBB84877923FBCBE0D24CC39D465B5F6AA7151A80A468230346DA1B36D5595B7",
+    "rerunEqual": true,
+    "replayEqual": true
+  },
+  {
+    "seed": 5,
+    "success": true,
+    "winners": [
+      "p2"
+    ],
+    "steps": 7,
+    "error": null,
+    "stateHash": "F760C31A00EE37221A8EBECE6D2AF73FDDF7BEE4F300E7B3C8DF4596C41EBB3A",
+    "rerunEqual": true,
+    "replayEqual": true
+  },
+  {
+    "seed": 6,
+    "success": true,
+    "winners": [
+      "p1"
+    ],
+    "steps": 7,
+    "error": null,
+    "stateHash": "F5408AC09193E8E5780F57A299F68FCA328C54818E896B7ED39BF9C9C560CC5D",
+    "rerunEqual": true,
+    "replayEqual": true
+  },
+  {
+    "seed": 7,
+    "success": true,
+    "winners": [
+      "p1"
+    ],
+    "steps": 7,
+    "error": null,
+    "stateHash": "4675BADB77ACA9146D0255BE1F1D59D70211C21673E6A5C7E12E113D5FA892BC",
+    "rerunEqual": true,
+    "replayEqual": true
+  },
+  {
+    "seed": 8,
+    "success": true,
+    "winners": [
+      "p1"
+    ],
+    "steps": 7,
+    "error": null,
+    "stateHash": "DE5CAAB08B22EACCEF34EEB03AD0281A6A4F862EA2F6EF813B0B35AB90F12A68",
+    "rerunEqual": true,
+    "replayEqual": true
+  },
+  {
+    "seed": 9,
+    "success": true,
+    "winners": [
+      "p1"
+    ],
+    "steps": 7,
+    "error": null,
+    "stateHash": "848764EC2FB8FB2E29FB41A22EA1E73C3D2863ADED7A193ACFD9573952519838",
+    "rerunEqual": true,
+    "replayEqual": true
+  },
+  {
+    "seed": 10,
+    "success": true,
+    "winners": [
+      "p2"
+    ],
+    "steps": 7,
+    "error": null,
+    "stateHash": "20CAAA638E8F99F5B7C613A1625E7A0D181B109702E099DB279253D1E9668B4D",
+    "rerunEqual": true,
+    "replayEqual": true
+  },
+  {
+    "seed": 11,
+    "success": true,
+    "winners": [
+      "p1"
+    ],
+    "steps": 7,
+    "error": null,
+    "stateHash": "AC2E742A5064935B813A1EEB376C4E5DE0D54BEBB44378304712D3B760C53F44",
+    "rerunEqual": true,
+    "replayEqual": true
+  },
+  {
+    "seed": 12,
+    "success": true,
+    "winners": [
+      "p2"
+    ],
+    "steps": 7,
+    "error": null,
+    "stateHash": "E2EAFB0D17309872475055BBF2844AE723344A543B8CA5F24C42A191D4CE690C",
+    "rerunEqual": true,
+    "replayEqual": true
+  },
+  {
+    "seed": 13,
+    "success": true,
+    "winners": [
+      "p1"
+    ],
+    "steps": 7,
+    "error": null,
+    "stateHash": "120220C667248F5FB000D0001EB43B923DF4934F6C136E2D2151086CB92342E4",
+    "rerunEqual": true,
+    "replayEqual": true
+  },
+  {
+    "seed": 14,
+    "success": true,
+    "winners": [
+      "p1"
+    ],
+    "steps": 7,
+    "error": null,
+    "stateHash": "3A507C56FDA07FF56D0B179AB3789562CF2E4A40E44A81924FEC21A70AB6E65D",
+    "rerunEqual": true,
+    "replayEqual": true
+  },
+  {
+    "seed": 15,
+    "success": true,
+    "winners": [
+      "p1"
+    ],
+    "steps": 7,
+    "error": null,
+    "stateHash": "B0F72423CBEF4290978DCBF7D82C3E6D294645952D71D9D6AC226A93C14BA2C3",
+    "rerunEqual": true,
+    "replayEqual": true
+  },
+  {
+    "seed": 16,
+    "success": true,
+    "winners": [
+      "p2"
+    ],
+    "steps": 7,
+    "error": null,
+    "stateHash": "4AB9143550F8893530C040423339642E3553E984DB94100247683AFC3292BC81",
+    "rerunEqual": true,
+    "replayEqual": true
+  },
+  {
+    "seed": 17,
+    "success": true,
+    "winners": [
+      "p1"
+    ],
+    "steps": 7,
+    "error": null,
+    "stateHash": "D5B34F69E061D899D8568DA667003CFAC4659BDE9A1AEC1B7B593CC20F1E6B94",
+    "rerunEqual": true,
+    "replayEqual": true
+  },
+  {
+    "seed": 18,
+    "success": true,
+    "winners": [
+      "p1"
+    ],
+    "steps": 7,
+    "error": null,
+    "stateHash": "CAC4D438D2DD7C2BB2EFE8CCF1120EAF2B333C9022A3E019EA7C1017B1E5DDAD",
+    "rerunEqual": true,
+    "replayEqual": true
+  },
+  {
+    "seed": 19,
+    "success": true,
+    "winners": [
+      "p2"
+    ],
+    "steps": 7,
+    "error": null,
+    "stateHash": "22118A83E2CD14B94C48BA7A9720EB44342388441D049FE1409EF979287104F2",
+    "rerunEqual": true,
+    "replayEqual": true
+  },
+  {
+    "seed": 20,
+    "success": true,
+    "winners": [
+      "p2"
+    ],
+    "steps": 7,
+    "error": null,
+    "stateHash": "4A6693664219A461F736C8EF1426E3D9AC5585BC34E71B6F07A576BA86580CEE",
+    "rerunEqual": true,
+    "replayEqual": true
+  }
+]

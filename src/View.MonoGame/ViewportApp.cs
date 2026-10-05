@@ -24,14 +24,25 @@ public sealed class ViewportApp : Application
         var host=new ContentControl { Content=new DesktopViewport() };
         var status=new TextBlock { Text="Wheel zoom / right drag pan / click. Resize window; rebuild to test disposal." };
         var rebuild=new Button { Content="Rebuild viewport" };
+        var zoomIn=new Button {Content="Zoom +"}; var zoomOut=new Button {Content="Zoom −"};
+        zoomIn.Click+=(_,_)=> { if(host.Content is DesktopViewport view) view.ChangeZoom(1.1f); };
+        zoomOut.Click+=(_,_)=> { if(host.Content is DesktopViewport view) view.ChangeZoom(1/1.1f); };
         rebuild.Click+=(_,_) => { (host.Content as DesktopViewport)?.Dispose(); host.Content=null; host.Content=new DesktopViewport(); status.Text=$"Live graphics devices: {DesktopViewport.LiveDevices}"; };
-        var panel=new DockPanel(); DockPanel.SetDock(rebuild,Dock.Top); DockPanel.SetDock(status,Dock.Top);
-        panel.Children.Add(rebuild); panel.Children.Add(status); panel.Children.Add(host);
+        var toolbar=new StackPanel { Orientation=Avalonia.Layout.Orientation.Horizontal }; toolbar.Children.Add(rebuild); toolbar.Children.Add(zoomIn); toolbar.Children.Add(zoomOut);
+        var panel=new DockPanel(); DockPanel.SetDock(toolbar,Dock.Top); DockPanel.SetDock(status,Dock.Top);
+        panel.Children.Add(toolbar); panel.Children.Add(status); panel.Children.Add(host);
         var window=new Window { Title=title, Width=960, Height=640, Content=panel };
         window.Closed+=(_,_) => (host.Content as DesktopViewport)?.Dispose();
         if(args.Length==2 && args[0]=="--smoke")
         {
             var count=0; var failures=new List<string>();
+            void CheckLabels(TableRenderer renderer)
+            {
+                var label=new string('X',180);
+                for(var i=0;i<20;i++) renderer.Text(label,20,20,Microsoft.Xna.Framework.Color.White);
+                if((renderer.CachedLabels!=1 || renderer.LabelTexturesCreated!=1) && !failures.Contains("Long label cache leaked")) failures.Add("Long label cache leaked");
+            }
+            ((DesktopViewport)host.Content!).Paint=CheckLabels;
             var timer=new DispatcherTimer { Interval=TimeSpan.FromSeconds(1) };
             timer.Tick+=(_,_) =>
             {
@@ -43,7 +54,7 @@ public sealed class ViewportApp : Application
                     timer.Stop(); File.WriteAllText(args[1],System.Text.Json.JsonSerializer.Serialize(new { title,cycles=count,failures }));
                     window.Close();
                 }
-                else { window.Width+=40; window.Height+=20; host.Content=new DesktopViewport(); }
+                else { window.Width+=40; window.Height+=20; host.Content=new DesktopViewport { Paint=CheckLabels }; }
             };
             window.Opened+=(_,_) => timer.Start(); window.Closed+=(_,_) => timer.Stop();
         }

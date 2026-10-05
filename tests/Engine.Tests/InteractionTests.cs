@@ -18,5 +18,11 @@ public static class InteractionTests
         Check.That(BoardGame.Kernel.Wire.Json(cli.View("p1"))==BoardGame.Kernel.Wire.Json(ui.Frame.View));
         Check.That(ui.Frame.Cpu && ui.Frame.Actions.Count==0); Check.That(await ui.StepCpuAsync());
         var p2=await PlayerSession.CreateAsync(module,42,"p2"); Check.That(p2.Frame.View.Seat=="p2" && p2.Frame.Actions.Count==0);
+        var broken=await PlayerSession.CreateAsync(module with {Cpu="return {decide=function(ctx) error('PRIVATE_CPU_CARD') end}"},42,"p2");
+        Check.That(!await broken.StepCpuAsync() && broken.Frame.Fault?.Code=="cpu-failure");
+        Check.That(!BoardGame.Kernel.Wire.Json(broken.Frame).Contains("PRIVATE_CPU_CARD"),"CPU diagnostic leaked to player");
+        var noActions=await PlayerSession.CreateAsync(module with {Rules="return {actions=function(ctx) return {} end}"},42,"p1");
+        Check.That(noActions.Frame.Fault?.Code=="no-actions");
+        var fresh=await PlayerSession.CreateAsync(module,42,"p1"); Check.That(fresh.Frame.Revision==0 && fresh.Frame.View.Phase=="setup");
     }
 }

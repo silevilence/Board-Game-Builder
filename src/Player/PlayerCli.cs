@@ -13,7 +13,7 @@ public static class PlayerCli
             if(args.Length==3 && args[0]=="pack") { ModulePackage.Pack(args[1],args[2]); Console.WriteLine("Package created: "+args[2]); return 0; }
             if(args.Length==0 || args[0]=="--help")
             {
-                Console.WriteLine("Board Game Builder M0\nbatch <module-dir|snapshot.json> [--seed N] [--count N] [--out directory] [--max-steps N]\nplay <module-dir> [--seed N] [--cpu p2,p3] [--human p1] [--log file] [--max-steps N]\nreplay <module-dir> <log-file> [--seat p1]\n输入动作编号，或 q 退出。日志含权威状态，仅用于作者诊断。" );return 0;
+                Console.WriteLine("Board Game Builder M1\ngui [module-dir|game.bgm]\npack <module-dir> <new.bgm>\nexport <player-release> <module-dir> <new-directory>\nbatch <module-dir|game.bgm|snapshot.json> [--seed N] [--count N] [--out directory] [--max-steps N]\nplay <module-dir|game.bgm> [--seed N] [--cpu p2,p3] [--human p1] [--log file] [--max-steps N]\nreplay <module-dir|game.bgm> <log-file> [--seat p1]\n输入动作编号，或 q 退出。日志含权威状态，仅用于作者诊断。" );return 0;
             }
             if(args[0]=="quit") return 0;
             if(args[0] is not ("play" or "replay" or "batch")) throw new ArgumentException("Unknown command. Use --help.");

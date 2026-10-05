@@ -92,7 +92,12 @@ public static class ModulePackage
             foreach(var entry in zip.Entries)
             {
                 ValidatePath(entry.FullName);
-                using var input=entry.Open(); using var buffer=new MemoryStream(); input.CopyTo(buffer);
+                using var input=entry.Open(); using var buffer=new MemoryStream(); var chunk=new byte[81920]; int read;
+                while((read=input.Read(chunk))>0)
+                {
+                    if(buffer.Length+read>MaxFile || buffer.Length+read>entry.Length) throw new InvalidDataException($"{entry.FullName}: expanded content exceeds declared size/budget");
+                    buffer.Write(chunk,0,read);
+                }
                 if(!entries.TryAdd(entry.FullName,buffer.ToArray())) throw new InvalidDataException($"{entry.FullName}: duplicate package entry");
             }
             if(!entries.Remove("package.manifest.json",out var manifestBytes)) throw new InvalidDataException("Missing package manifest");
@@ -102,7 +107,10 @@ public static class ModulePackage
             if(manifest.Dependencies.Any(d=>d.EditorOnly)) throw new InvalidDataException("Package contains editor_only dependencies");
             if(manifest.Files.Count!=entries.Count) throw new InvalidDataException("Package manifest file count mismatch");
             foreach(var f in manifest.Files)
+            {
+                ValidatePath(f.Key);
                 if(!entries.TryGetValue(f.Key,out var bytes) || Hash(bytes)!=f.Value) throw new InvalidDataException($"{f.Key}: missing or content hash mismatch");
+            }
             Directory.CreateDirectory(temp);
             foreach(var f in entries)
             {

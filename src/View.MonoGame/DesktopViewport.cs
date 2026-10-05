@@ -2,6 +2,8 @@ using System.Runtime.InteropServices;
 using Avalonia.Controls;
 using Avalonia.Platform;
 using Avalonia.Threading;
+using Avalonia.Input;
+using Avalonia.Interactivity;
 using Microsoft.Xna.Framework.Graphics;
 using Color = Microsoft.Xna.Framework.Color;
 using Rectangle = Microsoft.Xna.Framework.Rectangle;
@@ -17,6 +19,7 @@ public sealed class DesktopViewport : NativeControlHost, IDisposable
     private GraphicsDevice? device;
     private TableRenderer? renderer;
     private int width, height;
+    private bool cameraInitialized;
     public float Zoom { get; private set; } = 1;
     public float PanX { get; private set; }
     public float PanY { get; private set; }
@@ -27,15 +30,18 @@ public sealed class DesktopViewport : NativeControlHost, IDisposable
     public Action<TableRenderer>? Paint { get; set; }
     private bool panning;
     private float lastX, lastY;
+    private TopLevel? inputRoot;
 
     public DesktopViewport()
     {
         procedure = ProcessMessage;
+        Focusable=true;
         timer.Tick += (_, _) => Render();
     }
     protected override IPlatformHandle CreateNativeControlCore(IPlatformHandle parent)
     {
-        handle = CreateWindowEx(0, "STATIC", "MonoGame desktop", 0x50000000, 0, 0, 1, 1, parent.Handle, 0, 0, 0);
+        // SS_NOTIFY makes STATIC return HTCLIENT instead of HTTRANSPARENT for real mouse input.
+        handle = CreateWindowEx(0, "STATIC", "MonoGame desktop", 0x50000100, 0, 0, 1, 1, parent.Handle, 0, 0, 0);
         if (handle == 0) throw new System.ComponentModel.Win32Exception();
         previous = SetWindowLongPtr(handle, -4, Marshal.GetFunctionPointerForDelegate(procedure));
         timer.Start();
@@ -56,9 +62,26 @@ public sealed class DesktopViewport : NativeControlHost, IDisposable
         renderer?.Dispose(); renderer = null;
         if (device != null) { device.Dispose(); device = null; LiveDevices--; }
     }
-    public void Dispose() { timer.Stop(); ReleaseGraphics(); Paint=null; Input=null; }
+    public void Dispose()
+    {
+        inputRoot?.RemoveHandler(PointerWheelChangedEvent,RootWheel); inputRoot=null;
+        timer.Stop(); ReleaseGraphics(); Paint=null; Input=null;
+    }
+    protected override void OnAttachedToVisualTree(Avalonia.VisualTreeAttachmentEventArgs e)
+    {
+        base.OnAttachedToVisualTree(e);
+        inputRoot=TopLevel.GetTopLevel(this);
+        inputRoot?.AddHandler(PointerWheelChangedEvent,RootWheel,RoutingStrategies.Tunnel);
+    }
+    private void RootWheel(object? sender,PointerWheelEventArgs e)
+    {
+        var point=e.GetPosition(this);
+        if(point.X>=0 && point.Y>=0 && point.X<Bounds.Width && point.Y<Bounds.Height) { ChangeZoom(e.Delta.Y>0?1.1f:1/1.1f); e.Handled=true; }
+    }
+    public void ChangeZoom(float factor) => Zoom=Math.Clamp(Zoom*factor,.35f,3f);
     protected override void OnDetachedFromVisualTree(Avalonia.VisualTreeAttachmentEventArgs e)
     {
+        inputRoot?.RemoveHandler(PointerWheelChangedEvent,RootWheel); inputRoot=null;
         timer.Stop(); ReleaseGraphics(); base.OnDetachedFromVisualTree(e);
     }
     private void Render()
@@ -66,6 +89,7 @@ public sealed class DesktopViewport : NativeControlHost, IDisposable
         if (handle == 0 || !GetClientRect(handle, out var rect) || rect.Right < 1 || rect.Bottom < 1) return;
         try
         {
+            if(!cameraInitialized) { Zoom=(float)(TopLevel.GetTopLevel(this)?.RenderScaling ?? 1); cameraInitialized=true; }
             if (device == null || width != rect.Right || height != rect.Bottom)
             {
                 ReleaseGraphics(); width = rect.Right; height = rect.Bottom;
@@ -97,15 +121,15 @@ public sealed class DesktopViewport : NativeControlHost, IDisposable
         float x = (short)((long)l & 0xffff), y = (short)(((long)l >> 16) & 0xffff);
         switch (message)
         {
-            case 0x201: SetFocus(hwnd); SetCapture(hwnd); Input?.Invoke("down", (x-PanX)/Zoom, (y-PanY)/Zoom); return 0;
+            case 0x201: Focus(); SetFocus(hwnd); SetCapture(hwnd); Input?.Invoke("down", (x-PanX)/Zoom, (y-PanY)/Zoom); return 0;
             case 0x202: ReleaseCapture(); Input?.Invoke("up", (x-PanX)/Zoom, (y-PanY)/Zoom); return 0;
-            case 0x204: SetFocus(hwnd); SetCapture(hwnd); panning = true; lastX=x; lastY=y; return 0;
+            case 0x204: Focus(); SetFocus(hwnd); SetCapture(hwnd); panning = true; lastX=x; lastY=y; return 0;
             case 0x205: panning = false; ReleaseCapture(); return 0;
             case 0x200:
                 if (panning) { PanX += x-lastX; PanY += y-lastY; lastX=x; lastY=y; }
                 Input?.Invoke("move", (x-PanX)/Zoom, (y-PanY)/Zoom); return 0;
             case 0x20A:
-                Zoom = Math.Clamp(Zoom * ((short)((ulong)w >> 16) > 0 ? 1.1f : 1/1.1f), .35f, 3f); return 0;
+                ChangeZoom((short)((ulong)w >> 16) > 0 ? 1.1f : 1/1.1f); return 0;
             case 0x8: case 0x1F: panning=false; Input?.Invoke("cancel", 0, 0); break;
         }
         return CallWindowProc(previous, hwnd, message, w, l);

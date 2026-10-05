@@ -18,5 +18,10 @@ public static class ViewTests
         var card=scene.Items.First(i=>i.Kind=="card"); Check.That(scene.Hit(card.Bounds.X+5,card.Bounds.Y+5)==card);
         var visible=new VisibleEntity("art",null,null,false,0,true,"visible",0,0,[],[],"missing");
         projection.Entities.Add(visible); Check.That(TableScene.From(projection).Items.Any(i=>i.Resource=="missing"));
+        var before=TableScene.From(projection).Items.Single(i=>i.Entity=="art");
+        var moved=before.MoveBy(100,60);
+        projection.Entities.Remove(visible); projection.Entities.Add(visible with { X=moved.X,Y=moved.Y });
+        var after=TableScene.From(projection).Items.Single(i=>i.Entity=="art");
+        Check.That(after.Bounds.X-before.Bounds.X==100 && after.Bounds.Y-before.Bounds.Y==60,"Drag layout and command coordinates drifted");
     }
 }
