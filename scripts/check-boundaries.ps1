@@ -3,7 +3,7 @@ $allowed = @{
  'Kernel.Abstractions' = @(); 'Kernel' = @('Kernel.Abstractions'); 'Modules' = @('Kernel.Abstractions')
  'Lua' = @('Kernel.Abstractions'); 'Runtime' = @('Kernel','Modules','Lua')
  'View.Abstractions' = @('Kernel.Abstractions'); 'View.MonoGame' = @('View.Abstractions')
- 'Player' = @('Runtime'); 'Editor' = @('Runtime','View.MonoGame')
+ 'Player' = @('Runtime','View.MonoGame'); 'Editor' = @('Runtime','View.MonoGame')
 }
 Get-ChildItem "$PSScriptRoot/../src" -Filter *.csproj -Recurse | ForEach-Object {
  [xml]$project = Get-Content $_.FullName
