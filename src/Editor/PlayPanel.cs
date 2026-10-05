@@ -27,6 +27,8 @@ public sealed class PlayPanel : UserControl,IDisposable
     private readonly TextBox logPath=new() {Text="artifacts/debug-session.json",Width=260};
     private readonly CheckBox authorityLog=new() {Content="显示作者命令与 CPU 诊断（含私有数据）",IsChecked=false};
     private DebugReply? lastReply;
+    private readonly ComboBox observer=new() {Width=100};
+    private readonly CheckBox reveal=new() {Content="作者全信息调试（包含隐藏真值）"};
     public PlayPanel(Func<ModuleDocument?> document)
     {
         this.document=document;
@@ -34,6 +36,8 @@ public sealed class PlayPanel : UserControl,IDisposable
         var top=new WrapPanel {Children={new TextBlock {Text="种子"},seed,seats,external,executable,start,stop}};
         ControlButton("暂停",()=>Send(new("pause"))); ControlButton("继续",()=>Send(new("resume"))); ControlButton("单步 CPU",()=>Send(new("step",frame?.Revision ?? -1)));
         ControlButton("重放当前日志",()=>Send(new("replay")));
+        top.Children.Add(observer); top.Children.Add(reveal);
+        ControlButton("切换观察身份",()=>Send(new("observe",Seat:observer.SelectedItem as string,Authority:reveal.IsChecked==true)));
         top.Children.Add(logPath); top.Children.Add(authorityLog);
         ControlButton("保存日志",async ()=> { if(session==null) return; var reply=await session.SendAsync(new("recording")); var path=Path.GetFullPath(logPath.Text ?? ""); Directory.CreateDirectory(Path.GetDirectoryName(path)!); File.WriteAllText(path,Wire.Json(reply.Recording)); status.Text="日志已保存："+path; });
         ControlButton("打开并重放",()=>Send(new("replay",Recording:Wire.Read<SessionRecording>(File.ReadAllText(logPath.Text ?? "")))));
@@ -56,6 +60,7 @@ public sealed class PlayPanel : UserControl,IDisposable
         {
             foreach(var seat in document()?.Snapshot().Initial.Seats ?? [])
             { var check=new CheckBox {Content=seat.Id+" CPU",IsChecked=seat.Controller=="cpu",Margin=new Thickness(6)}; cpuSeats.Add(seat.Id,check); seats.Children.Add(check); }
+            observer.ItemsSource=cpuSeats.Keys.ToArray(); observer.SelectedIndex=0; reveal.IsChecked=false;
         }
         catch(Exception e) {status.Text=e.Message;}
     }
@@ -90,8 +95,15 @@ public sealed class PlayPanel : UserControl,IDisposable
     private void Refresh(string message)
     {
         if(frame==null || module==null) return;
-        table.Show(TableScene.From(frame.View,module.ResourceData));
+        var view=frame.View;
+        if(lastReply?.AuthorityState is {} authority)
+        {
+            var state=Wire.Copy(authority); foreach(var entity in state.Entities.Values) {entity.Visibility="public";entity.FaceUp=true;}
+            view=new GameEngine(state).Project(frame.View.Seat);
+        }
+        table.Show(TableScene.From(view,module.ResourceData));
         status.Text=$"试玩 · {frame.View.Seat} | 当前 {frame.View.CurrentSeat}\n{frame.View.Phase} · {frame.View.Turn} · {(frame.Paused?"已暂停":"运行中")}\n"+message+"\n"+(frame.View.Ended?"结算："+string.Join(",",frame.View.Winners):frame.Fault?.Detail ?? "");
+        if(lastReply?.AuthorityState!=null) status.Text="⚠ 作者全信息调试 · 隐藏真值\n"+status.Text;
         actions.Children.Clear();
         foreach(var offer in frame.Actions)
         {

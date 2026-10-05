@@ -4,7 +4,7 @@ $repo = Split-Path $PSScriptRoot -Parent
 $target = [IO.Path]::GetFullPath($Output)
 if (Test-Path -LiteralPath $target) { throw 'Release output already exists. Choose a new directory.' }
 # This is the engine-maintainer build. Export never calls dotnet or a compiler.
-dotnet publish "$repo/src/Player/Player.csproj" -c Release -r win-x64 --self-contained true -p:PublishSingleFile=false -p:DebugType=None -p:DebugSymbols=false -o $target
+dotnet publish "$repo/src/Player/Player.csproj" -c Release -r win-x64 --self-contained true -p:EnableEditorDebug=false -p:PublishSingleFile=false -p:DebugType=None -p:DebugSymbols=false -o $target
 if ($LASTEXITCODE -ne 0) { throw 'Player publish failed' }
 dotnet publish "$repo/src/Lua/Lua.csproj" -c Release -r win-x64 --self-contained true -p:PublishSingleFile=false -p:DebugType=None -p:DebugSymbols=false -o "$target/worker"
 if ($LASTEXITCODE -ne 0) { throw 'Lua worker publish failed' }

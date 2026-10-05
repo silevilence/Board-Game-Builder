@@ -4,6 +4,19 @@ using BoardGame.Runtime;
 namespace Engine.Tests;
 public static class DebugTests
 {
+    public static void Observers()
+    {
+        var module=DirectoryModule.Load("samples/quick-cards"); var controllers=module.Initial.Seats.ToDictionary(s=>s.Id,_=>"cpu");
+        using var a=new DebugSession(module,42,controllers,"p1"); using var b=new DebugSession(module,42,controllers,"p1");
+        var left=a.Handle(new("cpu",0)); var right=b.Handle(new("cpu",0));
+        Check.That(left.AuthorityState==null && left.Frame.View.Entities.All(e=>e.Container!="hand-p2"));
+        left=a.Handle(new("observe",Seat:"p2",Authority:true)); Check.That(left.AuthorityState!=null && left.Frame.View.Entities.Any(e=>e.Container=="hand-p2") && left.Frame.View.Entities.All(e=>e.Container!="hand-p1"));
+        while(!left.Frame.View.Ended)
+        {
+            left=a.Handle(new("cpu",left.Frame.Revision)); right=b.Handle(new("cpu",right.Frame.Revision)); Check.That(left.Frame.StateHash==right.Frame.StateHash,"Debug visibility affected CPU");
+        }
+        left=a.Handle(new("observe",Seat:"p1")); Check.That(left.AuthorityState==null);
+    }
     public static void Timeline()
     {
         var module=DirectoryModule.Load("samples/quick-cards"); var controllers=module.Initial.Seats.ToDictionary(s=>s.Id,s=>s.Controller);

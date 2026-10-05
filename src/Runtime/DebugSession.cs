@@ -1,16 +1,17 @@
 using BoardGame.Kernel;
 namespace BoardGame.Runtime;
 
-public sealed record DebugRequest(string Operation,long Revision=-1,Command? Command=null,LoadedModule? Module=null,string? Seat=null,SessionRecording? Recording=null);
+public sealed record DebugRequest(string Operation,long Revision=-1,Command? Command=null,LoadedModule? Module=null,string? Seat=null,SessionRecording? Recording=null,bool Authority=false);
 public sealed record DebugFrame(long Revision,SeatView View,List<ActionOffer> Actions,bool Cpu,SessionFault? Fault,string StateHash,bool Paused=false,bool IsReplay=false);
-public sealed record DebugReply(DebugFrame Frame,string Message="",CommandResult? Result=null,SessionRecording? Recording=null,List<LogEntry>? Timeline=null,List<Diagnostic>? Diagnostics=null,List<PlayerEvent>? PlayerLog=null);
+public sealed record DebugReply(DebugFrame Frame,string Message="",CommandResult? Result=null,SessionRecording? Recording=null,List<LogEntry>? Timeline=null,List<Diagnostic>? Diagnostics=null,List<PlayerEvent>? PlayerLog=null,GameState? AuthorityState=null);
 public interface IDebugSession : IDisposable { Task<DebugReply> SendAsync(DebugRequest request); }
 
 // A local author control surface; ordinary PlayerSession never exposes it to players or scripts.
 public sealed class DebugSession : IDisposable
 {
     private readonly PlaySession session;
-    private readonly string observer;
+    private string observer;
+    private bool authority;
     private long revision;
     private bool paused;
     public DebugSession(LoadedModule module,uint seed,IReadOnlyDictionary<string,string> controllers,string observer)
@@ -24,6 +25,9 @@ public sealed class DebugSession : IDisposable
         switch(request.Operation)
         {
             case "frame": break;
+            case "observe":
+                _=session.View(request.Seat ?? observer); observer=request.Seat ?? observer; authority=request.Authority; revision++;
+                message=authority?"作者全信息调试 · 不影响规则/CPU 权限":"席位投影："+observer; break;
             case "submit":
                 if(request.Revision!=revision) { message="stale-frame"; break; }
                 result=session.SubmitHuman(observer,request.Command ?? new(){Kind="invalid"}); revision++; break;
@@ -44,7 +48,7 @@ public sealed class DebugSession : IDisposable
         }
         var actions=session.Actions(); var view=session.View(observer);
         var log=session.ExportAuthorityLog();
-        return new(new(revision,view,!session.IsCpu && session.CurrentSeat==observer?actions.ToList():[],session.IsCpu,session.Fault,session.AuthorityStateHash(),paused),message,result,recording,log.Entries,session.ExportDiagnostics().ToList(),log.Entries.Select(e=>new PlayerEvent(e.Submission.Sequence,e.Submission.Actor,e.Submission.Accepted,e.Submission.Reason)).ToList());
+        return new(new(revision,view,!session.IsCpu && session.CurrentSeat==observer?actions.ToList():[],session.IsCpu,session.Fault,session.AuthorityStateHash(),paused),message,result,recording,log.Entries,session.ExportDiagnostics().ToList(),log.Entries.Select(e=>new PlayerEvent(e.Submission.Sequence,e.Submission.Actor,e.Submission.Accepted,e.Submission.Reason)).ToList(),authority?session.ExportAuthorityState():null);
     }
     public void Dispose()=>session.Dispose();
 }

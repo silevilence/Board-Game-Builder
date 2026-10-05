@@ -82,6 +82,7 @@ public sealed class PlaySession : IDisposable
     public ReplayLog ExportAuthorityLog() => engine.ExportLog();
     public IReadOnlyList<Diagnostic> ExportDiagnostics() => engine.ExportDiagnostics().Concat(Wire.Copy(cpuDiagnostics)).OrderBy(d=>d.Sequence).ToArray();
     public string AuthorityStateHash() => Wire.Hash(Wire.Json(engine.ExportAuthorityState()));
+    public GameState ExportAuthorityState() => engine.ExportAuthorityState();
     // The owner serializes this with commands. A successful switch affects the next submission.
     public void ReloadScripts(LoadedModule candidate)
     {
