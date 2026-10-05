@@ -16,7 +16,7 @@ local function actions(ctx)
     for _, card in ipairs(view.entities) do
         if card.container == 'hand-' .. view.seat and card.properties.value then
             table.insert(result, {id=card.id, label='打出 ' .. card.face,
-                command={kind='play', entity=card.id}})
+                command={kind='play', entity=card.id}, gesture='drag', target='table'})
         end
     end
     return result

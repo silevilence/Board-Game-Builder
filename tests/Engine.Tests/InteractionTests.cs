@@ -1,0 +1,22 @@
+using BoardGame.Modules;
+using BoardGame.Runtime;
+namespace Engine.Tests;
+public static class InteractionTests
+{
+    public static void Run() => RunAsync().GetAwaiter().GetResult();
+    private static async Task RunAsync()
+    {
+        var module=DirectoryModule.Load("samples/quick-cards"); var ui=await PlayerSession.CreateAsync(module,42,"p1");
+        var start=ui.SubmitAsync(0,new("action",Action:"start")); var duplicate=await ui.SubmitAsync(0,new("action",Action:"start"));
+        Check.That(!duplicate.Accepted); Check.That((await start).Accepted);
+        var old=ui.Frame; var card=old.Actions[0].Command.Entity;
+        var result=await ui.SubmitAsync(old.Revision,new("drag",card,"deck")); Check.That(!result.Accepted);
+        Check.That(BoardGame.Kernel.Wire.Json(old.View)==BoardGame.Kernel.Wire.Json(ui.Frame.View));
+        Check.That(!(await ui.SubmitAsync(old.Revision,new("drag",card,"table"))).Accepted);
+        Check.That((await ui.SubmitAsync(ui.Frame.Revision,new("drag",card,"table"))).Accepted);
+        var cli=new PlaySession(module,42); cli.SubmitHuman("p1",cli.Actions()[0].Command); cli.SubmitHuman("p1",cli.Actions()[0].Command);
+        Check.That(BoardGame.Kernel.Wire.Json(cli.View("p1"))==BoardGame.Kernel.Wire.Json(ui.Frame.View));
+        Check.That(ui.Frame.Cpu && ui.Frame.Actions.Count==0); Check.That(await ui.StepCpuAsync());
+        var p2=await PlayerSession.CreateAsync(module,42,"p2"); Check.That(p2.Frame.View.Seat=="p2" && p2.Frame.Actions.Count==0);
+    }
+}

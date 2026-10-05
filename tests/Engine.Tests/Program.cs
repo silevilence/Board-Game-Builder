@@ -1,5 +1,5 @@
 using Engine.Tests;
-var tests = new Dictionary<string, Action> { ["view"] = ViewTests.Run, ["modules"] = ModuleTests.Run, ["commands"] = CommandTests.Run, ["visibility"] = VisibilityTests.Run, ["replay"] = ReplayTests.Run, ["turns"] = TurnTests.Run, ["lua"] = LuaTests.Run, ["sandbox"] = SandboxTests.Run, ["cpu"] = CpuTests.Run, ["sample"] = SampleTests.Run, ["batch"] = BatchTests.Run, ["review"] = ReviewTests.Run };
+var tests = new Dictionary<string, Action> { ["interaction"] = InteractionTests.Run, ["view"] = ViewTests.Run, ["modules"] = ModuleTests.Run, ["commands"] = CommandTests.Run, ["visibility"] = VisibilityTests.Run, ["replay"] = ReplayTests.Run, ["turns"] = TurnTests.Run, ["lua"] = LuaTests.Run, ["sandbox"] = SandboxTests.Run, ["cpu"] = CpuTests.Run, ["sample"] = SampleTests.Run, ["batch"] = BatchTests.Run, ["review"] = ReviewTests.Run };
 try
 {
     if(args.Any(a=>!tests.ContainsKey(a))) throw new ArgumentException("Unknown test group.");

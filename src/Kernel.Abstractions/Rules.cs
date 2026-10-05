@@ -1,5 +1,5 @@
 namespace BoardGame.Kernel;
-public sealed record ActionOffer(string Id,string Label,Command Command);
+public sealed record ActionOffer(string Id,string Label,Command Command,string? Gesture=null,string? Target=null);
 public sealed record RuleDecision(bool Allowed,string Reason,List<Command> Commands);
 public interface IGameRules
 {

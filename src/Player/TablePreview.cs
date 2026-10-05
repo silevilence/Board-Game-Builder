@@ -7,13 +7,10 @@ public static class TablePreview
 {
     public static Window Create(string path)
     {
-        var module=DirectoryModule.Load(path); var session=new PlaySession(module,42);
-        session.SubmitHuman("p1",session.Actions()[0].Command);
-        var scene=TableScene.From(session.View("p1"),module.ResourceData);
-        string? selected=null; var view=new DesktopViewport();
-        view.Paint=r=>ScenePainter.Draw(r,scene,selected);
-        view.Input+=(kind,x,y)=> { if(kind=="down") selected=scene.Hit(x,y)?.Entity; };
-        var window=new Window { Title="Board Game Builder — seat projection",Width=1000,Height=850,Content=view };
-        window.Closed+=(_,_)=>view.Dispose(); return window;
+        var module=DirectoryModule.Load(path);
+        var window=new Window { Title="Board Game Builder — seat projection",Width=1100,Height=800 };
+        PlayBoard? board=null;
+        window.Opened+=async (_,_)=> { var session=await PlayerSession.CreateAsync(module,42,module.Initial.Seats[0].Id); board=new(session,module); window.Content=board; };
+        window.Closed+=(_,_)=>board?.Dispose(); return window;
     }
 }
