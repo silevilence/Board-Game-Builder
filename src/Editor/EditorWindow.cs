@@ -14,9 +14,11 @@ public sealed partial class EditorWindow : Window
     private readonly TabControl tabs=new();
     private readonly WrapPanel toolbar=new() { Margin=new Thickness(6) };
     private bool allowClose;
+    private readonly PlayPanel play;
     public EditorWindow(string? initial=null)
     {
         Title="Board Game Builder · Editor"; Width=1400; Height=900;
+        play=new PlayPanel(()=>document); scriptReload=play.ReloadScripts;
         toolbar.Children.Add(location);
         Add("新建",async ()=> { if(await CanLeave()) SetDocument(ModuleDocument.Create()); });
         Add("打开",async ()=> { if(await CanLeave()) SetDocument(ModuleDocument.Open(location.Text ?? "")); });
@@ -25,6 +27,8 @@ public sealed partial class EditorWindow : Window
         Add("撤销",()=>Run(()=>document?.Undo())); Add("重做",()=>Run(()=>document?.Redo()));
         Add("应用配置",()=>Run(ApplySource));
         tabs.Items.Add(new TabItem { Header="模块配置",Content=new ScrollViewer {Content=source} });
+        tabs.Items.Add(new TabItem {Header="试玩",Content=play});
+        Closed+=(_,_)=>play.Dispose();
         var root=new DockPanel(); DockPanel.SetDock(toolbar,Dock.Top); DockPanel.SetDock(status,Dock.Bottom);
         root.Children.Add(toolbar); root.Children.Add(status); root.Children.Add(tabs); Content=root;
         InitializePlugins();
@@ -45,6 +49,7 @@ public sealed partial class EditorWindow : Window
     {
         if(document!=null) document.Changed-=RefreshDocument;
         document=value;
+        play.DocumentChanged();
         plugins.SetDocument(value);
         location.Text=value?.DirectoryPath;
         if(document!=null) document.Changed+=RefreshDocument;
