@@ -6,7 +6,7 @@ using BoardGame.Runtime;
 using BoardGame.View;
 namespace BoardGame.Editor;
 
-public sealed class PlayPanel : UserControl,IDisposable
+public sealed partial class PlayPanel : UserControl,IDisposable
 {
     private readonly Func<ModuleDocument?> document;
     private readonly InteractiveTable table=new();

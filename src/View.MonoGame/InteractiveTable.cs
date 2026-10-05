@@ -11,6 +11,7 @@ public sealed class InteractiveTable : UserControl, IDisposable
     private float pointerX,pointerY;
     public string? Selected { get; private set; }
     public bool InputEnabled { get; set; }=true;
+    public int RenderedFrames => viewport.Frames;
     public event Action<TableGesture>? Gesture;
     public event Action<string>? RenderingError;
     public InteractiveTable()

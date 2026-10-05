@@ -1,0 +1,917 @@
+{
+  "date": "2026-10-05",
+  "modes": [
+    {
+      "module": "quick-cards",
+      "fingerprint": "BE07D3FF59C10A07B4AAFDF5225EC08EF558E2A8DED9993F11169C631A61D3C8",
+      "seed": 1,
+      "commands": 7,
+      "success": true,
+      "modesEqual": true,
+      "replayEqual": true,
+      "stateHash": "1821882BB47F2D18B6905DF64383BB3C6D4E485B457D69E9377B7594284BCB18"
+    },
+    {
+      "module": "quick-cards",
+      "fingerprint": "BE07D3FF59C10A07B4AAFDF5225EC08EF558E2A8DED9993F11169C631A61D3C8",
+      "seed": 2,
+      "commands": 7,
+      "success": true,
+      "modesEqual": true,
+      "replayEqual": true,
+      "stateHash": "ACB339A8B782C1187327219AC5EEB08869AC0370B22405EC0ACFFE69A8C4A486"
+    },
+    {
+      "module": "quick-cards",
+      "fingerprint": "BE07D3FF59C10A07B4AAFDF5225EC08EF558E2A8DED9993F11169C631A61D3C8",
+      "seed": 3,
+      "commands": 7,
+      "success": true,
+      "modesEqual": true,
+      "replayEqual": true,
+      "stateHash": "87D6A7E3BDA77C4B5D15070F7662D196471AF4EAA70C27C6FD73EF8B2EC3F8CA"
+    },
+    {
+      "module": "quick-cards",
+      "fingerprint": "BE07D3FF59C10A07B4AAFDF5225EC08EF558E2A8DED9993F11169C631A61D3C8",
+      "seed": 4,
+      "commands": 7,
+      "success": true,
+      "modesEqual": true,
+      "replayEqual": true,
+      "stateHash": "EA09FF3B7C8F5494933A0BE390F8B902A5E143F55F75F392693B188228EAC1B9"
+    },
+    {
+      "module": "quick-cards",
+      "fingerprint": "BE07D3FF59C10A07B4AAFDF5225EC08EF558E2A8DED9993F11169C631A61D3C8",
+      "seed": 5,
+      "commands": 7,
+      "success": true,
+      "modesEqual": true,
+      "replayEqual": true,
+      "stateHash": "287621A3162531147CCCB8E93C51D1587A7CF0AEA1591A8B1BB0B31BDB82E1A8"
+    },
+    {
+      "module": "quick-cards",
+      "fingerprint": "BE07D3FF59C10A07B4AAFDF5225EC08EF558E2A8DED9993F11169C631A61D3C8",
+      "seed": 6,
+      "commands": 7,
+      "success": true,
+      "modesEqual": true,
+      "replayEqual": true,
+      "stateHash": "CD5232B18D63EF029F7EA6ECACA93BF5CD1DCB3F941BADCDA61375E7AED5E196"
+    },
+    {
+      "module": "quick-cards",
+      "fingerprint": "BE07D3FF59C10A07B4AAFDF5225EC08EF558E2A8DED9993F11169C631A61D3C8",
+      "seed": 7,
+      "commands": 7,
+      "success": true,
+      "modesEqual": true,
+      "replayEqual": true,
+      "stateHash": "C5E399019CEFE28C68A84D0DC4D8C724464EBC078EB7CF4DFA43DBD93AC62CEA"
+    },
+    {
+      "module": "quick-cards",
+      "fingerprint": "BE07D3FF59C10A07B4AAFDF5225EC08EF558E2A8DED9993F11169C631A61D3C8",
+      "seed": 8,
+      "commands": 7,
+      "success": true,
+      "modesEqual": true,
+      "replayEqual": true,
+      "stateHash": "B20585422B1AB57694731A609106ACBCC871FE98BB9E0C8274A7DAC83C8F366C"
+    },
+    {
+      "module": "quick-cards",
+      "fingerprint": "BE07D3FF59C10A07B4AAFDF5225EC08EF558E2A8DED9993F11169C631A61D3C8",
+      "seed": 9,
+      "commands": 7,
+      "success": true,
+      "modesEqual": true,
+      "replayEqual": true,
+      "stateHash": "E0A249B816742470500EB9F644DFA0D898EC4848ECA938761ABF6436C470EF99"
+    },
+    {
+      "module": "quick-cards",
+      "fingerprint": "BE07D3FF59C10A07B4AAFDF5225EC08EF558E2A8DED9993F11169C631A61D3C8",
+      "seed": 10,
+      "commands": 7,
+      "success": true,
+      "modesEqual": true,
+      "replayEqual": true,
+      "stateHash": "4CC2DEE2FC71D2BF2A559A04D8E7207F30BF248134E47797305D64F93D9A271C"
+    },
+    {
+      "module": "quick-cards",
+      "fingerprint": "BE07D3FF59C10A07B4AAFDF5225EC08EF558E2A8DED9993F11169C631A61D3C8",
+      "seed": 11,
+      "commands": 7,
+      "success": true,
+      "modesEqual": true,
+      "replayEqual": true,
+      "stateHash": "087C19EB722FE8A234C4C5588D89B46A4B32DC500FA0590772EDA9E6B0F69334"
+    },
+    {
+      "module": "quick-cards",
+      "fingerprint": "BE07D3FF59C10A07B4AAFDF5225EC08EF558E2A8DED9993F11169C631A61D3C8",
+      "seed": 12,
+      "commands": 7,
+      "success": true,
+      "modesEqual": true,
+      "replayEqual": true,
+      "stateHash": "5C821A8D29AD7B68A645D5D9D8A0F7B53B82482FDEC865F02AAD7290864B6B2C"
+    },
+    {
+      "module": "quick-cards",
+      "fingerprint": "BE07D3FF59C10A07B4AAFDF5225EC08EF558E2A8DED9993F11169C631A61D3C8",
+      "seed": 13,
+      "commands": 7,
+      "success": true,
+      "modesEqual": true,
+      "replayEqual": true,
+      "stateHash": "D47C23EC0E905A2290D51AA1EFCEEBD2EF693DCA6018DC26A1DB7EE99D30CE2C"
+    },
+    {
+      "module": "quick-cards",
+      "fingerprint": "BE07D3FF59C10A07B4AAFDF5225EC08EF558E2A8DED9993F11169C631A61D3C8",
+      "seed": 14,
+      "commands": 7,
+      "success": true,
+      "modesEqual": true,
+      "replayEqual": true,
+      "stateHash": "7C9449058DEC2472DEF3A747FEA4FF46356087163DB4AA869A3270A0651D6D23"
+    },
+    {
+      "module": "quick-cards",
+      "fingerprint": "BE07D3FF59C10A07B4AAFDF5225EC08EF558E2A8DED9993F11169C631A61D3C8",
+      "seed": 15,
+      "commands": 7,
+      "success": true,
+      "modesEqual": true,
+      "replayEqual": true,
+      "stateHash": "942C1A6255CD68B14DCFEB1022848E7B3F6CD3F2611CA0A84A286057BFC574DB"
+    },
+    {
+      "module": "quick-cards",
+      "fingerprint": "BE07D3FF59C10A07B4AAFDF5225EC08EF558E2A8DED9993F11169C631A61D3C8",
+      "seed": 16,
+      "commands": 7,
+      "success": true,
+      "modesEqual": true,
+      "replayEqual": true,
+      "stateHash": "61FD435F0F78B07D967A72FC5D9AAF13F68257EA17A116097CC7AA0D8FE95012"
+    },
+    {
+      "module": "quick-cards",
+      "fingerprint": "BE07D3FF59C10A07B4AAFDF5225EC08EF558E2A8DED9993F11169C631A61D3C8",
+      "seed": 17,
+      "commands": 7,
+      "success": true,
+      "modesEqual": true,
+      "replayEqual": true,
+      "stateHash": "32998355E6EF7FFA21A9E412DCF1BF7A7070EC60E76CD0AE67735B566575D9A7"
+    },
+    {
+      "module": "quick-cards",
+      "fingerprint": "BE07D3FF59C10A07B4AAFDF5225EC08EF558E2A8DED9993F11169C631A61D3C8",
+      "seed": 18,
+      "commands": 7,
+      "success": true,
+      "modesEqual": true,
+      "replayEqual": true,
+      "stateHash": "610281EBA372262FC1FD36091A977F5A99D6421BC7801E3DDF092632CB6DA3C6"
+    },
+    {
+      "module": "quick-cards",
+      "fingerprint": "BE07D3FF59C10A07B4AAFDF5225EC08EF558E2A8DED9993F11169C631A61D3C8",
+      "seed": 19,
+      "commands": 7,
+      "success": true,
+      "modesEqual": true,
+      "replayEqual": true,
+      "stateHash": "53772F7C0BEE5801C65CE7AFF4506C5ABBE9057B750353DDE392D234AC2321BA"
+    },
+    {
+      "module": "quick-cards",
+      "fingerprint": "BE07D3FF59C10A07B4AAFDF5225EC08EF558E2A8DED9993F11169C631A61D3C8",
+      "seed": 20,
+      "commands": 7,
+      "success": true,
+      "modesEqual": true,
+      "replayEqual": true,
+      "stateHash": "DCD982D61364C904060ADDBF85139B604506F1F33241E1CD10579CEDE6C9308C"
+    },
+    {
+      "module": "hex-skirmish",
+      "fingerprint": "5AFFC13B77B1F1D84C8CAF4CA2137CC02ED33BDE342921B1770AE2F5E52EF331",
+      "seed": 1,
+      "commands": 31,
+      "success": true,
+      "modesEqual": true,
+      "replayEqual": true,
+      "stateHash": "39EFECD5CCE911F2F76AFFA69E8671FE2F5D3D95BD9D2C25CCE85706EEF3748B"
+    },
+    {
+      "module": "hex-skirmish",
+      "fingerprint": "5AFFC13B77B1F1D84C8CAF4CA2137CC02ED33BDE342921B1770AE2F5E52EF331",
+      "seed": 2,
+      "commands": 33,
+      "success": true,
+      "modesEqual": true,
+      "replayEqual": true,
+      "stateHash": "2CD8813183C13E0287F0E8E82EA9AF750152F8DCC7B079EED337FC77C62F7CBC"
+    },
+    {
+      "module": "hex-skirmish",
+      "fingerprint": "5AFFC13B77B1F1D84C8CAF4CA2137CC02ED33BDE342921B1770AE2F5E52EF331",
+      "seed": 3,
+      "commands": 31,
+      "success": true,
+      "modesEqual": true,
+      "replayEqual": true,
+      "stateHash": "9E54DE2B564D6B56C5D93BC8F1E856D92783C5336D6E78A84BEB921E188561F3"
+    },
+    {
+      "module": "hex-skirmish",
+      "fingerprint": "5AFFC13B77B1F1D84C8CAF4CA2137CC02ED33BDE342921B1770AE2F5E52EF331",
+      "seed": 4,
+      "commands": 33,
+      "success": true,
+      "modesEqual": true,
+      "replayEqual": true,
+      "stateHash": "B253AD0849A634AB82EA32015E09B4BF42D14014EFA8FF130EF626D88513DFC9"
+    },
+    {
+      "module": "hex-skirmish",
+      "fingerprint": "5AFFC13B77B1F1D84C8CAF4CA2137CC02ED33BDE342921B1770AE2F5E52EF331",
+      "seed": 5,
+      "commands": 28,
+      "success": true,
+      "modesEqual": true,
+      "replayEqual": true,
+      "stateHash": "2E5315285D31CE944BA124325A5B6BB7B50C8765308E6F493D3CFDE9F0C56789"
+    },
+    {
+      "module": "hex-skirmish",
+      "fingerprint": "5AFFC13B77B1F1D84C8CAF4CA2137CC02ED33BDE342921B1770AE2F5E52EF331",
+      "seed": 6,
+      "commands": 42,
+      "success": true,
+      "modesEqual": true,
+      "replayEqual": true,
+      "stateHash": "EB005D2D25848593849DB41F9BCA6AB3AEB0305EA29E4B6808FC75B543EDD6F6"
+    },
+    {
+      "module": "hex-skirmish",
+      "fingerprint": "5AFFC13B77B1F1D84C8CAF4CA2137CC02ED33BDE342921B1770AE2F5E52EF331",
+      "seed": 7,
+      "commands": 31,
+      "success": true,
+      "modesEqual": true,
+      "replayEqual": true,
+      "stateHash": "925EA118E749776E438B63B96DF5E080E8901D7E3778BF063B57BCB5AB8ADE88"
+    },
+    {
+      "module": "hex-skirmish",
+      "fingerprint": "5AFFC13B77B1F1D84C8CAF4CA2137CC02ED33BDE342921B1770AE2F5E52EF331",
+      "seed": 8,
+      "commands": 33,
+      "success": true,
+      "modesEqual": true,
+      "replayEqual": true,
+      "stateHash": "1397D83BC4A8A2641499022B5B7343578AE9509DA4A216B1CC7D963760422CF0"
+    },
+    {
+      "module": "hex-skirmish",
+      "fingerprint": "5AFFC13B77B1F1D84C8CAF4CA2137CC02ED33BDE342921B1770AE2F5E52EF331",
+      "seed": 9,
+      "commands": 33,
+      "success": true,
+      "modesEqual": true,
+      "replayEqual": true,
+      "stateHash": "54BDA94DDA1A2A66399BCBE337F60D7004E2A6D7FEE10380DB3389E33D87E359"
+    },
+    {
+      "module": "hex-skirmish",
+      "fingerprint": "5AFFC13B77B1F1D84C8CAF4CA2137CC02ED33BDE342921B1770AE2F5E52EF331",
+      "seed": 10,
+      "commands": 31,
+      "success": true,
+      "modesEqual": true,
+      "replayEqual": true,
+      "stateHash": "4B690E2DE64D6FADE94E48E05663D7E8F1F43FA7881E9ECCEDED36FF26883B2E"
+    },
+    {
+      "module": "hex-skirmish",
+      "fingerprint": "5AFFC13B77B1F1D84C8CAF4CA2137CC02ED33BDE342921B1770AE2F5E52EF331",
+      "seed": 11,
+      "commands": 33,
+      "success": true,
+      "modesEqual": true,
+      "replayEqual": true,
+      "stateHash": "9A6EB877A248082587D33AC1B23B151323973BEAEBAD0CD098B468379A34927D"
+    },
+    {
+      "module": "hex-skirmish",
+      "fingerprint": "5AFFC13B77B1F1D84C8CAF4CA2137CC02ED33BDE342921B1770AE2F5E52EF331",
+      "seed": 12,
+      "commands": 28,
+      "success": true,
+      "modesEqual": true,
+      "replayEqual": true,
+      "stateHash": "FBE9B4F5147F50D2E91DA233A4EB9D2E401A9CB3C9BA945B8629DF9152BDC7C8"
+    },
+    {
+      "module": "hex-skirmish",
+      "fingerprint": "5AFFC13B77B1F1D84C8CAF4CA2137CC02ED33BDE342921B1770AE2F5E52EF331",
+      "seed": 13,
+      "commands": 31,
+      "success": true,
+      "modesEqual": true,
+      "replayEqual": true,
+      "stateHash": "3CB3FD9AED243C031A8FA5ECF32297EE7A65F983EB3E9B1626B88CC29FADBBA3"
+    },
+    {
+      "module": "hex-skirmish",
+      "fingerprint": "5AFFC13B77B1F1D84C8CAF4CA2137CC02ED33BDE342921B1770AE2F5E52EF331",
+      "seed": 14,
+      "commands": 33,
+      "success": true,
+      "modesEqual": true,
+      "replayEqual": true,
+      "stateHash": "FE7156F2ED16AD72994770A16279B5340A0400787D1EE011C3D46676BC9E5ECD"
+    },
+    {
+      "module": "hex-skirmish",
+      "fingerprint": "5AFFC13B77B1F1D84C8CAF4CA2137CC02ED33BDE342921B1770AE2F5E52EF331",
+      "seed": 15,
+      "commands": 31,
+      "success": true,
+      "modesEqual": true,
+      "replayEqual": true,
+      "stateHash": "D1C00F49FD46AEED9329426950448E6C4F5E71FA974F2599F3525AC9489B4222"
+    },
+    {
+      "module": "hex-skirmish",
+      "fingerprint": "5AFFC13B77B1F1D84C8CAF4CA2137CC02ED33BDE342921B1770AE2F5E52EF331",
+      "seed": 16,
+      "commands": 31,
+      "success": true,
+      "modesEqual": true,
+      "replayEqual": true,
+      "stateHash": "B4397B5168C47C30E8436F07BE4FF6123564611B7466CEB7BA11982DB6531327"
+    },
+    {
+      "module": "hex-skirmish",
+      "fingerprint": "5AFFC13B77B1F1D84C8CAF4CA2137CC02ED33BDE342921B1770AE2F5E52EF331",
+      "seed": 17,
+      "commands": 31,
+      "success": true,
+      "modesEqual": true,
+      "replayEqual": true,
+      "stateHash": "E8582280446D2E735069080C68CB5069A164DFED391F27DAB65E07C61FA300A3"
+    },
+    {
+      "module": "hex-skirmish",
+      "fingerprint": "5AFFC13B77B1F1D84C8CAF4CA2137CC02ED33BDE342921B1770AE2F5E52EF331",
+      "seed": 18,
+      "commands": 31,
+      "success": true,
+      "modesEqual": true,
+      "replayEqual": true,
+      "stateHash": "C4AA7D704F7889274FB2E97737CFB0F1CEC1F4EB027AC647408C53511E992120"
+    },
+    {
+      "module": "hex-skirmish",
+      "fingerprint": "5AFFC13B77B1F1D84C8CAF4CA2137CC02ED33BDE342921B1770AE2F5E52EF331",
+      "seed": 19,
+      "commands": 28,
+      "success": true,
+      "modesEqual": true,
+      "replayEqual": true,
+      "stateHash": "0B37E3737CC8D3C4D15D2C93D007C426C5307E7E8569E25C4581B811D872D6C9"
+    },
+    {
+      "module": "hex-skirmish",
+      "fingerprint": "5AFFC13B77B1F1D84C8CAF4CA2137CC02ED33BDE342921B1770AE2F5E52EF331",
+      "seed": 20,
+      "commands": 33,
+      "success": true,
+      "modesEqual": true,
+      "replayEqual": true,
+      "stateHash": "E0CAFD3417AD98B160A9E1A294CEAE17840EFDF2960F1D0C2422839D6980B6E0"
+    }
+  ],
+  "batches": {
+    "cards": [
+      {
+        "seed": 1,
+        "success": true,
+        "winners": [
+          "p2"
+        ],
+        "steps": 7,
+        "stateHash": "1821882BB47F2D18B6905DF64383BB3C6D4E485B457D69E9377B7594284BCB18",
+        "rerunEqual": true,
+        "replayEqual": true
+      },
+      {
+        "seed": 2,
+        "success": true,
+        "winners": [
+          "p1"
+        ],
+        "steps": 7,
+        "stateHash": "ACB339A8B782C1187327219AC5EEB08869AC0370B22405EC0ACFFE69A8C4A486",
+        "rerunEqual": true,
+        "replayEqual": true
+      },
+      {
+        "seed": 3,
+        "success": true,
+        "winners": [
+          "p1"
+        ],
+        "steps": 7,
+        "stateHash": "87D6A7E3BDA77C4B5D15070F7662D196471AF4EAA70C27C6FD73EF8B2EC3F8CA",
+        "rerunEqual": true,
+        "replayEqual": true
+      },
+      {
+        "seed": 4,
+        "success": true,
+        "winners": [
+          "p2"
+        ],
+        "steps": 7,
+        "stateHash": "EA09FF3B7C8F5494933A0BE390F8B902A5E143F55F75F392693B188228EAC1B9",
+        "rerunEqual": true,
+        "replayEqual": true
+      },
+      {
+        "seed": 5,
+        "success": true,
+        "winners": [
+          "p2"
+        ],
+        "steps": 7,
+        "stateHash": "287621A3162531147CCCB8E93C51D1587A7CF0AEA1591A8B1BB0B31BDB82E1A8",
+        "rerunEqual": true,
+        "replayEqual": true
+      },
+      {
+        "seed": 6,
+        "success": true,
+        "winners": [
+          "p1"
+        ],
+        "steps": 7,
+        "stateHash": "CD5232B18D63EF029F7EA6ECACA93BF5CD1DCB3F941BADCDA61375E7AED5E196",
+        "rerunEqual": true,
+        "replayEqual": true
+      },
+      {
+        "seed": 7,
+        "success": true,
+        "winners": [
+          "p1"
+        ],
+        "steps": 7,
+        "stateHash": "C5E399019CEFE28C68A84D0DC4D8C724464EBC078EB7CF4DFA43DBD93AC62CEA",
+        "rerunEqual": true,
+        "replayEqual": true
+      },
+      {
+        "seed": 8,
+        "success": true,
+        "winners": [
+          "p1"
+        ],
+        "steps": 7,
+        "stateHash": "B20585422B1AB57694731A609106ACBCC871FE98BB9E0C8274A7DAC83C8F366C",
+        "rerunEqual": true,
+        "replayEqual": true
+      },
+      {
+        "seed": 9,
+        "success": true,
+        "winners": [
+          "p1"
+        ],
+        "steps": 7,
+        "stateHash": "E0A249B816742470500EB9F644DFA0D898EC4848ECA938761ABF6436C470EF99",
+        "rerunEqual": true,
+        "replayEqual": true
+      },
+      {
+        "seed": 10,
+        "success": true,
+        "winners": [
+          "p2"
+        ],
+        "steps": 7,
+        "stateHash": "4CC2DEE2FC71D2BF2A559A04D8E7207F30BF248134E47797305D64F93D9A271C",
+        "rerunEqual": true,
+        "replayEqual": true
+      },
+      {
+        "seed": 11,
+        "success": true,
+        "winners": [
+          "p1"
+        ],
+        "steps": 7,
+        "stateHash": "087C19EB722FE8A234C4C5588D89B46A4B32DC500FA0590772EDA9E6B0F69334",
+        "rerunEqual": true,
+        "replayEqual": true
+      },
+      {
+        "seed": 12,
+        "success": true,
+        "winners": [
+          "p2"
+        ],
+        "steps": 7,
+        "stateHash": "5C821A8D29AD7B68A645D5D9D8A0F7B53B82482FDEC865F02AAD7290864B6B2C",
+        "rerunEqual": true,
+        "replayEqual": true
+      },
+      {
+        "seed": 13,
+        "success": true,
+        "winners": [
+          "p1"
+        ],
+        "steps": 7,
+        "stateHash": "D47C23EC0E905A2290D51AA1EFCEEBD2EF693DCA6018DC26A1DB7EE99D30CE2C",
+        "rerunEqual": true,
+        "replayEqual": true
+      },
+      {
+        "seed": 14,
+        "success": true,
+        "winners": [
+          "p1"
+        ],
+        "steps": 7,
+        "stateHash": "7C9449058DEC2472DEF3A747FEA4FF46356087163DB4AA869A3270A0651D6D23",
+        "rerunEqual": true,
+        "replayEqual": true
+      },
+      {
+        "seed": 15,
+        "success": true,
+        "winners": [
+          "p1"
+        ],
+        "steps": 7,
+        "stateHash": "942C1A6255CD68B14DCFEB1022848E7B3F6CD3F2611CA0A84A286057BFC574DB",
+        "rerunEqual": true,
+        "replayEqual": true
+      },
+      {
+        "seed": 16,
+        "success": true,
+        "winners": [
+          "p2"
+        ],
+        "steps": 7,
+        "stateHash": "61FD435F0F78B07D967A72FC5D9AAF13F68257EA17A116097CC7AA0D8FE95012",
+        "rerunEqual": true,
+        "replayEqual": true
+      },
+      {
+        "seed": 17,
+        "success": true,
+        "winners": [
+          "p1"
+        ],
+        "steps": 7,
+        "stateHash": "32998355E6EF7FFA21A9E412DCF1BF7A7070EC60E76CD0AE67735B566575D9A7",
+        "rerunEqual": true,
+        "replayEqual": true
+      },
+      {
+        "seed": 18,
+        "success": true,
+        "winners": [
+          "p1"
+        ],
+        "steps": 7,
+        "stateHash": "610281EBA372262FC1FD36091A977F5A99D6421BC7801E3DDF092632CB6DA3C6",
+        "rerunEqual": true,
+        "replayEqual": true
+      },
+      {
+        "seed": 19,
+        "success": true,
+        "winners": [
+          "p2"
+        ],
+        "steps": 7,
+        "stateHash": "53772F7C0BEE5801C65CE7AFF4506C5ABBE9057B750353DDE392D234AC2321BA",
+        "rerunEqual": true,
+        "replayEqual": true
+      },
+      {
+        "seed": 20,
+        "success": true,
+        "winners": [
+          "p2"
+        ],
+        "steps": 7,
+        "stateHash": "DCD982D61364C904060ADDBF85139B604506F1F33241E1CD10579CEDE6C9308C",
+        "rerunEqual": true,
+        "replayEqual": true
+      }
+    ],
+    "hex": [
+      {
+        "seed": 1,
+        "success": true,
+        "winners": [
+          "p1",
+          "p2"
+        ],
+        "steps": 31,
+        "stateHash": "39EFECD5CCE911F2F76AFFA69E8671FE2F5D3D95BD9D2C25CCE85706EEF3748B",
+        "rerunEqual": true,
+        "replayEqual": true
+      },
+      {
+        "seed": 2,
+        "success": true,
+        "winners": [
+          "p1",
+          "p2"
+        ],
+        "steps": 33,
+        "stateHash": "2CD8813183C13E0287F0E8E82EA9AF750152F8DCC7B079EED337FC77C62F7CBC",
+        "rerunEqual": true,
+        "replayEqual": true
+      },
+      {
+        "seed": 3,
+        "success": true,
+        "winners": [
+          "p1",
+          "p2"
+        ],
+        "steps": 31,
+        "stateHash": "9E54DE2B564D6B56C5D93BC8F1E856D92783C5336D6E78A84BEB921E188561F3",
+        "rerunEqual": true,
+        "replayEqual": true
+      },
+      {
+        "seed": 4,
+        "success": true,
+        "winners": [
+          "p1",
+          "p2"
+        ],
+        "steps": 33,
+        "stateHash": "B253AD0849A634AB82EA32015E09B4BF42D14014EFA8FF130EF626D88513DFC9",
+        "rerunEqual": true,
+        "replayEqual": true
+      },
+      {
+        "seed": 5,
+        "success": true,
+        "winners": [
+          "p1",
+          "p2"
+        ],
+        "steps": 28,
+        "stateHash": "2E5315285D31CE944BA124325A5B6BB7B50C8765308E6F493D3CFDE9F0C56789",
+        "rerunEqual": true,
+        "replayEqual": true
+      },
+      {
+        "seed": 6,
+        "success": true,
+        "winners": [
+          "p1",
+          "p2"
+        ],
+        "steps": 42,
+        "stateHash": "EB005D2D25848593849DB41F9BCA6AB3AEB0305EA29E4B6808FC75B543EDD6F6",
+        "rerunEqual": true,
+        "replayEqual": true
+      },
+      {
+        "seed": 7,
+        "success": true,
+        "winners": [
+          "p1",
+          "p2"
+        ],
+        "steps": 31,
+        "stateHash": "925EA118E749776E438B63B96DF5E080E8901D7E3778BF063B57BCB5AB8ADE88",
+        "rerunEqual": true,
+        "replayEqual": true
+      },
+      {
+        "seed": 8,
+        "success": true,
+        "winners": [
+          "p1",
+          "p2"
+        ],
+        "steps": 33,
+        "stateHash": "1397D83BC4A8A2641499022B5B7343578AE9509DA4A216B1CC7D963760422CF0",
+        "rerunEqual": true,
+        "replayEqual": true
+      },
+      {
+        "seed": 9,
+        "success": true,
+        "winners": [
+          "p1",
+          "p2"
+        ],
+        "steps": 33,
+        "stateHash": "54BDA94DDA1A2A66399BCBE337F60D7004E2A6D7FEE10380DB3389E33D87E359",
+        "rerunEqual": true,
+        "replayEqual": true
+      },
+      {
+        "seed": 10,
+        "success": true,
+        "winners": [
+          "p1",
+          "p2"
+        ],
+        "steps": 31,
+        "stateHash": "4B690E2DE64D6FADE94E48E05663D7E8F1F43FA7881E9ECCEDED36FF26883B2E",
+        "rerunEqual": true,
+        "replayEqual": true
+      },
+      {
+        "seed": 11,
+        "success": true,
+        "winners": [
+          "p1",
+          "p2"
+        ],
+        "steps": 33,
+        "stateHash": "9A6EB877A248082587D33AC1B23B151323973BEAEBAD0CD098B468379A34927D",
+        "rerunEqual": true,
+        "replayEqual": true
+      },
+      {
+        "seed": 12,
+        "success": true,
+        "winners": [
+          "p1",
+          "p2"
+        ],
+        "steps": 28,
+        "stateHash": "FBE9B4F5147F50D2E91DA233A4EB9D2E401A9CB3C9BA945B8629DF9152BDC7C8",
+        "rerunEqual": true,
+        "replayEqual": true
+      },
+      {
+        "seed": 13,
+        "success": true,
+        "winners": [
+          "p1",
+          "p2"
+        ],
+        "steps": 31,
+        "stateHash": "3CB3FD9AED243C031A8FA5ECF32297EE7A65F983EB3E9B1626B88CC29FADBBA3",
+        "rerunEqual": true,
+        "replayEqual": true
+      },
+      {
+        "seed": 14,
+        "success": true,
+        "winners": [
+          "p1",
+          "p2"
+        ],
+        "steps": 33,
+        "stateHash": "FE7156F2ED16AD72994770A16279B5340A0400787D1EE011C3D46676BC9E5ECD",
+        "rerunEqual": true,
+        "replayEqual": true
+      },
+      {
+        "seed": 15,
+        "success": true,
+        "winners": [
+          "p1",
+          "p2"
+        ],
+        "steps": 31,
+        "stateHash": "D1C00F49FD46AEED9329426950448E6C4F5E71FA974F2599F3525AC9489B4222",
+        "rerunEqual": true,
+        "replayEqual": true
+      },
+      {
+        "seed": 16,
+        "success": true,
+        "winners": [
+          "p1",
+          "p2"
+        ],
+        "steps": 31,
+        "stateHash": "B4397B5168C47C30E8436F07BE4FF6123564611B7466CEB7BA11982DB6531327",
+        "rerunEqual": true,
+        "replayEqual": true
+      },
+      {
+        "seed": 17,
+        "success": true,
+        "winners": [
+          "p1",
+          "p2"
+        ],
+        "steps": 31,
+        "stateHash": "E8582280446D2E735069080C68CB5069A164DFED391F27DAB65E07C61FA300A3",
+        "rerunEqual": true,
+        "replayEqual": true
+      },
+      {
+        "seed": 18,
+        "success": true,
+        "winners": [
+          "p1",
+          "p2"
+        ],
+        "steps": 31,
+        "stateHash": "C4AA7D704F7889274FB2E97737CFB0F1CEC1F4EB027AC647408C53511E992120",
+        "rerunEqual": true,
+        "replayEqual": true
+      },
+      {
+        "seed": 19,
+        "success": true,
+        "winners": [
+          "p1",
+          "p2"
+        ],
+        "steps": 28,
+        "stateHash": "0B37E3737CC8D3C4D15D2C93D007C426C5307E7E8569E25C4581B811D872D6C9",
+        "rerunEqual": true,
+        "replayEqual": true
+      },
+      {
+        "seed": 20,
+        "success": true,
+        "winners": [
+          "p1",
+          "p2"
+        ],
+        "steps": 33,
+        "stateHash": "E0CAFD3417AD98B160A9E1A294CEAE17840EFDF2960F1D0C2422839D6980B6E0",
+        "rerunEqual": true,
+        "replayEqual": true
+      }
+    ]
+  },
+  "workflows": {
+    "cards": {
+      "success": true,
+      "module": "quick-cards",
+      "fingerprint": "A236DBCFDC2CAA74765144F0BD83A566F8B10C1114842A134DB3328056807654",
+      "commands": 8,
+      "plugins": [
+        "official.workspace"
+      ],
+      "samePlayLog": true,
+      "replay": true,
+      "initialUnchanged": true
+    },
+    "hex": {
+      "success": true,
+      "module": "hex-skirmish",
+      "fingerprint": "1727E12E3B9C30457F37B438681FACF0EC0AD4D9FAAB16520B035D0C7D430B3E",
+      "commands": 32,
+      "plugins": [
+        "official.workspace"
+      ],
+      "samePlayLog": true,
+      "replay": true,
+      "initialUnchanged": true
+    }
+  },
+  "cleanWindows": {
+    "environment": {
+      "sdkFolder": false,
+      "hasDotnet": false,
+      "os": "Microsoft Windows NT 10.0.26100.0",
+      "editorInstalled": false
+    },
+    "cards": {
+      "success": true,
+      "games": 2,
+      "ended": true,
+      "exitCode": 0
+    },
+    "hex": {
+      "success": true,
+      "games": 2,
+      "ended": true,
+      "exitCode": 0
+    }
+  }
+}
