@@ -18,6 +18,7 @@ public static class StateValidation
             if(e.Visibility is not ("public" or "owner" or "hidden") || (e.Visibility=="owner" && e.Owner==null)) Fail("visibility");
             if(!double.IsFinite(e.X) || !double.IsFinite(e.Y)) Fail("position");
             if(e.Faces==null || e.Faces.Any(string.IsNullOrWhiteSpace) || e.Face<0 || (e.Faces.Count==0?e.Face!=0:e.Face>=e.Faces.Count)) Fail("faces");
+            if(e.FaceResources==null || (e.FaceResources.Count!=0 && e.FaceResources.Count!=e.Faces!.Count) || e.FaceResources.Any(string.IsNullOrWhiteSpace)) Fail("face resources");
             if(e.Properties==null || e.Properties.Keys.Any(string.IsNullOrWhiteSpace)) Fail("properties");
             if(e.Contents==null) throw new InvalidDataException($"entities[{e.Id}].contents: required");
             if(e.Capacity<0 || e.Contents.Count>e.Capacity || e.Contents.Distinct().Count()!=e.Contents.Count || (!e.IsContainer && (e.Contents.Count!=0 || e.Capacity!=0 || e.Ordered))) Fail("capacity/contents");

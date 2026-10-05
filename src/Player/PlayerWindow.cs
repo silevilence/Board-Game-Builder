@@ -47,7 +47,7 @@ public sealed class PlayerWindow : Window
         var location=path.Text ?? ""; message.Text="正在加载模块…";
         try
         {
-            var loaded=await Task.Run(()=>DirectoryModule.Load(location));
+            var loaded=await Task.Run(()=>ModulePackage.Load(location));
             if(current!=generation) return;
             module=loaded; seat.ItemsSource=loaded.Initial.Seats.Select(s=>s.Id).ToArray(); seat.SelectedIndex=0;
             message.Text=$"{loaded.Id} · {loaded.Version} | 选择真人席位，其余席位使用 CPU。"; start.IsEnabled=true;

@@ -11,6 +11,12 @@ public static class DirectoryModule
             using var document = JsonDocument.Parse(File.ReadAllText(file));
             var root = document.RootElement;
             CheckDuplicates(root, "$");
+            var metadata=System.Text.Json.Nodes.JsonNode.Parse(root.GetRawText())!.AsObject();
+            var dependencies=ModulePackage.Dependencies(metadata);
+            var runtimeHashes=new SortedDictionary<string,string>(StringComparer.Ordinal) { ["dependencies"]=Wire.Hash(Wire.Json(dependencies)) };
+            foreach(var runtimeFile in ModulePackage.ReferencedFiles(metadata)) _=SafeFile(directory,runtimeFile);
+            if(metadata["runtimeFiles"] is System.Text.Json.Nodes.JsonArray runtimeFiles)
+                foreach(var runtimeFile in runtimeFiles) { var path=runtimeFile!.GetValue<string>(); runtimeHashes[path]=ModulePackage.Hash(File.ReadAllBytes(SafeFile(directory,path))); }
             if (root.GetProperty("format").GetInt32() != 1) Fail("$.format: unsupported version");
             var id = Text(root, "id"); var version = Text(root, "version");
             var rulesPath = SafeFile(directory, Text(root, "rules"));
@@ -87,7 +93,7 @@ public static class DirectoryModule
                     if (!visited.Add(parent)) Fail($"{entity.Id}.container: cycle");
             }
             StateValidation.Validate(state);
-            var module = new LoadedModule(id,version,"",state,rules,cpu,rulesPath,cpuPath,resources,resourceData);
+            var module = new LoadedModule(id,version,"",state,rules,cpu,rulesPath,cpuPath,resources,resourceData,runtimeHashes);
             return module with { Fingerprint=ModuleSnapshot.Fingerprint(module) };
         }
         catch (Exception error) when (error is InvalidDataException or JsonException or IOException or InvalidOperationException or KeyNotFoundException or ArgumentException or OverflowException)
@@ -109,7 +115,7 @@ public static class DirectoryModule
         else if (element.ValueKind == JsonValueKind.Array)
         { var i = 0; foreach (var item in element.EnumerateArray()) CheckDuplicates(item, $"{path}[{i++}]"); }
     }
-    private static string SafeFile(string directory, string relative)
+    internal static string SafeFile(string directory, string relative)
     {
         var root = Path.TrimEndingDirectorySeparator(Path.GetFullPath(directory)); var path = Path.GetFullPath(Path.Combine(root, relative));
         if (Path.IsPathRooted(relative) || !path.StartsWith(root + Path.DirectorySeparatorChar, StringComparison.OrdinalIgnoreCase)) Fail($"{relative}: path escapes module");
