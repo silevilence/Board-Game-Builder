@@ -4,6 +4,11 @@ internal static class Program
 {
     [STAThread] private static int Main(string[] args)
     {
+        if(args.FirstOrDefault()=="--editor-debug")
+        {
+            if(args.Contains("--headless")) { BoardGame.Runtime.DebugTransport.Serve(); return 0; }
+            return ViewportApp.Run("",[],()=>new DebugPlayerWindow());
+        }
         if(args.Length==0 || args[0]=="gui")
         {
             var module=args.Length>1?args[1]:null;

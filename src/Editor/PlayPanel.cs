@@ -21,11 +21,13 @@ public sealed class PlayPanel : UserControl,IDisposable
     private DebugFrame? frame;
     private bool busy;
     private int generation;
+    private readonly CheckBox external=new() {Content="独立 Player"};
+    private readonly TextBox executable=new() {Text=Path.GetFullPath("src/Player/bin/Release/net10.0-windows/Player.exe"),Width=260,Watermark="调试 Player.exe 路径"};
     public PlayPanel(Func<ModuleDocument?> document)
     {
         this.document=document;
         var start=new Button {Content="开始进程内试玩"}; var stop=new Button {Content="停止试玩"};
-        var top=new WrapPanel {Children={new TextBlock {Text="种子"},seed,seats,start,stop}};
+        var top=new WrapPanel {Children={new TextBlock {Text="种子"},seed,seats,external,executable,start,stop}};
         var side=new DockPanel {Width=280}; DockPanel.SetDock(status,Dock.Top); side.Children.Add(status); side.Children.Add(new ScrollViewer {Content=actions});
         var root=new DockPanel(); DockPanel.SetDock(top,Dock.Top); DockPanel.SetDock(side,Dock.Right); root.Children.Add(top); root.Children.Add(side); root.Children.Add(table); Content=root;
         start.Click+=async (_,_)=>await Start(); stop.Click+=(_,_)=>Stop();
@@ -52,7 +54,8 @@ public sealed class PlayPanel : UserControl,IDisposable
             module=document()?.Snapshot() ?? throw new InvalidOperationException("请打开模块");
             var controllers=cpuSeats.ToDictionary(s=>s.Key,s=>s.Value.IsChecked==true?"cpu":"human");
             var observer=module.Initial.Seats.FirstOrDefault(s=>controllers.GetValueOrDefault(s.Id)=="human")?.Id ?? module.Initial.Seats[0].Id;
-            session=new InProcessDebugSession(module,number,controllers,observer);
+            var created=external.IsChecked==true ? (IDebugSession)await ExternalDebugSession.Launch(executable.Text ?? "",module,number,controllers,observer) : new InProcessDebugSession(module,number,controllers,observer);
+            if(current!=generation) {created.Dispose();return;} session=created;
             await Send(new("frame")); if(current==generation) timer.Start();
         }
         catch(Exception e) {status.Text=e.Message;}

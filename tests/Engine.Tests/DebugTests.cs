@@ -4,6 +4,23 @@ using BoardGame.Runtime;
 namespace Engine.Tests;
 public static class DebugTests
 {
+    public static void External()
+    {
+        var module=DirectoryModule.Load("samples/quick-cards"); var controllers=module.Initial.Seats.ToDictionary(s=>s.Id,_=>"cpu");
+        using IDebugSession local=new InProcessDebugSession(module,7,controllers,"p1");
+        using IDebugSession remote=ExternalDebugSession.Launch("src/Player/bin/Release/net10.0-windows/Player.exe",module,7,controllers,"p1",true).GetAwaiter().GetResult();
+        var a=local.SendAsync(new("frame")).Result; var b=remote.SendAsync(new("frame")).Result;
+        var bad=module with {Rules="broken lua"}; bad=bad with {Fingerprint=ModuleSnapshot.Fingerprint(bad)};
+        Check.Throws(()=>remote.SendAsync(new("reload",Module:bad)).GetAwaiter().GetResult());
+        Check.That(remote.SendAsync(new("frame")).Result.Frame.StateHash==b.Frame.StateHash,"Failed reload killed Player");
+        while(!a.Frame.View.Ended)
+        {
+            var request=new DebugRequest("cpu",a.Frame.Revision); a=local.SendAsync(request).Result; b=remote.SendAsync(request).Result;
+            Check.That(Wire.Json(a)==Wire.Json(b),"Debug modes diverged");
+        }
+        a=local.SendAsync(new("recording")).Result; b=remote.SendAsync(new("recording")).Result; Check.That(Wire.Json(a.Recording)==Wire.Json(b.Recording));
+        remote.Dispose(); Check.Throws(()=>remote.SendAsync(new("frame")).GetAwaiter().GetResult(),"Player");
+    }
     public static void InProcess()
     {
         var module=DirectoryModule.Load("samples/quick-cards"); var initial=Wire.Json(module.Initial); string? previous=null;
