@@ -37,7 +37,7 @@ public sealed partial class GameEngine
             else
             {
                 var decision = rules.Decide(Project(state,actor),Wire.Copy(command));
-                if (!decision.Allowed) throw new CommandRejected("rule-rejected");
+                if (!decision.Allowed) { diagnostics.Add(new(sequence,actor,"decide",decision.Reason)); throw new CommandRejected("rule-rejected"); }
                 if (decision.Commands.Count is < 1 or > 64) throw new CommandRejected("rule-command-limit");
                 foreach (var effect in decision.Commands) effects.Add(Execute(candidate,actor,effect,true));
             }
@@ -47,6 +47,7 @@ public sealed partial class GameEngine
         }
         catch (CommandRejected error)
         {
+            diagnostics.Add(new(sequence,actor,"submit",error.Message));
             Record(new(sequence, actor, Wire.Copy(command), false, error.Message), []);
             return new(sequence, false, error.Message);
         }
