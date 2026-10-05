@@ -3,6 +3,21 @@ using BoardGame.Kernel;
 namespace Engine.Tests;
 public static class AuthorTests
 {
+    public static void Layouts()
+    {
+        foreach(var kind in new[]{"free","square","hex"})
+        {
+            var doc=ModuleDocument.Create(); doc.EditConfiguration(c=> { c["layout"]=System.Text.Json.Nodes.JsonNode.Parse(Wire.Json(new BoardLayout(kind))); c["entities"]!.AsArray().Add(System.Text.Json.Nodes.JsonNode.Parse("""{"id":"pawn","components":[{"type":"position","data":{"x":2,"y":3}}]}""")); });
+            var module=doc.Snapshot(); var grid=module.Initial.Layout!; var world=grid.World(2,3); var logical=grid.Logical(world.X,world.Y); Check.That(Math.Abs(logical.X-2)<1e-8 && Math.Abs(logical.Y-3)<1e-8);
+            var engine=new GameEngine(module.Initial,42,module.Fingerprint); Check.That(engine.Submit("p1",new(){Kind="move",Entity="pawn",X=2.3,Y=3.1}).Accepted);
+            var moved=engine.Project("p1").Entities[0]; var expected=grid.Snap(2.3,3.1); Check.That(moved.X==expected.X && moved.Y==expected.Y);
+            var scene=BoardGame.View.TableScene.From(engine.Project("p1")); var item=scene.Items.Single();
+            var target=grid.World(moved.X+1,moved.Y); var origin=grid.World(moved.X,moved.Y); var drag=item.MoveBy((float)(target.X-origin.X),(float)(target.Y-origin.Y));
+            Check.That(Math.Abs(drag.X-moved.X-1)<1e-5 && Math.Abs(drag.Y-moved.Y)<1e-5);
+            var replay=GameEngine.Replay(module,engine.ExportLog()); Check.That(Wire.Json(replay.ExportAuthorityState())==Wire.Json(engine.ExportAuthorityState()));
+            Check.That(grid.Neighbors(0,0).Count==(kind=="hex"?6:kind=="square"?4:0));
+        }
+    }
     public static void Media()
     {
         var doc=ModuleDocument.Open("samples/quick-cards"); var original=doc.Snapshot();

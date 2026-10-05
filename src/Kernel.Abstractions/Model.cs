@@ -32,6 +32,7 @@ public sealed class Entity
 }
 public sealed class GameState
 {
+    public BoardLayout? Layout { get; set; }
     public SortedDictionary<string, Entity> Entities { get; set; } = new(StringComparer.Ordinal);
     public List<Seat> Seats { get; set; } = [];
     public List<string> Phases { get; set; } = [];

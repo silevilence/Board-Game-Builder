@@ -28,6 +28,6 @@ public sealed partial class GameEngine
                 face ? new(e.Properties,StringComparer.Ordinal) : new(StringComparer.Ordinal),
                 e.Contents.Where(ids.Contains).ToList(),face && e.Face < e.FaceResources.Count ? e.FaceResources[e.Face] : null);
         }).ToList();
-        return new(seat,Wire.Copy(state.Seats),state.Seats[state.CurrentSeat].Id,state.Phase,state.Turn,state.Ended,[..state.Winners],entities);
+        return new(seat,Wire.Copy(state.Seats),state.Seats[state.CurrentSeat].Id,state.Phase,state.Turn,state.Ended,[..state.Winners],entities,state.Layout);
     }
 }

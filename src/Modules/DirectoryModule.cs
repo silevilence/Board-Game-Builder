@@ -33,6 +33,7 @@ public static class DirectoryModule
                 resourceData.Add(resource.Name,bytes);
             }
             var state = new GameState();
+            if(root.TryGetProperty("layout",out var layout)) state.Layout=Wire.Read<BoardLayout>(layout.GetRawText());
             foreach (var seat in root.GetProperty("seats").EnumerateArray())
             {
                 var controller = seat.TryGetProperty("controller", out var control) ? control.GetString()! : "human";

@@ -4,6 +4,17 @@ public static class ScenePainter
 {
     public static void Draw(TableRenderer renderer,TableScene scene,string? selected=null,string? target=null)
     {
+        if(scene.Layout is {Kind:not "free"} grid)
+            for(var q=-2;q<10;q++) for(var r=-2;r<8;r++)
+            {
+                var p=grid.World(q,r); var vertices=grid.Kind=="hex"?6:4; var radius=grid.Kind=="hex"?grid.Size:grid.Size/Math.Sqrt(2);
+                for(var i=0;i<vertices;i++)
+                {
+                    var angle=(grid.Kind=="hex"?30:45)+i*360.0/vertices; var next=angle+360.0/vertices;
+                    Vector2 At(double a)=>new((float)(p.X+radius*Math.Cos(a*Math.PI/180)),(float)(p.Y+radius*Math.Sin(a*Math.PI/180)));
+                    renderer.Line(At(angle),At(next),new Color(47,73,83));
+                }
+            }
         foreach(var item in scene.Items)
         {
             var b=item.Bounds;

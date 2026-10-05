@@ -3,6 +3,7 @@ public static class StateValidation
 {
     public static void Validate(GameState state)
     {
+        state.Layout?.Validate();
         if(state.Seats==null || state.Seats.Count==0 || state.Seats.Any(s=>s==null || string.IsNullOrWhiteSpace(s.Id) || string.IsNullOrWhiteSpace(s.Team) || s.Controller is not ("human" or "cpu")) || state.Seats.Select(s=>s.Id).Distinct().Count()!=state.Seats.Count)
             throw new InvalidDataException("seats: invalid or duplicate identity/controller");
         if(state.Phases==null || state.Phases.Count==0 || state.Phases.Any(string.IsNullOrWhiteSpace) || state.Phases.Distinct().Count()!=state.Phases.Count || !state.Phases.Contains(state.Phase) || state.CurrentSeat<0 || state.CurrentSeat>=state.Seats.Count || state.Turn<0)

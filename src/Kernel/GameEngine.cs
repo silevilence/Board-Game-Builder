@@ -114,7 +114,8 @@ public sealed partial class GameEngine
                 break;
             case "move":
                 if (!double.IsFinite(command.X) || !double.IsFinite(command.Y)) throw new CommandRejected("invalid-position");
-                entity.X = command.X; entity.Y = command.Y; break;
+                var position=state.Layout?.Snap(command.X,command.Y) ?? (command.X,command.Y);
+                entity.X = position.Item1; entity.Y = position.Item2; break;
             case "flip":
                 if (entity.Faces.Count == 0 || command.Value < 0 || command.Value >= entity.Faces.Count) throw new CommandRejected("invalid-face");
                 entity.Face = command.Value; entity.FaceUp = !entity.FaceUp; break;
