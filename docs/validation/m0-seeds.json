@@ -1,0 +1,262 @@
+[
+  {
+    "seed": 1,
+    "success": true,
+    "winners": [
+      "p2"
+    ],
+    "steps": 7,
+    "error": null,
+    "logPath": "artifacts/m0-validation/seed-1.json",
+    "stateHash": "D53EDEB257EC1F0176D52329A1B26A59F2B6D12C5F91BAD7B2D05F993E3EE4D8",
+    "rerunEqual": true,
+    "replayEqual": true
+  },
+  {
+    "seed": 2,
+    "success": true,
+    "winners": [
+      "p1"
+    ],
+    "steps": 7,
+    "error": null,
+    "logPath": "artifacts/m0-validation/seed-2.json",
+    "stateHash": "A326691C3FFAA9DFC4C6980308EFB9DC2DC959FF6EC19234FA53C5EE4161FFB6",
+    "rerunEqual": true,
+    "replayEqual": true
+  },
+  {
+    "seed": 3,
+    "success": true,
+    "winners": [
+      "p1"
+    ],
+    "steps": 7,
+    "error": null,
+    "logPath": "artifacts/m0-validation/seed-3.json",
+    "stateHash": "00DD63F5587830139E2CBFBCF8C80A3F9C94035A0B74F60C25CFACF6E97E4FD7",
+    "rerunEqual": true,
+    "replayEqual": true
+  },
+  {
+    "seed": 4,
+    "success": true,
+    "winners": [
+      "p2"
+    ],
+    "steps": 7,
+    "error": null,
+    "logPath": "artifacts/m0-validation/seed-4.json",
+    "stateHash": "72D044E4DB6C40C6A2AF734A5C32F6E4B7E9D91F5628C67F37299AC099686DA5",
+    "rerunEqual": true,
+    "replayEqual": true
+  },
+  {
+    "seed": 5,
+    "success": true,
+    "winners": [
+      "p2"
+    ],
+    "steps": 7,
+    "error": null,
+    "logPath": "artifacts/m0-validation/seed-5.json",
+    "stateHash": "19B04A353E20FD8CF0DF3994CEC9255CE2B425F07FB02A50BE9E2252435013EC",
+    "rerunEqual": true,
+    "replayEqual": true
+  },
+  {
+    "seed": 6,
+    "success": true,
+    "winners": [
+      "p1"
+    ],
+    "steps": 7,
+    "error": null,
+    "logPath": "artifacts/m0-validation/seed-6.json",
+    "stateHash": "B4EA53A06FBE94D2EC37E540D5EC3CA7FC99836AA4B51EA206FDEE57B8273147",
+    "rerunEqual": true,
+    "replayEqual": true
+  },
+  {
+    "seed": 7,
+    "success": true,
+    "winners": [
+      "p1"
+    ],
+    "steps": 7,
+    "error": null,
+    "logPath": "artifacts/m0-validation/seed-7.json",
+    "stateHash": "57AAB865C45440CDB9A4161807D1B376433405830EF91D597E53AE123E17B453",
+    "rerunEqual": true,
+    "replayEqual": true
+  },
+  {
+    "seed": 8,
+    "success": true,
+    "winners": [
+      "p1"
+    ],
+    "steps": 7,
+    "error": null,
+    "logPath": "artifacts/m0-validation/seed-8.json",
+    "stateHash": "8D3E92FB1EAE01BECF677537F4D12F191CC32960AA4F84C95104DF56094E3A08",
+    "rerunEqual": true,
+    "replayEqual": true
+  },
+  {
+    "seed": 9,
+    "success": true,
+    "winners": [
+      "p1"
+    ],
+    "steps": 7,
+    "error": null,
+    "logPath": "artifacts/m0-validation/seed-9.json",
+    "stateHash": "A0F691AD44737935AB917B27B9A5E7C6AD0D9F1ACCD28400B26DDEB35D2E28A7",
+    "rerunEqual": true,
+    "replayEqual": true
+  },
+  {
+    "seed": 10,
+    "success": true,
+    "winners": [
+      "p2"
+    ],
+    "steps": 7,
+    "error": null,
+    "logPath": "artifacts/m0-validation/seed-10.json",
+    "stateHash": "D56389863072525EB08E20D97F7F3D5ACAA14476BC65978756E05FCEFEC95718",
+    "rerunEqual": true,
+    "replayEqual": true
+  },
+  {
+    "seed": 11,
+    "success": true,
+    "winners": [
+      "p1"
+    ],
+    "steps": 7,
+    "error": null,
+    "logPath": "artifacts/m0-validation/seed-11.json",
+    "stateHash": "C380EF3A296790790CBBEFDAB8230AEA8BBFF2E52EC0FE8A341DB788F102E08C",
+    "rerunEqual": true,
+    "replayEqual": true
+  },
+  {
+    "seed": 12,
+    "success": true,
+    "winners": [
+      "p2"
+    ],
+    "steps": 7,
+    "error": null,
+    "logPath": "artifacts/m0-validation/seed-12.json",
+    "stateHash": "293E2D228C2998097F248BBE1FF764DF6FBCE48D10C0413A9FFA27CCF08DC093",
+    "rerunEqual": true,
+    "replayEqual": true
+  },
+  {
+    "seed": 13,
+    "success": true,
+    "winners": [
+      "p1"
+    ],
+    "steps": 7,
+    "error": null,
+    "logPath": "artifacts/m0-validation/seed-13.json",
+    "stateHash": "A3B04340F1A17A7483E7F1E5F9219FC01AA119C155B25CB922E329E9FA0CEB14",
+    "rerunEqual": true,
+    "replayEqual": true
+  },
+  {
+    "seed": 14,
+    "success": true,
+    "winners": [
+      "p1"
+    ],
+    "steps": 7,
+    "error": null,
+    "logPath": "artifacts/m0-validation/seed-14.json",
+    "stateHash": "BA5647F00908B075E64ED2CCAFFAF5E20E6E65A9194BFE92E62CEA2D3E71FAE7",
+    "rerunEqual": true,
+    "replayEqual": true
+  },
+  {
+    "seed": 15,
+    "success": true,
+    "winners": [
+      "p1"
+    ],
+    "steps": 7,
+    "error": null,
+    "logPath": "artifacts/m0-validation/seed-15.json",
+    "stateHash": "0AFB8F5B147B0A3A07705839F08EE1058D61A014F068A4504F91D27925642ECB",
+    "rerunEqual": true,
+    "replayEqual": true
+  },
+  {
+    "seed": 16,
+    "success": true,
+    "winners": [
+      "p2"
+    ],
+    "steps": 7,
+    "error": null,
+    "logPath": "artifacts/m0-validation/seed-16.json",
+    "stateHash": "DBA159D0D72B8F3E5EAC7DAEB7B59525BE60DB99376A28EEAC36829D54191518",
+    "rerunEqual": true,
+    "replayEqual": true
+  },
+  {
+    "seed": 17,
+    "success": true,
+    "winners": [
+      "p1"
+    ],
+    "steps": 7,
+    "error": null,
+    "logPath": "artifacts/m0-validation/seed-17.json",
+    "stateHash": "DCD0183CAF8F77115A5791FA114D6D0E8F9BF92FCB83F8BCE9D2853E1C841B50",
+    "rerunEqual": true,
+    "replayEqual": true
+  },
+  {
+    "seed": 18,
+    "success": true,
+    "winners": [
+      "p1"
+    ],
+    "steps": 7,
+    "error": null,
+    "logPath": "artifacts/m0-validation/seed-18.json",
+    "stateHash": "9DC5F011A9B245B9FBE9D3EE037558A82B1A54E873ADA1ACF0C8563FE80934B3",
+    "rerunEqual": true,
+    "replayEqual": true
+  },
+  {
+    "seed": 19,
+    "success": true,
+    "winners": [
+      "p2"
+    ],
+    "steps": 7,
+    "error": null,
+    "logPath": "artifacts/m0-validation/seed-19.json",
+    "stateHash": "F88529FB9973270AD6E7C3356EED87F02480A363C83AA79C03A9C23EC964CAAA",
+    "rerunEqual": true,
+    "replayEqual": true
+  },
+  {
+    "seed": 20,
+    "success": true,
+    "winners": [
+      "p2"
+    ],
+    "steps": 7,
+    "error": null,
+    "logPath": "artifacts/m0-validation/seed-20.json",
+    "stateHash": "62708B3CD7F37BA6063AC63EF90D4CE0CB400D09AF3DBCD149A5DE5EAB407FCE",
+    "rerunEqual": true,
+    "replayEqual": true
+  }
+]

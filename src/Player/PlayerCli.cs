@@ -11,12 +11,20 @@ public static class PlayerCli
         {
             if(args.Length==0 || args[0]=="--help")
             {
-                Console.WriteLine("Board Game Builder M0\nplay <module-dir> [--seed N] [--cpu p2,p3] [--human p1] [--log file] [--max-steps N]\nreplay <module-dir> <log-file> [--seat p1]\n输入动作编号，或 q 退出。日志含权威状态，仅用于作者诊断。" );return 0;
+                Console.WriteLine("Board Game Builder M0\nbatch <module-dir|snapshot.json> [--seed N] [--count N] [--out directory] [--max-steps N]\nplay <module-dir> [--seed N] [--cpu p2,p3] [--human p1] [--log file] [--max-steps N]\nreplay <module-dir> <log-file> [--seat p1]\n输入动作编号，或 q 退出。日志含权威状态，仅用于作者诊断。" );return 0;
             }
             if(args[0]=="quit") return 0;
-            if(args[0] is not ("play" or "replay")) throw new ArgumentException("Unknown command. Use --help.");
+            if(args[0] is not ("play" or "replay" or "batch")) throw new ArgumentException("Unknown command. Use --help.");
             if(args.Length<2) throw new ArgumentException("Module directory required.");
-            var module=DirectoryModule.Load(args[1]);
+            var module=File.Exists(args[1]) ? Wire.Read<LoadedModule>(File.ReadAllText(args[1])) : DirectoryModule.Load(args[1]);
+            if(args[0]=="batch")
+            {
+                var options=Options(args,2,["--seed","--count","--out","--max-steps"]);
+                var results=BatchRunner.Run(module,uint.Parse(options.GetValueOrDefault("--seed","1")),int.Parse(options.GetValueOrDefault("--count","20")),
+                    options.GetValueOrDefault("--out",Path.Combine("artifacts","batch",Guid.NewGuid().ToString())),int.Parse(options.GetValueOrDefault("--max-steps","500")),
+                    r=>Console.WriteLine($"seed={r.Seed} success={r.Success} winners={string.Join(',',r.Winners)} steps={r.Steps} error={r.Error ?? "none"} rerun={r.RerunEqual} replay={r.ReplayEqual} log={r.LogPath}"));
+                return results.All(r=>r.Success)?0:1;
+            }
             if(args[0]=="replay")
             {
                 if(args.Length<3) throw new ArgumentException("Log path required.");
