@@ -4,6 +4,22 @@ using BoardGame.Runtime;
 namespace Engine.Tests;
 public static class DebugTests
 {
+    public static void Timeline()
+    {
+        var module=DirectoryModule.Load("samples/quick-cards"); var controllers=module.Initial.Seats.ToDictionary(s=>s.Id,s=>s.Controller);
+        foreach(var external in new[]{false,true})
+        {
+            using IDebugSession client=external?ExternalDebugSession.Launch("src/Player/bin/Release/net10.0-windows/Player.exe",module,9,controllers,"p1",true).Result:new InProcessDebugSession(module,9,controllers,"p1");
+            var reply=client.SendAsync(new("frame")).Result;
+            reply=client.SendAsync(new("submit",reply.Frame.Revision,new(){Kind="invalid"})).Result; Check.That(reply.Result?.Accepted==false && reply.Timeline!.Count==1);
+            reply=client.SendAsync(new("submit",reply.Frame.Revision,reply.Frame.Actions[0].Command)).Result;
+            reply=client.SendAsync(new("submit",reply.Frame.Revision,reply.Frame.Actions[0].Command)).Result;
+            Check.That(reply.Frame.Cpu); reply=client.SendAsync(new("pause")).Result;
+            var count=reply.Timeline!.Count; reply=client.SendAsync(new("cpu",reply.Frame.Revision)).Result; Check.That(reply.Timeline!.Count==count);
+            reply=client.SendAsync(new("step",reply.Frame.Revision)).Result; Check.That(reply.Timeline!.Count==count+1 && reply.Diagnostics!.Any(d=>d.Entry.EndsWith(":decide")));
+            var state=reply.Frame.StateHash; reply=client.SendAsync(new("replay")).Result; Check.That(reply.Frame.IsReplay && reply.Frame.StateHash==state);
+        }
+    }
     public static void External()
     {
         var module=DirectoryModule.Load("samples/quick-cards"); var controllers=module.Initial.Seats.ToDictionary(s=>s.Id,_=>"cpu");

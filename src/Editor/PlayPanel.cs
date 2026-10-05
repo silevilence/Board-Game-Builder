@@ -23,17 +23,31 @@ public sealed class PlayPanel : UserControl,IDisposable
     private int generation;
     private readonly CheckBox external=new() {Content="独立 Player"};
     private readonly TextBox executable=new() {Text=Path.GetFullPath("src/Player/bin/Release/net10.0-windows/Player.exe"),Width=260,Watermark="调试 Player.exe 路径"};
+    private readonly TextBox timeline=new() {IsReadOnly=true,AcceptsReturn=true,Height=170};
+    private readonly TextBox logPath=new() {Text="artifacts/debug-session.json",Width=260};
+    private readonly CheckBox authorityLog=new() {Content="显示作者命令与 CPU 诊断（含私有数据）",IsChecked=false};
+    private DebugReply? lastReply;
     public PlayPanel(Func<ModuleDocument?> document)
     {
         this.document=document;
         var start=new Button {Content="开始进程内试玩"}; var stop=new Button {Content="停止试玩"};
         var top=new WrapPanel {Children={new TextBlock {Text="种子"},seed,seats,external,executable,start,stop}};
+        ControlButton("暂停",()=>Send(new("pause"))); ControlButton("继续",()=>Send(new("resume"))); ControlButton("单步 CPU",()=>Send(new("step",frame?.Revision ?? -1)));
+        ControlButton("重放当前日志",()=>Send(new("replay")));
+        top.Children.Add(logPath); top.Children.Add(authorityLog);
+        ControlButton("保存日志",async ()=> { if(session==null) return; var reply=await session.SendAsync(new("recording")); var path=Path.GetFullPath(logPath.Text ?? ""); Directory.CreateDirectory(Path.GetDirectoryName(path)!); File.WriteAllText(path,Wire.Json(reply.Recording)); status.Text="日志已保存："+path; });
+        ControlButton("打开并重放",()=>Send(new("replay",Recording:Wire.Read<SessionRecording>(File.ReadAllText(logPath.Text ?? "")))));
+        authorityLog.IsCheckedChanged+=(_,_)=>ShowTimeline();
         var side=new DockPanel {Width=280}; DockPanel.SetDock(status,Dock.Top); side.Children.Add(status); side.Children.Add(new ScrollViewer {Content=actions});
-        var root=new DockPanel(); DockPanel.SetDock(top,Dock.Top); DockPanel.SetDock(side,Dock.Right); root.Children.Add(top); root.Children.Add(side); root.Children.Add(table); Content=root;
+        var root=new DockPanel(); DockPanel.SetDock(top,Dock.Top); DockPanel.SetDock(timeline,Dock.Bottom); DockPanel.SetDock(side,Dock.Right); root.Children.Add(top); root.Children.Add(timeline); root.Children.Add(side); root.Children.Add(table); Content=root;
         start.Click+=async (_,_)=>await Start(); stop.Click+=(_,_)=>Stop();
         table.Gesture+=async g=> { if(frame!=null) await Send(new("submit",frame.Revision,PlayerSession.Resolve(frame.Actions,new(g.Kind,g.Entity,g.Target,g.X,g.Y)))); };
         table.RenderingError+=error=> { Stop(); status.Text=error; };
-        timer.Tick+=async (_,_)=> { if(frame is {Cpu:true,View.Ended:false,Fault:null} && !busy) await Send(new("cpu",frame.Revision)); };
+        timer.Tick+=async (_,_)=> { if(frame is {Cpu:true,View.Ended:false,Fault:null,Paused:false,IsReplay:false} && !busy) await Send(new("cpu",frame.Revision)); };
+        void ControlButton(string label,Func<Task> action)
+        {
+            var button=new Button {Content=label}; button.Click+=async (_,_)=> { try { await action(); } catch(Exception e) {status.Text=e.Message;} }; top.Children.Add(button);
+        }
     }
     public void DocumentChanged()
     {
@@ -64,15 +78,20 @@ public sealed class PlayPanel : UserControl,IDisposable
     {
         if(busy || session==null) return;
         busy=true; table.InputEnabled=false; actions.IsEnabled=false; var current=generation;
-        try { var reply=await session.SendAsync(request); if(current!=generation) return; frame=reply.Frame; Refresh(reply.Message.Length>0?reply.Message:reply.Result?.Reason ?? ""); }
+        try { var reply=await session.SendAsync(request); if(current!=generation) return; lastReply=reply; frame=reply.Frame; ShowTimeline(); Refresh(reply.Message.Length>0?reply.Message:reply.Result?.Reason ?? ""); }
         catch(Exception e) { if(current==generation) { timer.Stop(); status.Text="试玩故障："+e.Message; } }
         finally { if(current==generation) { busy=false; actions.IsEnabled=true; table.InputEnabled=frame is {Cpu:false,View.Ended:false,Fault:null}; } }
+    }
+    private void ShowTimeline()
+    {
+        if(lastReply==null) return;
+        timeline.Text=authorityLog.IsChecked==true ? "作者权威日志（不提供给玩家或脚本）\n"+string.Join("\n",(lastReply.Timeline ?? []).Select(e=>$"#{e.Submission.Sequence} {e.Submission.Actor} {Wire.Json(e.Submission.Command)} → {e.Submission.Reason}"))+"\n"+string.Join("\n",(lastReply.Diagnostics ?? []).Select(d=>$"#{d.Sequence} {d.Entry} {d.Message}")) : "玩家可读记录\n"+string.Join("\n",(lastReply.PlayerLog ?? []).Select(e=>$"#{e.Sequence} {e.Actor} {e.Reason}"));
     }
     private void Refresh(string message)
     {
         if(frame==null || module==null) return;
         table.Show(TableScene.From(frame.View,module.ResourceData));
-        status.Text=$"试玩 · {frame.View.Seat} | 当前 {frame.View.CurrentSeat}\n{frame.View.Phase} · {frame.View.Turn}\n"+(frame.View.Ended?"结算："+string.Join(",",frame.View.Winners):frame.Fault?.Detail ?? message);
+        status.Text=$"试玩 · {frame.View.Seat} | 当前 {frame.View.CurrentSeat}\n{frame.View.Phase} · {frame.View.Turn} · {(frame.Paused?"已暂停":"运行中")}\n"+message+"\n"+(frame.View.Ended?"结算："+string.Join(",",frame.View.Winners):frame.Fault?.Detail ?? "");
         actions.Children.Clear();
         foreach(var offer in frame.Actions)
         {

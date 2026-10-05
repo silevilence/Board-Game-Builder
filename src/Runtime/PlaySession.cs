@@ -8,6 +8,7 @@ public sealed class PlaySession : IDisposable
     private LoadedModule module;
     private readonly Dictionary<string,LoadedModule> versions=new(StringComparer.Ordinal);
     private readonly List<ScriptSwitch> switches=[];
+    private readonly List<Diagnostic> cpuDiagnostics=[];
     private readonly GameEngine engine;
     private readonly Dictionary<string,string> controllers;
     private readonly uint seed;
@@ -55,6 +56,7 @@ public sealed class PlaySession : IDisposable
             var random=uint.Parse(Wire.Hash($"{seed}:{Steps}:{CurrentSeat}")[..8],NumberStyles.HexNumber,CultureInfo.InvariantCulture);
             var json=worker.Invoke(module.Cpu,module.CpuPath,"decide",Wire.Json(new { view,actions }),random);
             var command=Wire.Read<Command>(json);
+            cpuDiagnostics.Add(new(engine.ExportLog().EntryCount+1,CurrentSeat,module.CpuPath+":decide",Wire.Json(command)));
             if(!actions.Any(a=>Wire.Json(a.Command)==Wire.Json(command)))
             { Stop("cpu-illegal-command","CPU returned a command not offered by the rules.");return false; }
             return Submit(command,true).Accepted;
@@ -76,9 +78,9 @@ public sealed class PlaySession : IDisposable
         if(Ended) worker.Dispose();
         return result;
     }
-    private void Stop(string code,string detail) { Fault ??=new(code,CurrentSeat,detail); worker.Dispose(); }
+    private void Stop(string code,string detail) { Fault ??=new(code,CurrentSeat,detail); cpuDiagnostics.Add(new(engine.ExportLog().EntryCount+1,CurrentSeat,module.CpuPath+":decide",code+": "+detail)); worker.Dispose(); }
     public ReplayLog ExportAuthorityLog() => engine.ExportLog();
-    public IReadOnlyList<Diagnostic> ExportDiagnostics() => engine.ExportDiagnostics();
+    public IReadOnlyList<Diagnostic> ExportDiagnostics() => engine.ExportDiagnostics().Concat(Wire.Copy(cpuDiagnostics)).OrderBy(d=>d.Sequence).ToArray();
     public string AuthorityStateHash() => Wire.Hash(Wire.Json(engine.ExportAuthorityState()));
     // The owner serializes this with commands. A successful switch affects the next submission.
     public void ReloadScripts(LoadedModule candidate)
