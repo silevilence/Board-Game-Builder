@@ -17,8 +17,13 @@ public static class DirectoryModule
             var cpuPath = SafeFile(directory, Text(root, "cpu"));
             var rules = File.ReadAllText(rulesPath); var cpu = File.ReadAllText(cpuPath);
             var resources = new SortedDictionary<string, string>(StringComparer.Ordinal);
+            var resourceData = new SortedDictionary<string, byte[]>(StringComparer.Ordinal);
             foreach (var resource in root.GetProperty("resources").EnumerateObject())
-                resources.Add(resource.Name, Convert.ToHexString(System.Security.Cryptography.SHA256.HashData(File.ReadAllBytes(SafeFile(directory, resource.Value.GetString()!)))));
+            {
+                var bytes=File.ReadAllBytes(SafeFile(directory, resource.Value.GetString()!));
+                resources.Add(resource.Name, Convert.ToHexString(System.Security.Cryptography.SHA256.HashData(bytes)));
+                resourceData.Add(resource.Name,bytes);
+            }
             var state = new GameState();
             foreach (var seat in root.GetProperty("seats").EnumerateArray())
             {
@@ -47,6 +52,7 @@ public static class DirectoryModule
                             entity.Contents = data.GetProperty("contents").EnumerateArray().Select(v => v.GetString()!).ToList(); break;
                         case "faces":
                             entity.Faces = data.GetProperty("names").EnumerateArray().Select(v => v.GetString()!).ToList(); entity.FaceUp = data.GetProperty("up").GetBoolean();
+                            entity.FaceResources=data.GetProperty("resources").EnumerateArray().Select(v=>v.GetString()!).ToList();
                             foreach (var asset in data.GetProperty("resources").EnumerateArray())
                                 if (!resources.ContainsKey(asset.GetString()!)) Fail($"$.entities[{entity.Id}].faces: unknown resource");
                             break;
@@ -81,7 +87,7 @@ public static class DirectoryModule
                     if (!visited.Add(parent)) Fail($"{entity.Id}.container: cycle");
             }
             StateValidation.Validate(state);
-            var module = new LoadedModule(id,version,"",state,rules,cpu,rulesPath,cpuPath,resources);
+            var module = new LoadedModule(id,version,"",state,rules,cpu,rulesPath,cpuPath,resources,resourceData);
             return module with { Fingerprint=ModuleSnapshot.Fingerprint(module) };
         }
         catch (Exception error) when (error is InvalidDataException or JsonException or IOException or InvalidOperationException or KeyNotFoundException or ArgumentException or OverflowException)

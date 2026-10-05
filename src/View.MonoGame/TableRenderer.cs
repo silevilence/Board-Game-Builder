@@ -9,6 +9,7 @@ public sealed class TableRenderer : IDisposable
     private readonly SpriteBatch batch;
     private readonly Texture2D pixel;
     private readonly Dictionary<string, Texture2D> labels = [];
+    private readonly Dictionary<string,Texture2D> images=[];
     public TableRenderer(GraphicsDevice device)
     {
         this.device=device; batch=new(device); pixel=new(device,1,1); pixel.SetData(new[] { Color.White });
@@ -39,5 +40,16 @@ public sealed class TableRenderer : IDisposable
         batch.Draw(texture,new Vector2(x,y),color);
     }
     public void End() => batch.End();
-    public void Dispose() { foreach(var t in labels.Values) t.Dispose(); labels.Clear(); pixel.Dispose(); batch.Dispose(); }
+    public void Image(string id,IReadOnlyDictionary<string,byte[]> resources,Rectangle bounds)
+    {
+        if(!resources.TryGetValue(id,out var bytes)) { Text("缺失资源: "+id,bounds.X,bounds.Y,Color.Red); return; }
+        var key=id+":"+Convert.ToHexString(System.Security.Cryptography.SHA256.HashData(bytes));
+        if(!images.TryGetValue(key,out var texture))
+        {
+            try { using var stream=new MemoryStream(bytes); texture=Texture2D.FromStream(device,stream); images.Add(key,texture); }
+            catch(Exception) { Text("资源无法解码: "+id,bounds.X,bounds.Y,Color.Red); return; }
+        }
+        batch.Draw(texture,bounds,Color.White);
+    }
+    public void Dispose() { foreach(var t in labels.Values.Concat(images.Values)) t.Dispose(); labels.Clear(); images.Clear(); pixel.Dispose(); batch.Dispose(); }
 }

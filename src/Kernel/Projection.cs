@@ -26,7 +26,7 @@ public sealed partial class GameEngine
             return new VisibleEntity(e.Id,e.Owner,e.Container,e.IsContainer,e.Contents.Count,e.FaceUp,
                 face && e.Faces.Count > 0 ? e.Faces[e.Face] : null,e.X,e.Y,
                 face ? new(e.Properties,StringComparer.Ordinal) : new(StringComparer.Ordinal),
-                e.Contents.Where(ids.Contains).ToList());
+                e.Contents.Where(ids.Contains).ToList(),face && e.Face < e.FaceResources.Count ? e.FaceResources[e.Face] : null);
         }).ToList();
         return new(seat,Wire.Copy(state.Seats),state.Seats[state.CurrentSeat].Id,state.Phase,state.Turn,state.Ended,[..state.Winners],entities);
     }

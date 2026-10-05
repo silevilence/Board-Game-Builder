@@ -23,6 +23,7 @@ public sealed class Entity
     public bool Ordered { get; set; }
     public List<string> Contents { get; set; } = [];
     public List<string> Faces { get; set; } = [];
+    public List<string> FaceResources { get; set; } = [];
     public int Face { get; set; }
     public bool FaceUp { get; set; } = true;
     public double X { get; set; }
@@ -42,4 +43,5 @@ public sealed class GameState
     public uint RandomState { get; set; } = 1;
 }
 public sealed record LoadedModule(string Id, string Version, string Fingerprint, GameState Initial,
-    string Rules, string Cpu, string RulesPath, string CpuPath, SortedDictionary<string,string>? ResourceHashes = null);
+    string Rules, string Cpu, string RulesPath, string CpuPath, SortedDictionary<string,string>? ResourceHashes = null,
+    SortedDictionary<string,byte[]>? ResourceData = null);
