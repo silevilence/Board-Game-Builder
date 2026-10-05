@@ -5,7 +5,7 @@ public sealed record TableRect(float X,float Y,float Width,float Height)
 {
     public bool Contains(float x,float y) => x>=X && y>=Y && x<X+Width && y<Y+Height;
 }
-public sealed record TableItem(string? Entity, string Kind, string Label, TableRect Bounds, string? Resource=null,double PositionX=0,double PositionY=0,BoardLayout? Layout=null)
+public sealed record TableItem(string? Entity, string Kind, string Label, TableRect Bounds, string? Resource=null,double PositionX=0,double PositionY=0,BoardLayout? Layout=null,string? Detail=null)
 {
     public (double X,double Y) MoveBy(float dx,float dy)
     {
@@ -42,11 +42,12 @@ public sealed record TableScene(IReadOnlyList<TableItem> Items, IReadOnlyDiction
         foreach(var e in projection.Entities.Where(e=>!e.IsContainer && e.Container==null))
         {
             var label=e.Face ?? e.Id;
-            if(e.Properties.Count>0) label+="  "+string.Join(" ",e.Properties.Select(p=>$"{p.Key}:{p.Value}"));
+            var detail=e.Properties.Count>0?string.Join(" ",e.Properties.Select(p=>$"{p.Key}:{p.Value}")):null;
+            if(projection.Layout==null && detail!=null) label+="  "+detail;
             if(e.Resource!=null && resources!=null && resources.TryGetValue(e.Resource,out var bytes)) used[e.Resource]=bytes;
             var point=projection.Layout?.World(e.X,e.Y);
-            var bounds=point==null?new TableRect((float)e.X+30,(float)e.Y+40+(regions.Length+1)/2*235+loose++*48,360,40):new TableRect((float)point.Value.X-30,(float)point.Value.Y-18,100,40);
-            items.Add(new(e.Id,"piece",label,bounds,e.Resource,e.X,e.Y,projection.Layout));
+            var bounds=point==null?new TableRect((float)e.X+30,(float)e.Y+40+(regions.Length+1)/2*235+loose++*48,360,40):new TableRect((float)point.Value.X-36,(float)point.Value.Y-24,76,48);
+            items.Add(new(e.Id,"piece",label,bounds,e.Resource,e.X,e.Y,projection.Layout,projection.Layout==null?null:detail));
         }
         return new(items,used,projection.Layout);
     }

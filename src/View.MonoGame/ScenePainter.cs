@@ -24,6 +24,7 @@ public static class ScenePainter
             renderer.Box(new((int)b.X,(int)b.Y,(int)b.Width,(int)b.Height),color);
             if(item.Resource!=null) renderer.Image(item.Resource,scene.Resources,new((int)b.X+3,(int)b.Y+25,(int)b.Width-6,(int)b.Height-28));
             renderer.Text(item.Label,(int)b.X+5,(int)b.Y+5,item.Kind=="card"?new Color(25,40,46):Color.White);
+            if(item.Detail!=null) renderer.Text(item.Detail,(int)b.X+3,(int)b.Y+25,new Color(186,211,221));
         }
     }
 }

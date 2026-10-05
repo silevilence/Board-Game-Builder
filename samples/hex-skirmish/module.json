@@ -1,0 +1,215 @@
+{
+  "format": 1,
+  "id": "hex-skirmish",
+  "version": "1.0.0",
+  "rules": "rules.lua",
+  "cpu": "cpu.lua",
+  "resources": {},
+  "seats": [
+    {
+      "id": "p1",
+      "team": "red",
+      "controller": "human"
+    },
+    {
+      "id": "p2",
+      "team": "red",
+      "controller": "cpu"
+    },
+    {
+      "id": "p3",
+      "team": "blue",
+      "controller": "cpu"
+    }
+  ],
+  "phases": [
+    "act",
+    "resolve"
+  ],
+  "layout": {
+    "kind": "hex",
+    "size": 45,
+    "originX": 100,
+    "originY": 100
+  },
+  "entities": [
+    {
+      "id": "unit-p1",
+      "components": [
+        {
+          "type": "owner",
+          "data": {
+            "seat": "p1"
+          }
+        },
+        {
+          "type": "position",
+          "data": {
+            "x": 0,
+            "y": 0
+          }
+        },
+        {
+          "type": "properties",
+          "data": {
+            "hp": 5,
+            "ap": 2
+          }
+        },
+        {
+          "type": "counter",
+          "data": {
+            "property": "hp",
+            "min": 0,
+            "max": 5
+          }
+        },
+        {
+          "type": "faces",
+          "data": {
+            "names": [
+              "p1 红队"
+            ],
+            "resources": [],
+            "up": true
+          }
+        }
+      ]
+    },
+    {
+      "id": "unit-p2",
+      "components": [
+        {
+          "type": "owner",
+          "data": {
+            "seat": "p2"
+          }
+        },
+        {
+          "type": "position",
+          "data": {
+            "x": 0,
+            "y": 2
+          }
+        },
+        {
+          "type": "properties",
+          "data": {
+            "hp": 5,
+            "ap": 2
+          }
+        },
+        {
+          "type": "counter",
+          "data": {
+            "property": "hp",
+            "min": 0,
+            "max": 5
+          }
+        },
+        {
+          "type": "faces",
+          "data": {
+            "names": [
+              "p2 红队"
+            ],
+            "resources": [],
+            "up": true
+          }
+        }
+      ]
+    },
+    {
+      "id": "unit-p3",
+      "components": [
+        {
+          "type": "owner",
+          "data": {
+            "seat": "p3"
+          }
+        },
+        {
+          "type": "position",
+          "data": {
+            "x": 4,
+            "y": 1
+          }
+        },
+        {
+          "type": "properties",
+          "data": {
+            "hp": 9,
+            "ap": 2
+          }
+        },
+        {
+          "type": "counter",
+          "data": {
+            "property": "hp",
+            "min": 0,
+            "max": 9
+          }
+        },
+        {
+          "type": "faces",
+          "data": {
+            "names": [
+              "p3 蓝队"
+            ],
+            "resources": [],
+            "up": true
+          }
+        }
+      ]
+    },
+    {
+      "id": "die",
+      "components": [
+        {
+          "type": "dice",
+          "data": {
+            "values": [
+              1,
+              2,
+              3,
+              4,
+              5,
+              6
+            ]
+          }
+        },
+        {
+          "type": "properties",
+          "data": {
+            "value": 1
+          }
+        },
+        {
+          "type": "position",
+          "data": {
+            "x": 0,
+            "y": 5
+          }
+        }
+      ]
+    },
+    {
+      "id": "match",
+      "components": [
+        {
+          "type": "properties",
+          "data": {
+            "target": 0
+          }
+        },
+        {
+          "type": "position",
+          "data": {
+            "x": 2,
+            "y": 5
+          }
+        }
+      ]
+    }
+  ]
+}
