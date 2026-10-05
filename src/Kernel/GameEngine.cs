@@ -4,7 +4,15 @@ public sealed partial class GameEngine
 {
     private GameState state;
     private readonly List<Submission> submissions = [];
-    public GameEngine(GameState initial) => state = Wire.Copy(initial);
+    private readonly GameState initial;
+    private readonly string fingerprint;
+    private readonly uint seed;
+    private readonly List<LogEntry> entries = [];
+    public GameEngine(GameState initial, uint seed = 1, string fingerprint = "development")
+    {
+        state = Wire.Copy(initial); state.RandomState = seed == 0 ? 0x9E3779B9 : seed;
+        this.initial = Wire.Copy(state); this.seed = seed; this.fingerprint = fingerprint;
+    }
     public GameState ExportAuthorityState() => Wire.Copy(state);
     public IReadOnlyList<Submission> ExportAuthoritySubmissions() => Wire.Copy(submissions);
     public CommandResult Submit(string actor, Command command)
@@ -14,14 +22,14 @@ public sealed partial class GameEngine
         {
             if (!state.Seats.Any(s => s.Id == actor) || state.Ended) throw new CommandRejected("operation-not-allowed");
             var candidate = Wire.Copy(state);
-            Apply(candidate, actor, command);
+            var effect = Execute(candidate, actor, command);
             state = candidate;
-            submissions.Add(new(sequence, actor, Wire.Copy(command), true, "accepted"));
+            Record(new(sequence, actor, Wire.Copy(command), true, "accepted"), [effect]);
             return new(sequence, true, "accepted");
         }
         catch (CommandRejected error)
         {
-            submissions.Add(new(sequence, actor, Wire.Copy(command), false, error.Message));
+            Record(new(sequence, actor, Wire.Copy(command), false, error.Message), []);
             return new(sequence, false, error.Message);
         }
     }
@@ -31,11 +39,34 @@ public sealed partial class GameEngine
             throw new CommandRejected("operation-not-allowed");
         return entity;
     }
-    private static void Apply(GameState state, string actor, Command command)
+    private static AppliedCommand Execute(GameState state, string actor, Command command)
+    {
+        Apply(state,actor,command);
+        return new(Wire.Copy(command),false,command.Kind == "shuffle" ? [..state.Entities[command.Entity!].Contents] : null,state.RandomState);
+    }
+    private static void Apply(GameState state, string actor, Command command, List<string>? recordedOrder = null)
     {
         var entity = Access(state, actor, command.Entity);
         switch (command.Kind)
         {
+            case "shuffle":
+                if (!entity.IsContainer || !entity.Ordered) throw new CommandRejected("invalid-container");
+                if (recordedOrder != null)
+                {
+                    if (!entity.Contents.Order().SequenceEqual(recordedOrder.Order())) throw new CommandRejected("invalid-shuffle-result");
+                    entity.Contents = [..recordedOrder];
+                }
+                else
+                {
+                    var random = state.RandomState;
+                    for (var i=entity.Contents.Count-1;i>0;i--)
+                    {
+                        var j=SeededRandom.Index(ref random,i+1);
+                        (entity.Contents[i],entity.Contents[j])=(entity.Contents[j],entity.Contents[i]);
+                    }
+                    state.RandomState=random;
+                }
+                break;
             case "move":
                 if (!double.IsFinite(command.X) || !double.IsFinite(command.Y)) throw new CommandRejected("invalid-position");
                 entity.X = command.X; entity.Y = command.Y; break;
