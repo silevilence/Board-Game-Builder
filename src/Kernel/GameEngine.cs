@@ -27,7 +27,7 @@ public sealed partial class GameEngine
     }
     private static Entity Access(GameState state, string actor, string? id)
     {
-        if (id == null || !state.Entities.TryGetValue(id, out var entity) || (entity.Owner != null && entity.Owner != actor) || entity.Visibility == "hidden")
+        if (id == null || !state.Entities.TryGetValue(id, out var entity) || (entity.Owner != null && entity.Owner != actor) || !IdentityVisible(state, entity, actor))
             throw new CommandRejected("operation-not-allowed");
         return entity;
     }
@@ -45,6 +45,18 @@ public sealed partial class GameEngine
             case "set":
                 if (command.Property == null || !entity.Properties.ContainsKey(command.Property)) throw new CommandRejected("invalid-property");
                 entity.Properties[command.Property] = command.Value; break;
+            case "reveal":
+                if (command.Visibility is not ("public" or "owner" or "hidden")) throw new CommandRejected("invalid-visibility");
+                if (command.Visibility == "owner" && entity.Owner == null) throw new CommandRejected("invalid-owner");
+                entity.Visibility = command.Visibility; entity.FaceUp = command.Visibility == "public"; break;
+            case "draw":
+                var hand = Access(state, actor, command.Target);
+                if (!entity.IsContainer || !entity.Ordered || entity.Contents.Count == 0 || !hand.IsContainer || hand.Id == entity.Id || hand.Contents.Count >= hand.Capacity)
+                    throw new CommandRejected("invalid-container");
+                var card = state.Entities[entity.Contents[0]];
+                if (card.IsContainer) throw new CommandRejected("invalid-container");
+                entity.Contents.RemoveAt(0); hand.Contents.Add(card.Id); card.Container = hand.Id;
+                card.Owner = hand.Owner ?? actor; card.Visibility = "owner"; card.FaceUp = false; break;
             case "transfer":
                 var target = Access(state, actor, command.Target);
                 if (!target.IsContainer || target.Contents.Count >= target.Capacity || entity.Container == target.Id) throw new CommandRejected("invalid-container");
