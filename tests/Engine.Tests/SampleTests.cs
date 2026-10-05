@@ -6,7 +6,7 @@ public static class SampleTests
 {
     public static void Run()
     {
-        var module=DirectoryModule.Load("samples/quick-cards");var session=new PlaySession(module,42);
+        var module=DirectoryModule.Load("samples/quick-cards");using var session=new PlaySession(module,42);
         var humanActions=0;
         while(!session.Ended && session.Fault==null && session.Steps<20)
         {

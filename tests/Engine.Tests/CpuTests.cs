@@ -17,7 +17,7 @@ public static class CpuTests
         }
         """;
         var m=new LoadedModule("cpu","1","cpu-test",s,rules,"return {decide=function(c) return c.actions[random_index(#c.actions)].command end}","rules.lua","cpu.lua");
-        var session=new PlaySession(m,7,new Dictionary<string,string> { ["p2"]="cpu" });
+        using var session=new PlaySession(m,7,new Dictionary<string,string> { ["p2"]="cpu" });
         Check.That(session.SubmitHuman("p1",new() { Kind="pass" }).Accepted);
         Check.That(session.StepCpu() && session.StepCpu());
         Check.That(session.CurrentSeat=="p1" && !session.IsCpu);
@@ -27,7 +27,7 @@ public static class CpuTests
         foreach(var cpu in new[] { "return {decide=function(c) return {kind='cheat'} end}",
             "return {decide=function(c) while true do end end}","return {decide=function(c) return c.view.authority.secret end}" })
         {
-            var bad=new PlaySession(m with { Cpu=cpu },controllers:new Dictionary<string,string> { ["p1"]="cpu" });
+            using var bad=new PlaySession(m with { Cpu=cpu },controllers:new Dictionary<string,string> { ["p1"]="cpu" });
             Check.That(!bad.StepCpu() && bad.Fault!=null && bad.Steps==0);
         }
     }

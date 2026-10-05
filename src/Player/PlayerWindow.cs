@@ -74,6 +74,7 @@ public sealed class PlayerWindow : Window
         try
         {
             var results=new List<string>();
+            var interactionMs=new List<double>();
             for(var game=0;game<2;game++)
             {
                 await Start();
@@ -81,14 +82,19 @@ public sealed class PlayerWindow : Window
                 {
                     await Task.Delay(120);
                     if(board.Frame.Cpu) await board.PumpCpu();
-                    else if(board.Frame.Actions.Count>0) await board.Act(new("action",Action:board.Frame.Actions[0].Id),board.Frame.Revision);
+                    else if(board.Frame.Actions.Count>0)
+                    {
+                        var clock=System.Diagnostics.Stopwatch.StartNew();
+                        await board.Act(new("action",Action:board.Frame.Actions[0].Id),board.Frame.Revision);
+                        interactionMs.Add(clock.Elapsed.TotalMilliseconds);
+                    }
                     else break;
                 }
                 if(board?.Frame.View.Ended!=true) throw new InvalidDataException(board?.Frame.Fault?.Detail ?? message.Text);
                 results.Add(Wire.Json(board.Frame.View));
             }
             if(results[0]!=results[1]) throw new InvalidDataException("Restart produced different state");
-            File.WriteAllText(output,Wire.Json(new { success=true,games=2,view=board!.Frame.View }));
+            File.WriteAllText(output,Wire.Json(new { success=true,games=2,interactionMs,view=board!.Frame.View }));
         }
         catch(Exception e) { File.WriteAllText(output,Wire.Json(new { success=false,error=e.ToString() })); }
         finally { Close(); }

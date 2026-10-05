@@ -5,12 +5,12 @@ public sealed record InteractionIntent(string Kind,string? Entity=null,string? T
 public sealed record SessionFrame(long Revision,SeatView View,IReadOnlyList<ActionOffer> Actions,bool Cpu,SessionFault? Fault);
 
 // One owner for each PlaySession. UI code keeps the last immutable projection during worker execution.
-public sealed class PlayerSession
+public sealed class PlayerSession : IDisposable
 {
     private readonly PlaySession session;
     private readonly string observer;
     private int busy;
-    private bool stopped;
+    private volatile bool stopped;
     public bool Busy => Volatile.Read(ref busy)!=0;
     public SessionFrame Frame { get; private set; }
     public string LastMessage { get; private set; }="";
@@ -22,7 +22,9 @@ public sealed class PlayerSession
     {
         if(!module.Initial.Seats.Any(s=>s.Id==humanSeat)) throw new ArgumentException("Unknown human seat.");
         var controllers=module.Initial.Seats.ToDictionary(s=>s.Id,s=>s.Id==humanSeat?"human":"cpu");
-        return new PlayerSession(new PlaySession(module,seed,controllers),humanSeat);
+        var session=new PlaySession(module,seed,controllers);
+        try { return new PlayerSession(session,humanSeat); }
+        catch { session.Dispose(); throw; }
     });
     private SessionFrame ReadFrame(long revision)
     {
@@ -42,7 +44,7 @@ public sealed class PlayerSession
             var command=Resolve(Frame.Actions,intent);
             var result=await Task.Run(()=>session.SubmitHuman(observer,command));
             LastMessage=result.Accepted?"操作已提交":result.Reason=="rule-rejected"?"当前规则不允许此操作，请使用右侧可用动作。":$"操作被拒绝：{result.Reason}";
-            Frame=await Task.Run(()=>ReadFrame(Frame.Revision+1));
+            if(!stopped) Frame=await Task.Run(()=>ReadFrame(Frame.Revision+1));
             return result;
         }
         finally { Volatile.Write(ref busy,0); }
@@ -54,12 +56,13 @@ public sealed class PlayerSession
         {
             if(stopped || !Frame.Cpu || Frame.View.Ended || Frame.Fault!=null) return false;
             var result=await Task.Run(session.StepCpu);
-            Frame=await Task.Run(()=>ReadFrame(Frame.Revision+1));
+            if(!stopped) Frame=await Task.Run(()=>ReadFrame(Frame.Revision+1));
             LastMessage=result?"CPU 已行动":"CPU 对局故障"; return result;
         }
         finally { Volatile.Write(ref busy,0); }
     }
-    public void Stop() => stopped=true;
+    public void Stop() { stopped=true; session.Dispose(); }
+    public void Dispose() => Stop();
     public static Command Resolve(IReadOnlyList<ActionOffer> actions,InteractionIntent intent)
     {
         if(intent.Kind=="action") return actions.FirstOrDefault(a=>a.Id==intent.Action)?.Command ?? new() { Kind="invalid-action" };

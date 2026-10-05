@@ -18,8 +18,8 @@ public static class PackageTests
         var package=Path.Combine(root,"game.bgm"); ModulePackage.Pack(source,package);
         var directory=DirectoryModule.Load(source); var packed=ModulePackage.Load(package);
         Check.That(directory.Fingerprint==packed.Fingerprint);
-        var a=new PlaySession(directory,42,directory.Initial.Seats.ToDictionary(s=>s.Id,_=>"cpu"));
-        var b=new PlaySession(packed,42,packed.Initial.Seats.ToDictionary(s=>s.Id,_=>"cpu"));
+        using var a=new PlaySession(directory,42,directory.Initial.Seats.ToDictionary(s=>s.Id,_=>"cpu"));
+        using var b=new PlaySession(packed,42,packed.Initial.Seats.ToDictionary(s=>s.Id,_=>"cpu"));
         while(!a.Ended && a.Fault==null) a.StepCpu(); while(!b.Ended && b.Fault==null) b.StepCpu();
         Check.That(a.Ended && b.Ended && a.AuthorityStateHash()==b.AuthorityStateHash());
         Check.That(Wire.Json(GameEngine.Replay(packed,a.ExportAuthorityLog()).Project("p1"))==Wire.Json(a.View("p1")));

@@ -79,7 +79,7 @@ public sealed class PlayBoard : UserControl,IDisposable
     {
         if(pumping) return;
         pumping=true;
-        try { while(!disposed && hostError==null && Frame.Cpu && !Frame.View.Ended && Frame.Fault==null) { await AdvanceCpu(); await Task.Delay(100); } }
+        try { while(!disposed && hostError==null && Frame.Cpu && !Frame.View.Ended && Frame.Fault==null) await AdvanceCpu(); }
         finally { pumping=false; }
     }
     private void SetBusy(string message) { status.Text=message; actions.Children.Clear(); table.InputEnabled=false; }

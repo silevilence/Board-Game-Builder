@@ -15,13 +15,17 @@ public static class BatchRunner
         PlaySession Play(uint seed)
         {
             var session=new PlaySession(module,seed,controllers,maxSteps);
-            while(!session.Ended && session.Fault==null) session.StepCpu();
-            return session;
+            try
+            {
+                while(!session.Ended && session.Fault==null) session.StepCpu();
+                return session;
+            }
+            catch { session.Dispose();throw; }
         }
         for(var i=0;i<count;i++)
         {
             var seed=startSeed+(uint)i;
-            var session=Play(seed);
+            using var session=Play(seed);
             var path=Path.GetFullPath(Path.Combine(output,$"seed-{seed}.json"));
             File.WriteAllText(path,Wire.Json(session.ExportAuthorityLog()));
             File.WriteAllText(path+".diagnostics.json",Wire.Json(new { session.Fault,diagnostics=session.ExportDiagnostics(),module.Fingerprint,seed,maxSteps,snapshotPath }));
@@ -33,7 +37,7 @@ public static class BatchRunner
                     module.Initial.Seats.All(s=>Wire.Json(restored.Project(s.Id))==Wire.Json(session.View(s.Id)));
                 if(session.Ended && session.Fault==null)
                 {
-                    var repeated=Play(seed);
+                    using var repeated=Play(seed);
                     rerun=repeated.Ended && repeated.Fault==null && Wire.Json(repeated.ExportAuthorityLog())==Wire.Json(session.ExportAuthorityLog());
                 }
                 if(!replay || (session.Fault==null && !rerun)) error="verification-mismatch";

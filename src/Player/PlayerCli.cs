@@ -41,7 +41,7 @@ public static class PlayerCli
             foreach(var kind in new[] { "cpu","human" })
                 if(flags.TryGetValue("--"+kind,out var seats)) foreach(var seat in seats.Split(','))
                     if(!controllers.TryAdd(seat,kind)) throw new ArgumentException("Duplicate seat override.");
-            var session=new PlaySession(module,seed,controllers,int.Parse(flags.GetValueOrDefault("--max-steps","500")));
+            using var session=new PlaySession(module,seed,controllers,int.Parse(flags.GetValueOrDefault("--max-steps","500")));
             string? observer=module.Initial.Seats.FirstOrDefault(s=>controllers.GetValueOrDefault(s.Id,s.Controller)=="human")?.Id;
             var logPath=flags.GetValueOrDefault("--log",Path.Combine("artifacts","sessions",Guid.NewGuid()+".json"));
             while(!session.Ended && session.Fault==null)

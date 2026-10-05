@@ -4,69 +4,143 @@ using BoardGame.Kernel;
 namespace BoardGame.Lua;
 public sealed record LuaRequest(string Source,string Path,string Entry,string Input,uint Seed);
 public sealed record LuaResponse(bool Success,string Json,string Error);
-// A disposable worker protects the host even when a CLR library call cannot yield.
+
 public static class LuaWorker
 {
-    public static string Invoke(string source,string path,string entry,string input,uint seed=1) =>
-        InvokeAsync(new(source,path,entry,input,seed)).GetAwaiter().GetResult();
-    private static async Task<string> InvokeAsync(LuaRequest request)
+    internal static readonly ActivitySource Diagnostics=new("BoardGame.Lua");
+    // One-shot callers retain the same ownership contract. PlaySession owns a reusable worker.
+    public static string Invoke(string source,string path,string entry,string input,uint seed=1)
     {
-        if(request.Source.Length>262144 || request.Input.Length>2097152) throw new InvalidDataException($"{request.Path}:{request.Entry}: input budget exceeded.");
-        var assembly=typeof(LuaWorker).Assembly.Location;
-        var bundled=Path.Combine(AppContext.BaseDirectory,"worker","Lua.exe");
-        var apphost=File.Exists(bundled)?bundled:Path.ChangeExtension(assembly,OperatingSystem.IsWindows()?".exe":null);
-        var hasHost=File.Exists(apphost);
-        var start=new ProcessStartInfo(hasHost?apphost:"dotnet") { UseShellExecute=false,CreateNoWindow=true,RedirectStandardInput=true,RedirectStandardOutput=true,RedirectStandardError=true };
-        if(!hasHost) start.ArgumentList.Add(assembly);
-        start.Environment["DOTNET_GCHeapHardLimit"]="4000000"; // 64 MiB managed heap, hexadecimal runtime setting.
-        start.Environment["DOTNET_EnableDiagnostics"]="0";
-        using var process=new Process { StartInfo=start };
+        using var worker=new LuaWorkerSession();
+        return worker.Invoke(source,path,entry,input,seed);
+    }
+}
+
+// Serial requests reuse only the OS process; LuaEvaluator creates a fresh VM for every request.
+public sealed class LuaWorkerSession : IDisposable
+{
+    private readonly SemaphoreSlim gate=new(1,1);
+    private readonly CancellationTokenSource lifetime=new();
+    private readonly object sync=new();
+    private static readonly TimeSpan WallTime=TimeSpan.FromSeconds(5);
+    private Process? process;
+    private Task<string>? errors;
+    private bool disposed;
+    private int requests;
+    internal int? ProcessId { get { lock(sync) return process?.Id; } }
+    public string Invoke(string source,string path,string entry,string input,uint seed=1) =>
+        InvokeAsync(new(source,path,entry,input,seed)).GetAwaiter().GetResult();
+
+    private async Task<string> InvokeAsync(LuaRequest request)
+    {
+        using var activity=LuaWorker.Diagnostics.StartActivity("invoke");
+        activity?.SetTag("lua.path",request.Path);
+        activity?.SetTag("lua.entry",request.Entry);
+        if(request.Source.Length>262144 || request.Input.Length>2097152)
+            throw new InvalidDataException($"{request.Path}:{request.Entry}: input budget exceeded.");
+        await gate.WaitAsync(lifetime.Token).ConfigureAwait(false);
+        Process? worker=null;
         try
         {
-            if(!process.Start()) throw new InvalidDataException("Cannot start Lua worker.");
-            var output=ReadBounded(process.StandardOutput,1048576);
-            var errors=ReadBounded(process.StandardError,65536);
-            var write=process.StandardInput.WriteAsync(Wire.Json(request));
-            var clock=Stopwatch.StartNew();
-            while(!write.IsCompleted && !process.HasExited)
+            worker=GetProcess();
+            using var deadline=CancellationTokenSource.CreateLinkedTokenSource(lifetime.Token);
+            deadline.CancelAfter(WallTime);
+            var exchange=Exchange(worker,request,deadline.Token);
+            // Observe faults even if the health monitor cancels this request first.
+            _=exchange.ContinueWith(t=> { _=t.Exception; },TaskContinuationOptions.OnlyOnFaulted);
+            while(!exchange.IsCompleted)
             {
-                if(clock.ElapsedMilliseconds>5000) throw new InvalidDataException("Lua timeout while sending input.");
-                await Task.Delay(10);
+                deadline.Token.ThrowIfCancellationRequested();
+                CheckHealth(worker);
+                await Task.WhenAny(exchange,Task.Delay(10,deadline.Token)).ConfigureAwait(false);
             }
-            await write;process.StandardInput.Close();
-            while(!process.HasExited)
-            {
-                if(clock.ElapsedMilliseconds>5000) throw new InvalidDataException("Lua wall-time limit exceeded.");
-                try
-                {
-                    process.Refresh();
-                    if(process.PrivateMemorySize64>268435456) throw new InvalidDataException("Lua memory limit exceeded.");
-                }
-                catch(InvalidOperationException) when(process.HasExited) { break; }
-                catch(System.ComponentModel.Win32Exception) when(process.HasExited) { break; }
-                if(output.IsFaulted || errors.IsFaulted) throw new InvalidDataException("Lua output budget exceeded.");
-                await Task.Delay(10);
-            }
-            var text=await output;var stderr=await errors;
-            if(text.Length==0) throw new InvalidDataException("Lua worker failed or exceeded memory limit: " + stderr);
-            var response=Wire.Read<LuaResponse>(text);
-            if(!response.Success || process.ExitCode!=0) throw new InvalidDataException(response.Error);
+            var response=await exchange.ConfigureAwait(false);
+            deadline.Token.ThrowIfCancellationRequested();
+            if(!response.Success) throw new InvalidDataException(response.Error);
+            CheckHealth(worker);
+            if(++requests>=256) Recycle(worker);
             return response.Json;
         }
         catch(Exception e) when(e is not OutOfMemoryException)
-        { throw new InvalidDataException($"{request.Path}:{request.Entry}: {e.Message}",e); }
-        finally
         {
-            try { if(!process.HasExited) { process.Kill(true); await process.WaitForExitAsync(); } }
-            catch(InvalidOperationException) { }
+            if(worker!=null) Recycle(worker);
+            var reason=e is OperationCanceledException
+                ? lifetime.IsCancellationRequested?"Lua session stopped.":"Lua wall-time limit exceeded."
+                : e.Message;
+            throw new InvalidDataException($"{request.Path}:{request.Entry}: {reason}",e);
+        }
+        finally { gate.Release(); }
+    }
+    private static async Task<LuaResponse> Exchange(Process worker,LuaRequest request,CancellationToken token)
+    {
+        await LuaProtocol.Write(worker.StandardInput.BaseStream,Wire.Json(request),LuaProtocol.RequestLimit,token).ConfigureAwait(false);
+        var response=await LuaProtocol.Read(worker.StandardOutput.BaseStream,LuaProtocol.ResponseLimit,token).ConfigureAwait(false);
+        return Wire.Read<LuaResponse>(response);
+    }
+    private Process GetProcess()
+    {
+        lock(sync)
+        {
+            ObjectDisposedException.ThrowIf(disposed,this);
+            if(process!=null && !process.HasExited) return process;
+            process?.Dispose();
+            process=null;errors=null;
+            var assembly=typeof(LuaWorker).Assembly.Location;
+            var bundled=Path.Combine(AppContext.BaseDirectory,"worker","Lua.exe");
+            var apphost=File.Exists(bundled)?bundled:Path.ChangeExtension(assembly,OperatingSystem.IsWindows()?".exe":null);
+            var hasHost=File.Exists(apphost);
+            var start=new ProcessStartInfo(hasHost?apphost:"dotnet") { UseShellExecute=false,CreateNoWindow=true,RedirectStandardInput=true,RedirectStandardOutput=true,RedirectStandardError=true };
+            if(!hasHost) start.ArgumentList.Add(assembly);
+            start.ArgumentList.Add("--server");
+            start.ArgumentList.Add(Environment.ProcessId.ToString(System.Globalization.CultureInfo.InvariantCulture));
+            start.Environment["DOTNET_GCHeapHardLimit"]="4000000"; // 64 MiB managed heap, hexadecimal runtime setting.
+            start.Environment["DOTNET_EnableDiagnostics"]="0";
+            var child=new Process { StartInfo=start };
+            try { if(!child.Start()) throw new InvalidDataException("Cannot start Lua worker."); }
+            catch { child.Dispose(); throw; }
+            process=child; requests=0;
+            errors=ReadErrors(child.StandardError);
+            _=errors.ContinueWith(t=> { _=t.Exception; },TaskContinuationOptions.OnlyOnFaulted);
+            return child;
         }
     }
-    private static async Task<string> ReadBounded(StreamReader reader,int limit)
+    private void CheckHealth(Process worker)
+    {
+        // Let the pipe reader drain a final structured error before reporting EOF.
+        if(worker.HasExited) return;
+        worker.Refresh();
+        if(worker.PrivateMemorySize64>268435456) throw new InvalidDataException("Lua memory limit exceeded.");
+        if(errors?.IsFaulted==true) throw new InvalidDataException("Lua output budget exceeded.");
+    }
+    private void Recycle(Process worker)
+    {
+        lock(sync)
+        {
+            if(!ReferenceEquals(process,worker)) return;
+            process=null; errors=null;
+            try
+            {
+                if(!worker.HasExited) worker.Kill(true);
+                worker.WaitForExit();
+            }
+            finally { worker.Dispose(); }
+        }
+    }
+    public void Dispose()
+    {
+        lock(sync)
+        {
+            if(disposed) return;
+            disposed=true; lifetime.Cancel();
+            if(process!=null) Recycle(process);
+        }
+    }
+    private static async Task<string> ReadErrors(StreamReader reader)
     {
         var text=new StringBuilder();var buffer=new char[4096];int read;
-        while((read=await reader.ReadAsync(buffer))>0)
+        while((read=await reader.ReadAsync(buffer).ConfigureAwait(false))>0)
         {
-            if(text.Length+read>limit) throw new InvalidDataException("Lua output budget exceeded.");
+            if(text.Length+read>65536) throw new InvalidDataException("Lua output budget exceeded.");
             text.Append(buffer,0,read);
         }
         return text.ToString();
