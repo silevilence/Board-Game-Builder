@@ -14,6 +14,8 @@ public sealed class DebugSession : IDisposable
     private bool authority;
     private long revision;
     private bool paused;
+    private SessionRecording? replay;
+    private GameEngine? restored;
     public DebugSession(LoadedModule module,uint seed,IReadOnlyDictionary<string,string> controllers,string observer)
     {
         if(!module.Initial.Seats.Any(s=>s.Id==observer)) throw new ArgumentException("Unknown observer seat");
@@ -21,6 +23,7 @@ public sealed class DebugSession : IDisposable
     }
     public DebugReply Handle(DebugRequest request)
     {
+        if(replay!=null && request.Operation is "submit" or "cpu" or "step" or "reload") return ReplayReply("回放期间不可修改试玩；请先继续。");
         CommandResult? result=null; SessionRecording? recording=null; var message="";
         switch(request.Operation)
         {
@@ -40,16 +43,19 @@ public sealed class DebugSession : IDisposable
             case "reload": session.ReloadScripts(request.Module ?? throw new InvalidDataException("Missing script version")); revision++; message="脚本已切换，下条命令生效。"; break;
             case "recording": recording=session.ExportRecording(); break;
             case "pause": paused=true; break;
-            case "resume": paused=false; break;
+            case "resume": paused=false; if(replay!=null) revision++; replay=null; restored=null; break;
             case "replay":
-                var history=request.Recording ?? session.ExportRecording(); var restored=history.Replay(); paused=true;
-                return new(new(revision,restored.Project(observer),[],false,null,Wire.Hash(Wire.Json(restored.ExportAuthorityState())),true,true),"日志回放；继续可返回当前试玩。",Recording:history,Timeline:history.Log.Entries,PlayerLog:restored.PlayerLog(observer).ToList());
+                var history=request.Recording ?? session.ExportRecording(); var engine=history.Replay();
+                _=engine.Project(observer); restored=engine; replay=history; paused=true; revision++;
+                return ReplayReply("日志回放；继续可返回当前试玩。");
             default: throw new InvalidDataException("Unknown local debug operation: "+request.Operation);
         }
+        if(replay!=null) return ReplayReply(message);
         var actions=session.Actions(); var view=session.View(observer);
         var log=session.ExportAuthorityLog();
         return new(new(revision,view,!session.IsCpu && session.CurrentSeat==observer?actions.ToList():[],session.IsCpu,session.Fault,session.AuthorityStateHash(),paused),message,result,recording,log.Entries,session.ExportDiagnostics().ToList(),log.Entries.Select(e=>new PlayerEvent(e.Submission.Sequence,e.Submission.Actor,e.Submission.Accepted,e.Submission.Reason)).ToList(),authority?session.ExportAuthorityState():null);
     }
+    private DebugReply ReplayReply(string message) => new(new(revision,restored!.Project(observer),[],false,null,Wire.Hash(Wire.Json(restored.ExportAuthorityState())),true,true),message,Recording:replay,Timeline:replay!.Log.Entries,PlayerLog:restored.PlayerLog(observer).ToList(),AuthorityState:authority?restored.ExportAuthorityState():null);
     public void Dispose()=>session.Dispose();
 }
 

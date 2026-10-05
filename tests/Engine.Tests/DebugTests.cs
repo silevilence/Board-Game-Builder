@@ -31,6 +31,9 @@ public static class DebugTests
             var count=reply.Timeline!.Count; reply=client.SendAsync(new("cpu",reply.Frame.Revision)).Result; Check.That(reply.Timeline!.Count==count);
             reply=client.SendAsync(new("step",reply.Frame.Revision)).Result; Check.That(reply.Timeline!.Count==count+1 && reply.Diagnostics!.Any(d=>d.Entry.EndsWith(":decide")));
             var state=reply.Frame.StateHash; reply=client.SendAsync(new("replay")).Result; Check.That(reply.Frame.IsReplay && reply.Frame.StateHash==state);
+            foreach(var operation in new[]{"submit","step","cpu","frame","pause"})
+            { reply=client.SendAsync(new(operation,reply.Frame.Revision,new(){Kind="invalid"})).Result; Check.That(reply.Frame.IsReplay && reply.Frame.StateHash==state && reply.Timeline!.Count==count+1,"Replay changed live state"); }
+            reply=client.SendAsync(new("resume")).Result; Check.That(!reply.Frame.IsReplay && reply.Frame.StateHash==state);
         }
     }
     public static void External()

@@ -25,5 +25,14 @@ public static class Authoring
         if(component!=null) component["data"]=data.DeepClone();
         else components.Add(new JsonObject { ["type"]=type,["data"]=data.DeepClone() });
     });
+    public static void ApplyFields(ModuleDocument doc,string collection,string id,string type,JsonObject? displayed,JsonObject edited)
+    {
+        if(displayed==null) { SetComponent(doc,collection,id,type,edited); return; }
+        var own=Find(doc.Configuration,collection,id)["components"]!.AsArray().FirstOrDefault(c=>c!["type"]!.GetValue<string>()==type)?["data"]?.DeepClone().AsObject() ?? new JsonObject();
+        var changed=false;
+        foreach(var field in edited)
+            if(!JsonNode.DeepEquals(displayed[field.Key],field.Value)) { own[field.Key]=field.Value?.DeepClone(); changed=true; }
+        if(changed) SetComponent(doc,collection,id,type,own);
+    }
     private static void ValidateId(string id) { if(string.IsNullOrWhiteSpace(id)) throw new InvalidDataException("Identity is required"); }
 }

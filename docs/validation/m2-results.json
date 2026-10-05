@@ -902,16 +902,30 @@
       "editorInstalled": false
     },
     "cards": {
-      "success": true,
-      "games": 2,
       "ended": true,
-      "exitCode": 0
+      "exitCode": 0,
+      "games": 2,
+      "success": true
     },
     "hex": {
-      "success": true,
-      "games": 2,
       "ended": true,
-      "exitCode": 0
+      "exitCode": 0,
+      "games": 2,
+      "success": true
     }
+  },
+  "finalReview": {
+    "baseline": "0c986993ef7be28513fab11e2d11362fa42ee017",
+    "taskHead": "07faebe",
+    "standards": "passed after fixes",
+    "spec": "passed after fixes",
+    "defaultTestGroups": 29,
+    "exportTests": true,
+    "twoModeSeeds": 40,
+    "workflowRegressions": true,
+    "artifactRoot": "artifacts/m2-final",
+    "cleanWindowsEvidence": "artifacts/m2-sandbox/verify-reviewed.ps1",
+    "formalDebugExitCode": 2,
+    "playerManifestHash": "1128EC204F1F7797560B17A63C0EF611FA64280ACC1904EDAD554910BC25C96B"
   }
 }

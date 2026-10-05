@@ -26,14 +26,14 @@ public sealed class ExportPanel : UserControl
                 var steps=plugins.Extensions.Where(e=>e.Kind==ExtensionKind.ExportStep).ToArray();
                 var reporter=new Progress<string>(text=>progress.Text=text);
                 await Task.Run(()=> {
-                    if(write) PlayerDistribution.Export(player,temp,output,staging=> {
+                    if(write) PlayerDistribution.Export(player,temp,output,staging=> Avalonia.Threading.Dispatcher.UIThread.InvokeAsync(()=> {
                         foreach(var step in steps)
                         {
-                            if(!plugins.Active.Contains(step.Plugin)) throw new InvalidOperationException("导出插件已停用："+step.Plugin);
+                            if(!plugins.Extensions.Any(current=>ReferenceEquals(current,step))) throw new InvalidOperationException("导出插件已停用或重载："+step.Plugin);
                             if(step.Value is Action<ExportContext> action) action(new(temp,staging));
                             else throw new InvalidDataException("Invalid export step: "+step.Id);
                         }
-                    },reporter);
+                    }).GetAwaiter().GetResult(),reporter);
                     else _=PlayerDistribution.Preflight(player,temp);
                 });
                 progress.Text=write?"导出完成。双击输出目录中的 Play.exe。":"依赖预检通过。";

@@ -14,6 +14,7 @@ public sealed partial class EditorWindow : Window
     private readonly TabControl tabs=new();
     private readonly WrapPanel toolbar=new() { Margin=new Thickness(6) };
     private bool allowClose;
+    private string sourceBase="";
     private readonly PlayPanel play;
     public EditorWindow(string? initial=null)
     {
@@ -26,6 +27,7 @@ public sealed partial class EditorWindow : Window
         Add("关闭文档",async ()=> { if(await CanLeave()) SetDocument(null); });
         Add("撤销",()=>Run(()=>document?.Undo())); Add("重做",()=>Run(()=>document?.Redo()));
         Add("应用配置",()=>Run(ApplySource));
+        Add("放弃配置草稿并重新读取",()=>Run(()=> { sourceBase=document?.Text("module.json") ?? ""; source.Text=sourceBase; }));
         tabs.Items.Add(new TabItem { Header="模块配置",Content=new ScrollViewer {Content=source} });
         tabs.Items.Add(new TabItem {Header="试玩",Content=play});
         tabs.Items.Add(new TabItem {Header="独立导出",Content=new ExportPanel(()=> {ApplySource();return document;},plugins)});
@@ -44,19 +46,27 @@ public sealed partial class EditorWindow : Window
         var button=new Button {Content=text,Margin=new Thickness(3)};
         button.Click+=async (_,_)=> { try { await action(); } catch(Exception e) { status.Text=e.Message; } }; toolbar.Children.Add(button);
     }
-    private bool BufferDirty => document!=null && source.Text!=document.Text("module.json");
-    private void ApplySource() { if(document!=null) { _=System.Text.Json.Nodes.JsonNode.Parse(source.Text ?? ""); document.EditText("module.json",source.Text ?? ""); } }
+    private bool BufferDirty => document!=null && source.Text!=sourceBase;
+    private void ApplySource()
+    {
+        if(document==null || !BufferDirty) return;
+        if(document.Text("module.json")!=sourceBase && source.Text!=document.Text("module.json"))
+            throw new InvalidOperationException("其他面板已修改配置；JSON 草稿仍保留。请复制草稿后重新读取最新配置并合并修改。");
+        _=System.Text.Json.Nodes.JsonNode.Parse(source.Text ?? "")!.AsObject();
+        document.EditText("module.json",source.Text ?? ""); sourceBase=source.Text ?? ""; UpdateTitle();
+    }
     private void SetDocument(ModuleDocument? value)
     {
         if(document!=null) document.Changed-=RefreshDocument;
         document=value;
+        sourceBase=value?.Text("module.json") ?? ""; source.Text=sourceBase;
         play.DocumentChanged();
         plugins.SetDocument(value);
         location.Text=value?.DirectoryPath;
         if(document!=null) document.Changed+=RefreshDocument;
         RefreshDocument();
     }
-    private void RefreshDocument() { source.Text=document?.Text("module.json") ?? ""; UpdateTitle(); }
+    private void RefreshDocument() { if(!BufferDirty) { sourceBase=document?.Text("module.json") ?? ""; source.Text=sourceBase; } UpdateTitle(); }
     private void UpdateTitle() => Title="Board Game Builder · Editor"+((document?.Dirty==true || BufferDirty)?" *":"");
     private async Task<bool> CanLeave()
     {

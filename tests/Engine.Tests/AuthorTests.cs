@@ -36,7 +36,7 @@ public static class AuthorTests
         var doc=ModuleDocument.Create(); Authoring.CreatePrototype(doc,"pawn");
         Authoring.SetComponent(doc,"prototypes","pawn","properties",new() {["score"]=1,["health"]=5});
         Authoring.Instantiate(doc,"pawn","one"); Authoring.Instantiate(doc,"pawn","two");
-        Authoring.SetComponent(doc,"entities","one","properties",new() {["score"]=9});
+        Authoring.ApplyFields(doc,"entities","one","properties",new() {["score"]=1,["health"]=5},new() {["score"]=9,["health"]=5});
         Authoring.SetComponent(doc,"prototypes","pawn","properties",new() {["score"]=2,["health"]=7});
         var state=doc.Snapshot(); Check.That(state.Initial.Entities["one"].Properties["score"]==9 && state.Initial.Entities["two"].Properties["score"]==2 && state.Initial.Entities["one"].Properties["health"]==7);
         var yaml=BoardGame.Modules.AuthorConfiguration.ToYaml(doc.Configuration); Authoring.ApplyYaml(doc,yaml);
@@ -65,6 +65,10 @@ public static class AuthorTests
             doc.Undo(); using var session=new BoardGame.Runtime.PlaySession(doc.Snapshot());
             session.SubmitHuman("p1",new() {Kind="finish"});
             Check.That(!doc.Snapshot().Initial.Ended,"Play changed author state");
+            File.WriteAllText(Path.Combine(path,"outside.txt"),"external change");
+            doc.EditConfiguration(c=>c["version"]="3");
+            Check.Throws(()=>doc.Save(),"changed outside");
+            Check.That(File.ReadAllText(Path.Combine(path,"outside.txt"))=="external change" && ModuleDocument.Open(path).Snapshot().Version=="2","External edit was overwritten");
         }
         finally { if(Directory.Exists(path)) Directory.Delete(path,true); }
     }

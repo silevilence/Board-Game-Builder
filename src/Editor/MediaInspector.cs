@@ -16,6 +16,7 @@ public sealed class MediaInspector : UserControl
     private readonly TextBlock status=new() {TextWrapping=Avalonia.Media.TextWrapping.Wrap};
     private readonly TextBox newId=new() {Watermark="新实体标识"};
     private readonly List<Action<JsonObject>> readers=[];
+    private JsonObject? displayed;
     public static readonly Dictionary<string,string> Defaults=new() {
         ["dice"]="{\"values\":[1,2,3,4,5,6]}", ["counter"]="{\"property\":\"value\",\"min\":0,\"max\":10}",
         ["position"]="{\"x\":0,\"y\":0}", ["owner"]="{\"seat\":\"p1\"}", ["visibility"]="{\"mode\":\"public\"}",
@@ -29,7 +30,7 @@ public sealed class MediaInspector : UserControl
         foreach(var control in new Control[]{collection,entities,types,newId}) { control.Margin=new Thickness(4); top.Children.Add(control); }
         Button("添加空实体",()=>Document.EditConfiguration(c=> { var id=newId.Text; if(string.IsNullOrWhiteSpace(id) || c["entities"]!.AsArray().Any(e=>e!["id"]!.GetValue<string>()==id)) throw new InvalidDataException("实体标识为空或重复"); c["entities"]!.AsArray().Add(new JsonObject {["id"]=id,["components"]=new JsonArray()}); }));
         Button("读取 / 添加组件",LoadFields);
-        Button("应用字段",()=> { var data=new JsonObject(); foreach(var read in readers) read(data); Authoring.SetComponent(Document,Collection,Identity,Component,data); _=Document.Snapshot(); });
+        Button("应用字段",()=> { var data=new JsonObject(); foreach(var read in readers) read(data); Authoring.ApplyFields(Document,Collection,Identity,Component,displayed,data); _=Document.Snapshot(); LoadFields(); });
         Button("移除覆盖 / 组件",()=>Document.EditConfiguration(c=> { var array=Authoring.Find(c,Collection,Identity)["components"]!.AsArray(); var item=array.FirstOrDefault(c=>c!["type"]!.GetValue<string>()==Component); if(item!=null) array.Remove(item); }));
         var property=new TextBox {Watermark="新数值属性名"}; top.Children.Add(property);
         Button("添加数值字段",()=> { if(string.IsNullOrWhiteSpace(property.Text)) throw new InvalidDataException("属性名不能为空"); Field(property.Text,JsonValue.Create(0)); });
@@ -58,6 +59,7 @@ public sealed class MediaInspector : UserControl
         var config=AuthorConfiguration.Expand(Document.Configuration);
         var item=Authoring.Find(config,Collection,Identity)["components"]!.AsArray().FirstOrDefault(c=>c!["type"]!.GetValue<string>()==Component);
         var data=item?["data"]?.AsObject() ?? JsonNode.Parse(Defaults[Component])!.AsObject();
+        displayed=item?["data"]?.DeepClone().AsObject();
         fields.Children.Clear(); readers.Clear(); foreach(var field in data) Field(field.Key,field.Value);
     }
     private void Field(string name,JsonNode? value)

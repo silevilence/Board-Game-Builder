@@ -47,13 +47,25 @@ public static class PlayerDistribution
             File.WriteAllText(Path.Combine(staging,"README.txt"),"Board Game Builder — Windows x64\r\n双击 Play.exe。选择真人席位和种子，点击开始；其余席位自动由 CPU 控制。\r\n右侧按钮执行规则动作；右键平移，滚轮或按钮缩放。\r\n使用结束对局停止故障对局，重新开局创建全新会话。\r\n无需编辑器、.NET SDK 或 .NET 运行时。需要 Direct3D 11 图形设备。\r\n");
             var module=ModulePackage.Load(Path.Combine(staging,"game.bgm"));
             File.WriteAllText(Path.Combine(staging,"versions.json"),Wire.Json(new {api=manifest.Api,player=manifest.Version,module=module.Id,module.Version,module.Fingerprint,rules=Wire.Hash(module.Rules),cpu=Wire.Hash(module.Cpu),kind="formal-player"}));
+            var protectedFiles=Directory.GetFiles(staging,"*",SearchOption.AllDirectories).ToDictionary(p=>Path.GetRelativePath(staging,p).Replace('\\','/'),p=>ModulePackage.Hash(File.ReadAllBytes(p)));
             progress?.Report("执行当前启用插件的导出附加步骤…"); additionalSteps?.Invoke(staging);
-            foreach(var file in manifest.Files)
+            ValidateExtras(new DirectoryInfo(staging));
+            foreach(var file in protectedFiles)
                 if(ModulePackage.Hash(File.ReadAllBytes(DirectoryModule.SafeFile(staging,file.Key)))!=file.Value) throw new InvalidDataException("Export step changed Player runtime: "+file.Key);
             if(ModulePackage.Load(Path.Combine(staging,"game.bgm")).Fingerprint!=module.Fingerprint) throw new InvalidDataException("Export step changed module package");
             Directory.Move(staging,target);
             progress?.Report("导出完成："+target);
         }
         finally { if(Directory.Exists(staging)) Directory.Delete(staging,true); }
+    }
+    private static void ValidateExtras(DirectoryInfo directory)
+    {
+        foreach(var item in directory.EnumerateFileSystemInfos())
+        {
+            if((item.Attributes & FileAttributes.ReparsePoint)!=0) throw new InvalidDataException("Linked export content is forbidden: "+item.Name);
+            if(item.Name.StartsWith("Editor",StringComparison.OrdinalIgnoreCase) || item.Extension.Equals(".csproj",StringComparison.OrdinalIgnoreCase) || item.Extension.Equals(".pdb",StringComparison.OrdinalIgnoreCase))
+                throw new InvalidDataException("Editor/development export content is forbidden: "+item.Name);
+            if(item is DirectoryInfo child) ValidateExtras(child);
+        }
     }
 }

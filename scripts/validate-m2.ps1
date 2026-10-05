@@ -10,6 +10,12 @@ if($LASTEXITCODE -ne 0) {throw 'Build failed'}
 dotnet run --project tests/Engine.Tests -c Release --no-build
 if($LASTEXITCODE -ne 0) {throw 'Tests failed'}
 & "$PSScriptRoot/publish-player.ps1" -Output "$root/player"
+$previousRelease=$env:BGB_TEST_RELEASE
+try {
+  $env:BGB_TEST_RELEASE="$root/player"
+  dotnet run --project tests/Engine.Tests -c Release --no-build -- export
+  if($LASTEXITCODE -ne 0) {throw 'Export tests failed'}
+} finally {$env:BGB_TEST_RELEASE=$previousRelease}
 dotnet run --project tests/Engine.Tests -c Release --no-build -- m2-gate
 if($LASTEXITCODE -ne 0) {throw 'Two-mode seed gate failed'}
 foreach($sample in @('quick-cards','hex-skirmish')) {

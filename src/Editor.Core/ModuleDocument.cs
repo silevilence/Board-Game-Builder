@@ -28,9 +28,14 @@ public sealed class ModuleDocument
     {
         path=Path.GetFullPath(path);
         _=DirectoryModule.Load(path);
+        return new(ReadFiles(path),path);
+    }
+    private static Dictionary<string,byte[]> ReadFiles(string path)
+    {
+        if((File.GetAttributes(path) & FileAttributes.ReparsePoint)!=0) throw new InvalidDataException("Linked author directories are unsupported");
         var files=new Dictionary<string,byte[]>(StringComparer.Ordinal);
         Read(path,"");
-        return new(files,path);
+        return files;
         void Read(string folder,string prefix)
         {
             foreach(var item in new DirectoryInfo(folder).EnumerateFileSystemInfos())
@@ -67,12 +72,19 @@ public sealed class ModuleDocument
     {
         var target=Path.GetFullPath(destination ?? DirectoryPath ?? throw new InvalidOperationException("Choose a module directory."));
         _=Snapshot();
-        if(DirectoryPath!=target && (Directory.Exists(target) || File.Exists(target))) throw new IOException("Choose a new module directory for Save As.");
+        var same=string.Equals(DirectoryPath,target,StringComparison.OrdinalIgnoreCase);
+        if(!same && (Directory.Exists(target) || File.Exists(target))) throw new IOException("Choose a new module directory for Save As.");
+        void CheckConflict()
+        {
+            if(same && (!Directory.Exists(target) || Hash(ReadFiles(target))!=saved)) throw new IOException("Module files changed outside the editor. Save As to a new directory, or reopen and merge your changes.");
+        }
+        CheckConflict();
         // A sibling staging directory keeps validation and I/O failures away from the current document.
         var staging=target+".saving-"+Guid.NewGuid(); var backup=target+".backup-"+Guid.NewGuid();
         try
         {
             Write(staging);
+            CheckConflict();
             if(Directory.Exists(target)) Directory.Move(target,backup);
             try { Directory.Move(staging,target); }
             catch { if(Directory.Exists(backup)) Directory.Move(backup,target); throw; }

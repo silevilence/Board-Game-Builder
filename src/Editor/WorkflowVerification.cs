@@ -6,6 +6,24 @@ namespace BoardGame.Editor;
 
 public sealed partial class PlayPanel
 {
+    internal async Task VerifyControls()
+    {
+        external.IsChecked=false; await Start(); timer.Stop();
+        if(frame?.View.Seat!="renamed" || !cpuSeats.ContainsKey("renamed") || cpuSeats.ContainsKey("p1")) throw new InvalidDataException("Seat controls were stale");
+        cpuSeats["renamed"].IsChecked=true; await Start(); timer.Stop();
+        var delayed=new DelayedDebugSession(session!); session=delayed;
+        var command=Send(new("cpu",frame!.Revision)); await Send(new("pause"));
+        delayed.Release(); await command;
+        if(frame?.Paused!=true || pendingPause) throw new InvalidDataException("Pause during command was lost");
+        Stop(); if(lastReply!=null || timeline.Text!="" || table.InputEnabled) throw new InvalidDataException("Stopped session retained data or input");
+    }
+    private sealed class DelayedDebugSession(IDebugSession inner) : IDebugSession
+    {
+        private readonly TaskCompletionSource release=new(TaskCreationOptions.RunContinuationsAsynchronously);
+        public void Release()=>release.TrySetResult();
+        public async Task<DebugReply> SendAsync(DebugRequest request) { if(request.Operation=="cpu") await release.Task; return await inner.SendAsync(request); }
+        public void Dispose()=>inner.Dispose();
+    }
     internal async Task<SessionRecording> VerifyPlay(bool independent)
     {
         external.IsChecked=independent;
@@ -41,6 +59,18 @@ public sealed partial class EditorWindow
         try
         {
             var author=document ?? throw new InvalidDataException("Module did not open");
+            source.Text+="\n "; var draft=source.Text;
+            author.EditText("rules.lua",author.Text("rules.lua")+"\n-- draft preservation probe\n");
+            if(source.Text!=draft) throw new InvalidDataException("Configuration draft was lost");
+            ApplySource(); author.Undo(); author.Undo();
+            source.Text+="\n "; draft=source.Text;
+            author.EditConfiguration(c=>c["version"]="conflict-probe");
+            var conflict=false; try { ApplySource(); } catch(InvalidOperationException) { conflict=true; }
+            if(!conflict || source.Text!=draft) throw new InvalidDataException("Configuration conflict lost draft");
+            source.Text=sourceBase; RefreshDocument(); author.Undo();
+            var temporary=ModuleDocument.Create(); SetDocument(temporary);
+            temporary.EditConfiguration(c=>c["seats"]![0]!["id"]="renamed");
+            await play.VerifyControls(); SetDocument(author);
             var original=author.Snapshot().Fingerprint;
             Authoring.ApplyYaml(author,AuthorConfiguration.ToYaml(author.Configuration));
             if(author.Snapshot().Fingerprint!=original) throw new InvalidDataException("YAML changed module");
