@@ -8,7 +8,9 @@ public static class DirectoryModule
         var file = Path.Combine(Path.GetFullPath(directory), "module.json");
         try
         {
-            using var document = JsonDocument.Parse(File.ReadAllText(file));
+            using var original = JsonDocument.Parse(File.ReadAllText(file));
+            CheckDuplicates(original.RootElement,"$");
+            using var document = JsonDocument.Parse(AuthorConfiguration.Expand(System.Text.Json.Nodes.JsonNode.Parse(original.RootElement.GetRawText())!.AsObject()).ToJsonString());
             var root = document.RootElement;
             CheckDuplicates(root, "$");
             var metadata=System.Text.Json.Nodes.JsonNode.Parse(root.GetRawText())!.AsObject();

@@ -42,9 +42,23 @@ public sealed partial class EditorWindow
     {
         public void Activate(PluginContext context)
         {
-            var text=new TextBlock();
-            void Refresh() => text.Text=context.Document==null?"没有模块文档":string.Join("\n",context.Document.Paths);
-            context.Register(ExtensionKind.Panel,"资源树",text);
+            var tree=new TreeView();
+            void Refresh()
+            {
+                tree.Items.Clear(); if(context.Document is not {} doc) return;
+                var files=new TreeViewItem {Header="模块文件",IsExpanded=true};
+                foreach(var path in doc.Paths) files.Items.Add(new TreeViewItem {Header=path}); tree.Items.Add(files);
+                foreach(var group in new[]{"resources","entities","prototypes"})
+                {
+                    var branch=new TreeViewItem {Header=group,IsExpanded=true};
+                    var data=doc.Configuration[group];
+                    if(data is System.Text.Json.Nodes.JsonArray list) foreach(var item in list) branch.Items.Add(new TreeViewItem {Header=item!["id"]!.GetValue<string>()});
+                    if(data is System.Text.Json.Nodes.JsonObject map) foreach(var item in map) branch.Items.Add(new TreeViewItem {Header=item.Key+" → "+item.Value});
+                    tree.Items.Add(branch);
+                }
+            }
+            context.Register(ExtensionKind.Panel,"资源树",tree);
+            context.Register(ExtensionKind.Inspector,"原型与 YAML",new AuthorPanel(context));
             context.OnDocumentChanged(Refresh); Refresh();
         }
     }
