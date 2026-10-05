@@ -13,8 +13,11 @@ public static class LuaWorker
     {
         if(request.Source.Length>262144 || request.Input.Length>2097152) throw new InvalidDataException($"{request.Path}:{request.Entry}: input budget exceeded.");
         var assembly=typeof(LuaWorker).Assembly.Location;
-        var start=new ProcessStartInfo("dotnet") { UseShellExecute=false,CreateNoWindow=true,RedirectStandardInput=true,RedirectStandardOutput=true,RedirectStandardError=true };
-        start.ArgumentList.Add(assembly);
+        var bundled=Path.Combine(AppContext.BaseDirectory,"worker","Lua.exe");
+        var apphost=File.Exists(bundled)?bundled:Path.ChangeExtension(assembly,OperatingSystem.IsWindows()?".exe":null);
+        var hasHost=File.Exists(apphost);
+        var start=new ProcessStartInfo(hasHost?apphost:"dotnet") { UseShellExecute=false,CreateNoWindow=true,RedirectStandardInput=true,RedirectStandardOutput=true,RedirectStandardError=true };
+        if(!hasHost) start.ArgumentList.Add(assembly);
         start.Environment["DOTNET_GCHeapHardLimit"]="4000000"; // 64 MiB managed heap, hexadecimal runtime setting.
         start.Environment["DOTNET_EnableDiagnostics"]="0";
         using var process=new Process { StartInfo=start };

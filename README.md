@@ -1,6 +1,6 @@
 # Board Game Builder
 
-M0 无图形界面运行时，开发环境为 .NET 10 SDK。
+本地单人桌游运行时与 Windows 图形 Player。开发环境为 .NET 10 SDK；导出物自带运行时。
 
 ```powershell
 dotnet build BoardGameBuilder.slnx
@@ -9,7 +9,18 @@ dotnet run --project tests/Engine.Tests
 dotnet run --project src/Player -- --help
 ```
 
-Kernel.Abstractions 定义数据与运行协议；Kernel 执行权威命令；Modules 负责目录加载；Lua 适配规则和决策；Runtime 供各宿主共享。View.Abstractions、View.MonoGame 与 Editor 在 M0 仅建立项目边界，窗口和渲染在 M1 实现。
+Kernel.Abstractions 定义数据与运行协议；Kernel 执行权威命令；Modules 负责目录／包加载与导出；Lua 适配规则和决策；Runtime 供各宿主共享。View.Abstractions 和 View.MonoGame 提供投影桌面与输入，Editor 当前为 Avalonia 最小视口验证壳。
+
+```powershell
+dotnet run --project src/Player -- gui samples/quick-cards
+dotnet run --project src/Editor
+dotnet run --project src/Player -- pack samples/quick-cards artifacts/quick-cards.bgm
+pwsh -NoProfile -File scripts/publish-player.ps1 -Output artifacts/player-release
+./artifacts/player-release/Player.exe export artifacts/player-release samples/quick-cards artifacts/quick-cards-windows
+```
+
+双击导出目录中的 Play.cmd，配置真人席位和种子后开始；CPU 自动推进。
+详见 [视口](docs/m1-hosting.md)、[模块包](docs/m1-packages.md)、[独立发行](docs/m1-distribution.md)。
 
 运行卡牌示例与固定种子验收：
 

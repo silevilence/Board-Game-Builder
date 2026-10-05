@@ -4,4 +4,9 @@
     <ProjectReference Include="../Runtime/Runtime.csproj" />
     <ProjectReference Include="../View.MonoGame/View.MonoGame.csproj" />
   </ItemGroup>
+  <Target Name="UseSeparateLuaWorkerDistribution" BeforeTargets="_HandleFileConflictsForPublish">
+    <ItemGroup>
+      <ResolvedFileToPublish Remove="@(ResolvedFileToPublish)" Condition="'%(ResolvedFileToPublish.RelativePath)' == 'Lua.exe' Or '%(ResolvedFileToPublish.RelativePath)' == 'Lua.deps.json' Or '%(ResolvedFileToPublish.RelativePath)' == 'Lua.runtimeconfig.json'" />
+    </ItemGroup>
+  </Target>
 </Project>

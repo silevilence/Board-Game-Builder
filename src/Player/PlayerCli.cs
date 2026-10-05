@@ -9,6 +9,7 @@ public static class PlayerCli
         Console.OutputEncoding=System.Text.Encoding.UTF8;
         try
         {
+            if(args.Length==4 && args[0]=="export") { PlayerDistribution.Export(args[1],args[2],args[3]); Console.WriteLine("Export created: "+args[3]); return 0; }
             if(args.Length==3 && args[0]=="pack") { ModulePackage.Pack(args[1],args[2]); Console.WriteLine("Package created: "+args[2]); return 0; }
             if(args.Length==0 || args[0]=="--help")
             {
