@@ -1,4 +1,7 @@
 <Solution>
+  <Folder Name="/samples/">
+    <Project Path="samples/Editor.SamplePlugin/Editor.SamplePlugin.csproj" />
+  </Folder>
   <Folder Name="/src/">
     <Project Path="src/Editor.Core/Editor.Core.csproj" />
     <Project Path="src/Editor/Editor.csproj" />

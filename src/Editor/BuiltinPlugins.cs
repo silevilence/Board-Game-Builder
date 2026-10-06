@@ -26,6 +26,14 @@ public static class BuiltinPlugins
             var sessions=new SessionController(scope.Service<DocumentWorkspace>("documents"));scope.Own(sessions);scope.Provide("sessions",sessions);
         },true));
         app.Install(new("base.viewports",1,["viewports"],[],scope=>scope.Provide("viewports",new EditorViewports()),true));
+        app.Install(new("base.assemblies",1,["assemblies"],[],_=>{},true)
+        {
+            InitializeAsync=async scope=>
+            {
+                await app.Root.Plugin(typeof(CordiSharp.Loading.AssemblyLoaderService));
+                scope.Provide("assemblies",new EditorAssemblies(app,app.Root.Get<CordiSharp.Loading.AssemblyLoaderService>("loader")!));
+            }
+        });
         app.Install(new("author.layout",1,[],["documents","viewports","panels"],scope=>
             scope.Service<PanelContributions>("panels").Register(scope,"author.layout","布局视口",()=>new LayoutPanel(scope))));
         app.Install(new("play.controls",1,[],["sessions","viewports","panels"],scope=>
@@ -52,7 +60,7 @@ public static class BuiltinPlugins
         }));
         void Panel(string id,string title,Func<EditorPluginScope,Control> factory)=>app.Install(new(id,1,[],["documents","panels"],scope=>
             scope.Service<PanelContributions>("panels").Register(scope,id,title,()=>factory(scope))));
-        app.Install(new("base.plugins",1,[],["panels","workspace"],scope=>
+        app.Install(new("base.plugins",1,[],["panels","workspace","assemblies"],scope=>
         {
             var list=new StackPanel {Spacing=8};
             void Refresh()
@@ -70,7 +78,13 @@ public static class BuiltinPlugins
                 }
             }
             app.Changed+=Refresh;scope.Own(new Cleanup(()=>app.Changed-=Refresh));Refresh();
-            scope.Service<PanelContributions>("panels").Register(scope,"base.plugins","插件管理",()=>new ScrollViewer {Content=list});
+            var path=new TextBox {PlaceholderText="预编译扩展 DLL 路径（旁边需有 .plugin.json）",Width=550};
+            var identity=new TextBox {PlaceholderText="要卸载的插件 ID",Width=180};
+            var load=new Button {Content="加载程序集"};var unload=new Button {Content="卸载程序集"};
+            load.Click+=async (_,_)=> {try {await scope.Service<EditorAssemblies>("assemblies").Load(path.Text ?? "");} catch(Exception e) {scope.Service<WorkspaceShell>("workspace").Report(e.Message);}};
+            unload.Click+=async (_,_)=> {try {await scope.Service<EditorAssemblies>("assemblies").Unload(identity.Text ?? "");scope.Service<WorkspaceShell>("workspace").Report("程序集已回收");} catch(Exception e) {scope.Service<WorkspaceShell>("workspace").Report(e.Message);}};
+            var panel=new DockPanel();var top=new WrapPanel {Children={path,load,identity,unload}};DockPanel.SetDock(top,Dock.Top);panel.Children.Add(top);panel.Children.Add(new ScrollViewer {Content=list});
+            scope.Service<PanelContributions>("panels").Register(scope,"base.plugins","插件管理",()=>panel);
         },true));
         app.Install(new("base.settings",1,[],["panels"],scope=>
             scope.Service<PanelContributions>("panels").Register(scope,"base.settings","设置",()=>new TextBlock {Text="编辑器：Avalonia 12.1.1 / CordiSharp 0.2.0\n视口：MonoGame WindowsDX\n工作区：功能标签页；原生视口区域遵守 airspace 限制。"}),true));

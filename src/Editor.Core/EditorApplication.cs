@@ -5,7 +5,10 @@ using CordiSharp.Registry;
 namespace BoardGame.Editor;
 
 public sealed record EditorPluginDefinition(string Id, int Api, string[] Provides, string[] Requires,
-    Action<EditorPluginScope> Activate, bool Required=false);
+    Action<EditorPluginScope> Activate, bool Required=false)
+{
+    public Func<EditorPluginScope,Task>? InitializeAsync { get; init; }
+}
 public enum EditorPluginStatus { Disabled, Waiting, Enabled, Failed }
 public sealed record EditorPluginState(string Id, EditorPluginStatus Status, string Reason);
 
@@ -58,12 +61,18 @@ public sealed class EditorApplication : IAsyncDisposable
             {
                 var definition=definitions[next];
                 states[next]=new(next,EditorPluginStatus.Waiting,"等待依赖与初始化");
-                var handle=Root.Inject(definition.Requires.Select(Capability),(ctx,_)=>
+                var handle=Root.Inject(definition.Requires.Select(Capability),(ctx,_)=>Activate(ctx));
+                async Task Activate(Context ctx)
                 {
-                    OnOwnerThread(()=>definition.Activate(new EditorPluginScope(this,ctx,definition)));
+                    Task? initialization=null;
+                    OnOwnerThread(()=>
+                    {
+                        var scope=new EditorPluginScope(this,ctx,definition);definition.Activate(scope);
+                        initialization=definition.InitializeAsync?.Invoke(scope);
+                    });
+                    if(initialization!=null) await initialization;
                     foreach(var capability in definition.Provides) ctx.Provide(Capability(capability),new object());
-                    return null;
-                });
+                }
                 handles.Add(next,handle); added.Add(next);
                 try { await handle.Await().WaitAsync(TimeSpan.FromSeconds(15)); }
                 catch(Exception error) { states[next]=new(next,EditorPluginStatus.Failed,error.Message); throw; }
@@ -80,13 +89,19 @@ public sealed class EditorApplication : IAsyncDisposable
     }
     public async Task Disable(string id) => await Change(id,false);
     public async Task Reload(string id) => await Change(id,true);
+    public async Task Uninstall(string id)
+    {
+        await Disable(id);
+        definitions.Remove(id);states.Remove(id);Notify();
+    }
+    public IDisposable Retain(string id,string reason)=>Guard(id,()=>reason);
     private async Task Change(string id,bool reload)
     {
         await lifecycle.WaitAsync();
         try
         {
             ObjectDisposedException.ThrowIf(disposed,this);
-            var affected=Dependents(id); var order=Order(affected).Where(affected.Contains).ToArray();
+            var affected=Dependents(id); var order=Order(affected.Where(handles.ContainsKey)).Where(affected.Contains).ToArray();
             foreach(var next in order)
             {
                 var reason=BlockedReason(next);
@@ -95,7 +110,7 @@ public sealed class EditorApplication : IAsyncDisposable
             foreach(var next in order.Reverse()) await Remove(next);
             if(reload)
             {
-                try { foreach(var next in order) await EnableCore(next); }
+                try { foreach(var next in order) await EnableCore(next);if(!order.Contains(id)) await EnableCore(id); }
                 catch {foreach(var next in order.Reverse()) await Remove(next);throw;}
             }
         }
@@ -199,6 +214,7 @@ public sealed class EditorPluginScope
     }
     public void On<T>(EventKey<T> key,Action<T> handler)=>Context.On(key,(_,value)=> {application.OnOwnerThread(()=>handler(value));return null;});
     public void Emit<T>(EventKey<T> key,T value)=>Context.Emit(key,value);
+    public EditorPluginScope ForContext(Context context)=>new(application,context,definition);
     public ModuleDocument? Document=>Service<DocumentWorkspace>("documents").Current;
     public void OnDocumentChanged(Action action)
     {

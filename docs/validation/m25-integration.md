@@ -117,3 +117,14 @@ observer/timeline/debug-play/debug-external 回归通过；控制器同步当前
 正式自包含 Player 重新发布为 Avalonia 12.1.1，导出核心测试通过；
 `artifacts/m25/export-smoke.json` 从本次导出完成两局 GUI 游戏，无编辑器依赖。
 预检验证 PE WindowsGui 子系统，正式启动不使用控制台入口。
+
+## 预编译程序集与真实回收
+
+`samples/Editor.SamplePlugin` 使用同一 Editor/Core、CordiSharp 和 Avalonia 合约，
+实际 `AssemblyLoaderService` 加载可回收上下文；标准 UI 控件来自默认上下文，
+扩展对象、事件、配置、后台任务及绘图回调随 CordiSharp fiber 清理。
+`artifacts/m25/assemblies-drain.json` 通过三次加载/面板呈现/卸载/重新加载，
+每次 WeakReference 确认加载上下文已回收，图形设备及原生窗口计数回到 0。
+活动引用租约提前拒绝卸载；刻意保留扩展对象会报告强引用而不误报回收成功。
+上游同步 GC 检查会阻塞 Avalonia 延迟清理，改为先请求卸载，再让 UI 队列完成工作，
+在有限重试内检查真实回收；失败仍明确区分“功能已注销”与“程序集未回收”。
