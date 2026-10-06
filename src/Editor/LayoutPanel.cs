@@ -5,10 +5,12 @@ namespace BoardGame.Editor;
 
 public sealed class LayoutPanel : UserControl,IDisposable
 {
-    private readonly InteractiveTable table=new();
+    private readonly InteractiveTable table;
+    internal InteractiveTable Table=>table;
     private readonly TextBlock message=new();
-    public LayoutPanel(PluginContext context)
+    public LayoutPanel(EditorPluginScope context)
     {
+        table=context.Service<EditorViewports>("viewports").Create(context);
         var kind=new ComboBox {ItemsSource=new[]{"free","square","hex"},SelectedIndex=0};
         var size=new NumericUpDown {Minimum=8,Maximum=1000,Value=70};
         var apply=new Button {Content="应用布局"};

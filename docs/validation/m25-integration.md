@@ -95,3 +95,10 @@ SessionController 由必需基础插件管理 CPU 调度与会话生命周期，
 `artifacts/m25/scripts.json`：两种 Play 模式分别重载规则和 CPU，语法错误保留原状态及命令序号；
 脚本面板重启不丢失文档文本，日志包含至少三版脚本并能重放到相同终局。
 停止和面板停用后的异步结果通过会话代际及面板取消令牌隔离。既有 reload 回归通过。
+
+## 视口生命周期验证
+
+`artifacts/m25/viewports.json` 通过：布局插件三轮创建、窗口调整尺寸、缩放、输入取消及销毁；
+每轮图形设备和原生子窗口计数均回到 0。编辑与试玩从同一视口服务创建 InteractiveTable。
+补齐失焦／分离时释放自身鼠标捕获、取消输入，以及渲染缩放变化时更新相机并取消旧手势。
+freecell-shortcuts、layouts、interaction、view 回归通过，空当接龙合法通关快捷操作保持有效。

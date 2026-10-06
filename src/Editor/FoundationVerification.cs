@@ -72,6 +72,16 @@ internal static class FoundationVerification
                 await app.Reload("author.media");await app.Reload("author.prototypes");
                 if(documents.Selection!=("entities","probe-instance")) throw new Exception("Shared selection lost");
                 _=document.Snapshot();
+                for(var cycle=0;cycle<3;cycle++)
+                {
+                    await app.Enable("author.layout");SessionVerification.Select(app,"author.layout");
+                    host.Window.Width+=30;host.Window.Height+=20;await Task.Delay(250);
+                    var layout=(LayoutPanel)((TabItem)app.Service<WorkspaceShell>("workspace").Tabs.SelectedItem!).Content!;
+                    layout.Table.ChangeZoom(1.1f);layout.Table.Hint("probe-instance",null);layout.Table.CancelInput();
+                    if(layout.Table.Selected!=null || layout.Table.RenderedFrames==0) throw new Exception("Layout input cancellation/render failed");
+                    SessionVerification.Select(app,"base.settings");await app.Disable("author.layout");await Task.Delay(50);
+                    if(BoardGame.View.DesktopViewport.LiveDevices!=0 || BoardGame.View.DesktopViewport.LiveNativeWindows!=0) throw new Exception("Viewport/native window leaked");
+                }
                 await app.Enable("author.configuration");
                 var original=documents.Draft("module.json").Text;
                 documents.EditDraft("module.json",original+"\n ");

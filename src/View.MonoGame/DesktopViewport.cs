@@ -20,11 +20,14 @@ public sealed class DesktopViewport : NativeControlHost, IDisposable
     private TableRenderer? renderer;
     private int width, height;
     private bool cameraInitialized;
+    private bool disposed;
+    private double renderScale=1;
     public float Zoom { get; private set; } = 1;
     public float PanX { get; private set; }
     public float PanY { get; private set; }
     public int Frames { get; private set; }
     public static int LiveDevices { get; private set; }
+    public static int LiveNativeWindows { get; private set; }
     public string? Error { get; private set; }
     public event Action<string, float, float>? Input;
     public Action<TableRenderer>? Paint { get; set; }
@@ -58,9 +61,11 @@ public sealed class DesktopViewport : NativeControlHost, IDisposable
     }
     protected override IPlatformHandle CreateNativeControlCore(IPlatformHandle parent)
     {
+        ObjectDisposedException.ThrowIf(disposed,this);
         // SS_NOTIFY makes STATIC return HTCLIENT instead of HTTRANSPARENT for real mouse input.
         handle = CreateWindowEx(0, "STATIC", "MonoGame desktop", 0x50000100, 0, 0, 1, 1, parent.Handle, 0, 0, 0);
         if (handle == 0) throw new System.ComponentModel.Win32Exception();
+        LiveNativeWindows++;
         previous = SetWindowLongPtr(handle, -4, Marshal.GetFunctionPointerForDelegate(procedure));
         timer.Start();
         return new PlatformHandle(handle, "HWND");
@@ -71,6 +76,7 @@ public sealed class DesktopViewport : NativeControlHost, IDisposable
         ReleaseGraphics();
         SetWindowLongPtr(control.Handle, -4, previous);
         DestroyWindow(control.Handle);
+        LiveNativeWindows--;
         handle = 0;
         panning = false;
         Input?.Invoke("cancel", 0, 0);
@@ -82,6 +88,8 @@ public sealed class DesktopViewport : NativeControlHost, IDisposable
     }
     public void Dispose()
     {
+        if(disposed) return;disposed=true;
+        CancelInput();
         inputRoot?.RemoveHandler(PointerWheelChangedEvent,RootWheel); inputRoot=null;
         timer.Stop(); ReleaseGraphics(); Paint=null; Input=null; CanPeek=null; KeyPressed=null;
     }
@@ -100,6 +108,7 @@ public sealed class DesktopViewport : NativeControlHost, IDisposable
     public void ResetClickSequence() { lastClick=0; clickCandidate=false; }
     protected override void OnDetachedFromVisualTree(Avalonia.VisualTreeAttachmentEventArgs e)
     {
+        CancelInput();
         inputRoot?.RemoveHandler(PointerWheelChangedEvent,RootWheel); inputRoot=null;
         timer.Stop(); ReleaseGraphics(); base.OnDetachedFromVisualTree(e);
     }
@@ -108,7 +117,13 @@ public sealed class DesktopViewport : NativeControlHost, IDisposable
         if (handle == 0 || !GetClientRect(handle, out var rect) || rect.Right < 1 || rect.Bottom < 1) return;
         try
         {
-            if(!cameraInitialized) { Zoom=(float)(TopLevel.GetTopLevel(this)?.RenderScaling ?? 1); cameraInitialized=true; }
+            var scale=TopLevel.GetTopLevel(this)?.RenderScaling ?? 1;
+            if(!cameraInitialized) {renderScale=scale;Zoom=(float)scale;cameraInitialized=true;}
+            else if(scale!=renderScale)
+            {
+                var ratio=(float)(scale/renderScale);Zoom*=ratio;PanX*=ratio;PanY*=ratio;renderScale=scale;
+                CancelInput();
+            }
             if (device == null || width != rect.Right || height != rect.Bottom)
             {
                 ReleaseGraphics(); width = rect.Right; height = rect.Bottom;
@@ -175,11 +190,17 @@ public sealed class DesktopViewport : NativeControlHost, IDisposable
             case 0x215:
                 if(releasingCapture) break;
                 goto case 0x1F;
-            case 0x8: case 0x1F: panning=false; lastClick=0; clickCandidate=false; Input?.Invoke("cancel",0,0); break;
+            case 0x8: case 0x1F: CancelInput();break;
         }
         return CallWindowProc(previous, hwnd, message, w, l);
     }
     private delegate nint WindowProc(nint hwnd, uint message, nuint w, nint l);
+    public void CancelInput()
+    {
+        panning=false;ResetClickSequence();
+        if(handle!=0 && GetCapture()==handle) ReleasePointer();
+        Input?.Invoke("cancel",0,0);
+    }
     private void ReleasePointer() { releasingCapture=true; try {ReleaseCapture();} finally {releasingCapture=false;} }
     [StructLayout(LayoutKind.Sequential)] private struct Rect { public int Left, Top, Right, Bottom; }
     [DllImport("user32.dll", CharSet=CharSet.Unicode, SetLastError=true)] private static extern nint CreateWindowEx(int ex, string cls, string title, int style, int x, int y, int w, int h, nint parent, nint menu, nint instance, nint param);
@@ -190,6 +211,7 @@ public sealed class DesktopViewport : NativeControlHost, IDisposable
     [DllImport("user32.dll")] private static extern nint SetFocus(nint hwnd);
     [DllImport("user32.dll")] private static extern nint SetCapture(nint hwnd);
     [DllImport("user32.dll")] private static extern bool ReleaseCapture();
+    [DllImport("user32.dll")] private static extern nint GetCapture();
     [DllImport("user32.dll")] private static extern uint GetDoubleClickTime();
     [DllImport("user32.dll")] private static extern int GetSystemMetrics(int index);
     [DllImport("user32.dll")] private static extern short GetKeyState(int key);

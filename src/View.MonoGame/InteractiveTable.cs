@@ -55,6 +55,8 @@ public sealed class InteractiveTable : UserControl, IDisposable
     }
     public void Hint(string? entity,string? target)=>input.Select(entity,target);
     public void Fit()=>viewport.Fit();
+    public void ChangeZoom(float factor)=>viewport.ChangeZoom(factor);
+    public void CancelInput()=>viewport.CancelInput();
     public void Show(TableScene value) { scene=value; input.Show(value); viewport.Canvas(value); controls.IsVisible=!value.ClassicCards; }
     public void Dispose() { viewport.Dispose(); Gesture=null; SelectionChanged=null; Shortcut=null; RenderingError=null; }
 }

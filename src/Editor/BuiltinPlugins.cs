@@ -25,7 +25,10 @@ public static class BuiltinPlugins
         {
             var sessions=new SessionController(scope.Service<DocumentWorkspace>("documents"));scope.Own(sessions);scope.Provide("sessions",sessions);
         },true));
-        app.Install(new("play.controls",1,[],["sessions","panels"],scope=>
+        app.Install(new("base.viewports",1,["viewports"],[],scope=>scope.Provide("viewports",new EditorViewports()),true));
+        app.Install(new("author.layout",1,[],["documents","viewports","panels"],scope=>
+            scope.Service<PanelContributions>("panels").Register(scope,"author.layout","布局视口",()=>new LayoutPanel(scope))));
+        app.Install(new("play.controls",1,[],["sessions","viewports","panels"],scope=>
             scope.Service<PanelContributions>("panels").Register(scope,"play.controls","试玩与调试",()=>new PlayPanel(scope))));
         app.Install(new("author.scripts",1,[],["documents","sessions","panels"],scope=>
             scope.Service<PanelContributions>("panels").Register(scope,"author.scripts","Lua 脚本",()=>new ScriptPanel(scope))));
