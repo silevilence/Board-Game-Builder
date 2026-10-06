@@ -48,3 +48,10 @@ dotnet build tests/Editor.Compatibility -c Release --no-restore
 `Editor.exe --verify-foundation artifacts/m25/foundation.json` 通过：基础插件打开空模块；
 可选插件初始化失败后文档实例保持不变；必需文档插件停用被明确拒绝；退出后根 fiber 副作用数为零。
 正常入口已使用 EditorHost 装配基础插件。文档、草稿、会话与各功能的进一步迁移按后续任务推进。
+
+## 依赖策略验证
+
+`dotnet run --project tests/Engine.Tests -c Release -- cordi` 通过。
+A→B→C 依赖链按反向释放、正向恢复；B 初始化失败后本次链全部回滚，独立插件保留。
+三轮重载后事件仅触发一次；缺失能力显示 Waiting 及缺失名称，循环、重复能力、API 不兼容明确失败。
+活动引用 guard 在任何销毁发生前检查，拒绝停用后仍保留实例；引用解除后可停用。

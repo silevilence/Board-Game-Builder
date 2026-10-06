@@ -170,11 +170,12 @@ public sealed class EditorPluginScope
     private readonly EditorPluginDefinition definition;
     public Context Context { get; }
     public string Id=>definition.Id;
-    public CancellationToken Cancellation=>cancellation.Token;
+    public CancellationToken Cancellation { get; }
     private readonly CancellationTokenSource cancellation=new();
     internal EditorPluginScope(EditorApplication application,Context context,EditorPluginDefinition definition)
     {
         this.application=application;Context=context;this.definition=definition;
+        Cancellation=cancellation.Token;
         Own(new Cleanup(()=> {cancellation.Cancel();cancellation.Dispose();}));
     }
     public void Own(IDisposable resource)=>Context.Effect(()=> (Action)(()=>application.OnOwnerThread(resource.Dispose)));
