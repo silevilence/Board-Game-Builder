@@ -12,7 +12,7 @@ public static class DocumentPlugin
         var shell=scope.Service<WorkspaceShell>("workspace");var commands=scope.Service<EditorCommands>("commands");
         var path=new TextBox {Width=400,PlaceholderText="模块目录（另存为请选择新目录）"};shell.Toolbar.Children.Add(path);
         scope.Own(new Cleanup(()=>shell.Toolbar.Children.Remove(path)));
-        path.TextChanged+=(_,_)=>documents.Location=path.Text ?? "";
+        path.PropertyChanged+=(_,e)=> {if(e.Property==TextBox.TextProperty) documents.Location=path.Text ?? "";};
         void Refresh()
         {
             if(path.Text!=documents.Location) path.Text=documents.Location;
@@ -27,6 +27,7 @@ public static class DocumentPlugin
         Add("document.undo","撤销",()=>Run(documents.Undo),()=>documents.CanUndo,"Ctrl+Z");
         Add("document.redo","重做",()=>Run(documents.Redo),()=>documents.CanRedo,"Ctrl+Y");
         Add("document.apply","应用配置草稿",()=>Run(documents.ApplyDrafts),()=>documents.Current!=null);
+        Add("document.discard-fields","放弃所有字段草稿",()=>Run(documents.DiscardForms),()=>documents.HasPendingForms);
         void Add(string id,string title,Func<Task> action,Func<bool> enabled,string? shortcut=null,CommandFocus focus=CommandFocus.Author)
             =>commands.Register(scope,new(id,title,action,enabled,shortcut,focus));
     }
@@ -57,7 +58,7 @@ public sealed class ConfigurationPanel : UserControl
             try {Source.IsEnabled=documents.Current!=null;var text=documents.Current==null?"":documents.Draft(draftName).Text;if(Source.Text!=text) Source.Text=text;}
             finally {loading=false;}
         }
-        Source.TextChanged+=(_,_)=> {if(!loading && documents.Current!=null) documents.EditDraft(draftName,Source.Text ?? "");};
+        Source.PropertyChanged+=(_,e)=> {if(e.Property==TextBox.TextProperty && !loading && documents.Current!=null) documents.EditDraft(draftName,Source.Text ?? "");};
         scope.OnDocumentChanged(Refresh);Refresh();
     }
 }

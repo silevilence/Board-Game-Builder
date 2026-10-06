@@ -3,7 +3,7 @@ namespace BoardGame.Editor;
 public enum CommandFocus { Global, Author, Viewport }
 public sealed record EditorCommand(string Id,string Title,Func<Task> Execute,Func<bool> Enabled,
     string? Shortcut=null,CommandFocus Focus=CommandFocus.Author);
-public sealed class EditorCommands
+public sealed class EditorCommands(Func<string,string>? normalizeShortcut=null)
 {
     private readonly Dictionary<string,(EditorCommand Command,CancellationToken Token)> commands=new(StringComparer.Ordinal);
     private readonly HashSet<string> running=[];
@@ -12,10 +12,12 @@ public sealed class EditorCommands
     public void Register(EditorPluginScope owner,EditorCommand command)
     {
         if(string.IsNullOrWhiteSpace(command.Id) || commands.ContainsKey(command.Id)) throw new InvalidDataException("Duplicate/empty command: "+command.Id);
+        if(command.Shortcut!=null) command=command with {Shortcut=normalizeShortcut?.Invoke(command.Shortcut) ?? command.Shortcut.Trim()};
         if(command.Shortcut!=null && commands.Values.Any(v=>string.Equals(v.Command.Shortcut,command.Shortcut,StringComparison.OrdinalIgnoreCase)))
             throw new InvalidDataException("Shortcut conflict: "+command.Shortcut);
         commands.Add(command.Id,(command,owner.Cancellation));
         owner.Own(new Cleanup(()=> {commands.Remove(command.Id);Refresh();}));Refresh();
+        owner.Guard(()=>running.Contains(command.Id)?"命令正在执行，请等待完成":null);
     }
     public bool CanExecute(string id)=>commands.TryGetValue(id,out var item) && !item.Token.IsCancellationRequested && !running.Contains(id) && item.Command.Enabled();
     public async Task Execute(string id)

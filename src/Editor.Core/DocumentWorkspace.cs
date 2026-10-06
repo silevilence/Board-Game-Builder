@@ -7,10 +7,12 @@ public enum UnsavedChoice { Cancel, Save, Discard }
 public sealed class DocumentWorkspace : IDisposable
 {
     private readonly Dictionary<string,DocumentDraft> drafts=new(StringComparer.Ordinal);
+    private readonly Dictionary<string,DocumentDraft> forms=new(StringComparer.Ordinal);
     public Dictionary<string,string> ViewState { get; }=new(StringComparer.Ordinal);
     public ModuleDocument? Current { get; private set; }
     public string Location { get; set; }="";
-    public bool Dirty=>Current?.Dirty==true || drafts.Values.Any(d=>d.Dirty);
+    private IEnumerable<DocumentDraft> AllDrafts=>drafts.Values.Concat(forms.Values);
+    public bool Dirty=>Current?.Dirty==true || AllDrafts.Any(d=>d.Dirty);
     public event Action? Changed;
     public event Action? Replaced;
     public (string Collection,string Id)? Selection { get; private set; }
@@ -23,7 +25,7 @@ public sealed class DocumentWorkspace : IDisposable
     public void Set(ModuleDocument? document)
     {
         if(Current!=null) Current.Changed-=Notify;
-        Current=document;drafts.Clear();ViewState.Clear();Selection=null;Location=document?.DirectoryPath ?? "";
+        Current=document;drafts.Clear();forms.Clear();ViewState.Clear();Selection=null;Location=document?.DirectoryPath ?? "";
         if(Current!=null) Current.Changed+=Notify;
         Replaced?.Invoke();Notify();
     }
@@ -37,9 +39,26 @@ public sealed class DocumentWorkspace : IDisposable
     }
     public void EditDraft(string name,string text) {Draft(name).Edit(text);Changed?.Invoke();}
     public void DiscardDraft(string name) {drafts.Remove(name);Changed?.Invoke();}
+    public DocumentDraft Form(string name,Func<string> initial)
+    {
+        var baseline=Current?.Text("module.json") ?? throw new InvalidOperationException("请打开模块");
+        if(forms.TryGetValue(name,out var draft) && (draft.Dirty || draft.Baseline==baseline)) return draft;
+        return forms[name]=new(name,baseline,initial(),false);
+    }
+    public void EditForm(string name,string text) {forms[name].Edit(text);Changed?.Invoke();}
+    public void DiscardForm(string name) {forms.Remove(name);Changed?.Invoke();}
+    public bool HasPendingForms=>forms.Values.Any(d=>d.Dirty);
+    public void DiscardForms() {forms.Clear();Changed?.Invoke();}
+    public void ApplyForm(string name,Action<ModuleDocument> apply)
+    {
+        var draft=forms[name];var document=Current ?? throw new InvalidOperationException("请打开模块");
+        if(document.Text("module.json")!=draft.Baseline) throw new InvalidOperationException("其他面板已修改配置；字段草稿已保留，请放弃并重新读取后合并。");
+        apply(document);forms.Remove(name);Notify();
+    }
     public void ApplyDrafts()
     {
         if(Current==null) return;
+        if(forms.Values.Any(d=>d.Dirty)) throw new InvalidOperationException("存在未应用的字段草稿："+string.Join("、",forms.Where(p=>p.Value.Dirty).Select(p=>p.Key))+"。请回到对应面板应用或放弃，再保存或试玩。");
         var dirty=drafts.Values.Where(d=>d.Dirty).ToArray();
         if(dirty.GroupBy(d=>d.Path).Any(g=>g.Count()>1)) throw new InvalidOperationException("JSON 与 YAML 草稿同时修改同一配置，请先选择保留一份并合并；草稿均已保留。");
         var edits=dirty.Select(d=>(Draft:d,Text:d.Serialize())).ToArray();
@@ -52,16 +71,16 @@ public sealed class DocumentWorkspace : IDisposable
     public void Save() {ApplyDrafts();Current?.Save(string.IsNullOrWhiteSpace(Location)?null:Location);}
     public void Undo()
     {
-        var pending=drafts.Values.LastOrDefault(d=>d.Dirty);
+        var pending=AllDrafts.LastOrDefault(d=>d.Dirty);
         if(pending!=null) {pending.Undo();Changed?.Invoke();} else Current?.Undo();
     }
     public void Redo()
     {
-        var pending=drafts.Values.LastOrDefault(d=>d.CanRedo);
+        var pending=AllDrafts.LastOrDefault(d=>d.CanRedo);
         if(pending!=null) {pending.Redo();Changed?.Invoke();} else Current?.Redo();
     }
-    public bool CanUndo=>Current?.CanUndo==true || drafts.Values.Any(d=>d.Dirty);
-    public bool CanRedo=>Current?.CanRedo==true || drafts.Values.Any(d=>d.CanRedo);
+    public bool CanUndo=>Current?.CanUndo==true || AllDrafts.Any(d=>d.Dirty);
+    public bool CanRedo=>Current?.CanRedo==true || AllDrafts.Any(d=>d.CanRedo);
     public async Task<bool> CanLeave(Func<Task<UnsavedChoice>> choose)
     {
         if(!Dirty) return true;
@@ -75,7 +94,7 @@ public sealed class DocumentWorkspace : IDisposable
             if(!draft.Dirty && Current.Paths.Contains(draft.Path)) draft.Reload(Current.Text(draft.Path));
         Changed?.Invoke();
     }
-    public void Dispose() {if(Current!=null) Current.Changed-=Notify;Current=null;Changed=null;Replaced=null;drafts.Clear();ViewState.Clear();}
+    public void Dispose() {if(Current!=null) Current.Changed-=Notify;Current=null;Changed=null;Replaced=null;SelectionChanged=null;drafts.Clear();forms.Clear();ViewState.Clear();}
 }
 
 public sealed class DocumentDraft(string path,string baseline,string text,bool yaml)

@@ -1,6 +1,7 @@
 using BoardGame.Kernel;
 using CordiSharp.Loading;
 using Avalonia.Threading;
+using CordiSharp.Registry;
 
 namespace BoardGame.Editor;
 
@@ -18,6 +19,7 @@ public sealed class EditorAssemblies(EditorApplication app,AssemblyLoaderService
         if(set.IsUnloaded) throw new InvalidDataException("程序集加载失败："+assemblyPath);
         try
         {
+            RejectAsyncEntries(set);
             _=set.GetPlugin(manifest.Entry);
             app.Install(new(manifest.Id,manifest.Api,manifest.Provides,manifest.Requires,_=>{})
             {
@@ -57,4 +59,10 @@ public sealed class EditorAssemblies(EditorApplication app,AssemblyLoaderService
     }
     [System.Runtime.CompilerServices.MethodImpl(System.Runtime.CompilerServices.MethodImplOptions.NoInlining)]
     private static WeakReference Track(AssemblyPluginSet set)=>new(set.AssemblyLoadContext!);
+    [System.Runtime.CompilerServices.MethodImpl(System.Runtime.CompilerServices.MethodImplOptions.NoInlining)]
+    private static void RejectAsyncEntries(AssemblyPluginSet set)
+    {
+        if(set.AssemblyLoadContext!.Assemblies.SelectMany(a=>a.GetTypes()).Any(t=>t.GetInterfaces().Any(i=>i.IsGenericType && i.GetGenericTypeDefinition()==typeof(IAsyncPlugin<>))))
+            throw new NotSupportedException("当前程序集扩展仅支持同步 IPlugin<EditorPluginScope> 入口；后台任务应由 Effect 管理取消与结束，不支持 IAsyncPlugin 初始化。");
+    }
 }

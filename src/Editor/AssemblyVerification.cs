@@ -17,6 +17,13 @@ internal static class AssemblyVerification
             try
             {
                 await host.Ready;var app=host.Application;var assemblies=app.Service<EditorAssemblies>("assemblies");
+                try
+                {
+                    await assemblies.Load(EditorPaths.InWorkspace("tests/Editor.AsyncProbe/bin/Release/net10.0-windows/Editor.AsyncProbe.dll"));
+                    throw new Exception("Unsafe async assembly entry was accepted");
+                }
+                catch(NotSupportedException e) when(e.Message.Contains("IAsyncPlugin")) { }
+                if(app.Catalog.Any(p=>p.Id=="probe.async")) throw new Exception("Rejected assembly left registrations");
                 for(var cycle=0;cycle<3;cycle++)
                 {
                     await assemblies.Load(path);SessionVerification.Select(app,"sample.panel");await Task.Delay(200);

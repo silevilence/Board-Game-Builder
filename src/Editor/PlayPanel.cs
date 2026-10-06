@@ -30,10 +30,10 @@ public sealed class PlayPanel : UserControl,IDisposable
         reveal=new CheckBox {Content="作者全信息调试（包含隐藏真值）",IsChecked=controller.Reveal};
         var stop=new Button {Content="停止试玩"};
         var top=new WrapPanel {Children={new TextBlock {Text="种子"},seed,seats,external,executable,start,stop}};
-        seed.TextChanged+=(_,_)=>controller.Seed=seed.Text ?? "";
+        seed.PropertyChanged+=(_,e)=> {if(e.Property==TextBox.TextProperty) controller.Seed=seed.Text ?? "";};
         external.IsCheckedChanged+=(_,_)=>controller.External=external.IsChecked==true;
-        executable.TextChanged+=(_,_)=>controller.Executable=executable.Text ?? "";
-        logPath.TextChanged+=(_,_)=>controller.LogPath=logPath.Text ?? "";
+        executable.PropertyChanged+=(_,e)=> {if(e.Property==TextBox.TextProperty) controller.Executable=executable.Text ?? "";};
+        logPath.PropertyChanged+=(_,e)=> {if(e.Property==TextBox.TextProperty) controller.LogPath=logPath.Text ?? "";};
         authorityLog.IsCheckedChanged+=(_,_)=> {controller.AuthorityLog=authorityLog.IsChecked==true;Refresh();};
         reveal.IsCheckedChanged+=(_,_)=>controller.Reveal=reveal.IsChecked==true;
         observer.SelectionChanged+=(_,_)=>controller.Observer=observer.SelectedItem as string;

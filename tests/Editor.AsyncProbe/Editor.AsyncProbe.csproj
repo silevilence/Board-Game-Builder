@@ -1,0 +1,5 @@
+<Project Sdk="Microsoft.NET.Sdk">
+  <PropertyGroup><TargetFramework>net10.0-windows</TargetFramework></PropertyGroup>
+  <ItemGroup><ProjectReference Include="../../src/Editor.Core/Editor.Core.csproj" /></ItemGroup>
+  <ItemGroup><None Update="Editor.AsyncProbe.plugin.json" CopyToOutputDirectory="PreserveNewest" /></ItemGroup>
+</Project>

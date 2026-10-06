@@ -5,7 +5,35 @@ namespace Engine.Tests;
 
 public static class CordiTests
 {
-    public static void Run()=>Verify().WaitAsync(TimeSpan.FromSeconds(45)).GetAwaiter().GetResult();
+    public static void Run()=>RunAll().WaitAsync(TimeSpan.FromSeconds(50)).GetAwaiter().GetResult();
+    private static async Task RunAll() {await Verify();await InitializationTimeouts();}
+    private static async Task InitializationTimeouts()
+    {
+        await using var app=new EditorApplication();var cancelled=false;var released=false;
+        app.Install(new("cooperative",1,[],[],scope=>scope.Own(new Cleanup(()=>released=true)))
+        {
+            InitializeAsync=async scope=> {try {await Task.Delay(Timeout.Infinite,scope.Cancellation);} finally {cancelled=true;}}
+        });
+        try {await app.Enable("cooperative");throw new Exception("Initialization did not time out");} catch(TimeoutException) { }
+        Check.That(cancelled && released,"Timed-out initializer blocked cleanup");
+        var finish=new TaskCompletionSource(TaskCreationOptions.RunContinuationsAsynchronously);Task? late=null;var lateResourceDisposed=false;
+        app.Install(new("late",1,["late"],[],_=>{})
+        {
+            InitializeAsync=scope=>late=Finish(scope)
+        });
+        async Task Finish(EditorPluginScope scope) {await finish.Task;scope.Own(new Cleanup(()=>lateResourceDisposed=true));scope.Provide("late",new object());}
+        try {await app.Enable("late");throw new Exception("Initialization did not time out");} catch(TimeoutException) { }
+        finish.SetResult();try {await late!;} catch(OperationCanceledException) { }
+        Check.That(lateResourceDisposed && app.Root.Get<object>("late")==null,"Late initializer resurrected resources");
+        app.Install(new("recovery",1,[],[],_=>{}));await app.Enable("recovery");await app.Disable("recovery");
+        var teardown=new TaskCompletionSource(TaskCreationOptions.RunContinuationsAsynchronously);
+        app.Install(new("atomic-uninstall",1,[],[],scope=>scope.Context.Effect(()=> (Func<Task>)(()=>teardown.Task))));
+        await app.Enable("atomic-uninstall");
+        var removing=app.Uninstall("atomic-uninstall");var reenabling=app.Enable("atomic-uninstall");
+        teardown.SetResult();await removing;await Reject(()=>reenabling,"Unknown plugin");
+        Check.That(!app.Catalog.Any(p=>p.Id=="atomic-uninstall"),"Concurrent enable revived an uninstalled plugin");
+        Check.That(!app.States.Any(p=>p.Id=="atomic-uninstall"),"Unknown plugin created an orphan status row");
+    }
     private static async Task Verify()
     {
         await using var app=new EditorApplication();

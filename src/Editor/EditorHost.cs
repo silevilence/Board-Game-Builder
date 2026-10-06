@@ -11,6 +11,7 @@ public sealed class EditorHost
     public Window Window { get; }=new() {Title="Board Game Builder · Editor",Width=1400,Height=900};
     public Task Ready { get; private set; }=Task.CompletedTask;
     private bool closing;
+    private bool checkingClose;
     public EditorHost(string? initial=null,bool baseOnly=false)
     {
         Window.Content=new TextBlock {Text="正在加载编辑器…"};
@@ -19,8 +20,11 @@ public sealed class EditorHost
         {
             if(closing) return;
             e.Cancel=true;
+            if(checkingClose) return;
+            checkingClose=true;
             try {if(await Application.RequestShutdown()) {closing=true;Window.Close();}}
-            catch(Exception error) {Window.Content=new TextBlock {Text="关闭失败："+error.Message};}
+            catch(Exception error) {Application.Service<WorkspaceShell>("workspace").Report("关闭失败："+error.Message);}
+            finally {checkingClose=false;}
         };
     }
     private async Task Start(string? initial,bool baseOnly)

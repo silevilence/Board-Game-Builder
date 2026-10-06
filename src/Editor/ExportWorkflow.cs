@@ -23,7 +23,7 @@ public sealed class ExportWorkflow(DocumentWorkspace documents,EditorContributio
             ModuleDocument.Open(doc.DirectoryPath).Save(temp);
             var player=ReleasePath;var output=Destination;
             var steps=contributions.Entries.Where(e=>e.Kind=="export-step").ToArray();
-            var reporter=new Progress<string>(text=> {Progress=text;Changed?.Invoke();});
+            var reporter=new Progress<string>(text=> {if(Running) {Progress=text;Changed?.Invoke();}});
             await Task.Run(()=>
             {
                 if(write) PlayerDistribution.Export(player,temp,output,staging=>Dispatcher.UIThread.Invoke(()=>
@@ -39,6 +39,11 @@ public sealed class ExportWorkflow(DocumentWorkspace documents,EditorContributio
             Progress=write?"导出完成。双击输出目录中的 Play.exe。":"依赖预检通过。";return true;
         }
         catch(Exception error) {Progress="导出失败："+error.Message;return false;}
-        finally {if(Directory.Exists(temp)) Directory.Delete(temp,true);Running=false;Changed?.Invoke();}
+        finally
+        {
+            try {if(Directory.Exists(temp)) Directory.Delete(temp,true);}
+            catch(Exception error) {Progress+=" 临时文件清理失败："+error.Message;}
+            finally {Running=false;Changed?.Invoke();}
+        }
     }
 }

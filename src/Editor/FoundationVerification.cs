@@ -1,5 +1,6 @@
 using Avalonia.Controls;
 using Avalonia.VisualTree;
+using Avalonia.LogicalTree;
 using BoardGame.Kernel;
 
 namespace BoardGame.Editor;
@@ -58,10 +59,18 @@ internal static class FoundationVerification
                 for(var cycle=0;cycle<3;cycle++)
                 {
                     await app.Enable("probe.command");
+                    if(cycle==0)
+                    {
+                        app.Install(new("probe.alias",1,[],["commands"],scope=>commands.Register(scope,new("probe.alias","冲突别名",()=>Task.CompletedTask,()=>true,"Control+F8"))));
+                        try {await app.Enable("probe.alias");throw new Exception("Shortcut alias conflict ignored");}
+                        catch(InvalidDataException e) when(e.Message.Contains("Shortcut conflict")) { }
+                    }
                     var button=app.Service<WorkspaceShell>("workspace").Toolbar.Children.OfType<Button>().Single(b=>Equals(b.Content,"验证命令"));
                     button.Command!.Execute(null);
                     host.Window.RaiseEvent(new Avalonia.Input.KeyEventArgs {RoutedEvent=Avalonia.Input.InputElement.KeyDownEvent,Key=Avalonia.Input.Key.F8,KeyModifiers=Avalonia.Input.KeyModifiers.Control});
                     if(executions!=(cycle+1)*2) throw new Exception("Button/shortcut differ or duplicate");
+                    app.Service<WorkspaceShell>("workspace").Toolbar.Children.OfType<TextBox>().Single().RaiseEvent(new Avalonia.Input.KeyEventArgs {RoutedEvent=Avalonia.Input.InputElement.KeyDownEvent,Key=Avalonia.Input.Key.F8,KeyModifiers=Avalonia.Input.KeyModifiers.Control});
+                    if(executions!=(cycle+1)*2) throw new Exception("Author shortcut ran from text editor");
                     enabled=false;commands.Refresh();
                     if(button.Command.CanExecute(null)) throw new Exception("Command enabled state differs");
                     await commands.Execute("probe.command");
@@ -69,6 +78,13 @@ internal static class FoundationVerification
                     enabled=true;await app.Disable("probe.command");
                     if(commands.Items.Count!=commandBaseline) throw new Exception("Command registration survived");
                 }
+                var pendingCommand=new TaskCompletionSource(TaskCreationOptions.RunContinuationsAsynchronously);
+                app.Install(new("probe.busy",1,[],["commands"],scope=>commands.Register(scope,new("probe.busy","忙命令",()=>pendingCommand.Task,()=>true))));
+                await app.Enable("probe.busy");var runningCommand=commands.Execute("probe.busy");
+                try {await app.Disable("probe.busy");throw new Exception("Running command was unloaded");}
+                catch(InvalidOperationException e) when(e.Message.Contains("正在执行")) { }
+                finally {pendingCommand.SetResult();await runningCommand;}
+                await app.Disable("probe.busy");
                 var documents=app.Service<DocumentWorkspace>("documents");
                 foreach(var id in new[]{"author.resources","author.yaml","author.prototypes","author.media","author.turns"})
                 {await app.Enable(id);await app.Reload(id);}
@@ -77,6 +93,27 @@ internal static class FoundationVerification
                 documents.Select("entities","probe-instance");
                 await app.Reload("author.media");await app.Reload("author.prototypes");
                 if(documents.Selection!=("entities","probe-instance")) throw new Exception("Shared selection lost");
+                T Panel<T>(string id) where T:Control=>(T)app.Service<WorkspaceShell>("workspace").Tabs.Items.OfType<TabItem>().Single(t=>Equals(t.Tag,id)).Content!;
+                var turnInput=Panel<TurnPanel>("author.turns").GetLogicalDescendants().OfType<TextBox>().First();
+                var turnDraft=turnInput.Text+"\n";turnInput.Text=turnDraft;
+                await app.Reload("author.turns");
+                if(Panel<TurnPanel>("author.turns").GetLogicalDescendants().OfType<TextBox>().First().Text!=turnDraft) throw new Exception("Seat draft lost with panel");
+                documents.Undo();documents.Redo();
+                if(Panel<TurnPanel>("author.turns").GetLogicalDescendants().OfType<TextBox>().First().Text!=turnDraft) throw new Exception("Seat draft Undo/Redo failed");
+                if(await documents.CanLeave(()=>Task.FromResult(UnsavedChoice.Cancel))) throw new Exception("Field draft Cancel failed");
+                try {documents.Save();throw new Exception("Unapplied field draft was silently saved");} catch(InvalidOperationException e) when(e.Message.Contains("字段草稿")) { }
+                documents.DiscardForm("席位与阶段");
+                var component=Panel<AuthorPanel>("author.prototypes").GetLogicalDescendants().OfType<TextBox>().Single(t=>t.AcceptsReturn);
+                component.Text="value: 7\n";await app.Reload("author.prototypes");
+                if(Panel<AuthorPanel>("author.prototypes").GetLogicalDescendants().OfType<TextBox>().Single(t=>t.AcceptsReturn).Text!="value: 7\n") throw new Exception("Component draft lost");
+                document.EditConfiguration(c=>c["version"]="changed");
+                try {documents.ApplyForm("组件 YAML/entities/probe-instance/properties",doc=>Authoring.SetComponent(doc,"entities","probe-instance","properties",new() {["value"]=7}));throw new Exception("Stale YAML silently overwrote changes");}
+                catch(InvalidOperationException e) when(e.Message.Contains("草稿")) { }
+                document.Undo();documents.DiscardForm("组件 YAML/entities/probe-instance/properties");
+                var mediaInput=Panel<MediaInspector>("author.media").GetLogicalDescendants().OfType<TextBox>().Single(t=>t.AcceptsReturn);
+                mediaInput.Text="1\n2\ninvalid";await app.Reload("author.media");
+                if(Panel<MediaInspector>("author.media").GetLogicalDescendants().OfType<TextBox>().Single(t=>t.AcceptsReturn).Text!="1\n2\ninvalid") throw new Exception("Unparsed media draft lost");
+                documents.DiscardForm("媒介字段/entities/probe-instance/dice");
                 _=document.Snapshot();
                 for(var cycle=0;cycle<3;cycle++)
                 {
@@ -114,7 +151,11 @@ internal static class FoundationVerification
                 if(app.Root.Fiber.DisposableCount!=0) throw new Exception("Root effects leaked");
             }
             catch(Exception error) {errors.Add(error.ToString());}
-            finally {File.WriteAllText(Path.GetFullPath(output),Wire.Json(new {success=errors.Count==0,errors}));host.Window.Close();}
+            finally
+            {
+                try {await host.Application.DisposeAsync();} catch(Exception error) {errors.Add(error.ToString());}
+                File.WriteAllText(Path.GetFullPath(output),Wire.Json(new {success=errors.Count==0,errors}));host.Window.Close();
+            }
         };
         return host.Window;
     }

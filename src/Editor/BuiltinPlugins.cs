@@ -16,7 +16,7 @@ public static class BuiltinPlugins
         },true));
         app.Install(new("base.commands",1,["commands","contributions"],["workspace"],scope=>
         {
-            var commands=new EditorCommands();scope.Provide("commands",commands);
+            var commands=new EditorCommands(shortcut=>Avalonia.Input.KeyGesture.Parse(shortcut).ToString());scope.Provide("commands",commands);
             scope.Provide("contributions",new EditorContributions());
             scope.Own(new CommandSurface(window,scope.Service<WorkspaceShell>("workspace"),commands));
         },true));

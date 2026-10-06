@@ -30,8 +30,8 @@ public sealed class ScriptPanel : UserControl
         // Editing immediately joins document undo/save/dirty handling; loading is guarded.
         var loading=false;
         void Sync() { if(loading) return; loading=true; try { Refresh(); } finally {loading=false;} }
-        rules.TextChanged+=(_,_)=> { if(!loading && loaded!=null) loaded.EditText(rulePath,rules.Text ?? ""); };
-        cpu.TextChanged+=(_,_)=> { if(!loading && loaded!=null) loaded.EditText(cpuPath,cpu.Text ?? ""); };
+        rules.PropertyChanged+=(_,e)=> { if(e.Property==TextBox.TextProperty && !loading && loaded!=null) loaded.EditText(rulePath,rules.Text ?? ""); };
+        cpu.PropertyChanged+=(_,e)=> { if(e.Property==TextBox.TextProperty && !loading && loaded!=null) loaded.EditText(cpuPath,cpu.Text ?? ""); };
         apply.Click+=(_,_)=>diagnostics.Text="脚本修改已进入文档；保存写入模块。配置变化需要重开对局。";
         hot.Click+=async (_,_)=> {
             hot.IsEnabled=false;

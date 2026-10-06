@@ -16,7 +16,12 @@ internal static class ExportVerification
                 await host.Ready;var app=host.Application;var documents=app.Service<DocumentWorkspace>("documents");
                 documents.Location=Path.Combine(Path.GetFullPath(output),"author");
                 var workflow=app.Service<ExportWorkflow>("exports");workflow.ReleasePath=release;workflow.Destination=Path.Combine(Path.GetFullPath(output),"export");
-                app.Install(new("probe.export-step",1,[],["contributions"],scope=>scope.Service<EditorContributions>("contributions").Register(scope,"export-step","probe",(Action<ExportContext>)(c=>File.WriteAllText(Path.Combine(c.Destination,"extra.txt"),"probe")))));
+                FileStream? held=null;string? temporary=null;
+                app.Install(new("probe.export-step",1,[],["contributions"],scope=>scope.Service<EditorContributions>("contributions").Register(scope,"export-step","probe",(Action<ExportContext>)(c=>
+                {
+                    File.WriteAllText(Path.Combine(c.Destination,"extra.txt"),"probe");temporary=c.ModuleDirectory;
+                    held=File.Open(Path.Combine(temporary,"module.json"),FileMode.Open,FileAccess.Read,FileShare.Read);
+                }))));
                 await app.Enable("probe.export-step");
                 var exporting=workflow.Run(true);
                 foreach(var id in new[]{"probe.export-step","author.export"})
@@ -24,7 +29,12 @@ internal static class ExportVerification
                     try {await app.Disable(id);throw new Exception("Running export was unloaded");}
                     catch(InvalidOperationException e) when(e.Message.Contains("执行")) { }
                 }
-                if(!await exporting) throw new Exception(workflow.Progress);
+                try
+                {
+                    if(!await exporting) throw new Exception(workflow.Progress);
+                    if(workflow.Running || !workflow.Progress.Contains("临时文件清理失败")) throw new Exception("Cleanup failure did not restore export state");
+                }
+                finally {held?.Dispose();if(temporary!=null && Directory.Exists(temporary)) Directory.Delete(temporary,true);}
                 if(workflow.Destination!=Path.Combine(Path.GetFullPath(output),"export")) throw new Exception("Export destination changed during execution");
                 if(!File.Exists(Path.Combine(workflow.Destination,"extra.txt"))) throw new Exception("Export step missing");
                 await app.Disable("probe.export-step");
