@@ -71,7 +71,8 @@ public sealed class SessionController : IDisposable
         try
         {
             var reply=await active.SendAsync(request);if(current!=generation) return null;
-            Reply=reply;Frame=reply.Frame;Status=reply.Message.Length>0?reply.Message:reply.Result?.Reason ?? "";return reply;
+            Reply=reply;Frame=reply.Frame;Observer=Frame.View.Seat;Reveal=reply.AuthorityState!=null;
+            Status=reply.Message.Length>0?reply.Message:reply.Result?.Reason ?? "";return reply;
         }
         catch(Exception error) {if(current==generation) {timer.Stop();Status="试玩故障："+error.Message;}return null;}
         finally

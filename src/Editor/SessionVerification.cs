@@ -24,6 +24,14 @@ internal static class SessionVerification
                     foreach(var seat in sessions.CpuSeats.Keys.ToArray()) sessions.CpuSeats[seat]=true;
                     await sessions.Start();await sessions.Send(new("pause"));
                     if(sessions.Frame==null || !sessions.Frame.Paused) throw new Exception(sessions.Status);
+                    foreach(var seat in documents.Current!.Snapshot().Initial.Seats)
+                    {
+                        var observed=await sessions.Send(new("observe",Seat:seat.Id));
+                        if(observed?.Frame.View.Seat!=seat.Id || observed.AuthorityState!=null) throw new Exception("Observer projection is incorrect");
+                    }
+                    var authority=await sessions.Send(new("observe",Seat:sessions.Observer,Authority:true));
+                    if(authority?.AuthorityState==null) throw new Exception("Explicit authority inspection unavailable");
+                    await sessions.Send(new("observe",Seat:documents.Current.Snapshot().Initial.Seats[0].Id,Authority:false));
                     var author=documents.Current!;
                     author.EditText("rules.lua",author.Text("rules.lua")+"\n-- m25 rules reload\n");
                     await app.Reload("author.scripts");

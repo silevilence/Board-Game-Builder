@@ -15,6 +15,7 @@ public sealed class PlayPanel : UserControl,IDisposable
     private readonly TextBox seed;
     private readonly StackPanel seats=new() {Orientation=Avalonia.Layout.Orientation.Horizontal};
     private readonly ComboBox observer=new() {Width=100};
+    private readonly CheckBox reveal;
     private readonly Dictionary<string,CheckBox> seatControls=[];
     private readonly Button start=new() {Content="开始试玩"};
     public PlayPanel(EditorPluginScope scope)
@@ -26,7 +27,7 @@ public sealed class PlayPanel : UserControl,IDisposable
         var executable=new TextBox {Text=controller.Executable,Width=260,PlaceholderText="调试 Player.exe 路径"};
         var logPath=new TextBox {Text=controller.LogPath,Width=260};
         var authorityLog=new CheckBox {Content="显示作者命令与 CPU 诊断（含私有数据）",IsChecked=controller.AuthorityLog};
-        var reveal=new CheckBox {Content="作者全信息调试（包含隐藏真值）",IsChecked=controller.Reveal};
+        reveal=new CheckBox {Content="作者全信息调试（包含隐藏真值）",IsChecked=controller.Reveal};
         var stop=new Button {Content="停止试玩"};
         var top=new WrapPanel {Children={new TextBlock {Text="种子"},seed,seats,external,executable,start,stop}};
         seed.TextChanged+=(_,_)=>controller.Seed=seed.Text ?? "";
@@ -83,6 +84,7 @@ public sealed class PlayPanel : UserControl,IDisposable
             }
             var selected=controller.Observer;observer.ItemsSource=controller.CpuSeats.Keys.ToArray();observer.SelectedItem=selected;
         }
+        observer.SelectedItem=controller.Observer;reveal.IsChecked=controller.Reveal;
         actions.Children.Clear();start.IsEnabled=!controller.Busy;
         Table.InputEnabled=controller.CanInput;actions.IsEnabled=!controller.Busy;status.Text=controller.Status;
         var reply=controller.Reply;

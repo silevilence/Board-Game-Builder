@@ -102,3 +102,9 @@ SessionController 由必需基础插件管理 CPU 调度与会话生命周期，
 每轮图形设备和原生子窗口计数均回到 0。编辑与试玩从同一视口服务创建 InteractiveTable。
 补齐失焦／分离时释放自身鼠标捕获、取消输入，以及渲染缩放变化时更新相机并取消旧手势。
 freecell-shortcuts、layouts、interaction、view 回归通过，空当接龙合法通关快捷操作保持有效。
+
+## 调试面板验证
+
+`artifacts/m25/debug-panels.json`：两种模式按各席位观察时不返回权威状态，显式全信息观察才返回；
+关闭全信息后恢复普通席位投影。面板重建仍显示同一暂停会话，非法动作、CPU 单步与回放通过。
+observer/timeline/debug-play/debug-external 回归通过；控制器同步当前观察身份与显式全信息标记。
