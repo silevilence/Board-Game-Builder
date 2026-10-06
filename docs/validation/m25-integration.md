@@ -1,0 +1,44 @@
+# M2.5 接入验证
+
+实施基线：`bc73d0a35e1640aedd885e66ff7f34c3e1af2159`。日期：2026-10-06。
+
+## 版本与接入选择
+
+用户确认直接升级 Avalonia，目标为 12.1.1，与 CordiSharp.Plugins.Avalonia 0.2.0 对齐。
+CordiSharp 核心固定 0.2.0；NuGet 包元数据记录源码提交
+`7b6cde4f43013ae4ff026b5f7bea5e5f9dd9300f`。
+上游参考：[CordiSharp](https://github.com/oniemiddle/CordiSharp)。
+本地查阅的上游 HEAD 为 `01f121728be1455101e260d69ffcc27c8599e3fa`，不将 HEAD 等同于发布包源码。
+
+项目原 Avalonia 11.3.10 无法直接满足扩展对 12.1.1 的依赖。
+保留 11.3.10 加薄 UI 适配曾作为候选，用户明确选择升级后不再沿该路径实施。
+MonoGame 保持 3.8.4.1，Windows NativeControlHost 与原生视口继续复用。
+
+SDK 固定 10.0.112，其 Roslyn 为 5.0；CordiSharp 0.2.0 附带分析器／生成器引用 Roslyn 5.6，
+导致 CS9057。通过 Directory.Build.targets 精确排除这两个可选构建工具；
+不降级诊断等级，不屏蔽其他分析器，插件使用显式注册／注入及运行时反射。
+
+## 可重复验证入口
+
+`tests/Editor.Compatibility` 是真实 Avalonia 窗口与 MonoGame 图形设备探针。
+运行参数为输出 JSON 路径；包含两个有依赖的插件、三轮启停、加载失败清理、
+缺失依赖等待状态以及图形设备计数。探针与正式入口使用同一 Windows 应用清单。
+
+```powershell
+dotnet restore tests/Editor.Compatibility --locked-mode
+dotnet build tests/Editor.Compatibility -c Release --no-restore
+./tests/Editor.Compatibility/bin/Release/net10.0-windows/Editor.Compatibility.exe artifacts/m25/compatibility.json
+```
+
+## 接入结果
+
+升级后的 Release 全解决方案构建通过，0 警告、0 错误。
+将 9 处弃用的 TextBox.Watermark 替换为 PlaceholderText，未屏蔽弃用诊断。
+锁定模式还原通过。`artifacts/m25/compatibility-v12.json`：3 轮、15 个实际绘制帧、
+结束时 0 个图形设备、空失败列表；包含 UI 扩展槽位注销与加载失败回滚。
+正式 Editor 的 `--smoke` 探针另通过三轮视口重建和长标签纹理复用检查。
+面板工厂在 RegisterSlot 前执行，使用户工厂失败不会在上游槽位目录留下半注册项。
+
+结论：采用 Avalonia 12.1.1 + CordiSharp / CordiSharp.Plugins.Avalonia 0.2.0。
+无需替换渲染管线，可进入正式编辑器迁移。后续完整工作流及发行物回归单独记录。
+

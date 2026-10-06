@@ -9,7 +9,7 @@ public sealed class AuthorPanel : UserControl
     private readonly PluginContext context;
     private readonly ComboBox collection=new() {ItemsSource=new[]{"entities","prototypes"},SelectedIndex=0,Width=120};
     private readonly ComboBox entity=new() {Width=160};
-    private readonly TextBox id=new() {Watermark="新标识",Width=130};
+    private readonly TextBox id=new() {PlaceholderText="新标识",Width=130};
     private readonly TextBox type=new() {Text="properties",Width=130};
     private readonly TextBox yaml=new() {AcceptsReturn=true,TextWrapping=Avalonia.Media.TextWrapping.NoWrap};
     private readonly TextBlock message=new() {TextWrapping=Avalonia.Media.TextWrapping.Wrap};

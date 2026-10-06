@@ -1,0 +1,9 @@
+<Project>
+  <!-- CordiSharp 0.2.0 ships Roslyn 5.6 analyzers; this repo uses SDK 10.0.112 / Roslyn 5.0.
+       Runtime reflection and explicit injection do not require its optional generators. -->
+  <Target Name="UseCordiSharpRuntimeWithoutGenerators" BeforeTargets="CoreCompile">
+    <ItemGroup>
+      <Analyzer Remove="@(Analyzer)" Condition="'%(Analyzer.Filename)' == 'CordiSharp.Analyzers' Or '%(Analyzer.Filename)' == 'CordiSharp.Generators'" />
+    </ItemGroup>
+  </Target>
+</Project>

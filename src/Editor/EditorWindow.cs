@@ -8,7 +8,7 @@ namespace BoardGame.Editor;
 public sealed partial class EditorWindow : Window
 {
     private ModuleDocument? document;
-    private readonly TextBox location=new() { Width=360,Watermark="模块目录（另存为请选择新目录）" };
+    private readonly TextBox location=new() { Width=360,PlaceholderText="模块目录（另存为请选择新目录）" };
     private readonly TextBox source=new() { AcceptsReturn=true,FontFamily=FontFamily.Parse("Consolas"),TextWrapping=TextWrapping.NoWrap };
     private readonly TextBlock status=new() { TextWrapping=TextWrapping.Wrap,Margin=new Thickness(8) };
     private readonly TabControl tabs=new();

@@ -14,7 +14,7 @@ public sealed class MediaInspector : UserControl
     private readonly ComboBox types=new() {ItemsSource=Defaults.Keys.ToArray(),SelectedIndex=0};
     private readonly StackPanel fields=new() {Spacing=8};
     private readonly TextBlock status=new() {TextWrapping=Avalonia.Media.TextWrapping.Wrap};
-    private readonly TextBox newId=new() {Watermark="新实体标识"};
+    private readonly TextBox newId=new() {PlaceholderText="新实体标识"};
     private readonly List<Action<JsonObject>> readers=[];
     private JsonObject? displayed;
     public static readonly Dictionary<string,string> Defaults=new() {
@@ -32,7 +32,7 @@ public sealed class MediaInspector : UserControl
         Button("读取 / 添加组件",LoadFields);
         Button("应用字段",()=> { var data=new JsonObject(); foreach(var read in readers) read(data); Authoring.ApplyFields(Document,Collection,Identity,Component,displayed,data); _=Document.Snapshot(); LoadFields(); });
         Button("移除覆盖 / 组件",()=>Document.EditConfiguration(c=> { var array=Authoring.Find(c,Collection,Identity)["components"]!.AsArray(); var item=array.FirstOrDefault(c=>c!["type"]!.GetValue<string>()==Component); if(item!=null) array.Remove(item); }));
-        var property=new TextBox {Watermark="新数值属性名"}; top.Children.Add(property);
+        var property=new TextBox {PlaceholderText="新数值属性名"}; top.Children.Add(property);
         Button("添加数值字段",()=> { if(string.IsNullOrWhiteSpace(property.Text)) throw new InvalidDataException("属性名不能为空"); Field(property.Text,JsonValue.Create(0)); });
         var panel=new DockPanel {Margin=new Thickness(10)}; DockPanel.SetDock(top,Dock.Top); DockPanel.SetDock(status,Dock.Bottom);
         panel.Children.Add(top); panel.Children.Add(status); panel.Children.Add(new ScrollViewer {Content=fields}); Content=panel;

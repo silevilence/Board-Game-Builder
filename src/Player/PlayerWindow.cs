@@ -11,8 +11,8 @@ namespace BoardGame.Player;
 
 public sealed partial class PlayerWindow : Window
 {
-    private readonly TextBox path=new() { Width=340, Watermark="模块目录或 .bgm 路径" };
-    private readonly TextBox seed=new() { Width=90, Text="42", Watermark="种子" };
+    private readonly TextBox path=new() { Width=340, PlaceholderText="模块目录或 .bgm 路径" };
+    private readonly TextBox seed=new() { Width=90, Text="42", PlaceholderText="种子" };
     private readonly ComboBox seat=new() { Width=130 };
     private readonly TextBlock message=new() { Text="加载模块，选择真人席位，其余席位由 CPU 控制。",TextWrapping=TextWrapping.Wrap,Margin=new Thickness(12) };
     private readonly ContentControl play=new();

@@ -7,8 +7,8 @@ public sealed class ExportPanel : UserControl
 {
     public ExportPanel(Func<ModuleDocument?> document,PluginHost plugins)
     {
-        var release=new TextBox {Text=EditorPaths.InWorkspace("artifacts/player-release-m2"),Watermark="官方 Player 发行目录"};
-        var destination=new TextBox {Text=EditorPaths.InWorkspace("artifacts/export-m2"),Watermark="新的输出目录"};
+        var release=new TextBox {Text=EditorPaths.InWorkspace("artifacts/player-release-m2"),PlaceholderText="官方 Player 发行目录"};
+        var destination=new TextBox {Text=EditorPaths.InWorkspace("artifacts/export-m2"),PlaceholderText="新的输出目录"};
         var progress=new TextBlock {TextWrapping=Avalonia.Media.TextWrapping.Wrap};
         var preflight=new Button {Content="依赖预检"}; var export=new Button {Content="保存并导出独立游戏"}; var bar=new ProgressBar {IsIndeterminate=true,IsVisible=false};
         Content=new StackPanel {Margin=new Thickness(20),Spacing=12,Children={new TextBlock {Text="预编译 Player（导出不调用 SDK）"},release,new TextBlock {Text="输出目录（必须尚不存在）"},destination,preflight,export,bar,progress}};
