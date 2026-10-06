@@ -14,6 +14,12 @@ public static class BuiltinPlugins
             scope.Provide("panels",new PanelContributions(app.Root.Get<AvaloniaUIService>("avalonia")!));
             scope.Own(new Cleanup(()=>window.Content=null));
         },true));
+        app.Install(new("base.commands",1,["commands","contributions"],["workspace"],scope=>
+        {
+            var commands=new EditorCommands();scope.Provide("commands",commands);
+            scope.Provide("contributions",new EditorContributions());
+            scope.Own(new CommandSurface(window,scope.Service<WorkspaceShell>("workspace"),commands));
+        },true));
         app.Install(new("base.documents",1,["documents"],["workspace"],scope=>
         {
             var documents=new DocumentWorkspace();scope.Own(documents);scope.Provide("documents",documents);

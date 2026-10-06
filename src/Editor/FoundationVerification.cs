@@ -47,6 +47,22 @@ internal static class FoundationVerification
                 try {await app.Enable("probe.duplicate");throw new Exception("Duplicate accepted");}
                 catch(InvalidDataException e) when(e.Message.Contains("Duplicate panel")) { }
                 if(panels.Count!=baseline) throw new Exception("Unrelated panel removed");
+                var commands=app.Service<EditorCommands>("commands");var executions=0;var enabled=true;
+                app.Install(new("probe.command",1,[],["commands"],scope=>commands.Register(scope,new("probe.command","验证命令",()=> {executions++;return Task.CompletedTask;},()=>enabled,"Ctrl+F8"))));
+                for(var cycle=0;cycle<3;cycle++)
+                {
+                    await app.Enable("probe.command");
+                    var button=app.Service<WorkspaceShell>("workspace").Toolbar.Children.OfType<Button>().Single(b=>Equals(b.Content,"验证命令"));
+                    button.Command!.Execute(null);
+                    host.Window.RaiseEvent(new Avalonia.Input.KeyEventArgs {RoutedEvent=Avalonia.Input.InputElement.KeyDownEvent,Key=Avalonia.Input.Key.F8,KeyModifiers=Avalonia.Input.KeyModifiers.Control});
+                    if(executions!=(cycle+1)*2) throw new Exception("Button/shortcut differ or duplicate");
+                    enabled=false;commands.Refresh();
+                    if(button.Command.CanExecute(null)) throw new Exception("Command enabled state differs");
+                    await commands.Execute("probe.command");
+                    if(executions!=(cycle+1)*2) throw new Exception("Disabled command ran");
+                    enabled=true;await app.Disable("probe.command");
+                    if(commands.Items.Count!=0) throw new Exception("Command registration survived");
+                }
                 try {await app.Disable("base.documents");throw new Exception("Required plugin was disabled");}
                 catch(InvalidOperationException e) when(e.Message.Contains("必需")) { }
                 await app.DisposeAsync();
