@@ -28,6 +28,7 @@ public sealed class EditorCommands
 }
 
 public sealed record OwnedContribution(string Owner,string Kind,string Id,object Value);
+public sealed record ExportContext(string ModuleDirectory,string Destination);
 public sealed class EditorContributions
 {
     private readonly List<OwnedContribution> entries=[];

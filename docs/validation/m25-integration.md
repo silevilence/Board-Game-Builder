@@ -128,3 +128,12 @@ observer/timeline/debug-play/debug-external 回归通过；控制器同步当前
 活动引用租约提前拒绝卸载；刻意保留扩展对象会报告强引用而不误报回收成功。
 上游同步 GC 检查会阻塞 Avalonia 延迟清理，改为先请求卸载，再让 UI 队列完成工作，
 在有限重试内检查真实回收；失败仍明确区分“功能已注销”与“程序集未回收”。
+
+## 最终迁移核对
+
+旧 PluginHost、PluginContext、IEditorPlugin 及其旧生命周期测试已删除；对应覆盖在 CordiTests
+和真实 FoundationVerification 中执行。基础和可选插件共用 CordiSharp 注册/释放路径。
+`artifacts/m25/foundation-final.json` 通过：仅基础插件即可持有文档并执行命令，
+可选失败不破坏工作区；所有作者面板重建、草稿/Undo、保存重开、视口清理均通过。
+解决方案构建及项目边界检查通过，新增边界禁止 CordiSharp 进入共享 Runtime/Player。
+使用说明和开发契约在 docs/editor-guide.md、docs/editor-plugins.md；历史需求文件未修改。

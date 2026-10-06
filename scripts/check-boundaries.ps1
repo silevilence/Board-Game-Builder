@@ -14,5 +14,8 @@ Get-ChildItem "$PSScriptRoot/../src" -Filter *.csproj -Recurse | ForEach-Object 
  if ($_.BaseName -in @('Kernel','Kernel.Abstractions')) {
   if ($project.SelectNodes('//PackageReference').Count) { throw 'Kernel must remain dependency free' }
  }
+ foreach ($package in $project.SelectNodes('//PackageReference')) {
+  if ($package.Include -like 'CordiSharp*' -and $_.BaseName -notin @('Editor','Editor.Core')) { throw 'CordiSharp must remain editor-only' }
+ }
 }
 Write-Output 'Project boundaries passed.'
