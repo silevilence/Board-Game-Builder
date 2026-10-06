@@ -55,3 +55,9 @@ dotnet build tests/Editor.Compatibility -c Release --no-restore
 A→B→C 依赖链按反向释放、正向恢复；B 初始化失败后本次链全部回滚，独立插件保留。
 三轮重载后事件仅触发一次；缺失能力显示 Waiting 及缺失名称，循环、重复能力、API 不兼容明确失败。
 活动引用 guard 在任何销毁发生前检查，拒绝停用后仍保留实例；引用解除后可停用。
+
+## 面板贡献验证
+
+`artifacts/m25/panels.json` 通过：独立面板三轮启停、重复 ID 拒绝、第二个工厂失败时
+撤销该插件已生成的第一个面板，基础设置和插件管理面板仍在。
+工厂、挂载、移除与 IDisposable 清理均在 UI 线程执行，清理令牌幂等。

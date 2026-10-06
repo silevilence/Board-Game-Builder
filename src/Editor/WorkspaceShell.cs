@@ -27,16 +27,19 @@ public sealed class PanelContributions(AvaloniaUIService ui)
     {
         ui.OnUi(()=>
         {
+            if(string.IsNullOrWhiteSpace(id) || string.IsNullOrWhiteSpace(title)) throw new InvalidDataException("Panel ID and title are required");
             if(!ids.Add(id)) throw new InvalidDataException("Duplicate panel: "+id);
             Control? control=null;
+            Cleanup? cleanup=null;
             try
             {
-                control=factory();
+                control=factory() ?? throw new InvalidDataException("Panel factory returned null: "+id);
                 var tab=new TabItem {Header=title,Content=control,Tag=id};
-                owner.Own(new Cleanup(()=> {ids.Remove(id);(control as IDisposable)?.Dispose();tab.Content=null;}));
+                cleanup=new Cleanup(()=> {ids.Remove(id);(control as IDisposable)?.Dispose();tab.Content=null;});
+                owner.Own(cleanup);
                 ui.RegisterSlot(owner.Context,"editor.panels",new FuncDataTemplate<object>((_,_)=>null),()=>new[]{tab});
             }
-            catch {ids.Remove(id);(control as IDisposable)?.Dispose();throw;}
+            catch {if(cleanup!=null) cleanup.Dispose();else {ids.Remove(id);(control as IDisposable)?.Dispose();}throw;}
         });
     }
 }

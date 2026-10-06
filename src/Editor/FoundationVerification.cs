@@ -21,6 +21,32 @@ internal static class FoundationVerification
                 try {await app.Enable("probe.optional");throw new Exception("Missing failure");}
                 catch(Exception e) when(e.Message=="optional probe failure") { }
                 if(!ReferenceEquals(document,app.Service<DocumentWorkspace>("documents").Current)) throw new Exception("Optional failure changed document");
+                var panels=app.Service<PanelContributions>("panels");
+                var baseline=panels.Count;var released=0;
+                app.Install(new("probe.panel",1,[],["panels"],scope=>
+                {
+                    scope.Own(new Cleanup(()=>released++));
+                    scope.Service<PanelContributions>("panels").Register(scope,"probe.panel","示例面板",()=>new TextBlock {Text="Independent panel"});
+                }));
+                for(var cycle=0;cycle<3;cycle++)
+                {
+                    await app.Enable("probe.panel");
+                    if(panels.Count!=baseline+1) throw new Exception("Duplicate or missing panel");
+                    await app.Disable("probe.panel");
+                    if(panels.Count!=baseline || released!=cycle+1) throw new Exception("Panel effects leaked");
+                }
+                app.Install(new("probe.factory",1,[],["panels"],scope=>
+                {
+                    panels.Register(scope,"probe.temporary","temporary",()=>new TextBlock());
+                    panels.Register(scope,"probe.throwing","throwing",()=>throw new Exception("factory failed"));
+                }));
+                try {await app.Enable("probe.factory");throw new Exception("Factory failure ignored");}
+                catch(Exception e) when(e.Message=="factory failed") { }
+                if(panels.Count!=baseline) throw new Exception("Factory failure leaked registration");
+                app.Install(new("probe.duplicate",1,[],["panels"],scope=>panels.Register(scope,"base.settings","duplicate",()=>new TextBlock())));
+                try {await app.Enable("probe.duplicate");throw new Exception("Duplicate accepted");}
+                catch(InvalidDataException e) when(e.Message.Contains("Duplicate panel")) { }
+                if(panels.Count!=baseline) throw new Exception("Unrelated panel removed");
                 try {await app.Disable("base.documents");throw new Exception("Required plugin was disabled");}
                 catch(InvalidOperationException e) when(e.Message.Contains("必需")) { }
                 await app.DisposeAsync();
