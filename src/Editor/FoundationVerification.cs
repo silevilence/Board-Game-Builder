@@ -64,6 +64,14 @@ internal static class FoundationVerification
                     if(commands.Items.Count!=commandBaseline) throw new Exception("Command registration survived");
                 }
                 var documents=app.Service<DocumentWorkspace>("documents");
+                foreach(var id in new[]{"author.resources","author.yaml","author.prototypes","author.media","author.turns"})
+                {await app.Enable(id);await app.Reload(id);}
+                Authoring.CreatePrototype(document,"probe");Authoring.Instantiate(document,"probe","probe-instance");
+                Authoring.SetComponent(document,"prototypes","probe","properties",new() {["value"]=3});
+                documents.Select("entities","probe-instance");
+                await app.Reload("author.media");await app.Reload("author.prototypes");
+                if(documents.Selection!=("entities","probe-instance")) throw new Exception("Shared selection lost");
+                _=document.Snapshot();
                 await app.Enable("author.configuration");
                 var original=documents.Draft("module.json").Text;
                 documents.EditDraft("module.json",original+"\n ");

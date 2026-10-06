@@ -8,7 +8,7 @@ namespace BoardGame.Editor;
 // The form edits the same component data as YAML, through one undo transaction.
 public sealed class MediaInspector : UserControl
 {
-    private readonly PluginContext context;
+    private readonly EditorPluginScope context;
     private readonly ComboBox collection=new() {ItemsSource=new[]{"entities","prototypes"},SelectedIndex=0};
     private readonly ComboBox entities=new() {MinWidth=180};
     private readonly ComboBox types=new() {ItemsSource=Defaults.Keys.ToArray(),SelectedIndex=0};
@@ -23,9 +23,10 @@ public sealed class MediaInspector : UserControl
         ["container"]="{\"capacity\":12,\"ordered\":false,\"contents\":[]}",
         ["faces"]="{\"names\":[\"正面\",\"背面\"],\"resources\":[],\"up\":true,\"index\":0}", ["properties"]="{\"value\":0}"
     };
-    public MediaInspector(PluginContext context)
+    public MediaInspector(EditorPluginScope context)
     {
         this.context=context;
+        var workspace=context.Service<DocumentWorkspace>("documents");
         var top=new WrapPanel();
         foreach(var control in new Control[]{collection,entities,types,newId}) { control.Margin=new Thickness(4); top.Children.Add(control); }
         Button("添加空实体",()=>Document.EditConfiguration(c=> { var id=newId.Text; if(string.IsNullOrWhiteSpace(id) || c["entities"]!.AsArray().Any(e=>e!["id"]!.GetValue<string>()==id)) throw new InvalidDataException("实体标识为空或重复"); c["entities"]!.AsArray().Add(new JsonObject {["id"]=id,["components"]=new JsonArray()}); }));
@@ -38,6 +39,15 @@ public sealed class MediaInspector : UserControl
         panel.Children.Add(top); panel.Children.Add(status); panel.Children.Add(new ScrollViewer {Content=fields}); Content=panel;
         collection.SelectionChanged+=(_,_)=>Refresh(); entities.SelectionChanged+=(_,_)=>TryLoad(); types.SelectionChanged+=(_,_)=>TryLoad();
         context.OnDocumentChanged(Refresh); Refresh();
+        var synchronizing=false;
+        void Selected()
+        {
+            if(workspace.Selection is not {} selected || synchronizing) return;
+            synchronizing=true;
+            try {collection.SelectedItem=selected.Collection;Refresh();entities.SelectedItem=selected.Id;} finally {synchronizing=false;}
+        }
+        entities.SelectionChanged+=(_,_)=> {if(!synchronizing && entities.SelectedItem is string selected) workspace.Select(Collection,selected);};
+        workspace.SelectionChanged+=Selected;context.Own(new Cleanup(()=>workspace.SelectionChanged-=Selected));Selected();
         void Button(string label,Action action)
         {
             var button=new Button {Content=label,Margin=new Thickness(4)};

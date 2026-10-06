@@ -13,10 +13,17 @@ public sealed class DocumentWorkspace : IDisposable
     public bool Dirty=>Current?.Dirty==true || drafts.Values.Any(d=>d.Dirty);
     public event Action? Changed;
     public event Action? Replaced;
+    public (string Collection,string Id)? Selection { get; private set; }
+    public event Action? SelectionChanged;
+    public void Select(string collection,string id)
+    {
+        if(Selection==(collection,id)) return;
+        Selection=(collection,id);SelectionChanged?.Invoke();
+    }
     public void Set(ModuleDocument? document)
     {
         if(Current!=null) Current.Changed-=Notify;
-        Current=document;drafts.Clear();ViewState.Clear();Location=document?.DirectoryPath ?? "";
+        Current=document;drafts.Clear();ViewState.Clear();Selection=null;Location=document?.DirectoryPath ?? "";
         if(Current!=null) Current.Changed+=Notify;
         Replaced?.Invoke();Notify();
     }

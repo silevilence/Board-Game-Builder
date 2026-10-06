@@ -23,6 +23,13 @@ public static class BuiltinPlugins
         app.Install(new("base.documents",1,["documents"],["workspace","commands"],scope=>DocumentPlugin.Activate(app,window,scope),true));
         app.Install(new("author.configuration",1,[],["documents","panels"],scope=>
             scope.Service<PanelContributions>("panels").Register(scope,"author.configuration","模块配置",()=>new ConfigurationPanel(scope))));
+        Panel("author.resources","资源树",scope=>new ResourcePanel(scope));
+        Panel("author.yaml","模块 YAML",scope=>new ConfigurationPanel(scope,"module.yaml"));
+        Panel("author.prototypes","原型与实例",scope=>new AuthorPanel(scope));
+        Panel("author.media","媒介组件",scope=>new MediaInspector(scope));
+        Panel("author.turns","席位与阶段",scope=>new TurnPanel(scope));
+        void Panel(string id,string title,Func<EditorPluginScope,Control> factory)=>app.Install(new(id,1,[],["documents","panels"],scope=>
+            scope.Service<PanelContributions>("panels").Register(scope,id,title,()=>factory(scope))));
         app.Install(new("base.plugins",1,[],["panels","workspace"],scope=>
         {
             var list=new StackPanel {Spacing=8};

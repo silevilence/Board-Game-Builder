@@ -6,7 +6,7 @@ namespace BoardGame.Editor;
 
 public sealed class TurnPanel : UserControl
 {
-    public TurnPanel(PluginContext context)
+    public TurnPanel(EditorPluginScope context)
     {
         var seats=new TextBox {AcceptsReturn=true,MinHeight=160}; var phases=new TextBox {AcceptsReturn=true,MinHeight=160};
         var status=new TextBlock {TextWrapping=Avalonia.Media.TextWrapping.Wrap}; var apply=new Button {Content="应用席位顺序与阶段"};

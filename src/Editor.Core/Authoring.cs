@@ -30,8 +30,14 @@ public static class Authoring
         if(displayed==null) { SetComponent(doc,collection,id,type,edited); return; }
         var own=Find(doc.Configuration,collection,id)["components"]!.AsArray().FirstOrDefault(c=>c!["type"]!.GetValue<string>()==type)?["data"]?.DeepClone().AsObject() ?? new JsonObject();
         var changed=false;
+        var current=Find(AuthorConfiguration.Expand(doc.Configuration),collection,id)["components"]!.AsArray().FirstOrDefault(c=>c!["type"]!.GetValue<string>()==type)?["data"]?.AsObject();
         foreach(var field in edited)
-            if(!JsonNode.DeepEquals(displayed[field.Key],field.Value)) { own[field.Key]=field.Value?.DeepClone(); changed=true; }
+            if(!JsonNode.DeepEquals(displayed[field.Key],field.Value))
+            {
+                if(!JsonNode.DeepEquals(current?[field.Key],displayed[field.Key]) && !JsonNode.DeepEquals(current?[field.Key],field.Value))
+                    throw new InvalidOperationException("其他面板已修改字段，请重新读取并合并："+field.Key);
+                own[field.Key]=field.Value?.DeepClone();changed=true;
+            }
         if(changed) SetComponent(doc,collection,id,type,own);
     }
     private static void ValidateId(string id) { if(string.IsNullOrWhiteSpace(id)) throw new InvalidDataException("Identity is required"); }
