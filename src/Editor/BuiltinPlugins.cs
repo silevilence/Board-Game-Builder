@@ -21,6 +21,12 @@ public static class BuiltinPlugins
             scope.Own(new CommandSurface(window,scope.Service<WorkspaceShell>("workspace"),commands));
         },true));
         app.Install(new("base.documents",1,["documents"],["workspace","commands"],scope=>DocumentPlugin.Activate(app,window,scope),true));
+        app.Install(new("base.sessions",1,["sessions"],["documents"],scope=>
+        {
+            var sessions=new SessionController(scope.Service<DocumentWorkspace>("documents"));scope.Own(sessions);scope.Provide("sessions",sessions);
+        },true));
+        app.Install(new("play.controls",1,[],["sessions","panels"],scope=>
+            scope.Service<PanelContributions>("panels").Register(scope,"play.controls","试玩与调试",()=>new PlayPanel(scope))));
         app.Install(new("author.configuration",1,[],["documents","panels"],scope=>
             scope.Service<PanelContributions>("panels").Register(scope,"author.configuration","模块配置",()=>new ConfigurationPanel(scope))));
         Panel("author.resources","资源树",scope=>new ResourcePanel(scope));

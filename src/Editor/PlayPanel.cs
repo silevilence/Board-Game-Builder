@@ -1,155 +1,105 @@
 using Avalonia;
 using Avalonia.Controls;
-using Avalonia.Threading;
 using BoardGame.Kernel;
 using BoardGame.Runtime;
 using BoardGame.View;
 namespace BoardGame.Editor;
 
-public sealed partial class PlayPanel : UserControl,IDisposable
+public sealed class PlayPanel : UserControl,IDisposable
 {
-    private readonly Func<ModuleDocument?> document;
-    private readonly InteractiveTable table=new();
+    private readonly SessionController controller;
+    internal InteractiveTable Table { get; }=new();
     private readonly StackPanel actions=new() {Width=260,Spacing=6};
     private readonly TextBlock status=new() {TextWrapping=Avalonia.Media.TextWrapping.Wrap};
-    private readonly TextBox seed=new() {Text="42",Width=100};
-    private readonly StackPanel seats=new() {Orientation=Avalonia.Layout.Orientation.Horizontal};
-    private readonly Dictionary<string,CheckBox> cpuSeats=new();
-    private readonly DispatcherTimer timer=new() {Interval=TimeSpan.FromMilliseconds(100)};
-    private IDebugSession? session;
-    private LoadedModule? module;
-    private DebugFrame? frame;
-    private bool busy;
-    private bool pendingPause;
-    private int generation;
-    private uint? activeSeed;
-    private readonly CheckBox external=new() {Content="独立 Player"};
-    private readonly TextBox executable=new() {Text=EditorPaths.InWorkspace("src/Player/bin/Release/net10.0-windows/Player.exe"),Width=260,PlaceholderText="调试 Player.exe 路径"};
     private readonly TextBox timeline=new() {IsReadOnly=true,AcceptsReturn=true,Height=170};
-    private readonly TextBox logPath=new() {Text=EditorPaths.InWorkspace("artifacts/debug-session.json"),Width=260};
-    private readonly CheckBox authorityLog=new() {Content="显示作者命令与 CPU 诊断（含私有数据）",IsChecked=false};
-    private DebugReply? lastReply;
+    private readonly TextBox seed;
+    private readonly StackPanel seats=new() {Orientation=Avalonia.Layout.Orientation.Horizontal};
     private readonly ComboBox observer=new() {Width=100};
-    private readonly CheckBox reveal=new() {Content="作者全信息调试（包含隐藏真值）"};
-    public PlayPanel(Func<ModuleDocument?> document)
+    private readonly Dictionary<string,CheckBox> seatControls=[];
+    private readonly Button start=new() {Content="开始试玩"};
+    public PlayPanel(EditorPluginScope scope)
     {
-        this.document=document;
-        var start=new Button {Content="开始进程内试玩"}; var stop=new Button {Content="停止试玩"};
+        controller=scope.Service<SessionController>("sessions");
+        seed=new TextBox {Text=controller.Seed,Width=100};
+        var external=new CheckBox {Content="独立 Player",IsChecked=controller.External};
+        var executable=new TextBox {Text=controller.Executable,Width=260,PlaceholderText="调试 Player.exe 路径"};
+        var logPath=new TextBox {Text=controller.LogPath,Width=260};
+        var authorityLog=new CheckBox {Content="显示作者命令与 CPU 诊断（含私有数据）",IsChecked=controller.AuthorityLog};
+        var reveal=new CheckBox {Content="作者全信息调试（包含隐藏真值）",IsChecked=controller.Reveal};
+        var stop=new Button {Content="停止试玩"};
         var top=new WrapPanel {Children={new TextBlock {Text="种子"},seed,seats,external,executable,start,stop}};
-        ControlButton("暂停",()=>Send(new("pause"))); ControlButton("继续",()=>Send(new("resume"))); ControlButton("单步 CPU",()=>Send(new("step",frame?.Revision ?? -1)));
-        ControlButton("重放当前日志",()=>Send(new("replay")));
-        top.Children.Add(observer); top.Children.Add(reveal);
-        ControlButton("切换观察身份",()=>Send(new("observe",Seat:observer.SelectedItem as string,Authority:reveal.IsChecked==true)));
-        top.Children.Add(logPath); top.Children.Add(authorityLog);
-        ControlButton("保存日志",async ()=> { if(session==null) return; var reply=await session.SendAsync(new("recording")); var path=Path.GetFullPath(logPath.Text ?? ""); Directory.CreateDirectory(Path.GetDirectoryName(path)!); File.WriteAllText(path,Wire.Json(reply.Recording)); status.Text="日志已保存："+path; });
-        ControlButton("打开并重放",()=>Send(new("replay",Recording:Wire.Read<SessionRecording>(File.ReadAllText(logPath.Text ?? "")))));
-        authorityLog.IsCheckedChanged+=(_,_)=>ShowTimeline();
-        var side=new DockPanel {Width=280}; DockPanel.SetDock(status,Dock.Top); side.Children.Add(status); side.Children.Add(new ScrollViewer {Content=actions});
-        var root=new DockPanel(); DockPanel.SetDock(top,Dock.Top); DockPanel.SetDock(timeline,Dock.Bottom); DockPanel.SetDock(side,Dock.Right); root.Children.Add(top); root.Children.Add(timeline); root.Children.Add(side); root.Children.Add(table); Content=root;
-        start.Click+=async (_,_)=>await Start(); stop.Click+=(_,_)=>Stop();
-        TableKeyInput.Attach(this,table.HandleShortcut);
-        seed.KeyDown+=async (_,e)=> { if(e.Key==Avalonia.Input.Key.Enter) {e.Handled=true; await Start();} };
-        table.Gesture+=async g=> { if(frame!=null) await Send(new("submit",frame.Revision,PlayerSession.Resolve(frame.Actions,new(g.Kind,g.Entity,g.Target,g.X,g.Y)))); };
-        table.Shortcut+=async key=>
+        seed.TextChanged+=(_,_)=>controller.Seed=seed.Text ?? "";
+        external.IsCheckedChanged+=(_,_)=>controller.External=external.IsChecked==true;
+        executable.TextChanged+=(_,_)=>controller.Executable=executable.Text ?? "";
+        logPath.TextChanged+=(_,_)=>controller.LogPath=logPath.Text ?? "";
+        authorityLog.IsCheckedChanged+=(_,_)=> {controller.AuthorityLog=authorityLog.IsChecked==true;Refresh();};
+        reveal.IsCheckedChanged+=(_,_)=>controller.Reveal=reveal.IsChecked==true;
+        observer.SelectionChanged+=(_,_)=>controller.Observer=observer.SelectedItem as string;
+        ControlButton("暂停",()=>controller.Send(new("pause")));
+        ControlButton("继续",()=>controller.Send(new("resume")));
+        ControlButton("单步 CPU",()=>controller.Send(new("step",controller.Frame?.Revision ?? -1)));
+        ControlButton("重放当前日志",()=>controller.Send(new("replay")));
+        top.Children.Add(observer);top.Children.Add(reveal);
+        ControlButton("切换观察身份",()=>controller.Send(new("observe",Seat:controller.Observer,Authority:controller.Reveal)));
+        top.Children.Add(logPath);top.Children.Add(authorityLog);
+        ControlButton("保存日志",controller.SaveRecording);
+        ControlButton("打开并重放",()=>controller.Send(new("replay",Recording:Wire.Read<SessionRecording>(File.ReadAllText(controller.LogPath)))));
+        var side=new DockPanel {Width=280};DockPanel.SetDock(status,Dock.Top);side.Children.Add(status);side.Children.Add(new ScrollViewer {Content=actions});
+        var root=new DockPanel();DockPanel.SetDock(top,Dock.Top);DockPanel.SetDock(timeline,Dock.Bottom);DockPanel.SetDock(side,Dock.Right);
+        root.Children.Add(top);root.Children.Add(timeline);root.Children.Add(side);root.Children.Add(Table);Content=root;
+        start.Click+=async (_,_)=>await controller.Start();stop.Click+=(_,_)=>controller.Stop();
+        TableKeyInput.Attach(this,Table.HandleShortcut);
+        seed.KeyDown+=async (_,e)=> {if(e.Key==Avalonia.Input.Key.Enter) {e.Handled=true;await controller.Start();}};
+        Table.Gesture+=async g=> {if(controller.Frame is {} frame) await controller.Send(new("submit",frame.Revision,PlayerSession.Resolve(frame.Actions,new(g.Kind,g.Entity,g.Target,g.X,g.Y))));};
+        Table.Shortcut+=async key=>
         {
-            if(key=="choose-seed") { seed.Focus(); seed.SelectAll(); return; }
+            if(key=="choose-seed") {seed.Focus();seed.SelectAll();return;}
             if(key is "restart" or "new-game")
-            { if(key=="new-game") seed.Text=System.Security.Cryptography.RandomNumberGenerator.GetInt32(1,int.MaxValue).ToString(); else if(activeSeed is {} previous) seed.Text=previous.ToString(); await Start(); return; }
-            if(frame==null || busy) return;
-            if(key=="hint")
-            { var hint=frame.Actions.FirstOrDefault(a=>a.Gesture=="drag"); table.Hint(hint?.Command.Entity,hint?.Target); status.Text=hint==null?"没有可提示动作":"合法走法（不保证最优）："+hint.Label; return; }
-            await Send(new("submit",frame.Revision,PlayerSession.Resolve(frame.Actions,new("shortcut",table.Selected,Action:key))));
+            {
+                seed.Text=key=="new-game"?System.Security.Cryptography.RandomNumberGenerator.GetInt32(1,int.MaxValue).ToString():controller.ActiveSeed?.ToString() ?? controller.Seed;
+                await controller.Start();return;
+            }
+            if(controller.Frame is not {} frame || controller.Busy) return;
+            if(key=="hint") {var hint=frame.Actions.FirstOrDefault(a=>a.Gesture=="drag");Table.Hint(hint?.Command.Entity,hint?.Target);status.Text=hint==null?"没有可提示动作":"合法走法（不保证最优）："+hint.Label;return;}
+            await controller.Send(new("submit",frame.Revision,PlayerSession.Resolve(frame.Actions,new("shortcut",Table.Selected,Action:key))));
         };
-        table.RenderingError+=error=> { Stop(); status.Text=error; };
-        timer.Tick+=async (_,_)=> { if(frame is {Cpu:true,View.Ended:false,Fault:null,Paused:false,IsReplay:false} && !busy) await Send(new("cpu",frame.Revision)); };
+        Table.RenderingError+=error=> {controller.Stop();status.Text=error;};
+        controller.Changed+=Refresh;Refresh();
         void ControlButton(string label,Func<Task> action)
         {
-            var button=new Button {Content=label}; button.Click+=async (_,_)=> { try { await action(); } catch(Exception e) {status.Text=e.Message;} }; top.Children.Add(button);
+            var button=new Button {Content=label};button.Click+=async (_,_)=> {try {await action();} catch(Exception e) {status.Text=e.Message;}};top.Children.Add(button);
         }
     }
-    public void DocumentChanged()
+    private void Refresh()
     {
-        Stop(); activeSeed=null; cpuSeats.Clear();
-        try
+        if(!seatControls.Keys.SequenceEqual(controller.CpuSeats.Keys))
         {
-            SyncSeats(document()?.Snapshot()); reveal.IsChecked=false;
-        }
-        catch(Exception e) {status.Text=e.Message;}
-    }
-    private void SyncSeats(LoadedModule? current)
-    {
-        var selected=observer.SelectedItem as string;
-        var previous=cpuSeats.ToDictionary(s=>s.Key,s=>s.Value.IsChecked);
-        seats.Children.Clear(); cpuSeats.Clear();
-        foreach(var seat in current?.Initial.Seats ?? [])
-        { var check=new CheckBox {Content=seat.Id+" CPU",IsChecked=previous.GetValueOrDefault(seat.Id,seat.Controller=="cpu"),Margin=new Thickness(6)}; cpuSeats.Add(seat.Id,check); seats.Children.Add(check); }
-        observer.ItemsSource=cpuSeats.Keys.ToArray(); observer.SelectedItem=selected!=null && cpuSeats.ContainsKey(selected)?selected:cpuSeats.Keys.FirstOrDefault();
-    }
-    private async Task Start()
-    {
-        Stop(); var current=generation;
-        try
-        {
-            if(!uint.TryParse(seed.Text,out var number)) throw new InvalidDataException("种子必须是无符号整数");
-            module=document()?.Snapshot() ?? throw new InvalidOperationException("请打开模块");
-            SyncSeats(module);
-            var controllers=cpuSeats.ToDictionary(s=>s.Key,s=>s.Value.IsChecked==true?"cpu":"human");
-            var observer=module.Initial.Seats.FirstOrDefault(s=>controllers.GetValueOrDefault(s.Id)=="human")?.Id ?? module.Initial.Seats[0].Id;
-            var created=external.IsChecked==true ? (IDebugSession)await ExternalDebugSession.Launch(executable.Text ?? "",module,number,controllers,observer) : new InProcessDebugSession(module,number,controllers,observer);
-            if(current!=generation) {created.Dispose();return;} session=created; activeSeed=number;
-            await Send(new("frame")); if(current==generation) timer.Start();
-        }
-        catch(Exception e) {status.Text=e.Message;}
-    }
-    private async Task Send(DebugRequest request)
-    {
-        if(session==null) return;
-        if(busy) { if(request.Operation=="pause") pendingPause=true; return; }
-        busy=true; table.InputEnabled=false; actions.IsEnabled=false; var current=generation;
-        try { var reply=await session.SendAsync(request); if(current!=generation) return; lastReply=reply; frame=reply.Frame; ShowTimeline(); Refresh(reply.Message.Length>0?reply.Message:reply.Result?.Reason ?? ""); }
-        catch(Exception e) { if(current==generation) { timer.Stop(); status.Text="试玩故障："+e.Message; } }
-        finally
-        {
-            if(current==generation)
+            seats.Children.Clear();seatControls.Clear();
+            foreach(var seat in controller.CpuSeats)
             {
-                busy=false; actions.IsEnabled=true; table.InputEnabled=frame is {Cpu:false,View.Ended:false,Fault:null,IsReplay:false};
-                if(pendingPause) { pendingPause=false; await Send(new("pause")); }
+                var check=new CheckBox {Content=seat.Key+" CPU",IsChecked=seat.Value,Margin=new Thickness(6)};
+                check.IsCheckedChanged+=(_,_)=>controller.CpuSeats[seat.Key]=check.IsChecked==true;seats.Children.Add(check);seatControls[seat.Key]=check;
             }
+            var selected=controller.Observer;observer.ItemsSource=controller.CpuSeats.Keys.ToArray();observer.SelectedItem=selected;
         }
-    }
-    private void ShowTimeline()
-    {
-        if(lastReply==null) return;
-        timeline.Text=authorityLog.IsChecked==true ? "作者权威日志（不提供给玩家或脚本）\n"+string.Join("\n",(lastReply.Timeline ?? []).Select(e=>$"#{e.Submission.Sequence} {e.Submission.Actor} {Wire.Json(e.Submission.Command)} → {e.Submission.Reason}"))+"\n"+string.Join("\n",(lastReply.Diagnostics ?? []).Select(d=>$"#{d.Sequence} {d.Entry} {d.Message}")) : "玩家可读记录\n"+string.Join("\n",(lastReply.PlayerLog ?? []).Select(e=>$"#{e.Sequence} {e.Actor} {e.Reason}"));
-    }
-    private void Refresh(string message)
-    {
-        if(frame==null || module==null) return;
+        actions.Children.Clear();start.IsEnabled=!controller.Busy;
+        Table.InputEnabled=controller.CanInput;actions.IsEnabled=!controller.Busy;status.Text=controller.Status;
+        var reply=controller.Reply;
+        timeline.Text=reply==null?"":controller.AuthorityLog
+            ? "作者权威日志（不提供给玩家或脚本）\n"+string.Join("\n",(reply.Timeline ?? []).Select(e=>$"#{e.Submission.Sequence} {e.Submission.Actor} {Wire.Json(e.Submission.Command)} → {e.Submission.Reason}"))+"\n"+string.Join("\n",(reply.Diagnostics ?? []).Select(d=>$"#{d.Sequence} {d.Entry} {d.Message}"))
+            : "玩家可读记录\n"+string.Join("\n",(reply.PlayerLog ?? []).Select(e=>$"#{e.Sequence} {e.Actor} {e.Reason}"));
+        if(controller.Frame is not {} frame || controller.Module is not {} module) {Table.Show(new([],new Dictionary<string,byte[]>()));return;}
         var view=frame.View;
-        if(lastReply?.AuthorityState is {} authority)
-        {
-            var state=Wire.Copy(authority); foreach(var entity in state.Entities.Values) {entity.Visibility="public";entity.FaceUp=true;}
-            view=new GameEngine(state).Project(frame.View.Seat);
-        }
-        var resources=frame.IsReplay && lastReply?.Recording is {} history?history.Versions[history.Log.ModuleFingerprint].ResourceData:module.ResourceData;
-        table.Show(TableScene.From(view,resources));
-        status.Text=$"试玩 · {frame.View.Seat} | 当前 {frame.View.CurrentSeat}\n{frame.View.Phase} · {frame.View.Turn} · {(frame.Paused?"已暂停":"运行中")}\n"+message+"\n"+(frame.View.Ended?"结算："+string.Join(",",frame.View.Winners):frame.Fault?.Detail ?? "");
-        if(lastReply?.AuthorityState!=null) status.Text="⚠ 作者全信息调试 · 隐藏真值\n"+status.Text;
-        actions.Children.Clear();
+        if(reply?.AuthorityState is {} authority) {var state=Wire.Copy(authority);foreach(var e in state.Entities.Values) {e.Visibility="public";e.FaceUp=true;}view=new GameEngine(state).Project(frame.View.Seat);}
+        var resources=frame.IsReplay && reply?.Recording is {} history?history.Versions[history.Log.ModuleFingerprint].ResourceData:module.ResourceData;
+        Table.Show(TableScene.From(view,resources));
+        status.Text=$"试玩 · {frame.View.Seat} | 当前 {frame.View.CurrentSeat}\n{frame.View.Phase} · {frame.View.Turn} · {(frame.Paused?"已暂停":"运行中")}\n"+controller.Status+"\n"+(frame.View.Ended?"结算："+string.Join(",",frame.View.Winners):frame.Fault?.Detail ?? "");
+        if(reply?.AuthorityState!=null) status.Text="⚠ 作者全信息调试 · 隐藏真值\n"+status.Text;
         foreach(var offer in frame.Actions)
         {
-            var revision=frame.Revision; var button=new Button {Content=offer.Label}; button.Click+=async (_,_)=>await Send(new("submit",revision,offer.Command)); actions.Children.Add(button);
+            var revision=frame.Revision;var button=new Button {Content=offer.Label};
+            button.Click+=async (_,_)=>await controller.Send(new("submit",revision,offer.Command));actions.Children.Add(button);
         }
     }
-    public async Task<string> ReloadScripts(LoadedModule candidate)
-    {
-        if(session==null) return "未开始试玩，新局将使用当前脚本。";
-        if(busy) throw new InvalidOperationException("当前命令尚未完成，请在命令边界重试。");
-        busy=true;
-        var current=generation; table.InputEnabled=false; actions.IsEnabled=false;
-        try { var reply=await session.SendAsync(new("reload",Module:candidate)); if(current!=generation) return "试玩已停止，忽略旧会话的重载结果。"; lastReply=reply; frame=reply.Frame; ShowTimeline(); Refresh(reply.Message); return reply.Message; }
-        finally { if(current==generation) {busy=false; actions.IsEnabled=true; table.InputEnabled=frame is {Cpu:false,View.Ended:false,Fault:null,IsReplay:false}; if(pendingPause) {pendingPause=false;await Send(new("pause"));} } }
-    }
-    public void Stop() { generation++; timer.Stop(); session?.Dispose(); session=null; frame=null; lastReply=null; busy=false; pendingPause=false; timeline.Text=""; actions.Children.Clear(); actions.IsEnabled=true; table.InputEnabled=false; table.Show(new([],new Dictionary<string,byte[]>())); status.Text="已停止；作者初始局面保持不变。"; }
-    public void Dispose() { Stop(); table.Dispose(); }
+    public void Dispose() {controller.Changed-=Refresh;Table.Dispose();}
 }
