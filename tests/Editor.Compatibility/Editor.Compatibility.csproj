@@ -6,5 +6,3 @@
     <ProjectReference Include="../../src/View.MonoGame/View.MonoGame.csproj" />
   </ItemGroup>
 </Project>
-
-

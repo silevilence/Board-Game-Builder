@@ -5,4 +5,5 @@
     <ProjectReference Include="../Runtime/Runtime.csproj" />
     <ProjectReference Include="../View.MonoGame/View.MonoGame.csproj" />
   </ItemGroup>
+  <ItemGroup><PackageReference Include="CordiSharp.Plugins.Avalonia" Version="[0.2.0]" /></ItemGroup>
 </Project>

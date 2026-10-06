@@ -42,3 +42,9 @@ dotnet build tests/Editor.Compatibility -c Release --no-restore
 结论：采用 Avalonia 12.1.1 + CordiSharp / CordiSharp.Plugins.Avalonia 0.2.0。
 无需替换渲染管线，可进入正式编辑器迁移。后续完整工作流及发行物回归单独记录。
 
+
+## 基础宿主验证
+
+`Editor.exe --verify-foundation artifacts/m25/foundation.json` 通过：基础插件打开空模块；
+可选插件初始化失败后文档实例保持不变；必需文档插件停用被明确拒绝；退出后根 fiber 副作用数为零。
+正常入口已使用 EditorHost 装配基础插件。文档、草稿、会话与各功能的进一步迁移按后续任务推进。
