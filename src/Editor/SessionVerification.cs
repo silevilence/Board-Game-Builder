@@ -24,6 +24,18 @@ internal static class SessionVerification
                     foreach(var seat in sessions.CpuSeats.Keys.ToArray()) sessions.CpuSeats[seat]=true;
                     await sessions.Start();await sessions.Send(new("pause"));
                     if(sessions.Frame==null || !sessions.Frame.Paused) throw new Exception(sessions.Status);
+                    var author=documents.Current!;
+                    author.EditText("rules.lua",author.Text("rules.lua")+"\n-- m25 rules reload\n");
+                    await app.Reload("author.scripts");
+                    var beforeReload=sessions.Frame.Revision;
+                    await sessions.ReloadScripts(author.Snapshot());
+                    if(sessions.Frame.Revision!=beforeReload+1) throw new Exception("Rules reload failed: "+sessions.Status);
+                    author.EditText("cpu.lua",author.Text("cpu.lua")+"\n-- m25 CPU reload\n");
+                    await sessions.ReloadScripts(author.Snapshot());
+                    if(sessions.Frame.Revision!=beforeReload+2) throw new Exception("CPU reload failed: "+sessions.Status);
+                    var validHash=sessions.Frame.StateHash;
+                    author.EditText("rules.lua","broken lua ?");await sessions.ReloadScripts(author.Snapshot());author.Undo();
+                    if(sessions.Frame.Revision!=beforeReload+2 || sessions.Frame.StateHash!=validHash) throw new Exception("Broken Lua damaged current session");
                     var active=sessions.Session;var revision=sessions.Frame.Revision;
                     for(var cycle=0;cycle<3;cycle++)
                     {
@@ -39,6 +51,7 @@ internal static class SessionVerification
                     if(sessions.Frame?.View.Ended!=true || sessions.Frame.Fault!=null) throw new Exception("Did not finish: "+sessions.Status);
                     var final=sessions.Frame.StateHash;
                     var recording=(await sessions.Send(new("recording")))?.Recording ?? throw new Exception("Missing recording");recordings.Add(recording);
+                    if(recording.Switches.Count<3) throw new Exception("Reload versions missing");
                     await sessions.Send(new("replay"));if(sessions.Frame.StateHash!=final || !sessions.Frame.IsReplay) throw new Exception("Replay differs");
                     if(((PlayPanel)((TabItem)app.Service<WorkspaceShell>("workspace").Tabs.SelectedItem!).Content!).Table.RenderedFrames==0) throw new Exception("No rendered play frames");
                     sessions.Stop();
@@ -47,6 +60,7 @@ internal static class SessionVerification
                     var old=new DelayedSession(sessions.Session!);sessions.Session=old;
                     var late=sessions.Send(new("step",sessions.Frame!.Revision));sessions.Stop();old.Release();await late;
                     if(sessions.Active || sessions.Frame!=null || sessions.Busy) throw new Exception("Late result repopulated stopped session");
+                    author.Undo();author.Undo();
                 }
                 if(Wire.Json(recordings[0].Log)!=Wire.Json(recordings[1].Log)) throw new Exception("Play modes differ");
                 if(documents.Current.Snapshot().Fingerprint!=initial) throw new Exception("Play changed author state");

@@ -6,8 +6,10 @@ namespace BoardGame.Editor;
 
 public sealed class ScriptPanel : UserControl
 {
-    public ScriptPanel(PluginContext context,Func<LoadedModule,Task<string>> reload)
+    public ScriptPanel(EditorPluginScope context)
     {
+        var sessions=context.Service<SessionController>("sessions");
+        var cancellation=context.Cancellation;
         var rules=new TextBox {AcceptsReturn=true,FontFamily=FontFamily.Parse("Consolas")};
         var cpu=new TextBox {AcceptsReturn=true,FontFamily=FontFamily.Parse("Consolas")};
         var diagnostics=new TextBox {IsReadOnly=true,AcceptsReturn=true,MinHeight=80,TextWrapping=TextWrapping.Wrap};
@@ -33,9 +35,9 @@ public sealed class ScriptPanel : UserControl
         apply.Click+=(_,_)=>diagnostics.Text="脚本修改已进入文档；保存写入模块。配置变化需要重开对局。";
         hot.Click+=async (_,_)=> {
             hot.IsEnabled=false;
-            try { if(context.Document==null) return; diagnostics.Text=await reload(context.Document.Snapshot()); }
-            catch(Exception e) { diagnostics.Text="重载失败，当前会话继续使用旧版：\n"+e.Message; }
-            finally {hot.IsEnabled=true;}
+            try { if(context.Document==null) return; var result=await sessions.ReloadScripts(context.Document.Snapshot());if(!cancellation.IsCancellationRequested) diagnostics.Text=result; }
+            catch(Exception e) { if(!cancellation.IsCancellationRequested) diagnostics.Text="重载失败，当前会话继续使用旧版：\n"+e.Message; }
+            finally {if(!cancellation.IsCancellationRequested) hot.IsEnabled=true;}
         };
         context.OnDocumentChanged(Sync); Sync();
     }
