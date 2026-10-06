@@ -13,7 +13,7 @@ public static class ExportTests
         Check.Throws(()=>PlayerDistribution.Export(release,"samples/quick-cards",path+"-fail",_=>throw new Exception("plugin failure")),"plugin failure");
         Check.That(!Directory.Exists(path+"-fail"));
         Check.Throws(()=>PlayerDistribution.Preflight(path+"-absent","samples/quick-cards"));
-        foreach(var file in new[]{"Play.exe","versions.json","Editor.dll"})
+        foreach(var file in new[]{"Play.exe","versions.json","Editor.dll","CordiSharp.dll"})
         {
             var target=path+"-tampered-"+file;
             Check.Throws(()=>PlayerDistribution.Export(release,"samples/quick-cards",target,staging=>File.WriteAllText(Path.Combine(staging,file),"invalid")),file);

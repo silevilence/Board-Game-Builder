@@ -39,6 +39,17 @@ public static class BuiltinPlugins
         Panel("author.prototypes","原型与实例",scope=>new AuthorPanel(scope));
         Panel("author.media","媒介组件",scope=>new MediaInspector(scope));
         Panel("author.turns","席位与阶段",scope=>new TurnPanel(scope));
+        app.Install(new("author.export",1,["exports"],["documents","contributions","panels","workspace"],scope=>
+        {
+            var workflow=new ExportWorkflow(scope.Service<DocumentWorkspace>("documents"),scope.Service<EditorContributions>("contributions"));scope.Provide("exports",workflow);
+            scope.Guard(()=>workflow.Running?"导出正在执行，请等待完成":null);
+            scope.Own(app.BeforeShutdown(()=>
+            {
+                if(workflow.Running) scope.Service<WorkspaceShell>("workspace").Report("导出正在执行，请等待完成后退出。");
+                return Task.FromResult(!workflow.Running);
+            }));
+            scope.Service<PanelContributions>("panels").Register(scope,"author.export","独立导出",()=>new ExportPanel(scope));
+        }));
         void Panel(string id,string title,Func<EditorPluginScope,Control> factory)=>app.Install(new(id,1,[],["documents","panels"],scope=>
             scope.Service<PanelContributions>("panels").Register(scope,id,title,()=>factory(scope))));
         app.Install(new("base.plugins",1,[],["panels","workspace"],scope=>

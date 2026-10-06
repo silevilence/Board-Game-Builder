@@ -108,3 +108,12 @@ freecell-shortcuts、layouts、interaction、view 回归通过，空当接龙合
 `artifacts/m25/debug-panels.json`：两种模式按各席位观察时不返回权威状态，显式全信息观察才返回；
 关闭全信息后恢复普通席位投影。面板重建仍显示同一暂停会话，非法动作、CPU 单步与回放通过。
 observer/timeline/debug-play/debug-external 回归通过；控制器同步当前观察身份与显式全信息标记。
+
+## 导出工作流验证
+
+`artifacts/m25/export-cards-verified/result.json` 通过：实际附加步骤执行、启停注销、
+运行中导出及步骤所有者拒绝停用、缺失发行物诊断、目标目录保持不变。
+修复 Avalonia 文本框延迟初始化事件覆盖目标目录的问题。
+正式自包含 Player 重新发布为 Avalonia 12.1.1，导出核心测试通过；
+`artifacts/m25/export-smoke.json` 从本次导出完成两局 GUI 游戏，无编辑器依赖。
+预检验证 PE WindowsGui 子系统，正式启动不使用控制台入口。

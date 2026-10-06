@@ -14,7 +14,7 @@ public static class PlayerDistribution
         foreach(var file in manifest.Files)
         {
             ModulePackage.ValidatePath(file.Key);
-            if(file.Key.Split('/').Any(s=>s.StartsWith("Editor",StringComparison.OrdinalIgnoreCase)) || file.Key.EndsWith(".csproj") || file.Key.EndsWith(".pdb"))
+            if(file.Key.Split('/').Any(s=>s.StartsWith("Editor",StringComparison.OrdinalIgnoreCase) || s.StartsWith("CordiSharp",StringComparison.OrdinalIgnoreCase)) || file.Key.EndsWith(".csproj") || file.Key.EndsWith(".pdb"))
                 throw new InvalidDataException("release.json: editor/development content is forbidden: "+file.Key);
             var source=DirectoryModule.SafeFile(release,file.Key);
             if(ModulePackage.Hash(File.ReadAllBytes(source))!=file.Value) throw new InvalidDataException(file.Key+": release content hash mismatch");
@@ -63,7 +63,7 @@ public static class PlayerDistribution
         foreach(var item in directory.EnumerateFileSystemInfos())
         {
             if((item.Attributes & FileAttributes.ReparsePoint)!=0) throw new InvalidDataException("Linked export content is forbidden: "+item.Name);
-            if(item.Name.StartsWith("Editor",StringComparison.OrdinalIgnoreCase) || item.Extension.Equals(".csproj",StringComparison.OrdinalIgnoreCase) || item.Extension.Equals(".pdb",StringComparison.OrdinalIgnoreCase))
+            if(item.Name.StartsWith("Editor",StringComparison.OrdinalIgnoreCase) || item.Name.StartsWith("CordiSharp",StringComparison.OrdinalIgnoreCase) || item.Extension.Equals(".csproj",StringComparison.OrdinalIgnoreCase) || item.Extension.Equals(".pdb",StringComparison.OrdinalIgnoreCase))
                 throw new InvalidDataException("Editor/development export content is forbidden: "+item.Name);
             if(item is DirectoryInfo child) ValidateExtras(child);
         }
