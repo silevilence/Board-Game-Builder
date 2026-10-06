@@ -19,6 +19,13 @@ public sealed class EditorApplication : IAsyncDisposable
     private readonly SemaphoreSlim lifecycle=new(1,1);
     private readonly Action<Action> dispatch;
     private bool disposed;
+    private readonly List<Func<Task<bool>>> shutdownChecks=[];
+    public IDisposable BeforeShutdown(Func<Task<bool>> check) {shutdownChecks.Add(check);return new Cleanup(()=>shutdownChecks.Remove(check));}
+    public async Task<bool> RequestShutdown()
+    {
+        foreach(var check in shutdownChecks.ToArray()) if(!await check()) return false;
+        await DisposeAsync();return true;
+    }
     public Context Root { get; }=Context.Create();
     public IReadOnlyList<EditorPluginDefinition> Catalog=>definitions.Values.ToArray();
     public IReadOnlyList<EditorPluginState> States=>states.Values.ToArray();
@@ -192,4 +199,10 @@ public sealed class EditorPluginScope
     }
     public void On<T>(EventKey<T> key,Action<T> handler)=>Context.On(key,(_,value)=> {application.OnOwnerThread(()=>handler(value));return null;});
     public void Emit<T>(EventKey<T> key,T value)=>Context.Emit(key,value);
+    public ModuleDocument? Document=>Service<DocumentWorkspace>("documents").Current;
+    public void OnDocumentChanged(Action action)
+    {
+        var documents=Service<DocumentWorkspace>("documents");documents.Changed+=action;
+        Own(new Cleanup(()=>documents.Changed-=action));
+    }
 }

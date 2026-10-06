@@ -20,21 +20,9 @@ public static class BuiltinPlugins
             scope.Provide("contributions",new EditorContributions());
             scope.Own(new CommandSurface(window,scope.Service<WorkspaceShell>("workspace"),commands));
         },true));
-        app.Install(new("base.documents",1,["documents"],["workspace"],scope=>
-        {
-            var documents=new DocumentWorkspace();scope.Own(documents);scope.Provide("documents",documents);
-            var shell=scope.Service<WorkspaceShell>("workspace");
-            var path=new TextBox {Width=400,PlaceholderText="模块目录"};shell.Toolbar.Children.Add(path);
-            scope.Own(new Cleanup(()=>shell.Toolbar.Children.Remove(path)));
-            Add("新建",()=>documents.Set(ModuleDocument.Create()));
-            Add("打开",()=>documents.Set(ModuleDocument.Open(path.Text ?? "")));
-            Add("保存",()=>documents.Current?.Save(path.Text));
-            void Add(string title,Action action)
-            {
-                var button=new Button {Content=title};button.Click+=(_,_)=> {try {action();shell.Report("完成");} catch(Exception e) {shell.Report(e.Message);}};
-                shell.Toolbar.Children.Add(button);scope.Own(new Cleanup(()=>shell.Toolbar.Children.Remove(button)));
-            }
-        },true));
+        app.Install(new("base.documents",1,["documents"],["workspace","commands"],scope=>DocumentPlugin.Activate(app,window,scope),true));
+        app.Install(new("author.configuration",1,[],["documents","panels"],scope=>
+            scope.Service<PanelContributions>("panels").Register(scope,"author.configuration","模块配置",()=>new ConfigurationPanel(scope))));
         app.Install(new("base.plugins",1,[],["panels","workspace"],scope=>
         {
             var list=new StackPanel {Spacing=8};

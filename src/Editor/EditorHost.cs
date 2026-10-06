@@ -19,7 +19,7 @@ public sealed class EditorHost
         {
             if(closing) return;
             e.Cancel=true;
-            try {await Application.DisposeAsync();closing=true;Window.Close();}
+            try {if(await Application.RequestShutdown()) {closing=true;Window.Close();}}
             catch(Exception error) {Window.Content=new TextBlock {Text="关闭失败："+error.Message};}
         };
     }

@@ -47,7 +47,7 @@ internal static class FoundationVerification
                 try {await app.Enable("probe.duplicate");throw new Exception("Duplicate accepted");}
                 catch(InvalidDataException e) when(e.Message.Contains("Duplicate panel")) { }
                 if(panels.Count!=baseline) throw new Exception("Unrelated panel removed");
-                var commands=app.Service<EditorCommands>("commands");var executions=0;var enabled=true;
+                var commands=app.Service<EditorCommands>("commands");var commandBaseline=commands.Items.Count;var executions=0;var enabled=true;
                 app.Install(new("probe.command",1,[],["commands"],scope=>commands.Register(scope,new("probe.command","验证命令",()=> {executions++;return Task.CompletedTask;},()=>enabled,"Ctrl+F8"))));
                 for(var cycle=0;cycle<3;cycle++)
                 {
@@ -61,8 +61,29 @@ internal static class FoundationVerification
                     await commands.Execute("probe.command");
                     if(executions!=(cycle+1)*2) throw new Exception("Disabled command ran");
                     enabled=true;await app.Disable("probe.command");
-                    if(commands.Items.Count!=0) throw new Exception("Command registration survived");
+                    if(commands.Items.Count!=commandBaseline) throw new Exception("Command registration survived");
                 }
+                var documents=app.Service<DocumentWorkspace>("documents");
+                await app.Enable("author.configuration");
+                var original=documents.Draft("module.json").Text;
+                documents.EditDraft("module.json",original+"\n ");
+                await app.Reload("author.configuration");
+                var config=(ConfigurationPanel)app.Service<WorkspaceShell>("workspace").Tabs.Items.OfType<TabItem>().Single(t=>Equals(t.Tag,"author.configuration")).Content!;
+                if(config.Source.Text!=original+"\n ") throw new Exception("Draft was lost with panel");
+                documents.Undo();if(documents.Draft("module.json").Text!=original) throw new Exception("Draft undo lost");
+                documents.Redo();if(documents.Draft("module.json").Text==original) throw new Exception("Draft redo lost");
+                if(await documents.CanLeave(()=>Task.FromResult(UnsavedChoice.Cancel))) throw new Exception("Cancel left document");
+                if(!documents.Draft("module.json").Dirty) throw new Exception("Cancel lost draft");
+                document.EditConfiguration(c=>c["version"]="conflict");
+                try {documents.ApplyDrafts();throw new Exception("Conflict ignored");}
+                catch(InvalidOperationException e) when(e.Message.Contains("草稿")) { }
+                documents.DiscardDraft("module.json");document.Undo();
+                document.EditText("rules.lua",document.Text("rules.lua")+"\n-- retained across panel reconstruction\n");
+                await app.Reload("author.configuration");documents.Undo();documents.Redo();
+                if(!document.Text("rules.lua").Contains("retained across")) throw new Exception("Document undo history lost");
+                documents.Location=Path.GetFullPath(output)+"-author-"+Guid.NewGuid();
+                if(!await documents.CanLeave(()=>Task.FromResult(UnsavedChoice.Save))) throw new Exception("Save cancelled");
+                if(ModuleDocument.Open(documents.Location).Snapshot().Fingerprint!=document.Snapshot().Fingerprint) throw new Exception("Save/reopen differs");
                 try {await app.Disable("base.documents");throw new Exception("Required plugin was disabled");}
                 catch(InvalidOperationException e) when(e.Message.Contains("必需")) { }
                 await app.DisposeAsync();
