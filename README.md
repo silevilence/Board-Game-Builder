@@ -35,3 +35,12 @@ dotnet run --project src/Player -- batch samples/quick-cards --seed 1 --count 20
 
 M2 操作见 [编辑器指南](docs/editor-guide.md) 与 [完整验收记录](docs/validation/m2-review.md)。
 第二示例为 [六角小队战](samples/hex-skirmish/README.md)，支持真人与 CPU 队友对抗 CPU。
+
+真实单人纸牌补充示例：[空当接龙](samples/freecell/README.md)，使用 Kenney 资源、Lua 规则和共享有序叠牌视图。种子 1 已验证可解，操作为「开始 → 洗牌 → 发牌」。
+
+```powershell
+dotnet run --project src/Player -- gui samples/freecell
+dotnet run --project tests/Engine.Tests -c Release -- freecell freecell-shortcuts freecell-modes
+```
+
+本机独立产物：`artifacts/freecell-windows-1.2.0/Play.exe`。经典绿色牌桌与灰色菜单，自动适应窗口；支持点击选牌／目标、双击快速移牌、按住右键看牌及键盘快捷操作。完整键位见模块说明，证据与限制见 [空当接龙验收记录](docs/validation/freecell-review.md)。

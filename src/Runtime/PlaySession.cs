@@ -65,7 +65,8 @@ public sealed class PlaySession : IDisposable
     }
     private CommandResult Submit(Command command,bool cpu)
     {
-        if(Steps>=maxSteps) { Stop("step-limit",$"Exceeded {maxSteps} steps.");return new(0,false,"step-limit"); }
+        // The runaway guard is for automatic play; a human may keep thinking, moving and undoing.
+        if(cpu && Steps>=maxSteps) { Stop("step-limit",$"Exceeded {maxSteps} steps.");return new(0,false,"step-limit"); }
         var before=Wire.Json(engine.ExportAuthorityState());
         var result=engine.Submit(CurrentSeat,command);
         if(!result.Accepted)

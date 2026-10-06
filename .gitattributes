@@ -2,3 +2,5 @@
 *.cs text eol=lf
 *.md text eol=lf
 *.lua text eol=lf
+# Preserve the vendored license exactly as supplied in the Kenney archive.
+samples/freecell/assets/License.txt -text -whitespace

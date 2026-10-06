@@ -22,6 +22,7 @@ public sealed partial class PlayPanel : UserControl,IDisposable
     private bool busy;
     private bool pendingPause;
     private int generation;
+    private uint? activeSeed;
     private readonly CheckBox external=new() {Content="独立 Player"};
     private readonly TextBox executable=new() {Text=EditorPaths.InWorkspace("src/Player/bin/Release/net10.0-windows/Player.exe"),Width=260,Watermark="调试 Player.exe 路径"};
     private readonly TextBox timeline=new() {IsReadOnly=true,AcceptsReturn=true,Height=170};
@@ -46,7 +47,19 @@ public sealed partial class PlayPanel : UserControl,IDisposable
         var side=new DockPanel {Width=280}; DockPanel.SetDock(status,Dock.Top); side.Children.Add(status); side.Children.Add(new ScrollViewer {Content=actions});
         var root=new DockPanel(); DockPanel.SetDock(top,Dock.Top); DockPanel.SetDock(timeline,Dock.Bottom); DockPanel.SetDock(side,Dock.Right); root.Children.Add(top); root.Children.Add(timeline); root.Children.Add(side); root.Children.Add(table); Content=root;
         start.Click+=async (_,_)=>await Start(); stop.Click+=(_,_)=>Stop();
+        TableKeyInput.Attach(this,table.HandleShortcut);
+        seed.KeyDown+=async (_,e)=> { if(e.Key==Avalonia.Input.Key.Enter) {e.Handled=true; await Start();} };
         table.Gesture+=async g=> { if(frame!=null) await Send(new("submit",frame.Revision,PlayerSession.Resolve(frame.Actions,new(g.Kind,g.Entity,g.Target,g.X,g.Y)))); };
+        table.Shortcut+=async key=>
+        {
+            if(key=="choose-seed") { seed.Focus(); seed.SelectAll(); return; }
+            if(key is "restart" or "new-game")
+            { if(key=="new-game") seed.Text=System.Security.Cryptography.RandomNumberGenerator.GetInt32(1,int.MaxValue).ToString(); else if(activeSeed is {} previous) seed.Text=previous.ToString(); await Start(); return; }
+            if(frame==null || busy) return;
+            if(key=="hint")
+            { var hint=frame.Actions.FirstOrDefault(a=>a.Gesture=="drag"); table.Hint(hint?.Command.Entity,hint?.Target); status.Text=hint==null?"没有可提示动作":"合法走法（不保证最优）："+hint.Label; return; }
+            await Send(new("submit",frame.Revision,PlayerSession.Resolve(frame.Actions,new("shortcut",table.Selected,Action:key))));
+        };
         table.RenderingError+=error=> { Stop(); status.Text=error; };
         timer.Tick+=async (_,_)=> { if(frame is {Cpu:true,View.Ended:false,Fault:null,Paused:false,IsReplay:false} && !busy) await Send(new("cpu",frame.Revision)); };
         void ControlButton(string label,Func<Task> action)
@@ -56,7 +69,7 @@ public sealed partial class PlayPanel : UserControl,IDisposable
     }
     public void DocumentChanged()
     {
-        Stop(); cpuSeats.Clear();
+        Stop(); activeSeed=null; cpuSeats.Clear();
         try
         {
             SyncSeats(document()?.Snapshot()); reveal.IsChecked=false;
@@ -83,7 +96,7 @@ public sealed partial class PlayPanel : UserControl,IDisposable
             var controllers=cpuSeats.ToDictionary(s=>s.Key,s=>s.Value.IsChecked==true?"cpu":"human");
             var observer=module.Initial.Seats.FirstOrDefault(s=>controllers.GetValueOrDefault(s.Id)=="human")?.Id ?? module.Initial.Seats[0].Id;
             var created=external.IsChecked==true ? (IDebugSession)await ExternalDebugSession.Launch(executable.Text ?? "",module,number,controllers,observer) : new InProcessDebugSession(module,number,controllers,observer);
-            if(current!=generation) {created.Dispose();return;} session=created;
+            if(current!=generation) {created.Dispose();return;} session=created; activeSeed=number;
             await Send(new("frame")); if(current==generation) timer.Start();
         }
         catch(Exception e) {status.Text=e.Message;}

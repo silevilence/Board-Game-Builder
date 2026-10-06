@@ -1,0 +1,468 @@
+[
+  {
+    "kind": "start"
+  },
+  {
+    "kind": "deal"
+  },
+  {
+    "kind": "place",
+    "entity": "card-40",
+    "target": "home-4"
+  },
+  {
+    "kind": "place",
+    "entity": "card-09",
+    "target": "column-7"
+  },
+  {
+    "kind": "place",
+    "entity": "card-16",
+    "target": "cell-1"
+  },
+  {
+    "kind": "place",
+    "entity": "card-27",
+    "target": "home-3"
+  },
+  {
+    "kind": "place",
+    "entity": "card-21",
+    "target": "column-7"
+  },
+  {
+    "kind": "place",
+    "entity": "card-12",
+    "target": "cell-2"
+  },
+  {
+    "kind": "place",
+    "entity": "card-45",
+    "target": "column-3"
+  },
+  {
+    "kind": "place",
+    "entity": "card-50",
+    "target": "column-5"
+  },
+  {
+    "kind": "place",
+    "entity": "card-34",
+    "target": "cell-3"
+  },
+  {
+    "kind": "place",
+    "entity": "card-41",
+    "target": "home-4"
+  },
+  {
+    "kind": "place",
+    "entity": "card-36",
+    "target": "column-5"
+  },
+  {
+    "kind": "place",
+    "entity": "card-20",
+    "target": "column-6"
+  },
+  {
+    "kind": "place",
+    "entity": "card-18",
+    "target": "column-6"
+  },
+  {
+    "kind": "place",
+    "entity": "card-11",
+    "target": "cell-4"
+  },
+  {
+    "kind": "place",
+    "entity": "card-15",
+    "target": "column-8"
+  },
+  {
+    "kind": "place",
+    "entity": "card-11",
+    "target": "column-3"
+  },
+  {
+    "kind": "place",
+    "entity": "card-09",
+    "target": "column-5"
+  },
+  {
+    "kind": "place",
+    "entity": "card-23",
+    "target": "column-3"
+  },
+  {
+    "kind": "place",
+    "entity": "card-49",
+    "target": "column-7"
+  },
+  {
+    "kind": "place",
+    "entity": "card-08",
+    "target": "column-7"
+  },
+  {
+    "kind": "place",
+    "entity": "card-12",
+    "target": "column-6"
+  },
+  {
+    "kind": "place",
+    "entity": "card-38",
+    "target": "column-2"
+  },
+  {
+    "kind": "place",
+    "entity": "card-47",
+    "target": "column-4"
+  },
+  {
+    "kind": "place",
+    "entity": "card-28",
+    "target": "home-3"
+  },
+  {
+    "kind": "place",
+    "entity": "card-29",
+    "target": "home-3"
+  },
+  {
+    "kind": "place",
+    "entity": "card-17",
+    "target": "column-3"
+  },
+  {
+    "kind": "place",
+    "entity": "card-03",
+    "target": "column-3"
+  },
+  {
+    "kind": "place",
+    "entity": "card-51",
+    "target": "cell-2"
+  },
+  {
+    "kind": "place",
+    "entity": "card-46",
+    "target": "column-5"
+  },
+  {
+    "kind": "place",
+    "entity": "card-30",
+    "target": "home-3"
+  },
+  {
+    "kind": "place",
+    "entity": "card-31",
+    "target": "home-3"
+  },
+  {
+    "kind": "place",
+    "entity": "card-01",
+    "target": "home-1"
+  },
+  {
+    "kind": "place",
+    "entity": "card-37",
+    "target": "column-6"
+  },
+  {
+    "kind": "place",
+    "entity": "card-49",
+    "target": "column-6"
+  },
+  {
+    "kind": "place",
+    "entity": "card-32",
+    "target": "home-3"
+  },
+  {
+    "kind": "place",
+    "entity": "card-22",
+    "target": "column-1"
+  },
+  {
+    "kind": "place",
+    "entity": "card-42",
+    "target": "home-4"
+  },
+  {
+    "kind": "place",
+    "entity": "card-09",
+    "target": "column-2"
+  },
+  {
+    "kind": "place",
+    "entity": "card-24",
+    "target": "cell-4"
+  },
+  {
+    "kind": "place",
+    "entity": "card-33",
+    "target": "home-3"
+  },
+  {
+    "kind": "place",
+    "entity": "card-02",
+    "target": "home-1"
+  },
+  {
+    "kind": "place",
+    "entity": "card-34",
+    "target": "home-3"
+  },
+  {
+    "kind": "place",
+    "entity": "card-22",
+    "target": "column-7"
+  },
+  {
+    "kind": "place",
+    "entity": "card-20",
+    "target": "column-7"
+  },
+  {
+    "kind": "place",
+    "entity": "card-25",
+    "target": "column-1"
+  },
+  {
+    "kind": "place",
+    "entity": "card-43",
+    "target": "home-4"
+  },
+  {
+    "kind": "place",
+    "entity": "card-25",
+    "target": "column-5"
+  },
+  {
+    "kind": "place",
+    "entity": "card-17",
+    "target": "column-4"
+  },
+  {
+    "kind": "place",
+    "entity": "card-44",
+    "target": "home-4"
+  },
+  {
+    "kind": "place",
+    "entity": "card-05",
+    "target": "column-1"
+  },
+  {
+    "kind": "place",
+    "entity": "card-07",
+    "target": "cell-3"
+  },
+  {
+    "kind": "place",
+    "entity": "card-14",
+    "target": "home-2"
+  },
+  {
+    "kind": "place",
+    "entity": "card-15",
+    "target": "home-2"
+  },
+  {
+    "kind": "place",
+    "entity": "card-16",
+    "target": "home-2"
+  },
+  {
+    "kind": "place",
+    "entity": "card-03",
+    "target": "home-1"
+  },
+  {
+    "kind": "place",
+    "entity": "card-17",
+    "target": "home-2"
+  },
+  {
+    "kind": "place",
+    "entity": "card-18",
+    "target": "home-2"
+  },
+  {
+    "kind": "place",
+    "entity": "card-45",
+    "target": "home-4"
+  },
+  {
+    "kind": "place",
+    "entity": "card-46",
+    "target": "home-4"
+  },
+  {
+    "kind": "place",
+    "entity": "card-07",
+    "target": "column-2"
+  },
+  {
+    "kind": "place",
+    "entity": "card-39",
+    "target": "column-3"
+  },
+  {
+    "kind": "place",
+    "entity": "card-13",
+    "target": "cell-1"
+  },
+  {
+    "kind": "place",
+    "entity": "card-04",
+    "target": "home-1"
+  },
+  {
+    "kind": "place",
+    "entity": "card-05",
+    "target": "home-1"
+  },
+  {
+    "kind": "place",
+    "entity": "card-06",
+    "target": "home-1"
+  },
+  {
+    "kind": "place",
+    "entity": "card-19",
+    "target": "home-2"
+  },
+  {
+    "kind": "place",
+    "entity": "card-20",
+    "target": "home-2"
+  },
+  {
+    "kind": "place",
+    "entity": "card-07",
+    "target": "home-1"
+  },
+  {
+    "kind": "place",
+    "entity": "card-08",
+    "target": "home-1"
+  },
+  {
+    "kind": "place",
+    "entity": "card-47",
+    "target": "home-4"
+  },
+  {
+    "kind": "place",
+    "entity": "card-21",
+    "target": "home-2"
+  },
+  {
+    "kind": "place",
+    "entity": "card-35",
+    "target": "home-3"
+  },
+  {
+    "kind": "place",
+    "entity": "card-22",
+    "target": "home-2"
+  },
+  {
+    "kind": "place",
+    "entity": "card-09",
+    "target": "home-1"
+  },
+  {
+    "kind": "place",
+    "entity": "card-10",
+    "target": "home-1"
+  },
+  {
+    "kind": "place",
+    "entity": "card-52",
+    "target": "column-1"
+  },
+  {
+    "kind": "place",
+    "entity": "card-48",
+    "target": "home-4"
+  },
+  {
+    "kind": "place",
+    "entity": "card-36",
+    "target": "home-3"
+  },
+  {
+    "kind": "place",
+    "entity": "card-23",
+    "target": "home-2"
+  },
+  {
+    "kind": "place",
+    "entity": "card-49",
+    "target": "home-4"
+  },
+  {
+    "kind": "place",
+    "entity": "card-24",
+    "target": "home-2"
+  },
+  {
+    "kind": "place",
+    "entity": "card-50",
+    "target": "home-4"
+  },
+  {
+    "kind": "place",
+    "entity": "card-11",
+    "target": "home-1"
+  },
+  {
+    "kind": "place",
+    "entity": "card-37",
+    "target": "home-3"
+  },
+  {
+    "kind": "place",
+    "entity": "card-51",
+    "target": "home-4"
+  },
+  {
+    "kind": "place",
+    "entity": "card-25",
+    "target": "home-2"
+  },
+  {
+    "kind": "place",
+    "entity": "card-38",
+    "target": "home-3"
+  },
+  {
+    "kind": "place",
+    "entity": "card-12",
+    "target": "home-1"
+  },
+  {
+    "kind": "place",
+    "entity": "card-26",
+    "target": "home-2"
+  },
+  {
+    "kind": "place",
+    "entity": "card-13",
+    "target": "home-1"
+  },
+  {
+    "kind": "place",
+    "entity": "card-52",
+    "target": "home-4"
+  },
+  {
+    "kind": "place",
+    "entity": "card-39",
+    "target": "home-3"
+  }
+]

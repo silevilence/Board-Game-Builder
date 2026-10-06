@@ -1,0 +1,2287 @@
+{
+  "format": 1,
+  "id": "freecell",
+  "version": "1.2.0",
+  "rules": "rules.lua",
+  "cpu": "cpu.lua",
+  "resources": {
+    "card-01": "assets/card_clubs_A.png",
+    "card-02": "assets/card_clubs_02.png",
+    "card-03": "assets/card_clubs_03.png",
+    "card-04": "assets/card_clubs_04.png",
+    "card-05": "assets/card_clubs_05.png",
+    "card-06": "assets/card_clubs_06.png",
+    "card-07": "assets/card_clubs_07.png",
+    "card-08": "assets/card_clubs_08.png",
+    "card-09": "assets/card_clubs_09.png",
+    "card-10": "assets/card_clubs_10.png",
+    "card-11": "assets/card_clubs_J.png",
+    "card-12": "assets/card_clubs_Q.png",
+    "card-13": "assets/card_clubs_K.png",
+    "card-14": "assets/card_diamonds_A.png",
+    "card-15": "assets/card_diamonds_02.png",
+    "card-16": "assets/card_diamonds_03.png",
+    "card-17": "assets/card_diamonds_04.png",
+    "card-18": "assets/card_diamonds_05.png",
+    "card-19": "assets/card_diamonds_06.png",
+    "card-20": "assets/card_diamonds_07.png",
+    "card-21": "assets/card_diamonds_08.png",
+    "card-22": "assets/card_diamonds_09.png",
+    "card-23": "assets/card_diamonds_10.png",
+    "card-24": "assets/card_diamonds_J.png",
+    "card-25": "assets/card_diamonds_Q.png",
+    "card-26": "assets/card_diamonds_K.png",
+    "card-27": "assets/card_hearts_A.png",
+    "card-28": "assets/card_hearts_02.png",
+    "card-29": "assets/card_hearts_03.png",
+    "card-30": "assets/card_hearts_04.png",
+    "card-31": "assets/card_hearts_05.png",
+    "card-32": "assets/card_hearts_06.png",
+    "card-33": "assets/card_hearts_07.png",
+    "card-34": "assets/card_hearts_08.png",
+    "card-35": "assets/card_hearts_09.png",
+    "card-36": "assets/card_hearts_10.png",
+    "card-37": "assets/card_hearts_J.png",
+    "card-38": "assets/card_hearts_Q.png",
+    "card-39": "assets/card_hearts_K.png",
+    "card-40": "assets/card_spades_A.png",
+    "card-41": "assets/card_spades_02.png",
+    "card-42": "assets/card_spades_03.png",
+    "card-43": "assets/card_spades_04.png",
+    "card-44": "assets/card_spades_05.png",
+    "card-45": "assets/card_spades_06.png",
+    "card-46": "assets/card_spades_07.png",
+    "card-47": "assets/card_spades_08.png",
+    "card-48": "assets/card_spades_09.png",
+    "card-49": "assets/card_spades_10.png",
+    "card-50": "assets/card_spades_J.png",
+    "card-51": "assets/card_spades_Q.png",
+    "card-52": "assets/card_spades_K.png"
+  },
+  "runtimeFiles": [
+    "assets/License.txt",
+    "README.md"
+  ],
+  "seats": [
+    {
+      "id": "p1",
+      "team": "solo",
+      "controller": "human"
+    }
+  ],
+  "phases": [
+    "setup",
+    "deal",
+    "play"
+  ],
+  "layout": {
+    "kind": "free",
+    "originX": 20,
+    "originY": 12
+  },
+  "entities": [
+    {
+      "id": "deck",
+      "components": [
+        {
+          "type": "container",
+          "data": {
+            "capacity": 52,
+            "ordered": true,
+            "contents": [
+              "card-01",
+              "card-02",
+              "card-03",
+              "card-04",
+              "card-05",
+              "card-06",
+              "card-07",
+              "card-08",
+              "card-09",
+              "card-10",
+              "card-11",
+              "card-12",
+              "card-13",
+              "card-14",
+              "card-15",
+              "card-16",
+              "card-17",
+              "card-18",
+              "card-19",
+              "card-20",
+              "card-21",
+              "card-22",
+              "card-23",
+              "card-24",
+              "card-25",
+              "card-26",
+              "card-27",
+              "card-28",
+              "card-29",
+              "card-30",
+              "card-31",
+              "card-32",
+              "card-33",
+              "card-34",
+              "card-35",
+              "card-36",
+              "card-37",
+              "card-38",
+              "card-39",
+              "card-40",
+              "card-41",
+              "card-42",
+              "card-43",
+              "card-44",
+              "card-45",
+              "card-46",
+              "card-47",
+              "card-48",
+              "card-49",
+              "card-50",
+              "card-51",
+              "card-52"
+            ]
+          }
+        },
+        {
+          "type": "position",
+          "data": {
+            "x": 0,
+            "y": 0
+          }
+        },
+        {
+          "type": "faces",
+          "data": {
+            "names": [
+              "牌库"
+            ],
+            "resources": [],
+            "up": true
+          }
+        },
+        {
+          "type": "properties",
+          "data": {
+            "zone": 0,
+            "number": 0,
+            "viewFanY": 0,
+            "viewWidth": 84,
+            "viewHeight": 120,
+            "viewTheme": 1,
+            "viewSuit": 0,
+            "viewCardWidth": 84,
+            "viewCardHeight": 120,
+            "viewHotkey": 0,
+            "viewHidden": 1
+          }
+        }
+      ]
+    },
+    {
+      "id": "column-1",
+      "components": [
+        {
+          "type": "container",
+          "data": {
+            "capacity": 52,
+            "ordered": true,
+            "contents": []
+          }
+        },
+        {
+          "type": "position",
+          "data": {
+            "x": 0,
+            "y": 190
+          }
+        },
+        {
+          "type": "faces",
+          "data": {
+            "names": [
+              "第 1 列"
+            ],
+            "resources": [],
+            "up": true
+          }
+        },
+        {
+          "type": "properties",
+          "data": {
+            "zone": 1,
+            "number": 1,
+            "viewFanY": 42,
+            "viewWidth": 84,
+            "viewHeight": 410,
+            "viewTheme": 1,
+            "viewSuit": 0,
+            "viewCardWidth": 84,
+            "viewCardHeight": 120,
+            "viewHotkey": 1,
+            "viewHidden": 0
+          }
+        }
+      ]
+    },
+    {
+      "id": "column-2",
+      "components": [
+        {
+          "type": "container",
+          "data": {
+            "capacity": 52,
+            "ordered": true,
+            "contents": []
+          }
+        },
+        {
+          "type": "position",
+          "data": {
+            "x": 112,
+            "y": 190
+          }
+        },
+        {
+          "type": "faces",
+          "data": {
+            "names": [
+              "第 2 列"
+            ],
+            "resources": [],
+            "up": true
+          }
+        },
+        {
+          "type": "properties",
+          "data": {
+            "zone": 1,
+            "number": 2,
+            "viewFanY": 42,
+            "viewWidth": 84,
+            "viewHeight": 410,
+            "viewTheme": 1,
+            "viewSuit": 0,
+            "viewCardWidth": 84,
+            "viewCardHeight": 120,
+            "viewHotkey": 2,
+            "viewHidden": 0
+          }
+        }
+      ]
+    },
+    {
+      "id": "column-3",
+      "components": [
+        {
+          "type": "container",
+          "data": {
+            "capacity": 52,
+            "ordered": true,
+            "contents": []
+          }
+        },
+        {
+          "type": "position",
+          "data": {
+            "x": 224,
+            "y": 190
+          }
+        },
+        {
+          "type": "faces",
+          "data": {
+            "names": [
+              "第 3 列"
+            ],
+            "resources": [],
+            "up": true
+          }
+        },
+        {
+          "type": "properties",
+          "data": {
+            "zone": 1,
+            "number": 3,
+            "viewFanY": 42,
+            "viewWidth": 84,
+            "viewHeight": 410,
+            "viewTheme": 1,
+            "viewSuit": 0,
+            "viewCardWidth": 84,
+            "viewCardHeight": 120,
+            "viewHotkey": 3,
+            "viewHidden": 0
+          }
+        }
+      ]
+    },
+    {
+      "id": "column-4",
+      "components": [
+        {
+          "type": "container",
+          "data": {
+            "capacity": 52,
+            "ordered": true,
+            "contents": []
+          }
+        },
+        {
+          "type": "position",
+          "data": {
+            "x": 336,
+            "y": 190
+          }
+        },
+        {
+          "type": "faces",
+          "data": {
+            "names": [
+              "第 4 列"
+            ],
+            "resources": [],
+            "up": true
+          }
+        },
+        {
+          "type": "properties",
+          "data": {
+            "zone": 1,
+            "number": 4,
+            "viewFanY": 42,
+            "viewWidth": 84,
+            "viewHeight": 410,
+            "viewTheme": 1,
+            "viewSuit": 0,
+            "viewCardWidth": 84,
+            "viewCardHeight": 120,
+            "viewHotkey": 4,
+            "viewHidden": 0
+          }
+        }
+      ]
+    },
+    {
+      "id": "column-5",
+      "components": [
+        {
+          "type": "container",
+          "data": {
+            "capacity": 52,
+            "ordered": true,
+            "contents": []
+          }
+        },
+        {
+          "type": "position",
+          "data": {
+            "x": 448,
+            "y": 190
+          }
+        },
+        {
+          "type": "faces",
+          "data": {
+            "names": [
+              "第 5 列"
+            ],
+            "resources": [],
+            "up": true
+          }
+        },
+        {
+          "type": "properties",
+          "data": {
+            "zone": 1,
+            "number": 5,
+            "viewFanY": 42,
+            "viewWidth": 84,
+            "viewHeight": 410,
+            "viewTheme": 1,
+            "viewSuit": 0,
+            "viewCardWidth": 84,
+            "viewCardHeight": 120,
+            "viewHotkey": 5,
+            "viewHidden": 0
+          }
+        }
+      ]
+    },
+    {
+      "id": "column-6",
+      "components": [
+        {
+          "type": "container",
+          "data": {
+            "capacity": 52,
+            "ordered": true,
+            "contents": []
+          }
+        },
+        {
+          "type": "position",
+          "data": {
+            "x": 560,
+            "y": 190
+          }
+        },
+        {
+          "type": "faces",
+          "data": {
+            "names": [
+              "第 6 列"
+            ],
+            "resources": [],
+            "up": true
+          }
+        },
+        {
+          "type": "properties",
+          "data": {
+            "zone": 1,
+            "number": 6,
+            "viewFanY": 42,
+            "viewWidth": 84,
+            "viewHeight": 410,
+            "viewTheme": 1,
+            "viewSuit": 0,
+            "viewCardWidth": 84,
+            "viewCardHeight": 120,
+            "viewHotkey": 6,
+            "viewHidden": 0
+          }
+        }
+      ]
+    },
+    {
+      "id": "column-7",
+      "components": [
+        {
+          "type": "container",
+          "data": {
+            "capacity": 52,
+            "ordered": true,
+            "contents": []
+          }
+        },
+        {
+          "type": "position",
+          "data": {
+            "x": 672,
+            "y": 190
+          }
+        },
+        {
+          "type": "faces",
+          "data": {
+            "names": [
+              "第 7 列"
+            ],
+            "resources": [],
+            "up": true
+          }
+        },
+        {
+          "type": "properties",
+          "data": {
+            "zone": 1,
+            "number": 7,
+            "viewFanY": 42,
+            "viewWidth": 84,
+            "viewHeight": 410,
+            "viewTheme": 1,
+            "viewSuit": 0,
+            "viewCardWidth": 84,
+            "viewCardHeight": 120,
+            "viewHotkey": 7,
+            "viewHidden": 0
+          }
+        }
+      ]
+    },
+    {
+      "id": "column-8",
+      "components": [
+        {
+          "type": "container",
+          "data": {
+            "capacity": 52,
+            "ordered": true,
+            "contents": []
+          }
+        },
+        {
+          "type": "position",
+          "data": {
+            "x": 784,
+            "y": 190
+          }
+        },
+        {
+          "type": "faces",
+          "data": {
+            "names": [
+              "第 8 列"
+            ],
+            "resources": [],
+            "up": true
+          }
+        },
+        {
+          "type": "properties",
+          "data": {
+            "zone": 1,
+            "number": 8,
+            "viewFanY": 42,
+            "viewWidth": 84,
+            "viewHeight": 410,
+            "viewTheme": 1,
+            "viewSuit": 0,
+            "viewCardWidth": 84,
+            "viewCardHeight": 120,
+            "viewHotkey": 8,
+            "viewHidden": 0
+          }
+        }
+      ]
+    },
+    {
+      "id": "cell-1",
+      "components": [
+        {
+          "type": "container",
+          "data": {
+            "capacity": 1,
+            "ordered": true,
+            "contents": []
+          }
+        },
+        {
+          "type": "position",
+          "data": {
+            "x": 0,
+            "y": 32
+          }
+        },
+        {
+          "type": "faces",
+          "data": {
+            "names": [
+              "空当 1"
+            ],
+            "resources": [],
+            "up": true
+          }
+        },
+        {
+          "type": "properties",
+          "data": {
+            "zone": 2,
+            "number": 9,
+            "viewFanY": 0,
+            "viewWidth": 84,
+            "viewHeight": 120,
+            "viewTheme": 1,
+            "viewSuit": 0,
+            "viewCardWidth": 84,
+            "viewCardHeight": 120,
+            "viewHotkey": 0,
+            "viewHidden": 0
+          }
+        }
+      ]
+    },
+    {
+      "id": "cell-2",
+      "components": [
+        {
+          "type": "container",
+          "data": {
+            "capacity": 1,
+            "ordered": true,
+            "contents": []
+          }
+        },
+        {
+          "type": "position",
+          "data": {
+            "x": 96,
+            "y": 32
+          }
+        },
+        {
+          "type": "faces",
+          "data": {
+            "names": [
+              "空当 2"
+            ],
+            "resources": [],
+            "up": true
+          }
+        },
+        {
+          "type": "properties",
+          "data": {
+            "zone": 2,
+            "number": 10,
+            "viewFanY": 0,
+            "viewWidth": 84,
+            "viewHeight": 120,
+            "viewTheme": 1,
+            "viewSuit": 0,
+            "viewCardWidth": 84,
+            "viewCardHeight": 120,
+            "viewHotkey": 0,
+            "viewHidden": 0
+          }
+        }
+      ]
+    },
+    {
+      "id": "cell-3",
+      "components": [
+        {
+          "type": "container",
+          "data": {
+            "capacity": 1,
+            "ordered": true,
+            "contents": []
+          }
+        },
+        {
+          "type": "position",
+          "data": {
+            "x": 192,
+            "y": 32
+          }
+        },
+        {
+          "type": "faces",
+          "data": {
+            "names": [
+              "空当 3"
+            ],
+            "resources": [],
+            "up": true
+          }
+        },
+        {
+          "type": "properties",
+          "data": {
+            "zone": 2,
+            "number": 11,
+            "viewFanY": 0,
+            "viewWidth": 84,
+            "viewHeight": 120,
+            "viewTheme": 1,
+            "viewSuit": 0,
+            "viewCardWidth": 84,
+            "viewCardHeight": 120,
+            "viewHotkey": 0,
+            "viewHidden": 0
+          }
+        }
+      ]
+    },
+    {
+      "id": "cell-4",
+      "components": [
+        {
+          "type": "container",
+          "data": {
+            "capacity": 1,
+            "ordered": true,
+            "contents": []
+          }
+        },
+        {
+          "type": "position",
+          "data": {
+            "x": 288,
+            "y": 32
+          }
+        },
+        {
+          "type": "faces",
+          "data": {
+            "names": [
+              "空当 4"
+            ],
+            "resources": [],
+            "up": true
+          }
+        },
+        {
+          "type": "properties",
+          "data": {
+            "zone": 2,
+            "number": 12,
+            "viewFanY": 0,
+            "viewWidth": 84,
+            "viewHeight": 120,
+            "viewTheme": 1,
+            "viewSuit": 0,
+            "viewCardWidth": 84,
+            "viewCardHeight": 120,
+            "viewHotkey": 0,
+            "viewHidden": 0
+          }
+        }
+      ]
+    },
+    {
+      "id": "home-1",
+      "components": [
+        {
+          "type": "container",
+          "data": {
+            "capacity": 13,
+            "ordered": true,
+            "contents": []
+          }
+        },
+        {
+          "type": "position",
+          "data": {
+            "x": 496,
+            "y": 32
+          }
+        },
+        {
+          "type": "faces",
+          "data": {
+            "names": [
+              "梅花 A→K"
+            ],
+            "resources": [],
+            "up": true
+          }
+        },
+        {
+          "type": "properties",
+          "data": {
+            "zone": 3,
+            "number": 13,
+            "viewFanY": 0,
+            "viewWidth": 84,
+            "viewHeight": 120,
+            "viewTheme": 1,
+            "viewSuit": 1,
+            "viewCardWidth": 84,
+            "viewCardHeight": 120,
+            "viewHotkey": 0,
+            "viewHidden": 0
+          }
+        }
+      ]
+    },
+    {
+      "id": "home-2",
+      "components": [
+        {
+          "type": "container",
+          "data": {
+            "capacity": 13,
+            "ordered": true,
+            "contents": []
+          }
+        },
+        {
+          "type": "position",
+          "data": {
+            "x": 592,
+            "y": 32
+          }
+        },
+        {
+          "type": "faces",
+          "data": {
+            "names": [
+              "方块 A→K"
+            ],
+            "resources": [],
+            "up": true
+          }
+        },
+        {
+          "type": "properties",
+          "data": {
+            "zone": 3,
+            "number": 14,
+            "viewFanY": 0,
+            "viewWidth": 84,
+            "viewHeight": 120,
+            "viewTheme": 1,
+            "viewSuit": 2,
+            "viewCardWidth": 84,
+            "viewCardHeight": 120,
+            "viewHotkey": 0,
+            "viewHidden": 0
+          }
+        }
+      ]
+    },
+    {
+      "id": "home-3",
+      "components": [
+        {
+          "type": "container",
+          "data": {
+            "capacity": 13,
+            "ordered": true,
+            "contents": []
+          }
+        },
+        {
+          "type": "position",
+          "data": {
+            "x": 688,
+            "y": 32
+          }
+        },
+        {
+          "type": "faces",
+          "data": {
+            "names": [
+              "红桃 A→K"
+            ],
+            "resources": [],
+            "up": true
+          }
+        },
+        {
+          "type": "properties",
+          "data": {
+            "zone": 3,
+            "number": 15,
+            "viewFanY": 0,
+            "viewWidth": 84,
+            "viewHeight": 120,
+            "viewTheme": 1,
+            "viewSuit": 3,
+            "viewCardWidth": 84,
+            "viewCardHeight": 120,
+            "viewHotkey": 0,
+            "viewHidden": 0
+          }
+        }
+      ]
+    },
+    {
+      "id": "home-4",
+      "components": [
+        {
+          "type": "container",
+          "data": {
+            "capacity": 13,
+            "ordered": true,
+            "contents": []
+          }
+        },
+        {
+          "type": "position",
+          "data": {
+            "x": 784,
+            "y": 32
+          }
+        },
+        {
+          "type": "faces",
+          "data": {
+            "names": [
+              "黑桃 A→K"
+            ],
+            "resources": [],
+            "up": true
+          }
+        },
+        {
+          "type": "properties",
+          "data": {
+            "zone": 3,
+            "number": 16,
+            "viewFanY": 0,
+            "viewWidth": 84,
+            "viewHeight": 120,
+            "viewTheme": 1,
+            "viewSuit": 4,
+            "viewCardWidth": 84,
+            "viewCardHeight": 120,
+            "viewHotkey": 0,
+            "viewHidden": 0
+          }
+        }
+      ]
+    },
+    {
+      "id": "card-01",
+      "components": [
+        {
+          "type": "faces",
+          "data": {
+            "names": [
+              "梅花A"
+            ],
+            "resources": [
+              "card-01"
+            ],
+            "up": true
+          }
+        },
+        {
+          "type": "properties",
+          "data": {
+            "rank": 1,
+            "suit": 1,
+            "color": 0,
+            "number": 1
+          }
+        }
+      ]
+    },
+    {
+      "id": "card-02",
+      "components": [
+        {
+          "type": "faces",
+          "data": {
+            "names": [
+              "梅花2"
+            ],
+            "resources": [
+              "card-02"
+            ],
+            "up": true
+          }
+        },
+        {
+          "type": "properties",
+          "data": {
+            "rank": 2,
+            "suit": 1,
+            "color": 0,
+            "number": 2
+          }
+        }
+      ]
+    },
+    {
+      "id": "card-03",
+      "components": [
+        {
+          "type": "faces",
+          "data": {
+            "names": [
+              "梅花3"
+            ],
+            "resources": [
+              "card-03"
+            ],
+            "up": true
+          }
+        },
+        {
+          "type": "properties",
+          "data": {
+            "rank": 3,
+            "suit": 1,
+            "color": 0,
+            "number": 3
+          }
+        }
+      ]
+    },
+    {
+      "id": "card-04",
+      "components": [
+        {
+          "type": "faces",
+          "data": {
+            "names": [
+              "梅花4"
+            ],
+            "resources": [
+              "card-04"
+            ],
+            "up": true
+          }
+        },
+        {
+          "type": "properties",
+          "data": {
+            "rank": 4,
+            "suit": 1,
+            "color": 0,
+            "number": 4
+          }
+        }
+      ]
+    },
+    {
+      "id": "card-05",
+      "components": [
+        {
+          "type": "faces",
+          "data": {
+            "names": [
+              "梅花5"
+            ],
+            "resources": [
+              "card-05"
+            ],
+            "up": true
+          }
+        },
+        {
+          "type": "properties",
+          "data": {
+            "rank": 5,
+            "suit": 1,
+            "color": 0,
+            "number": 5
+          }
+        }
+      ]
+    },
+    {
+      "id": "card-06",
+      "components": [
+        {
+          "type": "faces",
+          "data": {
+            "names": [
+              "梅花6"
+            ],
+            "resources": [
+              "card-06"
+            ],
+            "up": true
+          }
+        },
+        {
+          "type": "properties",
+          "data": {
+            "rank": 6,
+            "suit": 1,
+            "color": 0,
+            "number": 6
+          }
+        }
+      ]
+    },
+    {
+      "id": "card-07",
+      "components": [
+        {
+          "type": "faces",
+          "data": {
+            "names": [
+              "梅花7"
+            ],
+            "resources": [
+              "card-07"
+            ],
+            "up": true
+          }
+        },
+        {
+          "type": "properties",
+          "data": {
+            "rank": 7,
+            "suit": 1,
+            "color": 0,
+            "number": 7
+          }
+        }
+      ]
+    },
+    {
+      "id": "card-08",
+      "components": [
+        {
+          "type": "faces",
+          "data": {
+            "names": [
+              "梅花8"
+            ],
+            "resources": [
+              "card-08"
+            ],
+            "up": true
+          }
+        },
+        {
+          "type": "properties",
+          "data": {
+            "rank": 8,
+            "suit": 1,
+            "color": 0,
+            "number": 8
+          }
+        }
+      ]
+    },
+    {
+      "id": "card-09",
+      "components": [
+        {
+          "type": "faces",
+          "data": {
+            "names": [
+              "梅花9"
+            ],
+            "resources": [
+              "card-09"
+            ],
+            "up": true
+          }
+        },
+        {
+          "type": "properties",
+          "data": {
+            "rank": 9,
+            "suit": 1,
+            "color": 0,
+            "number": 9
+          }
+        }
+      ]
+    },
+    {
+      "id": "card-10",
+      "components": [
+        {
+          "type": "faces",
+          "data": {
+            "names": [
+              "梅花10"
+            ],
+            "resources": [
+              "card-10"
+            ],
+            "up": true
+          }
+        },
+        {
+          "type": "properties",
+          "data": {
+            "rank": 10,
+            "suit": 1,
+            "color": 0,
+            "number": 10
+          }
+        }
+      ]
+    },
+    {
+      "id": "card-11",
+      "components": [
+        {
+          "type": "faces",
+          "data": {
+            "names": [
+              "梅花J"
+            ],
+            "resources": [
+              "card-11"
+            ],
+            "up": true
+          }
+        },
+        {
+          "type": "properties",
+          "data": {
+            "rank": 11,
+            "suit": 1,
+            "color": 0,
+            "number": 11
+          }
+        }
+      ]
+    },
+    {
+      "id": "card-12",
+      "components": [
+        {
+          "type": "faces",
+          "data": {
+            "names": [
+              "梅花Q"
+            ],
+            "resources": [
+              "card-12"
+            ],
+            "up": true
+          }
+        },
+        {
+          "type": "properties",
+          "data": {
+            "rank": 12,
+            "suit": 1,
+            "color": 0,
+            "number": 12
+          }
+        }
+      ]
+    },
+    {
+      "id": "card-13",
+      "components": [
+        {
+          "type": "faces",
+          "data": {
+            "names": [
+              "梅花K"
+            ],
+            "resources": [
+              "card-13"
+            ],
+            "up": true
+          }
+        },
+        {
+          "type": "properties",
+          "data": {
+            "rank": 13,
+            "suit": 1,
+            "color": 0,
+            "number": 13
+          }
+        }
+      ]
+    },
+    {
+      "id": "card-14",
+      "components": [
+        {
+          "type": "faces",
+          "data": {
+            "names": [
+              "方块A"
+            ],
+            "resources": [
+              "card-14"
+            ],
+            "up": true
+          }
+        },
+        {
+          "type": "properties",
+          "data": {
+            "rank": 1,
+            "suit": 2,
+            "color": 1,
+            "number": 14
+          }
+        }
+      ]
+    },
+    {
+      "id": "card-15",
+      "components": [
+        {
+          "type": "faces",
+          "data": {
+            "names": [
+              "方块2"
+            ],
+            "resources": [
+              "card-15"
+            ],
+            "up": true
+          }
+        },
+        {
+          "type": "properties",
+          "data": {
+            "rank": 2,
+            "suit": 2,
+            "color": 1,
+            "number": 15
+          }
+        }
+      ]
+    },
+    {
+      "id": "card-16",
+      "components": [
+        {
+          "type": "faces",
+          "data": {
+            "names": [
+              "方块3"
+            ],
+            "resources": [
+              "card-16"
+            ],
+            "up": true
+          }
+        },
+        {
+          "type": "properties",
+          "data": {
+            "rank": 3,
+            "suit": 2,
+            "color": 1,
+            "number": 16
+          }
+        }
+      ]
+    },
+    {
+      "id": "card-17",
+      "components": [
+        {
+          "type": "faces",
+          "data": {
+            "names": [
+              "方块4"
+            ],
+            "resources": [
+              "card-17"
+            ],
+            "up": true
+          }
+        },
+        {
+          "type": "properties",
+          "data": {
+            "rank": 4,
+            "suit": 2,
+            "color": 1,
+            "number": 17
+          }
+        }
+      ]
+    },
+    {
+      "id": "card-18",
+      "components": [
+        {
+          "type": "faces",
+          "data": {
+            "names": [
+              "方块5"
+            ],
+            "resources": [
+              "card-18"
+            ],
+            "up": true
+          }
+        },
+        {
+          "type": "properties",
+          "data": {
+            "rank": 5,
+            "suit": 2,
+            "color": 1,
+            "number": 18
+          }
+        }
+      ]
+    },
+    {
+      "id": "card-19",
+      "components": [
+        {
+          "type": "faces",
+          "data": {
+            "names": [
+              "方块6"
+            ],
+            "resources": [
+              "card-19"
+            ],
+            "up": true
+          }
+        },
+        {
+          "type": "properties",
+          "data": {
+            "rank": 6,
+            "suit": 2,
+            "color": 1,
+            "number": 19
+          }
+        }
+      ]
+    },
+    {
+      "id": "card-20",
+      "components": [
+        {
+          "type": "faces",
+          "data": {
+            "names": [
+              "方块7"
+            ],
+            "resources": [
+              "card-20"
+            ],
+            "up": true
+          }
+        },
+        {
+          "type": "properties",
+          "data": {
+            "rank": 7,
+            "suit": 2,
+            "color": 1,
+            "number": 20
+          }
+        }
+      ]
+    },
+    {
+      "id": "card-21",
+      "components": [
+        {
+          "type": "faces",
+          "data": {
+            "names": [
+              "方块8"
+            ],
+            "resources": [
+              "card-21"
+            ],
+            "up": true
+          }
+        },
+        {
+          "type": "properties",
+          "data": {
+            "rank": 8,
+            "suit": 2,
+            "color": 1,
+            "number": 21
+          }
+        }
+      ]
+    },
+    {
+      "id": "card-22",
+      "components": [
+        {
+          "type": "faces",
+          "data": {
+            "names": [
+              "方块9"
+            ],
+            "resources": [
+              "card-22"
+            ],
+            "up": true
+          }
+        },
+        {
+          "type": "properties",
+          "data": {
+            "rank": 9,
+            "suit": 2,
+            "color": 1,
+            "number": 22
+          }
+        }
+      ]
+    },
+    {
+      "id": "card-23",
+      "components": [
+        {
+          "type": "faces",
+          "data": {
+            "names": [
+              "方块10"
+            ],
+            "resources": [
+              "card-23"
+            ],
+            "up": true
+          }
+        },
+        {
+          "type": "properties",
+          "data": {
+            "rank": 10,
+            "suit": 2,
+            "color": 1,
+            "number": 23
+          }
+        }
+      ]
+    },
+    {
+      "id": "card-24",
+      "components": [
+        {
+          "type": "faces",
+          "data": {
+            "names": [
+              "方块J"
+            ],
+            "resources": [
+              "card-24"
+            ],
+            "up": true
+          }
+        },
+        {
+          "type": "properties",
+          "data": {
+            "rank": 11,
+            "suit": 2,
+            "color": 1,
+            "number": 24
+          }
+        }
+      ]
+    },
+    {
+      "id": "card-25",
+      "components": [
+        {
+          "type": "faces",
+          "data": {
+            "names": [
+              "方块Q"
+            ],
+            "resources": [
+              "card-25"
+            ],
+            "up": true
+          }
+        },
+        {
+          "type": "properties",
+          "data": {
+            "rank": 12,
+            "suit": 2,
+            "color": 1,
+            "number": 25
+          }
+        }
+      ]
+    },
+    {
+      "id": "card-26",
+      "components": [
+        {
+          "type": "faces",
+          "data": {
+            "names": [
+              "方块K"
+            ],
+            "resources": [
+              "card-26"
+            ],
+            "up": true
+          }
+        },
+        {
+          "type": "properties",
+          "data": {
+            "rank": 13,
+            "suit": 2,
+            "color": 1,
+            "number": 26
+          }
+        }
+      ]
+    },
+    {
+      "id": "card-27",
+      "components": [
+        {
+          "type": "faces",
+          "data": {
+            "names": [
+              "红桃A"
+            ],
+            "resources": [
+              "card-27"
+            ],
+            "up": true
+          }
+        },
+        {
+          "type": "properties",
+          "data": {
+            "rank": 1,
+            "suit": 3,
+            "color": 1,
+            "number": 27
+          }
+        }
+      ]
+    },
+    {
+      "id": "card-28",
+      "components": [
+        {
+          "type": "faces",
+          "data": {
+            "names": [
+              "红桃2"
+            ],
+            "resources": [
+              "card-28"
+            ],
+            "up": true
+          }
+        },
+        {
+          "type": "properties",
+          "data": {
+            "rank": 2,
+            "suit": 3,
+            "color": 1,
+            "number": 28
+          }
+        }
+      ]
+    },
+    {
+      "id": "card-29",
+      "components": [
+        {
+          "type": "faces",
+          "data": {
+            "names": [
+              "红桃3"
+            ],
+            "resources": [
+              "card-29"
+            ],
+            "up": true
+          }
+        },
+        {
+          "type": "properties",
+          "data": {
+            "rank": 3,
+            "suit": 3,
+            "color": 1,
+            "number": 29
+          }
+        }
+      ]
+    },
+    {
+      "id": "card-30",
+      "components": [
+        {
+          "type": "faces",
+          "data": {
+            "names": [
+              "红桃4"
+            ],
+            "resources": [
+              "card-30"
+            ],
+            "up": true
+          }
+        },
+        {
+          "type": "properties",
+          "data": {
+            "rank": 4,
+            "suit": 3,
+            "color": 1,
+            "number": 30
+          }
+        }
+      ]
+    },
+    {
+      "id": "card-31",
+      "components": [
+        {
+          "type": "faces",
+          "data": {
+            "names": [
+              "红桃5"
+            ],
+            "resources": [
+              "card-31"
+            ],
+            "up": true
+          }
+        },
+        {
+          "type": "properties",
+          "data": {
+            "rank": 5,
+            "suit": 3,
+            "color": 1,
+            "number": 31
+          }
+        }
+      ]
+    },
+    {
+      "id": "card-32",
+      "components": [
+        {
+          "type": "faces",
+          "data": {
+            "names": [
+              "红桃6"
+            ],
+            "resources": [
+              "card-32"
+            ],
+            "up": true
+          }
+        },
+        {
+          "type": "properties",
+          "data": {
+            "rank": 6,
+            "suit": 3,
+            "color": 1,
+            "number": 32
+          }
+        }
+      ]
+    },
+    {
+      "id": "card-33",
+      "components": [
+        {
+          "type": "faces",
+          "data": {
+            "names": [
+              "红桃7"
+            ],
+            "resources": [
+              "card-33"
+            ],
+            "up": true
+          }
+        },
+        {
+          "type": "properties",
+          "data": {
+            "rank": 7,
+            "suit": 3,
+            "color": 1,
+            "number": 33
+          }
+        }
+      ]
+    },
+    {
+      "id": "card-34",
+      "components": [
+        {
+          "type": "faces",
+          "data": {
+            "names": [
+              "红桃8"
+            ],
+            "resources": [
+              "card-34"
+            ],
+            "up": true
+          }
+        },
+        {
+          "type": "properties",
+          "data": {
+            "rank": 8,
+            "suit": 3,
+            "color": 1,
+            "number": 34
+          }
+        }
+      ]
+    },
+    {
+      "id": "card-35",
+      "components": [
+        {
+          "type": "faces",
+          "data": {
+            "names": [
+              "红桃9"
+            ],
+            "resources": [
+              "card-35"
+            ],
+            "up": true
+          }
+        },
+        {
+          "type": "properties",
+          "data": {
+            "rank": 9,
+            "suit": 3,
+            "color": 1,
+            "number": 35
+          }
+        }
+      ]
+    },
+    {
+      "id": "card-36",
+      "components": [
+        {
+          "type": "faces",
+          "data": {
+            "names": [
+              "红桃10"
+            ],
+            "resources": [
+              "card-36"
+            ],
+            "up": true
+          }
+        },
+        {
+          "type": "properties",
+          "data": {
+            "rank": 10,
+            "suit": 3,
+            "color": 1,
+            "number": 36
+          }
+        }
+      ]
+    },
+    {
+      "id": "card-37",
+      "components": [
+        {
+          "type": "faces",
+          "data": {
+            "names": [
+              "红桃J"
+            ],
+            "resources": [
+              "card-37"
+            ],
+            "up": true
+          }
+        },
+        {
+          "type": "properties",
+          "data": {
+            "rank": 11,
+            "suit": 3,
+            "color": 1,
+            "number": 37
+          }
+        }
+      ]
+    },
+    {
+      "id": "card-38",
+      "components": [
+        {
+          "type": "faces",
+          "data": {
+            "names": [
+              "红桃Q"
+            ],
+            "resources": [
+              "card-38"
+            ],
+            "up": true
+          }
+        },
+        {
+          "type": "properties",
+          "data": {
+            "rank": 12,
+            "suit": 3,
+            "color": 1,
+            "number": 38
+          }
+        }
+      ]
+    },
+    {
+      "id": "card-39",
+      "components": [
+        {
+          "type": "faces",
+          "data": {
+            "names": [
+              "红桃K"
+            ],
+            "resources": [
+              "card-39"
+            ],
+            "up": true
+          }
+        },
+        {
+          "type": "properties",
+          "data": {
+            "rank": 13,
+            "suit": 3,
+            "color": 1,
+            "number": 39
+          }
+        }
+      ]
+    },
+    {
+      "id": "card-40",
+      "components": [
+        {
+          "type": "faces",
+          "data": {
+            "names": [
+              "黑桃A"
+            ],
+            "resources": [
+              "card-40"
+            ],
+            "up": true
+          }
+        },
+        {
+          "type": "properties",
+          "data": {
+            "rank": 1,
+            "suit": 4,
+            "color": 0,
+            "number": 40
+          }
+        }
+      ]
+    },
+    {
+      "id": "card-41",
+      "components": [
+        {
+          "type": "faces",
+          "data": {
+            "names": [
+              "黑桃2"
+            ],
+            "resources": [
+              "card-41"
+            ],
+            "up": true
+          }
+        },
+        {
+          "type": "properties",
+          "data": {
+            "rank": 2,
+            "suit": 4,
+            "color": 0,
+            "number": 41
+          }
+        }
+      ]
+    },
+    {
+      "id": "card-42",
+      "components": [
+        {
+          "type": "faces",
+          "data": {
+            "names": [
+              "黑桃3"
+            ],
+            "resources": [
+              "card-42"
+            ],
+            "up": true
+          }
+        },
+        {
+          "type": "properties",
+          "data": {
+            "rank": 3,
+            "suit": 4,
+            "color": 0,
+            "number": 42
+          }
+        }
+      ]
+    },
+    {
+      "id": "card-43",
+      "components": [
+        {
+          "type": "faces",
+          "data": {
+            "names": [
+              "黑桃4"
+            ],
+            "resources": [
+              "card-43"
+            ],
+            "up": true
+          }
+        },
+        {
+          "type": "properties",
+          "data": {
+            "rank": 4,
+            "suit": 4,
+            "color": 0,
+            "number": 43
+          }
+        }
+      ]
+    },
+    {
+      "id": "card-44",
+      "components": [
+        {
+          "type": "faces",
+          "data": {
+            "names": [
+              "黑桃5"
+            ],
+            "resources": [
+              "card-44"
+            ],
+            "up": true
+          }
+        },
+        {
+          "type": "properties",
+          "data": {
+            "rank": 5,
+            "suit": 4,
+            "color": 0,
+            "number": 44
+          }
+        }
+      ]
+    },
+    {
+      "id": "card-45",
+      "components": [
+        {
+          "type": "faces",
+          "data": {
+            "names": [
+              "黑桃6"
+            ],
+            "resources": [
+              "card-45"
+            ],
+            "up": true
+          }
+        },
+        {
+          "type": "properties",
+          "data": {
+            "rank": 6,
+            "suit": 4,
+            "color": 0,
+            "number": 45
+          }
+        }
+      ]
+    },
+    {
+      "id": "card-46",
+      "components": [
+        {
+          "type": "faces",
+          "data": {
+            "names": [
+              "黑桃7"
+            ],
+            "resources": [
+              "card-46"
+            ],
+            "up": true
+          }
+        },
+        {
+          "type": "properties",
+          "data": {
+            "rank": 7,
+            "suit": 4,
+            "color": 0,
+            "number": 46
+          }
+        }
+      ]
+    },
+    {
+      "id": "card-47",
+      "components": [
+        {
+          "type": "faces",
+          "data": {
+            "names": [
+              "黑桃8"
+            ],
+            "resources": [
+              "card-47"
+            ],
+            "up": true
+          }
+        },
+        {
+          "type": "properties",
+          "data": {
+            "rank": 8,
+            "suit": 4,
+            "color": 0,
+            "number": 47
+          }
+        }
+      ]
+    },
+    {
+      "id": "card-48",
+      "components": [
+        {
+          "type": "faces",
+          "data": {
+            "names": [
+              "黑桃9"
+            ],
+            "resources": [
+              "card-48"
+            ],
+            "up": true
+          }
+        },
+        {
+          "type": "properties",
+          "data": {
+            "rank": 9,
+            "suit": 4,
+            "color": 0,
+            "number": 48
+          }
+        }
+      ]
+    },
+    {
+      "id": "card-49",
+      "components": [
+        {
+          "type": "faces",
+          "data": {
+            "names": [
+              "黑桃10"
+            ],
+            "resources": [
+              "card-49"
+            ],
+            "up": true
+          }
+        },
+        {
+          "type": "properties",
+          "data": {
+            "rank": 10,
+            "suit": 4,
+            "color": 0,
+            "number": 49
+          }
+        }
+      ]
+    },
+    {
+      "id": "card-50",
+      "components": [
+        {
+          "type": "faces",
+          "data": {
+            "names": [
+              "黑桃J"
+            ],
+            "resources": [
+              "card-50"
+            ],
+            "up": true
+          }
+        },
+        {
+          "type": "properties",
+          "data": {
+            "rank": 11,
+            "suit": 4,
+            "color": 0,
+            "number": 50
+          }
+        }
+      ]
+    },
+    {
+      "id": "card-51",
+      "components": [
+        {
+          "type": "faces",
+          "data": {
+            "names": [
+              "黑桃Q"
+            ],
+            "resources": [
+              "card-51"
+            ],
+            "up": true
+          }
+        },
+        {
+          "type": "properties",
+          "data": {
+            "rank": 12,
+            "suit": 4,
+            "color": 0,
+            "number": 51
+          }
+        }
+      ]
+    },
+    {
+      "id": "card-52",
+      "components": [
+        {
+          "type": "faces",
+          "data": {
+            "names": [
+              "黑桃K"
+            ],
+            "resources": [
+              "card-52"
+            ],
+            "up": true
+          }
+        },
+        {
+          "type": "properties",
+          "data": {
+            "rank": 13,
+            "suit": 4,
+            "color": 0,
+            "number": 52
+          }
+        }
+      ]
+    },
+    {
+      "id": "match",
+      "components": [
+        {
+          "type": "properties",
+          "data": {
+            "moves": 0,
+            "home": 0,
+            "lastCard": 0,
+            "lastSource": 0,
+            "lastCount": 0,
+            "viewHidden": 1
+          }
+        }
+      ]
+    }
+  ]
+}
