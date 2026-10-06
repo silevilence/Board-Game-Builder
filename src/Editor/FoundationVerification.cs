@@ -1,4 +1,5 @@
 using Avalonia.Controls;
+using Avalonia.VisualTree;
 using BoardGame.Kernel;
 
 namespace BoardGame.Editor;
@@ -15,6 +16,11 @@ internal static class FoundationVerification
             {
                 await host.Ready;
                 var app=host.Application;
+                await Task.Delay(100);
+                var settings=app.Service<WorkspaceShell>("workspace").Tabs.Items.OfType<TabItem>().Single(t=>Equals(t.Tag,"base.settings"));
+                if(!settings.GetVisualDescendants().OfType<TextBlock>().Any(t=>t.Text=="设置")) throw new Exception("Panel title is not rendered");
+                var pluginPanel=app.Service<WorkspaceShell>("workspace").Tabs.Items.OfType<TabItem>().Single(t=>Equals(t.Tag,"base.plugins"));
+                if(!((Control)pluginPanel.Content!).GetVisualDescendants().OfType<TextBlock>().Any(t=>t.Text=="加载程序集")) throw new Exception("Panel button label is not rendered");
                 var document=app.Service<DocumentWorkspace>("documents").Current ?? throw new Exception("No empty document");
                 if(document.Snapshot().Id!="untitled") throw new Exception("Wrong empty document");
                 app.Install(new("probe.optional",1,[],["documents"],_=>throw new Exception("optional probe failure")));

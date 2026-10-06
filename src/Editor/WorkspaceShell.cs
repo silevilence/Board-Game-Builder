@@ -37,9 +37,16 @@ public sealed class PanelContributions(AvaloniaUIService ui)
                 var tab=new TabItem {Header=title,Content=control,Tag=id};
                 cleanup=new Cleanup(()=> {ids.Remove(id);(control as IDisposable)?.Dispose();tab.Content=null;});
                 owner.Own(cleanup);
-                ui.RegisterSlot(owner.Context,"editor.panels",new FuncDataTemplate<object>((_,_)=>null),()=>new[]{tab});
+                ui.RegisterSlot(owner.Context,"editor.panels",new ExistingControlsTemplate(),()=>new[]{tab});
             }
             catch {if(cleanup!=null) cleanup.Dispose();else {ids.Remove(id);(control as IDisposable)?.Dispose();}throw;}
         });
+    }
+    // Slot entries are already controls. Do not match descendant strings: a broad
+    // object template would erase every tab header and button label in the slot.
+    private sealed class ExistingControlsTemplate : IDataTemplate
+    {
+        public bool Match(object? data)=>false;
+        public Control? Build(object? data)=>null;
     }
 }

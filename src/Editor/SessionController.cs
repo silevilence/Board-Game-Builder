@@ -74,7 +74,19 @@ public sealed class SessionController : IDisposable
             Reply=reply;Frame=reply.Frame;Observer=Frame.View.Seat;Reveal=reply.AuthorityState!=null;
             Status=reply.Message.Length>0?reply.Message:reply.Result?.Reason ?? "";return reply;
         }
-        catch(Exception error) {if(current==generation) {timer.Stop();Status="试玩故障："+error.Message;}return null;}
+        catch(DebugOperationException error) {if(current==generation) Status=error.Message;return null;}
+        catch(Exception error)
+        {
+            if(current==generation)
+            {
+                if(error is IOException or ObjectDisposedException)
+                {
+                    timer.Stop();active.Dispose();session=null;Frame=null;Reply=null;Module=null;pendingPause=false;
+                }
+                Status="试玩故障："+error.Message;
+            }
+            return null;
+        }
         finally
         {
             if(current==generation)

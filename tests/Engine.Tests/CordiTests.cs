@@ -5,7 +5,7 @@ namespace Engine.Tests;
 
 public static class CordiTests
 {
-    public static void Run()=>Verify().GetAwaiter().GetResult();
+    public static void Run()=>Verify().WaitAsync(TimeSpan.FromSeconds(45)).GetAwaiter().GetResult();
     private static async Task Verify()
     {
         await using var app=new EditorApplication();
@@ -14,7 +14,7 @@ public static class CordiTests
         foreach(var (id,requires) in new[] {("a",Array.Empty<string>()),("b",new[]{"a"}),("c",new[]{"b"}),("other",Array.Empty<string>())})
             app.Install(new(id,1,[id],requires,c=>
             {
-                events.Add("+"+id);c.Own(new Cleanup(()=>events.Add("-"+id)));c.Provide(id,new object());
+                Trace("+"+id);events.Add("+"+id);c.Own(new Cleanup(()=> {Trace("-"+id);events.Add("-"+id);}));c.Provide(id,new object());
                 c.On(ping,_=>calls++);
                 if(fail && id=="b") throw new InvalidOperationException("broken b");
             }));
@@ -37,8 +37,9 @@ public static class CordiTests
         var held=true;
         app.Install(new("guarded",1,[],[],c=>c.Guard(()=>held?"活动文档引用":null)));
         await app.Enable("guarded");await Reject(()=>app.Disable("guarded"),"活动文档引用");
-        held=false;await app.Disable("guarded");
+        held=false;await app.Disable("guarded");Trace("dispose root");
     }
+    private static void Trace(string text) {if(Environment.GetEnvironmentVariable("BGB_TRACE_CORDI")=="1") Console.WriteLine("CORDI "+text);}
     private static async Task Reject(Func<Task> action,string text)
     {
         try {await action();throw new Exception("Expected: "+text);}

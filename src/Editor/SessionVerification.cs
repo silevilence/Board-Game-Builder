@@ -68,6 +68,17 @@ internal static class SessionVerification
                     var old=new DelayedSession(sessions.Session!);sessions.Session=old;
                     var late=sessions.Send(new("step",sessions.Frame!.Revision));sessions.Stop();old.Release();await late;
                     if(sessions.Active || sessions.Frame!=null || sessions.Busy) throw new Exception("Late result repopulated stopped session");
+                    if(external)
+                    {
+                        var existing=System.Diagnostics.Process.GetProcessesByName("Player").Select(p=>p.Id).ToHashSet();
+                        await sessions.Start();sessions.SuspendScheduler();
+                        var child=System.Diagnostics.Process.GetProcessesByName("Player").Single(p=>!existing.Contains(p.Id));
+                        child.Kill(true);await child.WaitForExitAsync();child.Dispose();
+                        await sessions.Send(new("frame"));
+                        if(sessions.Active || sessions.Frame!=null || !sessions.Status.Contains("故障")) throw new Exception("Crashed Player left an interactive stale frame");
+                        await sessions.Start();await sessions.Send(new("pause"));
+                        if(sessions.Frame==null) throw new Exception("Player crash prevented restart");sessions.Stop();
+                    }
                     author.Undo();author.Undo();
                 }
                 if(Wire.Json(recordings[0].Log)!=Wire.Json(recordings[1].Log)) throw new Exception("Play modes differ");

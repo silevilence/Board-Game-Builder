@@ -21,14 +21,27 @@ if($LASTEXITCODE -ne 0) {throw 'Two-mode seed gate failed'}
 foreach($sample in @('quick-cards','hex-skirmish')) {
   dotnet run --project src/Player -c Release --no-build -- batch "samples/$sample" --seed 1 --count 20 --out "$root/$sample-seeds"
   if($LASTEXITCODE -ne 0) {throw "Seed gate failed: $sample"}
-  $start=[Diagnostics.ProcessStartInfo]::new("$repo/src/Editor/bin/Release/net10.0-windows/Editor.exe")
-  $start.UseShellExecute=$false
-  $start.CreateNoWindow=$true
-  foreach($argument in @('--verify',"$repo/samples/$sample","$root/$sample-workflow","$root/player")) {$start.ArgumentList.Add($argument)}
-  $process=[Diagnostics.Process]::Start($start)
-  if(-not $process.WaitForExit(180000)) {$process.Kill($true);throw "Editor verification timed out: $sample"}
-  $result=Get-Content -Raw -LiteralPath "$root/$sample-workflow/result.json" | ConvertFrom-Json
-  if(-not $result.success) {throw $result.error}
+  foreach($probe in @('session','export')) {
+    $start=[Diagnostics.ProcessStartInfo]::new("$repo/src/Editor/bin/Release/net10.0-windows/Editor.exe")
+    $start.UseShellExecute=$false
+    $start.CreateNoWindow=$true
+    $resultPath=if($probe -eq 'session') {"$root/$sample-session.json"} else {"$root/$sample-export/result.json"}
+    $probeOutput=if($probe -eq 'session') {$resultPath} else {"$root/$sample-export"}
+    foreach($argument in @("--verify-$probe","$repo/samples/$sample",$probeOutput)) {$start.ArgumentList.Add($argument)}
+    if($probe -eq 'export') {$start.ArgumentList.Add("$root/player")}
+    $process=[Diagnostics.Process]::Start($start)
+    if(-not $process.WaitForExit(300000)) {$process.Kill($true);throw "Editor verification timed out: $sample / $probe"}
+    $result=Get-Content -Raw -LiteralPath $resultPath | ConvertFrom-Json
+    if(-not $result.success) {throw ($result.errors -join "`n")}
+  }
 }
-Write-Output "Local M2 verification complete: $root"
-Write-Output 'Clean Windows verification remains separate; see docs/validation/m2-review.md.'
+
+$start=[Diagnostics.ProcessStartInfo]::new("$repo/src/Editor/bin/Release/net10.0-windows/Editor.exe")
+$start.UseShellExecute=$false;$start.CreateNoWindow=$true
+$start.ArgumentList.Add('--verify-foundation');$start.ArgumentList.Add("$root/foundation.json")
+$process=[Diagnostics.Process]::Start($start)
+if(-not $process.WaitForExit(120000)) {$process.Kill($true);throw 'Foundation verification timed out'}
+if(-not (Get-Content -Raw "$root/foundation.json" | ConvertFrom-Json).success) {throw 'Foundation verification failed'}
+
+Write-Output "Local M2/M2.5 verification complete: $root"
+Write-Output 'Clean Windows verification remains separate; see docs/validation/m25-integration.md.'

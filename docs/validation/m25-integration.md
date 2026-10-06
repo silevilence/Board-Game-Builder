@@ -137,3 +137,33 @@ observer/timeline/debug-play/debug-external 回归通过；控制器同步当前
 可选失败不破坏工作区；所有作者面板重建、草稿/Undo、保存重开、视口清理均通过。
 解决方案构建及项目边界检查通过，新增边界禁止 CordiSharp 进入共享 Runtime/Player。
 使用说明和开发契约在 docs/editor-guide.md、docs/editor-plugins.md；历史需求文件未修改。
+
+## M2.5 最终回归
+
+2026-10-06：解决方案 Release 构建 0 警告、0 错误；工程依赖边界检查通过。
+`regression-final.log` 的 31 个默认测试组全部通过，另有正式发行物 export 组通过。
+卡牌和六角各 20 固定种子的全 CPU 终局、重复运行及回放全部一致；
+`artifacts/m25/cards-seeds.log`、`hex-seeds.log` 保存每个种子的结果。
+`artifacts/m25/mode-gate.log` 与 `artifacts/m2-mode-gate/summary.json` 记录同一 40 种子
+在进程内及独立 Player 的逐步帧、日志与回放一致性。
+空当接龙 fresh seed 1 的 94 条合法通关命令、20 种子、快捷键/点击以及两种模式一致性通过。
+
+本轮真实 Windows Sandbox 10.0.26100.0：hasDotnet=false、sdkFolder=false、editorInstalled=false。
+`artifacts/m25/sandbox/{environment.json,cards-games.json,hex-games.json}`：两份 Avalonia 12.1.1
+正式发行物各完成两局 GUI 游戏，退出码均为 0。验证后已停止本轮创建的沙箱。
+通过 [微软 Sandbox CLI](https://learn.microsoft.com/en-us/windows/security/application-security/application-isolation/windows-sandbox/windows-sandbox-cli)
+共享两个导出目录、以 ExistingLogin 执行验证；没有把本机去除 PATH 当作干净系统证据。
+
+cua-driver 实际窗口检查发现并修复 Slot 的 object 数据模板吞掉标题和按钮文字的问题。
+面板直接贡献 Control，注册的空模板必须不匹配任何普通数据；不得遮蔽后代字符串。
+`editor-fixed.png`、`editor-play.png` 和 `foundation-rendered-final.json` 验证修复后标题、按钮与试玩区实际呈现。
+原生视口的 UIA 子树有时不可遍历，截图仍可验证显示；本机未做多显卡或物理跨屏混合 DPI 人工检查。
+核心 View 的缩放、输入取消、失焦和三轮设备归零验证已覆盖；保留既有 HWND airspace 限制。
+
+程序集最终回归 `assemblies-final.json` 再次确认三次真实回收、故意保留对象诊断和设备归零。
+修订 `scripts/validate-m2.ps1` 使用新的 foundation/session/export 验收入口，避免旧 --verify 入口失效。
+
+`session-crash-fixed.json`：两模式规则/CPU 热重载及语法错误保留旧版本、三轮面板重建、
+暂停/停止迟到结果、非法动作与回放通过；另外真实终止本轮启动的独立 Player，
+控制器清除失效帧并给出诊断，再启动成功，最后图形设备归零。
+操作拒绝/脚本校验失败仍保留会话；仅传输中断或已释放客户端清除失效会话。
