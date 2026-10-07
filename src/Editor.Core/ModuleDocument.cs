@@ -49,6 +49,22 @@ public sealed class ModuleDocument
     }
     public string Text(string path) => Encoding.UTF8.GetString(files[path]);
     public JsonObject Configuration => JsonNode.Parse(Text("module.json"))!.AsObject();
+    public byte[] Bytes(string path)=>files[path].ToArray();
+    public string Revision=>Hash(files);
+    public void Import(string revision,JsonObject configuration,IReadOnlyDictionary<string,byte[]> additions)
+    {
+        if(revision!=Revision) throw new InvalidOperationException("文档已改变，请重新预览导入。");
+        var candidate=new Dictionary<string,byte[]>(files,StringComparer.Ordinal);
+        foreach(var file in additions)
+        {
+            ModulePackage.ValidatePath(file.Key);
+            if(candidate.Keys.Any(p=>p.Equals(file.Key,StringComparison.OrdinalIgnoreCase))) throw new InvalidDataException("导入路径冲突："+file.Key);
+            candidate.Add(file.Key,file.Value.ToArray());
+        }
+        candidate["module.json"]=Encoding.UTF8.GetBytes(configuration.ToJsonString(new() {WriteIndented=true}));
+        var probe=new ModuleDocument(candidate,null);_=probe.Snapshot();
+        undo.Push(files);redo.Clear();files=candidate;Changed?.Invoke();
+    }
     public void EditText(string path,string text) => Edit(path,Encoding.UTF8.GetBytes(text));
     public void EditConfiguration(Action<JsonObject> edit)
     {

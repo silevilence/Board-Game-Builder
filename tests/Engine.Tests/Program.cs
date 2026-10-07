@@ -9,6 +9,7 @@ try
     tests.Add("wasm",WasmTests.Run);
     tests.Add("wasm-extensions",WasmTests.Extensions);
     tests.Add("wasm-isolation",WasmTests.Isolation);
+    tests.Add("image-import",ImportTests.Images);
     if(args.Any(a=>!tests.ContainsKey(a))) throw new ArgumentException("Unknown test group.");
     foreach (var test in tests.Where(t => (args.Length == 0 && t.Key != "m2-gate" && t.Key != "export") || args.Contains(t.Key))) { test.Value(); Console.WriteLine($"PASS {test.Key}"); }
     return 0;

@@ -20,6 +20,11 @@ public sealed record TableScene(IReadOnlyList<TableItem> Items, IReadOnlyDiction
     public static TableScene From(SeatView projection,IReadOnlyDictionary<string,byte[]>? resources=null)
     {
         var items=new List<TableItem>(); var used=new Dictionary<string,byte[]>();
+        foreach(var cloth in projection.Entities.Where(e=>e.Properties.GetValueOrDefault("viewTablecloth")==1 && e.Resource!=null))
+        {
+            if(resources!=null && resources.TryGetValue(cloth.Resource!,out var bytes)) used[cloth.Resource!]=bytes;
+            items.Add(new(null,"tablecloth","",new((float)cloth.X,(float)cloth.Y,Math.Clamp(cloth.Properties.GetValueOrDefault("viewWidth",1200),1,8192),Math.Clamp(cloth.Properties.GetValueOrDefault("viewHeight",800),1,8192)),cloth.Resource));
+        }
         var regions=projection.Entities.Where(e=>e.IsContainer && e.Properties.GetValueOrDefault("viewHidden")!=1).OrderBy(e=>e.Owner==projection.Seat?1:0).ToArray();
         var classic=regions.Any(e=>e.Properties.GetValueOrDefault("viewTheme")==1);
         var index=0;
@@ -49,7 +54,7 @@ public sealed record TableScene(IReadOnlyList<TableItem> Items, IReadOnlyDiction
             }
         }
         var loose=0;
-        foreach(var e in projection.Entities.Where(e=>!e.IsContainer && e.Container==null && e.Properties.GetValueOrDefault("viewHidden")!=1))
+        foreach(var e in projection.Entities.Where(e=>!e.IsContainer && e.Container==null && e.Properties.GetValueOrDefault("viewHidden")!=1 && e.Properties.GetValueOrDefault("viewTablecloth")!=1))
         {
             var label=e.Face ?? e.Id;
             var detail=e.Properties.Count>0?string.Join(" ",e.Properties.Select(p=>$"{p.Key}:{p.Value}")):null;

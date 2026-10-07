@@ -4,6 +4,8 @@ public static class ScenePainter
 {
     public static void Draw(TableRenderer renderer,TableScene scene,string? selected=null,string? target=null,string? peeked=null)
     {
+        foreach(var cloth in scene.Items.Where(i=>i.Kind=="tablecloth"))
+            if(cloth.Resource!=null) renderer.Image(cloth.Resource,scene.Resources,new((int)cloth.Bounds.X,(int)cloth.Bounds.Y,(int)cloth.Bounds.Width,(int)cloth.Bounds.Height));
         if(scene.ClassicCards) { DrawClassic(renderer,scene,selected,target,peeked); return; }
         if(scene.Layout is {Kind:not "free"} grid)
             for(var q=-2;q<10;q++) for(var r=-2;r<8;r++)
@@ -17,7 +19,7 @@ public static class ScenePainter
                 }
             }
         var peek=scene.Items.FirstOrDefault(i=>i.Entity==peeked && i.Kind=="card");
-        foreach(var item in peek==null?scene.Items:scene.Items.Append(peek))
+        foreach(var item in (peek==null?scene.Items:scene.Items.Append(peek)).Where(i=>i.Kind!="tablecloth"))
         {
             var b=item.Bounds;
             var color=item.Kind switch { "region"=>new Color(27,66,72),"back"=>new Color(63,89,114),"piece"=>new Color(34,49,60),_=>new Color(234,209,157) };
@@ -61,7 +63,7 @@ public static class ScenePainter
             if(slot.Hotkey>0) r.Text(slot.Hotkey.ToString(),x+w/2-5,y-24,new Color(92,170,110),12);
             if(slot.Entity==target) Outline(r,new(x-3,y-3,w+6,h+6),new Color(237,213,104),2);
         }
-        var cards=scene.Items.Where(i=>i.Kind!="region");
+        var cards=scene.Items.Where(i=>i.Kind is not ("region" or "tablecloth"));
         var peek=cards.FirstOrDefault(i=>i.Entity==peeked && i.Kind=="card");
         foreach(var item in peek==null?cards:cards.Append(peek)) DrawCard(r,scene,item,item.Entity==selected);
     }
