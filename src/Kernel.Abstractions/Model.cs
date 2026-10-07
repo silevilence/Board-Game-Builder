@@ -80,4 +80,5 @@ public sealed class GameState
 }
 public sealed record LoadedModule(string Id, string Version, string Fingerprint, GameState Initial,
     string Rules, string Cpu, string RulesPath, string CpuPath, SortedDictionary<string,string>? ResourceHashes = null,
-    SortedDictionary<string,byte[]>? ResourceData = null, SortedDictionary<string,string>? RuntimeHashes = null);
+    SortedDictionary<string,byte[]>? ResourceData = null, SortedDictionary<string,string>? RuntimeHashes = null,
+    [property:JsonIgnore(Condition=JsonIgnoreCondition.WhenWritingNull)] List<RuntimePlugin>? RuntimePlugins=null);

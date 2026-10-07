@@ -7,7 +7,11 @@ using System.Text.Json.Serialization;
 using BoardGame.Kernel;
 namespace BoardGame.Modules;
 
-public sealed record RuntimeDependency(string Id,string Version,int Api,[property:JsonPropertyName("editor_only")] bool EditorOnly=false);
+public sealed record RuntimeDependency(string Id,string Version,int Api,[property:JsonPropertyName("editor_only")] bool EditorOnly=false,
+    [property:JsonIgnore(Condition=JsonIgnoreCondition.WhenWritingNull)] string? Kind=null,
+    [property:JsonIgnore(Condition=JsonIgnoreCondition.WhenWritingNull)] string? File=null,
+    [property:JsonIgnore(Condition=JsonIgnoreCondition.WhenWritingNull)] string? Sha256=null,
+    [property:JsonIgnore(Condition=JsonIgnoreCondition.WhenWritingNull)] List<string>? Permissions=null);
 public sealed record PackageManifest(int Format,int Api,string Source,string ModuleId,string ModuleVersion,string Fingerprint,
     List<RuntimeDependency> Dependencies,SortedDictionary<string,string> Files);
 public static class ModulePackage
@@ -31,6 +35,16 @@ public static class ModulePackage
         {
             if(d==null || string.IsNullOrWhiteSpace(d.Id) || !ids.Add(d.Id)) throw new InvalidDataException("plugins: duplicate/conflicting dependency");
             if(d.EditorOnly) continue;
+            if(d.Kind=="wasm")
+            {
+                if(Official.ContainsKey(d.Id) || d.Api!=1 || !int.TryParse(d.Version,out var pluginVersion) || pluginVersion<1 || pluginVersion.ToString()!=d.Version ||
+                   d.File==null || !d.File.EndsWith(".wasm",StringComparison.Ordinal) || d.Sha256==null || d.Sha256.Length!=64 || !d.Sha256.All(Uri.IsHexDigit))
+                    throw new InvalidDataException($"plugins[{d.Id}]: incompatible WASM API/version/file/hash");
+                ValidatePath(d.File);
+                if(d.Permissions is {Count:>0}) throw new InvalidDataException($"plugins[{d.Id}]: unsupported permission");
+                continue;
+            }
+            if(d.Kind is not (null or "native")) throw new InvalidDataException($"plugins[{d.Id}]: unsupported plugin kind");
             if(!Official.TryGetValue(d.Id,out var version)) throw new InvalidDataException($"plugins[{d.Id}]: missing/unsupported runtime dependency");
             if(d.Api!=EngineVersion.Api || d.Version!=version) throw new InvalidDataException($"plugins[{d.Id}]: incompatible API/version");
         }
@@ -67,6 +81,7 @@ public static class ModulePackage
         var paths=new List<string> {root["rules"]!.GetValue<string>(),root["cpu"]!.GetValue<string>()};
         paths.AddRange(root["resources"]!.AsObject().Select(p=>p.Value!.GetValue<string>()));
         if(root["runtimeFiles"] is JsonArray runtime) paths.AddRange(runtime.Select(p=>p!.GetValue<string>()));
+        paths.AddRange(Dependencies(root).Where(d=>d.Kind=="wasm").Select(d=>d.File!));
         foreach(var path in paths.Distinct(StringComparer.OrdinalIgnoreCase))
         {
             ValidatePath(path);

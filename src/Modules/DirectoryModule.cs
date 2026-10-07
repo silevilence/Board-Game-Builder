@@ -17,6 +17,14 @@ public static class DirectoryModule
             var dependencies=ModulePackage.Dependencies(metadata);
             var runtimeHashes=new SortedDictionary<string,string>(StringComparer.Ordinal) { ["dependencies"]=Wire.Hash(Wire.Json(dependencies)) };
             foreach(var runtimeFile in ModulePackage.ReferencedFiles(metadata)) _=SafeFile(directory,runtimeFile);
+            var plugins=new List<RuntimePlugin>();
+            foreach(var dependency in dependencies.Where(d=>d.Kind=="wasm"))
+            {
+                var code=File.ReadAllBytes(SafeFile(directory,dependency.File!));
+                if(code.Length>256*1024 || ModulePackage.Hash(code)!=dependency.Sha256?.ToUpperInvariant()) Fail($"plugins[{dependency.Id}]: WASM content hash/size mismatch");
+                runtimeHashes[dependency.File!]=ModulePackage.Hash(code);
+                plugins.Add(new(dependency.Id,dependency.Version,dependency.Api,dependency.File!,dependency.Sha256!,dependency.Permissions ?? [],code));
+            }
             if(metadata["runtimeFiles"] is System.Text.Json.Nodes.JsonArray runtimeFiles)
                 foreach(var runtimeFile in runtimeFiles) { var path=runtimeFile!.GetValue<string>(); runtimeHashes[path]=ModulePackage.Hash(File.ReadAllBytes(SafeFile(directory,path))); }
             if (root.GetProperty("format").GetInt32() != 1) Fail("$.format: unsupported version");
@@ -102,7 +110,7 @@ public static class DirectoryModule
                     if (!visited.Add(parent)) Fail($"{entity.Id}.container: cycle");
             }
             StateValidation.Validate(state);
-            var module = new LoadedModule(id,version,"",state,rules,cpu,rulesPath,cpuPath,resources,resourceData,runtimeHashes);
+            var module = new LoadedModule(id,version,"",state,rules,cpu,rulesPath,cpuPath,resources,resourceData,runtimeHashes,plugins.Count==0?null:plugins);
             return module with { Fingerprint=ModuleSnapshot.Fingerprint(module) };
         }
         catch (Exception error) when (error is InvalidDataException or JsonException or IOException or InvalidOperationException or KeyNotFoundException or ArgumentException or OverflowException)

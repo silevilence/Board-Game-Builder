@@ -10,6 +10,7 @@ public sealed class PlaySession : IDisposable
     private readonly List<ScriptSwitch> switches=[];
     private readonly List<Diagnostic> cpuDiagnostics=[];
     private readonly GameEngine engine;
+    private readonly WasmPlugins? plugins;
     private readonly Dictionary<string,string> controllers;
     private readonly uint seed;
     private readonly int maxSteps;
@@ -31,7 +32,14 @@ public sealed class PlaySession : IDisposable
             if(!this.controllers.ContainsKey(c.Key) || c.Value is not ("human" or "cpu")) throw new ArgumentException("Invalid seat/controller configuration.");
             this.controllers[c.Key]=c.Value;
         }
-        engine=new GameEngine(module.Initial,seed,module.Fingerprint,new LuaRules(module.Rules,module.RulesPath,seed,worker));
+        // Kernel and official runtime are ready before module WASM, followed by Lua rules.
+        engine=new GameEngine(module.Initial,seed,module.Fingerprint);
+        try
+        {
+            if(module.RuntimePlugins!=null) plugins=new WasmPlugins(module.RuntimePlugins);
+            engine.ReplaceRules(new LuaRules(module.Rules,module.RulesPath,seed,worker));
+        }
+        catch {plugins?.Dispose();worker.Dispose();throw;}
     }
     public SeatView View(string seat) => engine.Project(seat);
     public IReadOnlyList<ActionOffer> Actions()
@@ -89,7 +97,7 @@ public sealed class PlaySession : IDisposable
     {
         ObjectDisposedException.ThrowIf(disposed,this);
         if(Fault!=null || Ended) throw new InvalidOperationException("Session ended or faulted; restart required.");
-        if(Wire.Json(candidate.Initial)!=Wire.Json(module.Initial) || Wire.Json(candidate.ResourceHashes)!=Wire.Json(module.ResourceHashes) || Wire.Json(candidate.RuntimeHashes)!=Wire.Json(module.RuntimeHashes) || candidate.Id!=module.Id)
+        if(Wire.Json(candidate.Initial)!=Wire.Json(module.Initial) || Wire.Json(candidate.ResourceHashes)!=Wire.Json(module.ResourceHashes) || Wire.Json(candidate.RuntimeHashes)!=Wire.Json(module.RuntimeHashes) || Wire.Json(candidate.RuntimePlugins)!=Wire.Json(module.RuntimePlugins) || candidate.Id!=module.Id)
             throw new InvalidOperationException("Configuration, resources or dependencies changed; restart required.");
         if(candidate.Fingerprint!=BoardGame.Modules.ModuleSnapshot.Fingerprint(candidate)) throw new InvalidDataException("Script version fingerprint mismatch");
         using(var probe=new LuaWorkerSession())
@@ -102,5 +110,5 @@ public sealed class PlaySession : IDisposable
         versions[next.Fingerprint]=Wire.Copy(next); switches.Add(new(engine.ExportLog().EntryCount,next.Fingerprint));
     }
     public SessionRecording ExportRecording() => SessionRecording.Create(engine.ExportLog(),switches,versions);
-    public void Dispose() { disposed=true; worker.Dispose(); }
+    public void Dispose() { if(disposed) return;disposed=true;worker.Dispose();plugins?.Dispose(); }
 }

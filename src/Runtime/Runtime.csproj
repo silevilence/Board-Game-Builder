@@ -4,4 +4,7 @@
     <ProjectReference Include="../Modules/Modules.csproj" />
     <ProjectReference Include="../Lua/Lua.csproj" />
   </ItemGroup>
+  <ItemGroup>
+    <PackageReference Include="Wasmtime" Version="48.0.2" />
+  </ItemGroup>
 </Project>

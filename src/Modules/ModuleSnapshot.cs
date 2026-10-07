@@ -4,7 +4,7 @@ public static class ModuleSnapshot
 {
     public static string Fingerprint(LoadedModule module) => Wire.Hash(Wire.Json(new {
         id=module.Id,version=module.Version,state=module.Initial,rules=module.Rules,cpu=module.Cpu,
-        resources=module.ResourceHashes ?? new SortedDictionary<string,string>(StringComparer.Ordinal),runtime=module.RuntimeHashes }));
+        resources=module.ResourceHashes ?? new SortedDictionary<string,string>(StringComparer.Ordinal),runtime=module.RuntimeHashes })+(module.RuntimePlugins==null?"":Wire.Json(module.RuntimePlugins)));
     public static LoadedModule Load(string path)
     {
         try

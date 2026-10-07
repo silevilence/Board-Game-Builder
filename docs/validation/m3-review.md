@@ -28,3 +28,9 @@ Lua 通过 `secret-open` 声明参与席位、数值范围、可修改性、逻�
 `samples/sealed-auction` 提供三席位出价、弃权、逻辑截止、揭示、席位顺序平局规则和结算。
 规则全部在 Lua，CPU 只从席位投影与合法出价动作选择。`auction` 验证真人 + CPU 与全 CPU
 各 20 个固定种子、隐藏值隔离与回放；另覆盖同价、越界出价、全部未提交及重复结算。
+
+## WASM 加载
+
+固定 Wasmtime 48.0.2；`wasm packages replay` 通过。真实 WASM 在 PlaySession 与
+Editor 使用的 DebugSession 中加载；错误版本、哈希、权限、第三方原生依赖、
+缺失文件均失败；数据包往返保留指纹，运行时插件变更必须重开会话。
