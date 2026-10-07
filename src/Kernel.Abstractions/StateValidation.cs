@@ -9,6 +9,17 @@ public static class StateValidation
         if(state.Phases==null || state.Phases.Count==0 || state.Phases.Any(string.IsNullOrWhiteSpace) || state.Phases.Distinct().Count()!=state.Phases.Count || !state.Phases.Contains(state.Phase) || state.CurrentSeat<0 || state.CurrentSeat>=state.Seats.Count || state.Turn<0)
             throw new InvalidDataException("turn/phases: invalid state");
         if(state.Winners==null || state.Winners.Distinct().Count()!=state.Winners.Count || state.Winners.Any(w=>!state.Seats.Any(s=>s.Id==w))) throw new InvalidDataException("winners: invalid seat");
+        if(state.Secret is {} round)
+        {
+            var d=round.Declaration;
+            if(d==null || string.IsNullOrWhiteSpace(d.Id) || d.Participants==null || d.Participants.Count is <1 or >32 || d.Participants.Distinct().Count()!=d.Participants.Count || d.Participants.Any(p=>!state.Seats.Any(s=>s.Id==p)) ||
+                d.Minimum>d.Maximum || d.CollectionSteps is <1 or >4096 || d.Missing is not ("abstain" or "default") || d.Reveal is not ("all-locked" or "closed") ||
+                d.Missing=="default" && (d.DefaultValue<d.Minimum || d.DefaultValue>d.Maximum) || !state.Seats.Any(s=>s.Id==round.Coordinator) ||
+                round.Status is not ("collecting" or "closed" or "revealed" or "settled") || round.Remaining<0 || round.Remaining>d.CollectionSteps ||
+                round.Choices==null || round.Choices.Any(p=>!d.Participants.Contains(p.Key) || p.Value is {} value && (value<d.Minimum || value>d.Maximum)) ||
+                round.Locked==null || round.Locked.Distinct().Count()!=round.Locked.Count || round.Locked.Any(p=>!round.Choices.ContainsKey(p)) || round.Status!="collecting" && round.Locked.Count!=d.Participants.Count)
+                throw new InvalidDataException("secret: invalid collection state");
+        }
         if(state.Entities==null) throw new InvalidDataException("entities: required");
         foreach(var pair in state.Entities)
         {

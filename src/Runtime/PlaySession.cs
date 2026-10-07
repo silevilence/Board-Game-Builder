@@ -42,8 +42,8 @@ public sealed class PlaySession : IDisposable
     }
     public CommandResult SubmitHuman(string seat,Command command)
     {
-        if(disposed || Fault!=null || Ended || seat!=CurrentSeat || controllers[seat]!="human") return new(0,false,"operation-not-allowed");
-        return Submit(command,false);
+        if(disposed || Fault!=null || Ended || !engine.CanAct(seat) || controllers.GetValueOrDefault(seat)!="human") return new(0,false,"operation-not-allowed");
+        return Submit(command,false,seat);
     }
     public bool StepCpu()
     {
@@ -63,12 +63,12 @@ public sealed class PlaySession : IDisposable
         }
         catch(Exception e) { Stop("cpu-failure",e.Message);return false; }
     }
-    private CommandResult Submit(Command command,bool cpu)
+    private CommandResult Submit(Command command,bool cpu,string? actor=null)
     {
         // The runaway guard is for automatic play; a human may keep thinking, moving and undoing.
         if(cpu && Steps>=maxSteps) { Stop("step-limit",$"Exceeded {maxSteps} steps.");return new(0,false,"step-limit"); }
         var before=Wire.Json(engine.ExportAuthorityState());
-        var result=engine.Submit(CurrentSeat,command);
+        var result=engine.Submit(actor ?? CurrentSeat,command);
         if(!result.Accepted)
         {
             if(cpu || result.Reason=="script-failure" || result.Reason=="rule-command-limit") Stop(cpu?"cpu-rejected":"rule-failure",result.Reason);

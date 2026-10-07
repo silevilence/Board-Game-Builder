@@ -28,6 +28,9 @@ public sealed partial class GameEngine
                 face ? new(e.Properties,StringComparer.Ordinal) : new(StringComparer.Ordinal),
                 e.Contents.Where(ids.Contains).ToList(),face && e.Face < e.FaceResources.Count ? e.FaceResources[e.Face] : null);
         }).ToList();
-        return new(seat,Wire.Copy(state.Seats),state.Seats[state.CurrentSeat].Id,state.Phase,state.Turn,state.Ended,[..state.Winners],entities,state.Layout);
+        var round=state.Secret;
+        var secret=round==null?null:new SecretView(Wire.Copy(round.Declaration),round.Status,round.Remaining,round.Choices.Keys.ToList(),[..round.Locked],round.Choices.GetValueOrDefault(seat),
+            round.Status is "revealed" or "settled"?new(round.Choices,StringComparer.Ordinal):null);
+        return new(seat,Wire.Copy(state.Seats),state.Seats[state.CurrentSeat].Id,state.Phase,state.Turn,state.Ended,[..state.Winners],entities,state.Layout,secret);
     }
 }

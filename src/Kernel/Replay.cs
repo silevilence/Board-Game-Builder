@@ -33,7 +33,7 @@ public sealed partial class GameEngine
                 if (!s.Accepted && entry.Effects.Count != 0) throw new InvalidDataException("Rejected command has effects.");
                 if (s.Accepted)
                 {
-                    if (!engine.state.Seats.Any(seat=>seat.Id==s.Actor) || engine.state.Seats[engine.state.CurrentSeat].Id!=s.Actor || engine.state.Ended || entry.Effects.Count is < 1 or > 64) throw new InvalidDataException("Invalid replay actor/effects.");
+                    if (!CanAct(engine.state,s.Actor) || entry.Effects.Count is < 1 or > 64) throw new InvalidDataException("Invalid replay actor/effects.");
                     foreach (var effect in entry.Effects)
                     {
                         if ((effect.Command.Kind=="shuffle") != (effect.Order!=null)) throw new InvalidDataException("Missing or unexpected random outcome.");

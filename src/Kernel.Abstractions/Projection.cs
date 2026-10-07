@@ -3,5 +3,6 @@ public sealed record VisibleEntity(string Id, string? Owner, string? Container, 
     int Count, bool FaceUp, string? Face, double X, double Y,
     SortedDictionary<string,int> Properties, List<string> Contents, string? Resource = null);
 public sealed record SeatView(string Seat, List<Seat> Seats, string CurrentSeat, string Phase, int Turn,
-    bool Ended, List<string> Winners, List<VisibleEntity> Entities,BoardLayout? Layout=null);
+    bool Ended, List<string> Winners, List<VisibleEntity> Entities,BoardLayout? Layout=null,
+    [property:System.Text.Json.Serialization.JsonIgnore(Condition=System.Text.Json.Serialization.JsonIgnoreCondition.WhenWritingNull)] SecretView? Secret=null);
 public sealed record PlayerEvent(long Sequence, string Actor, bool Accepted, string Reason);

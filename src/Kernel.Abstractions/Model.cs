@@ -65,6 +65,8 @@ public sealed class Entity
 }
 public sealed class GameState
 {
+    [JsonIgnore(Condition=JsonIgnoreCondition.WhenWritingNull)]
+    public SecretRound? Secret {get;set;}
     public BoardLayout? Layout { get; set; }
     public SortedDictionary<string, Entity> Entities { get; set; } = new(StringComparer.Ordinal);
     public List<Seat> Seats { get; set; } = [];

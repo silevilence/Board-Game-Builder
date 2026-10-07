@@ -12,10 +12,13 @@ public sealed partial class GameEngine
     public void ReplaceRules(IGameRules replacement) => rules=replacement;
     private readonly List<Diagnostic> diagnostics = [];
     public IReadOnlyList<Diagnostic> ExportDiagnostics() => Wire.Copy(diagnostics);
+    public bool CanAct(string actor)=>CanAct(state,actor);
+    private static bool CanAct(GameState state,string actor)=>!state.Ended && state.Seats.Any(s=>s.Id==actor) &&
+        (state.Seats[state.CurrentSeat].Id==actor || state.Secret is {Status:"collecting"} round && round.Declaration.Participants.Contains(actor) && !round.Locked.Contains(actor));
     public IReadOnlyList<ActionOffer> Actions(string actor)
     {
         var view = Project(actor);
-        if (state.Ended || view.CurrentSeat != actor) return [];
+        if (!CanAct(actor)) return [];
         try
         {
             var actions=(rules?.Actions(view) ?? []).ToList();
@@ -38,7 +41,7 @@ public sealed partial class GameEngine
         var sequence = submissions.Count + 1L;
         try
         {
-            if (!state.Seats.Any(s => s.Id == actor) || state.Ended || state.Seats[state.CurrentSeat].Id != actor) throw new CommandRejected("operation-not-allowed");
+            if (!CanAct(actor)) throw new CommandRejected("operation-not-allowed");
             var candidate = Wire.Copy(state);
             List<AppliedCommand> effects = [];
             if (rules == null) effects.Add(Execute(candidate,actor,command));
@@ -79,6 +82,7 @@ public sealed partial class GameEngine
     private static void Apply(GameState state, string actor, Command command, List<string>? recordedOrder = null, bool ruleEffect = false,int? recordedRoll=null)
     {
         if (state.Ended) throw new CommandRejected("operation-not-allowed");
+        if(command.Kind.StartsWith("secret-",StringComparison.Ordinal)) {ApplySecret(state,actor,command,ruleEffect);return;}
         if (command.Kind is "next" or "phase" or "finish")
         {
             if (command.Kind == "finish")

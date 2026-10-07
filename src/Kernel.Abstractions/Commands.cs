@@ -1,6 +1,8 @@
 namespace BoardGame.Kernel;
 public sealed record Command
 {
+    [System.Text.Json.Serialization.JsonIgnore(Condition=System.Text.Json.Serialization.JsonIgnoreCondition.WhenWritingNull)]
+    public SecretDeclaration? Collection {get;init;}
     public string Kind { get; init; } = "";
     public string? Entity { get; init; }
     public string? Target { get; init; }
