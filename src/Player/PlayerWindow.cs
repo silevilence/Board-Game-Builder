@@ -27,7 +27,7 @@ public sealed partial class PlayerWindow : Window
     private bool classic;
     private readonly Border classicBar=new() {IsVisible=false};
     private readonly WrapPanel top=new() {Orientation=Orientation.Horizontal,Margin=new Thickness(10)};
-    public PlayerWindow(string? initial=null,string? smoke=null,string? smokeActions=null)
+    public PlayerWindow(string? initial=null,string? smoke=null,string? smokeActions=null,string? verifyBackground=null)
     {
         Title="Board Game Builder · 本地 Player"; Width=1200; Height=880; MinWidth=800; MinHeight=600;
         path.Text=initial ?? (File.Exists(Path.Combine(AppContext.BaseDirectory,"game.bgm"))?Path.Combine(AppContext.BaseDirectory,"game.bgm"):"samples/quick-cards");
@@ -53,6 +53,7 @@ public sealed partial class PlayerWindow : Window
         Opened+=async (_,_)=>
         {
             await Load();
+            if(verifyBackground!=null) { await VerifyBackground(verifyBackground); return; }
             if(smoke!=null) await Smoke(smoke,smokeActions);
         };
     }
@@ -74,11 +75,14 @@ public sealed partial class PlayerWindow : Window
             var loaded=await Task.Run(()=>ModulePackage.Load(location));
             if(current!=generation) return;
             module=loaded; seat.ItemsSource=loaded.Initial.Seats.Select(s=>s.Id).ToArray(); seat.SelectedIndex=0;
-            localHumans.Text=string.Join(",",loaded.Initial.Seats.Select(s=>s.Id));
+            var defaultHumans=loaded.Initial.Seats.Where(s=>s.Controller=="human").Select(s=>s.Id).ToArray();
+            localHumans.Text=string.Join(",",defaultHumans.Length>0?defaultHumans:[loaded.Initial.Seats[0].Id]);
+            mode.SelectedIndex=defaultHumans.Length>1?1:0;
             classic=loaded.Initial.Entities.Values.Any(e=>e.Properties.GetValueOrDefault("viewTheme")==1);
             classicBar.IsVisible=classic; top.IsVisible=!classic; message.IsVisible=!classic;
             RequestedThemeVariant=classic?Avalonia.Styling.ThemeVariant.Light:Avalonia.Styling.ThemeVariant.Default;
-            Background=classic?new SolidColorBrush(Color.Parse("#d4d0c8")):null;
+            if(classic) Background=new SolidColorBrush(Color.Parse("#d4d0c8"));
+            else ClearValue(BackgroundProperty); // Restore the theme brush; a local null suppresses it.
             message.Text=$"{loaded.Id} · {loaded.Version} | 选择真人席位，其余席位使用 CPU。"; start.IsEnabled=true;
             if(classic) await Start();
         }
@@ -104,7 +108,8 @@ public sealed partial class PlayerWindow : Window
             if(current!=generation) { session.Stop(); return; }
             activeSeed=value; board=new(session,loaded); board.HostShortcut+=key=>_=HostKey(key); play.Content=board;
             if(classic) {Title="空当接龙 · 牌局 #"+value; top.IsVisible=false; message.IsVisible=false;}
-            message.Text="点牌再点目标 / 拖动 · 双击快速移牌 · 按住右键看牌 · 中键或空白处右拖平移 · H 提示 · F2 新局 / F3 种子 / Ctrl+R 重开";
+            message.Text=classic?"点牌再点目标 / 拖动 · 双击快速移牌 · 按住右键看牌 · 中键或空白处右拖平移 · H 提示 · F2 新局 / F3 种子 / Ctrl+R 重开"
+                :"双击对象执行可用动作，也可使用右侧动作栏 · 滚轮缩放 · 中键平移 · F2 新局 / F3 种子 / Ctrl+R 重开";
             await board.PumpCpu();
         }
         catch(Exception e) { if(current==generation) {message.IsVisible=true; message.Text="无法开始："+e.Message;} }

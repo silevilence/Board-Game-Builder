@@ -95,7 +95,7 @@ public sealed class PlayBoard : UserControl,IDisposable
     }
     private void Add(string label,Func<Task> action)
     {
-        var button=new Button { Content=label, HorizontalAlignment=Avalonia.Layout.HorizontalAlignment.Stretch };
+        var button=new Button { Content=new TextBlock {Text=label,TextWrapping=TextWrapping.Wrap}, HorizontalAlignment=Avalonia.Layout.HorizontalAlignment.Stretch };
         button.Click+=async (_,_)=>await action(); actions.Children.Add(button);
     }
     public void HandleShortcut(string key)=>table.HandleShortcut(key);

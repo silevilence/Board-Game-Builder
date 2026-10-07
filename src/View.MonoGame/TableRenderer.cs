@@ -17,7 +17,13 @@ public sealed class TableRenderer : IDisposable
     {
         this.device=device; batch=new(device); pixel=new(device,1,1); pixel.SetData(new[] { Color.White });
     }
-    public void Begin(float zoom, float x, float y) => batch.Begin(blendState:BlendState.NonPremultiplied,transformMatrix: Matrix.CreateScale(zoom)*Matrix.CreateTranslation(x,y,0));
+    public void Begin(float zoom, float x, float y)
+    {
+        // Dynamic score/resource labels must not disappear once a long game fills the cache.
+        // Retire textures between batches, never while SpriteBatch still references them.
+        if(labels.Count>=192) {foreach(var label in labels.Values) label.Dispose();labels.Clear();}
+        batch.Begin(blendState:BlendState.NonPremultiplied,transformMatrix: Matrix.CreateScale(zoom)*Matrix.CreateTranslation(x,y,0));
+    }
     public void Box(Rectangle bounds, Color color) => batch.Draw(pixel,bounds,color);
     public void Line(Vector2 from,Vector2 to,Color color) => batch.Draw(pixel,from,null,color,MathF.Atan2(to.Y-from.Y,to.X-from.X),Vector2.Zero,new Vector2(Vector2.Distance(from,to),1),SpriteEffects.None,0);
     public void Text(string text, int x, int y, Color color,int size=13)

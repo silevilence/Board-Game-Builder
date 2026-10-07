@@ -3,7 +3,7 @@ using BoardGame.Kernel;
 namespace BoardGame.Runtime;
 
 public enum LocalTableMode { HotSeat, SplitScreen }
-public sealed record LocalTableFrame(long Revision,string? WaitingFor,IReadOnlyList<SessionFrame> Views,bool Cpu,bool Ended,SessionFault? Fault=null,IReadOnlyList<string>? CanTake=null);
+public sealed record LocalTableFrame(long Revision,string? WaitingFor,IReadOnlyList<SessionFrame> Views,bool Cpu,bool Ended,SessionFault? Fault=null,IReadOnlyList<string>? CanTake=null,IReadOnlyList<string>? Winners=null);
 
 // The authority stays behind this boundary. Each displayed view is a detached seat projection.
 public sealed class LocalTableSession : IDisposable
@@ -34,7 +34,7 @@ public sealed class LocalTableSession : IDisposable
         var seats=mode==LocalTableMode.SplitScreen?humans:active==null?[]:[active];
         var fault=session.Fault is {} f?f with {Detail="规则或 CPU 执行失败，请重新开局。"}:null;
         var views=seats.Select(s=>new SessionFrame(revision,session.View(s),!cpu?offers[s]:[],cpu,fault)).ToArray();
-        return new(revision,waiting,views,cpu,ended,fault,mode==LocalTableMode.HotSeat && !cpu?offers.Where(p=>p.Value.Count>0).Select(p=>p.Key).ToArray():[]);
+        return new(revision,waiting,views,cpu,ended,fault,mode==LocalTableMode.HotSeat && !cpu?offers.Where(p=>p.Value.Count>0).Select(p=>p.Key).ToArray():[],ended?session.View(humans[0]).Winners:[]);
     }
     private async Task Refresh()
     {

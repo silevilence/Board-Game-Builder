@@ -40,12 +40,13 @@ public sealed class DesktopViewport : NativeControlHost, IDisposable
     private bool clickCandidate;
     private float lastX, lastY;
     private TopLevel? inputRoot;
-    private bool classic,autoFit;
+    private bool classic,autoFit,sprites;
     private float canvasWidth=920,canvasHeight=640;
     public void Canvas(TableScene scene)
     {
-        if(classic!=scene.ClassicCards) { classic=scene.ClassicCards; autoFit=classic; cameraInitialized=false; }
-        if(classic)
+        var hasSprites=scene.Items.Any(i=>i.Kind=="sprite");
+        if(classic!=scene.ClassicCards || sprites!=hasSprites) { classic=scene.ClassicCards; sprites=hasSprites; autoFit=classic || sprites; cameraInitialized=false; }
+        if((classic || sprites) && scene.Items.Count>0)
         {
             canvasWidth=Math.Max(400,scene.Items.Max(i=>i.Bounds.X+i.Bounds.Width)+20);
             canvasHeight=Math.Max(560,scene.Items.Max(i=>i.Bounds.Y+i.Bounds.Height)+20);

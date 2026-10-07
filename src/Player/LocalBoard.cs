@@ -37,6 +37,7 @@ public sealed class LocalBoard : UserControl,IDisposable
         Clear();if(disposed) return;
         header.Children.Add(new TextBlock {Text="本地多人 · 同屏内容可被旁观；身份投影隔离数据，不能阻止旁观屏幕。"});
         var frame=session.Frame;
+        if(frame.Ended) header.Children.Add(new TextBlock {Text="对局结束 · 胜者："+string.Join("、",frame.Winners ?? []),FontSize=22,Margin=new Avalonia.Thickness(12)});
         if(frame.Fault!=null) header.Children.Add(new TextBlock {Text="对局故障："+frame.Fault.Code+" · "+frame.Fault.Detail});
         foreach(var seat in frame.CanTake ?? [])
         {
@@ -53,13 +54,14 @@ public sealed class LocalBoard : UserControl,IDisposable
         {
             var column=tables.Count;views.ColumnDefinitions.Add(new ColumnDefinition());
             var panel=new DockPanel();Grid.SetColumn(panel,column);views.Children.Add(panel);
-            var controls=new StackPanel {Spacing=6};DockPanel.SetDock(controls,Dock.Top);panel.Children.Add(controls);
+            var controls=new StackPanel {Spacing=6,Margin=new Avalonia.Thickness(8)};
+            var sidebar=new ScrollViewer {Content=controls,Width=270};DockPanel.SetDock(sidebar,Dock.Right);panel.Children.Add(sidebar);
             controls.Children.Add(new TextBlock {Text=$"控制席位：{seat.View.Seat} · 当前：{seat.View.CurrentSeat} · {seat.View.Phase}"});
             if(seat.View.Ended) controls.Children.Add(new TextBlock {Text="结算："+string.Join(", ",seat.View.Winners)});
             if(seat.Fault!=null) controls.Children.Add(new TextBlock {Text=seat.Fault.Detail});
             foreach(var offer in seat.Actions)
             {
-                var button=new Button {Content=offer.Label};
+                var button=new Button {Content=new TextBlock {Text=offer.Label,TextWrapping=Avalonia.Media.TextWrapping.Wrap},HorizontalAlignment=Avalonia.Layout.HorizontalAlignment.Stretch};
                 button.Click+=async (_,_)=>await Run(async ()=> {await session.SubmitAsync(frame.Revision,seat.View.Seat,new("action",Action:offer.Id));});
                 controls.Children.Add(button);
             }

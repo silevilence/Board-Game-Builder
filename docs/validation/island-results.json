@@ -1,0 +1,247 @@
+{
+  "date": "2026-10-07",
+  "module": "island-settlers",
+  "fingerprint": "0014B1DB41641E49905D32C3C32BEFE3C6A6036EE01D6448FA9BB96FAE958AB3",
+  "cases": [
+    {
+      "seed": 1,
+      "success": true,
+      "winners": [
+        "p4"
+      ],
+      "steps": 194,
+      "error": null,
+      "stateHash": "2BF791B8CA00DC74680A6398490BC849B08E4DD7AC1457CEF885AA6AC35D59AA",
+      "rerunEqual": true,
+      "replayEqual": true
+    },
+    {
+      "seed": 2,
+      "success": true,
+      "winners": [
+        "p2"
+      ],
+      "steps": 113,
+      "error": null,
+      "stateHash": "1F4371E72A2505EE3A3F6AC52196BADDC8AE1159C977D5D429FF1AB8C9C98C93",
+      "rerunEqual": true,
+      "replayEqual": true
+    },
+    {
+      "seed": 3,
+      "success": true,
+      "winners": [
+        "p1"
+      ],
+      "steps": 139,
+      "error": null,
+      "stateHash": "68A117DA4B422B3E50A9B296276D80381904E2ED8BBE7929DBAED7261010DD69",
+      "rerunEqual": true,
+      "replayEqual": true
+    },
+    {
+      "seed": 4,
+      "success": true,
+      "winners": [
+        "p4"
+      ],
+      "steps": 198,
+      "error": null,
+      "stateHash": "C0C3A597588D96C6FF49AA6EB36B586AF07258958551A59469B71EFC46A1C5F8",
+      "rerunEqual": true,
+      "replayEqual": true
+    },
+    {
+      "seed": 5,
+      "success": true,
+      "winners": [
+        "p3"
+      ],
+      "steps": 164,
+      "error": null,
+      "stateHash": "EEA11003AC5664E3F697AF7A1B27D95B8B0364867C688210A4F4109B6F078373",
+      "rerunEqual": true,
+      "replayEqual": true
+    },
+    {
+      "seed": 6,
+      "success": true,
+      "winners": [
+        "p2"
+      ],
+      "steps": 170,
+      "error": null,
+      "stateHash": "0903C17EFD41CF58AA3E92A327BC422EDB1BC36349417C6F5F562D90D11E80A1",
+      "rerunEqual": true,
+      "replayEqual": true
+    },
+    {
+      "seed": 7,
+      "success": true,
+      "winners": [
+        "p2"
+      ],
+      "steps": 145,
+      "error": null,
+      "stateHash": "56671E8D3A0A87D14BF5B86E017BB0488CDD5DFDD8DD9FA40D9C52E0ADE15B43",
+      "rerunEqual": true,
+      "replayEqual": true
+    },
+    {
+      "seed": 8,
+      "success": true,
+      "winners": [
+        "p2"
+      ],
+      "steps": 168,
+      "error": null,
+      "stateHash": "2BB1ECAEA7E76778C6D9DDE2F731924DECE355BD93EB58AC2F96E1A7813C28C2",
+      "rerunEqual": true,
+      "replayEqual": true
+    },
+    {
+      "seed": 9,
+      "success": true,
+      "winners": [
+        "p4"
+      ],
+      "steps": 214,
+      "error": null,
+      "stateHash": "E0FB1E60F3970DDE4D755E5C17B39049006AE3EDC639EFD4DF5F547946970D41",
+      "rerunEqual": true,
+      "replayEqual": true
+    },
+    {
+      "seed": 10,
+      "success": true,
+      "winners": [
+        "p3"
+      ],
+      "steps": 194,
+      "error": null,
+      "stateHash": "8E9F42482412A465B07DD832566124C1011A2CE7F7E62C6B2ECE01A8C1247C7B",
+      "rerunEqual": true,
+      "replayEqual": true
+    },
+    {
+      "seed": 11,
+      "success": true,
+      "winners": [
+        "p2"
+      ],
+      "steps": 187,
+      "error": null,
+      "stateHash": "3A4325F344F4555DFADD5557F72E10444FE9CAAD89DBA4DD7521F398CB5B1039",
+      "rerunEqual": true,
+      "replayEqual": true
+    },
+    {
+      "seed": 12,
+      "success": true,
+      "winners": [
+        "p1"
+      ],
+      "steps": 133,
+      "error": null,
+      "stateHash": "43C7C58404000A0F809C0E4A63156CB36A489A9107F560684448C20FDE302960",
+      "rerunEqual": true,
+      "replayEqual": true
+    },
+    {
+      "seed": 13,
+      "success": true,
+      "winners": [
+        "p1"
+      ],
+      "steps": 197,
+      "error": null,
+      "stateHash": "9CA6D5CF14165B0EEE2DC5BB2780C47B81E454B2B556FECCC3D949CD78527D35",
+      "rerunEqual": true,
+      "replayEqual": true
+    },
+    {
+      "seed": 14,
+      "success": true,
+      "winners": [
+        "p1"
+      ],
+      "steps": 166,
+      "error": null,
+      "stateHash": "6FE300690A7F2E55DF85E73F02FEC655B2D073B6A620268BB012238E48B151B1",
+      "rerunEqual": true,
+      "replayEqual": true
+    },
+    {
+      "seed": 15,
+      "success": true,
+      "winners": [
+        "p1"
+      ],
+      "steps": 192,
+      "error": null,
+      "stateHash": "A0358381579BB0F1B3C15E469BF7CD06B51F0DF7B36AE5E6240BFF2BD242A413",
+      "rerunEqual": true,
+      "replayEqual": true
+    },
+    {
+      "seed": 16,
+      "success": true,
+      "winners": [
+        "p1"
+      ],
+      "steps": 161,
+      "error": null,
+      "stateHash": "3BA06E58371417C6EE58B2BDC993D06E02E7AF3B0BB0747341F0FF93FA1169A1",
+      "rerunEqual": true,
+      "replayEqual": true
+    },
+    {
+      "seed": 17,
+      "success": true,
+      "winners": [
+        "p2"
+      ],
+      "steps": 142,
+      "error": null,
+      "stateHash": "C658178FBD79C647432A840DFD84BEA07113ABB18A36652F32BAE6F75125C0B0",
+      "rerunEqual": true,
+      "replayEqual": true
+    },
+    {
+      "seed": 18,
+      "success": true,
+      "winners": [
+        "p2"
+      ],
+      "steps": 201,
+      "error": null,
+      "stateHash": "1BA2CEA0FF91198E119CF543FDF39BEE37B6BED38238BF1D6473688F272ABA1F",
+      "rerunEqual": true,
+      "replayEqual": true
+    },
+    {
+      "seed": 19,
+      "success": true,
+      "winners": [
+        "p2"
+      ],
+      "steps": 164,
+      "error": null,
+      "stateHash": "3DF8C0AA007361CB86A0DC401FCEE1E380DD83FFCB88CAAC6E5FE2B7DCEFC864",
+      "rerunEqual": true,
+      "replayEqual": true
+    },
+    {
+      "seed": 20,
+      "success": true,
+      "winners": [
+        "p2"
+      ],
+      "steps": 230,
+      "error": null,
+      "stateHash": "5F8C577D6342CFDFBB9645D564B94F235D302D8DE29257D98CA243ADB3D35359",
+      "rerunEqual": true,
+      "replayEqual": true
+    }
+  ]
+}

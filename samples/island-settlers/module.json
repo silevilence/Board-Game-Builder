@@ -1,0 +1,8406 @@
+{
+  "format": 1,
+  "id": "island-settlers",
+  "version": "1.0.0",
+  "rules": "rules.lua",
+  "cpu": "cpu.lua",
+  "resources": {
+    "terrain-1": "assets/terrain-1.png",
+    "terrain-2": "assets/terrain-2.png",
+    "terrain-3": "assets/terrain-3.png",
+    "terrain-4": "assets/terrain-4.png",
+    "terrain-5": "assets/terrain-5.png",
+    "terrain-6": "assets/terrain-6.png",
+    "forest": "assets/forest.png",
+    "brick": "assets/brick.png",
+    "wool": "assets/wool.png",
+    "grain": "assets/grain.png",
+    "ore": "assets/ore.png",
+    "village": "assets/village.png",
+    "city": "assets/city.png",
+    "dice-1": "assets/dice-1.png",
+    "dice-2": "assets/dice-2.png",
+    "dice-3": "assets/dice-3.png",
+    "dice-4": "assets/dice-4.png",
+    "dice-5": "assets/dice-5.png",
+    "dice-6": "assets/dice-6.png",
+    "robber": "assets/robber.png",
+    "development-1": "assets/development-1.png",
+    "development-2": "assets/development-2.png",
+    "development-3": "assets/development-3.png",
+    "card-back": "assets/card-back.png",
+    "empty": "assets/empty.png"
+  },
+  "runtimeFiles": [
+    "README.md",
+    "assets/playing-cards-License.txt",
+    "assets/boardgame-License.txt",
+    "assets/hexagon-License.txt"
+  ],
+  "plugins": [
+    {
+      "id": "counter",
+      "version": "1",
+      "api": 1,
+      "kind": "wasm",
+      "file": "counter.wasm",
+      "sha256": "386DD6D65D4753BDD831857013B50AAD30CCC2C2A6938CBC01142B13C50D3C26",
+      "permissions": [
+        "component",
+        "command"
+      ]
+    }
+  ],
+  "seats": [
+    {
+      "id": "p1",
+      "team": "p1",
+      "controller": "human"
+    },
+    {
+      "id": "p2",
+      "team": "p2",
+      "controller": "human"
+    },
+    {
+      "id": "p3",
+      "team": "p3",
+      "controller": "cpu"
+    },
+    {
+      "id": "p4",
+      "team": "p4",
+      "controller": "cpu"
+    }
+  ],
+  "phases": [
+    "welcome",
+    "settle",
+    "road",
+    "roll",
+    "produce",
+    "build",
+    "robber",
+    "auction"
+  ],
+  "layout": {
+    "kind": "free",
+    "originX": 0,
+    "originY": 0
+  },
+  "entities": [
+    {
+      "id": "tile-1",
+      "components": [
+        {
+          "type": "position",
+          "data": {
+            "x": 359.1487483155919,
+            "y": 148.0
+          }
+        },
+        {
+          "type": "faces",
+          "data": {
+            "names": [
+              "森林 5"
+            ],
+            "resources": [
+              "terrain-1"
+            ],
+            "up": true
+          }
+        },
+        {
+          "type": "properties",
+          "data": {
+            "viewStyle": 1,
+            "viewWidth": 110,
+            "viewHeight": 126,
+            "viewLayer": 0,
+            "tile": 1,
+            "resource": 1,
+            "number": 5,
+            "viewLabel": 1,
+            "viewLabelY": 22,
+            "viewColor": 16049860
+          }
+        }
+      ]
+    },
+    {
+      "id": "decor-1",
+      "components": [
+        {
+          "type": "position",
+          "data": {
+            "x": 359.1487483155919,
+            "y": 140.0
+          }
+        },
+        {
+          "type": "faces",
+          "data": {
+            "names": [
+              "decor-1"
+            ],
+            "resources": [
+              "forest"
+            ],
+            "up": true
+          }
+        },
+        {
+          "type": "properties",
+          "data": {
+            "viewStyle": 1,
+            "viewWidth": 38,
+            "viewHeight": 40,
+            "viewLayer": 1,
+            "viewPassive": 1
+          }
+        }
+      ]
+    },
+    {
+      "id": "tile-2",
+      "components": [
+        {
+          "type": "position",
+          "data": {
+            "x": 470.0,
+            "y": 148.0
+          }
+        },
+        {
+          "type": "faces",
+          "data": {
+            "names": [
+              "丘陵 2"
+            ],
+            "resources": [
+              "terrain-2"
+            ],
+            "up": true
+          }
+        },
+        {
+          "type": "properties",
+          "data": {
+            "viewStyle": 1,
+            "viewWidth": 110,
+            "viewHeight": 126,
+            "viewLayer": 0,
+            "tile": 2,
+            "resource": 2,
+            "number": 2,
+            "viewLabel": 1,
+            "viewLabelY": 22,
+            "viewColor": 16049860
+          }
+        }
+      ]
+    },
+    {
+      "id": "decor-2",
+      "components": [
+        {
+          "type": "position",
+          "data": {
+            "x": 470.0,
+            "y": 140.0
+          }
+        },
+        {
+          "type": "faces",
+          "data": {
+            "names": [
+              "decor-2"
+            ],
+            "resources": [
+              "brick"
+            ],
+            "up": true
+          }
+        },
+        {
+          "type": "properties",
+          "data": {
+            "viewStyle": 1,
+            "viewWidth": 38,
+            "viewHeight": 40,
+            "viewLayer": 1,
+            "viewPassive": 1
+          }
+        }
+      ]
+    },
+    {
+      "id": "tile-3",
+      "components": [
+        {
+          "type": "position",
+          "data": {
+            "x": 580.8512516844081,
+            "y": 148.0
+          }
+        },
+        {
+          "type": "faces",
+          "data": {
+            "names": [
+              "牧场 6"
+            ],
+            "resources": [
+              "terrain-3"
+            ],
+            "up": true
+          }
+        },
+        {
+          "type": "properties",
+          "data": {
+            "viewStyle": 1,
+            "viewWidth": 110,
+            "viewHeight": 126,
+            "viewLayer": 0,
+            "tile": 3,
+            "resource": 3,
+            "number": 6,
+            "viewLabel": 1,
+            "viewLabelY": 22,
+            "viewColor": 16049860
+          }
+        }
+      ]
+    },
+    {
+      "id": "decor-3",
+      "components": [
+        {
+          "type": "position",
+          "data": {
+            "x": 580.8512516844081,
+            "y": 140.0
+          }
+        },
+        {
+          "type": "faces",
+          "data": {
+            "names": [
+              "decor-3"
+            ],
+            "resources": [
+              "wool"
+            ],
+            "up": true
+          }
+        },
+        {
+          "type": "properties",
+          "data": {
+            "viewStyle": 1,
+            "viewWidth": 38,
+            "viewHeight": 40,
+            "viewLayer": 1,
+            "viewPassive": 1
+          }
+        }
+      ]
+    },
+    {
+      "id": "tile-4",
+      "components": [
+        {
+          "type": "position",
+          "data": {
+            "x": 303.7231224733878,
+            "y": 244.0
+          }
+        },
+        {
+          "type": "faces",
+          "data": {
+            "names": [
+              "麦田 3"
+            ],
+            "resources": [
+              "terrain-4"
+            ],
+            "up": true
+          }
+        },
+        {
+          "type": "properties",
+          "data": {
+            "viewStyle": 1,
+            "viewWidth": 110,
+            "viewHeight": 126,
+            "viewLayer": 0,
+            "tile": 4,
+            "resource": 4,
+            "number": 3,
+            "viewLabel": 1,
+            "viewLabelY": 22,
+            "viewColor": 16049860
+          }
+        }
+      ]
+    },
+    {
+      "id": "decor-4",
+      "components": [
+        {
+          "type": "position",
+          "data": {
+            "x": 303.7231224733878,
+            "y": 236.0
+          }
+        },
+        {
+          "type": "faces",
+          "data": {
+            "names": [
+              "decor-4"
+            ],
+            "resources": [
+              "grain"
+            ],
+            "up": true
+          }
+        },
+        {
+          "type": "properties",
+          "data": {
+            "viewStyle": 1,
+            "viewWidth": 38,
+            "viewHeight": 40,
+            "viewLayer": 1,
+            "viewPassive": 1
+          }
+        }
+      ]
+    },
+    {
+      "id": "tile-5",
+      "components": [
+        {
+          "type": "position",
+          "data": {
+            "x": 414.57437415779594,
+            "y": 244.0
+          }
+        },
+        {
+          "type": "faces",
+          "data": {
+            "names": [
+              "矿山 8"
+            ],
+            "resources": [
+              "terrain-5"
+            ],
+            "up": true
+          }
+        },
+        {
+          "type": "properties",
+          "data": {
+            "viewStyle": 1,
+            "viewWidth": 110,
+            "viewHeight": 126,
+            "viewLayer": 0,
+            "tile": 5,
+            "resource": 5,
+            "number": 8,
+            "viewLabel": 1,
+            "viewLabelY": 22,
+            "viewColor": 16049860
+          }
+        }
+      ]
+    },
+    {
+      "id": "decor-5",
+      "components": [
+        {
+          "type": "position",
+          "data": {
+            "x": 414.57437415779594,
+            "y": 236.0
+          }
+        },
+        {
+          "type": "faces",
+          "data": {
+            "names": [
+              "decor-5"
+            ],
+            "resources": [
+              "ore"
+            ],
+            "up": true
+          }
+        },
+        {
+          "type": "properties",
+          "data": {
+            "viewStyle": 1,
+            "viewWidth": 38,
+            "viewHeight": 40,
+            "viewLayer": 1,
+            "viewPassive": 1
+          }
+        }
+      ]
+    },
+    {
+      "id": "tile-6",
+      "components": [
+        {
+          "type": "position",
+          "data": {
+            "x": 525.4256258422041,
+            "y": 244.0
+          }
+        },
+        {
+          "type": "faces",
+          "data": {
+            "names": [
+              "森林 10"
+            ],
+            "resources": [
+              "terrain-1"
+            ],
+            "up": true
+          }
+        },
+        {
+          "type": "properties",
+          "data": {
+            "viewStyle": 1,
+            "viewWidth": 110,
+            "viewHeight": 126,
+            "viewLayer": 0,
+            "tile": 6,
+            "resource": 1,
+            "number": 10,
+            "viewLabel": 1,
+            "viewLabelY": 22,
+            "viewColor": 16049860
+          }
+        }
+      ]
+    },
+    {
+      "id": "decor-6",
+      "components": [
+        {
+          "type": "position",
+          "data": {
+            "x": 525.4256258422041,
+            "y": 236.0
+          }
+        },
+        {
+          "type": "faces",
+          "data": {
+            "names": [
+              "decor-6"
+            ],
+            "resources": [
+              "forest"
+            ],
+            "up": true
+          }
+        },
+        {
+          "type": "properties",
+          "data": {
+            "viewStyle": 1,
+            "viewWidth": 38,
+            "viewHeight": 40,
+            "viewLayer": 1,
+            "viewPassive": 1
+          }
+        }
+      ]
+    },
+    {
+      "id": "tile-7",
+      "components": [
+        {
+          "type": "position",
+          "data": {
+            "x": 636.2768775266122,
+            "y": 244.0
+          }
+        },
+        {
+          "type": "faces",
+          "data": {
+            "names": [
+              "麦田 9"
+            ],
+            "resources": [
+              "terrain-4"
+            ],
+            "up": true
+          }
+        },
+        {
+          "type": "properties",
+          "data": {
+            "viewStyle": 1,
+            "viewWidth": 110,
+            "viewHeight": 126,
+            "viewLayer": 0,
+            "tile": 7,
+            "resource": 4,
+            "number": 9,
+            "viewLabel": 1,
+            "viewLabelY": 22,
+            "viewColor": 16049860
+          }
+        }
+      ]
+    },
+    {
+      "id": "decor-7",
+      "components": [
+        {
+          "type": "position",
+          "data": {
+            "x": 636.2768775266122,
+            "y": 236.0
+          }
+        },
+        {
+          "type": "faces",
+          "data": {
+            "names": [
+              "decor-7"
+            ],
+            "resources": [
+              "grain"
+            ],
+            "up": true
+          }
+        },
+        {
+          "type": "properties",
+          "data": {
+            "viewStyle": 1,
+            "viewWidth": 38,
+            "viewHeight": 40,
+            "viewLayer": 1,
+            "viewPassive": 1
+          }
+        }
+      ]
+    },
+    {
+      "id": "tile-8",
+      "components": [
+        {
+          "type": "position",
+          "data": {
+            "x": 248.29749663118372,
+            "y": 340.0
+          }
+        },
+        {
+          "type": "faces",
+          "data": {
+            "names": [
+              "牧场 12"
+            ],
+            "resources": [
+              "terrain-3"
+            ],
+            "up": true
+          }
+        },
+        {
+          "type": "properties",
+          "data": {
+            "viewStyle": 1,
+            "viewWidth": 110,
+            "viewHeight": 126,
+            "viewLayer": 0,
+            "tile": 8,
+            "resource": 3,
+            "number": 12,
+            "viewLabel": 1,
+            "viewLabelY": 22,
+            "viewColor": 16049860
+          }
+        }
+      ]
+    },
+    {
+      "id": "decor-8",
+      "components": [
+        {
+          "type": "position",
+          "data": {
+            "x": 248.29749663118372,
+            "y": 332.0
+          }
+        },
+        {
+          "type": "faces",
+          "data": {
+            "names": [
+              "decor-8"
+            ],
+            "resources": [
+              "wool"
+            ],
+            "up": true
+          }
+        },
+        {
+          "type": "properties",
+          "data": {
+            "viewStyle": 1,
+            "viewWidth": 38,
+            "viewHeight": 40,
+            "viewLayer": 1,
+            "viewPassive": 1
+          }
+        }
+      ]
+    },
+    {
+      "id": "tile-9",
+      "components": [
+        {
+          "type": "position",
+          "data": {
+            "x": 359.1487483155919,
+            "y": 340.0
+          }
+        },
+        {
+          "type": "faces",
+          "data": {
+            "names": [
+              "丘陵 11"
+            ],
+            "resources": [
+              "terrain-2"
+            ],
+            "up": true
+          }
+        },
+        {
+          "type": "properties",
+          "data": {
+            "viewStyle": 1,
+            "viewWidth": 110,
+            "viewHeight": 126,
+            "viewLayer": 0,
+            "tile": 9,
+            "resource": 2,
+            "number": 11,
+            "viewLabel": 1,
+            "viewLabelY": 22,
+            "viewColor": 16049860
+          }
+        }
+      ]
+    },
+    {
+      "id": "decor-9",
+      "components": [
+        {
+          "type": "position",
+          "data": {
+            "x": 359.1487483155919,
+            "y": 332.0
+          }
+        },
+        {
+          "type": "faces",
+          "data": {
+            "names": [
+              "decor-9"
+            ],
+            "resources": [
+              "brick"
+            ],
+            "up": true
+          }
+        },
+        {
+          "type": "properties",
+          "data": {
+            "viewStyle": 1,
+            "viewWidth": 38,
+            "viewHeight": 40,
+            "viewLayer": 1,
+            "viewPassive": 1
+          }
+        }
+      ]
+    },
+    {
+      "id": "tile-10",
+      "components": [
+        {
+          "type": "position",
+          "data": {
+            "x": 470.0,
+            "y": 340.0
+          }
+        },
+        {
+          "type": "faces",
+          "data": {
+            "names": [
+              "荒漠 "
+            ],
+            "resources": [
+              "terrain-6"
+            ],
+            "up": true
+          }
+        },
+        {
+          "type": "properties",
+          "data": {
+            "viewStyle": 1,
+            "viewWidth": 110,
+            "viewHeight": 126,
+            "viewLayer": 0,
+            "tile": 10,
+            "resource": 6,
+            "number": 0,
+            "viewLabel": 1,
+            "viewLabelY": 22,
+            "viewColor": 16049860
+          }
+        }
+      ]
+    },
+    {
+      "id": "tile-11",
+      "components": [
+        {
+          "type": "position",
+          "data": {
+            "x": 580.8512516844081,
+            "y": 340.0
+          }
+        },
+        {
+          "type": "faces",
+          "data": {
+            "names": [
+              "矿山 4"
+            ],
+            "resources": [
+              "terrain-5"
+            ],
+            "up": true
+          }
+        },
+        {
+          "type": "properties",
+          "data": {
+            "viewStyle": 1,
+            "viewWidth": 110,
+            "viewHeight": 126,
+            "viewLayer": 0,
+            "tile": 11,
+            "resource": 5,
+            "number": 4,
+            "viewLabel": 1,
+            "viewLabelY": 22,
+            "viewColor": 16049860
+          }
+        }
+      ]
+    },
+    {
+      "id": "decor-11",
+      "components": [
+        {
+          "type": "position",
+          "data": {
+            "x": 580.8512516844081,
+            "y": 332.0
+          }
+        },
+        {
+          "type": "faces",
+          "data": {
+            "names": [
+              "decor-11"
+            ],
+            "resources": [
+              "ore"
+            ],
+            "up": true
+          }
+        },
+        {
+          "type": "properties",
+          "data": {
+            "viewStyle": 1,
+            "viewWidth": 38,
+            "viewHeight": 40,
+            "viewLayer": 1,
+            "viewPassive": 1
+          }
+        }
+      ]
+    },
+    {
+      "id": "tile-12",
+      "components": [
+        {
+          "type": "position",
+          "data": {
+            "x": 691.7025033688162,
+            "y": 340.0
+          }
+        },
+        {
+          "type": "faces",
+          "data": {
+            "names": [
+              "森林 8"
+            ],
+            "resources": [
+              "terrain-1"
+            ],
+            "up": true
+          }
+        },
+        {
+          "type": "properties",
+          "data": {
+            "viewStyle": 1,
+            "viewWidth": 110,
+            "viewHeight": 126,
+            "viewLayer": 0,
+            "tile": 12,
+            "resource": 1,
+            "number": 8,
+            "viewLabel": 1,
+            "viewLabelY": 22,
+            "viewColor": 16049860
+          }
+        }
+      ]
+    },
+    {
+      "id": "decor-12",
+      "components": [
+        {
+          "type": "position",
+          "data": {
+            "x": 691.7025033688162,
+            "y": 332.0
+          }
+        },
+        {
+          "type": "faces",
+          "data": {
+            "names": [
+              "decor-12"
+            ],
+            "resources": [
+              "forest"
+            ],
+            "up": true
+          }
+        },
+        {
+          "type": "properties",
+          "data": {
+            "viewStyle": 1,
+            "viewWidth": 38,
+            "viewHeight": 40,
+            "viewLayer": 1,
+            "viewPassive": 1
+          }
+        }
+      ]
+    },
+    {
+      "id": "tile-13",
+      "components": [
+        {
+          "type": "position",
+          "data": {
+            "x": 303.7231224733878,
+            "y": 436.0
+          }
+        },
+        {
+          "type": "faces",
+          "data": {
+            "names": [
+              "麦田 10"
+            ],
+            "resources": [
+              "terrain-4"
+            ],
+            "up": true
+          }
+        },
+        {
+          "type": "properties",
+          "data": {
+            "viewStyle": 1,
+            "viewWidth": 110,
+            "viewHeight": 126,
+            "viewLayer": 0,
+            "tile": 13,
+            "resource": 4,
+            "number": 10,
+            "viewLabel": 1,
+            "viewLabelY": 22,
+            "viewColor": 16049860
+          }
+        }
+      ]
+    },
+    {
+      "id": "decor-13",
+      "components": [
+        {
+          "type": "position",
+          "data": {
+            "x": 303.7231224733878,
+            "y": 428.0
+          }
+        },
+        {
+          "type": "faces",
+          "data": {
+            "names": [
+              "decor-13"
+            ],
+            "resources": [
+              "grain"
+            ],
+            "up": true
+          }
+        },
+        {
+          "type": "properties",
+          "data": {
+            "viewStyle": 1,
+            "viewWidth": 38,
+            "viewHeight": 40,
+            "viewLayer": 1,
+            "viewPassive": 1
+          }
+        }
+      ]
+    },
+    {
+      "id": "tile-14",
+      "components": [
+        {
+          "type": "position",
+          "data": {
+            "x": 414.57437415779594,
+            "y": 436.0
+          }
+        },
+        {
+          "type": "faces",
+          "data": {
+            "names": [
+              "牧场 9"
+            ],
+            "resources": [
+              "terrain-3"
+            ],
+            "up": true
+          }
+        },
+        {
+          "type": "properties",
+          "data": {
+            "viewStyle": 1,
+            "viewWidth": 110,
+            "viewHeight": 126,
+            "viewLayer": 0,
+            "tile": 14,
+            "resource": 3,
+            "number": 9,
+            "viewLabel": 1,
+            "viewLabelY": 22,
+            "viewColor": 16049860
+          }
+        }
+      ]
+    },
+    {
+      "id": "decor-14",
+      "components": [
+        {
+          "type": "position",
+          "data": {
+            "x": 414.57437415779594,
+            "y": 428.0
+          }
+        },
+        {
+          "type": "faces",
+          "data": {
+            "names": [
+              "decor-14"
+            ],
+            "resources": [
+              "wool"
+            ],
+            "up": true
+          }
+        },
+        {
+          "type": "properties",
+          "data": {
+            "viewStyle": 1,
+            "viewWidth": 38,
+            "viewHeight": 40,
+            "viewLayer": 1,
+            "viewPassive": 1
+          }
+        }
+      ]
+    },
+    {
+      "id": "tile-15",
+      "components": [
+        {
+          "type": "position",
+          "data": {
+            "x": 525.4256258422041,
+            "y": 436.0
+          }
+        },
+        {
+          "type": "faces",
+          "data": {
+            "names": [
+              "丘陵 4"
+            ],
+            "resources": [
+              "terrain-2"
+            ],
+            "up": true
+          }
+        },
+        {
+          "type": "properties",
+          "data": {
+            "viewStyle": 1,
+            "viewWidth": 110,
+            "viewHeight": 126,
+            "viewLayer": 0,
+            "tile": 15,
+            "resource": 2,
+            "number": 4,
+            "viewLabel": 1,
+            "viewLabelY": 22,
+            "viewColor": 16049860
+          }
+        }
+      ]
+    },
+    {
+      "id": "decor-15",
+      "components": [
+        {
+          "type": "position",
+          "data": {
+            "x": 525.4256258422041,
+            "y": 428.0
+          }
+        },
+        {
+          "type": "faces",
+          "data": {
+            "names": [
+              "decor-15"
+            ],
+            "resources": [
+              "brick"
+            ],
+            "up": true
+          }
+        },
+        {
+          "type": "properties",
+          "data": {
+            "viewStyle": 1,
+            "viewWidth": 38,
+            "viewHeight": 40,
+            "viewLayer": 1,
+            "viewPassive": 1
+          }
+        }
+      ]
+    },
+    {
+      "id": "tile-16",
+      "components": [
+        {
+          "type": "position",
+          "data": {
+            "x": 636.2768775266122,
+            "y": 436.0
+          }
+        },
+        {
+          "type": "faces",
+          "data": {
+            "names": [
+              "矿山 5"
+            ],
+            "resources": [
+              "terrain-5"
+            ],
+            "up": true
+          }
+        },
+        {
+          "type": "properties",
+          "data": {
+            "viewStyle": 1,
+            "viewWidth": 110,
+            "viewHeight": 126,
+            "viewLayer": 0,
+            "tile": 16,
+            "resource": 5,
+            "number": 5,
+            "viewLabel": 1,
+            "viewLabelY": 22,
+            "viewColor": 16049860
+          }
+        }
+      ]
+    },
+    {
+      "id": "decor-16",
+      "components": [
+        {
+          "type": "position",
+          "data": {
+            "x": 636.2768775266122,
+            "y": 428.0
+          }
+        },
+        {
+          "type": "faces",
+          "data": {
+            "names": [
+              "decor-16"
+            ],
+            "resources": [
+              "ore"
+            ],
+            "up": true
+          }
+        },
+        {
+          "type": "properties",
+          "data": {
+            "viewStyle": 1,
+            "viewWidth": 38,
+            "viewHeight": 40,
+            "viewLayer": 1,
+            "viewPassive": 1
+          }
+        }
+      ]
+    },
+    {
+      "id": "tile-17",
+      "components": [
+        {
+          "type": "position",
+          "data": {
+            "x": 359.1487483155919,
+            "y": 532.0
+          }
+        },
+        {
+          "type": "faces",
+          "data": {
+            "names": [
+              "牧场 6"
+            ],
+            "resources": [
+              "terrain-3"
+            ],
+            "up": true
+          }
+        },
+        {
+          "type": "properties",
+          "data": {
+            "viewStyle": 1,
+            "viewWidth": 110,
+            "viewHeight": 126,
+            "viewLayer": 0,
+            "tile": 17,
+            "resource": 3,
+            "number": 6,
+            "viewLabel": 1,
+            "viewLabelY": 22,
+            "viewColor": 16049860
+          }
+        }
+      ]
+    },
+    {
+      "id": "decor-17",
+      "components": [
+        {
+          "type": "position",
+          "data": {
+            "x": 359.1487483155919,
+            "y": 524.0
+          }
+        },
+        {
+          "type": "faces",
+          "data": {
+            "names": [
+              "decor-17"
+            ],
+            "resources": [
+              "wool"
+            ],
+            "up": true
+          }
+        },
+        {
+          "type": "properties",
+          "data": {
+            "viewStyle": 1,
+            "viewWidth": 38,
+            "viewHeight": 40,
+            "viewLayer": 1,
+            "viewPassive": 1
+          }
+        }
+      ]
+    },
+    {
+      "id": "tile-18",
+      "components": [
+        {
+          "type": "position",
+          "data": {
+            "x": 470.0,
+            "y": 532.0
+          }
+        },
+        {
+          "type": "faces",
+          "data": {
+            "names": [
+              "麦田 3"
+            ],
+            "resources": [
+              "terrain-4"
+            ],
+            "up": true
+          }
+        },
+        {
+          "type": "properties",
+          "data": {
+            "viewStyle": 1,
+            "viewWidth": 110,
+            "viewHeight": 126,
+            "viewLayer": 0,
+            "tile": 18,
+            "resource": 4,
+            "number": 3,
+            "viewLabel": 1,
+            "viewLabelY": 22,
+            "viewColor": 16049860
+          }
+        }
+      ]
+    },
+    {
+      "id": "decor-18",
+      "components": [
+        {
+          "type": "position",
+          "data": {
+            "x": 470.0,
+            "y": 524.0
+          }
+        },
+        {
+          "type": "faces",
+          "data": {
+            "names": [
+              "decor-18"
+            ],
+            "resources": [
+              "grain"
+            ],
+            "up": true
+          }
+        },
+        {
+          "type": "properties",
+          "data": {
+            "viewStyle": 1,
+            "viewWidth": 38,
+            "viewHeight": 40,
+            "viewLayer": 1,
+            "viewPassive": 1
+          }
+        }
+      ]
+    },
+    {
+      "id": "tile-19",
+      "components": [
+        {
+          "type": "position",
+          "data": {
+            "x": 580.8512516844081,
+            "y": 532.0
+          }
+        },
+        {
+          "type": "faces",
+          "data": {
+            "names": [
+              "森林 11"
+            ],
+            "resources": [
+              "terrain-1"
+            ],
+            "up": true
+          }
+        },
+        {
+          "type": "properties",
+          "data": {
+            "viewStyle": 1,
+            "viewWidth": 110,
+            "viewHeight": 126,
+            "viewLayer": 0,
+            "tile": 19,
+            "resource": 1,
+            "number": 11,
+            "viewLabel": 1,
+            "viewLabelY": 22,
+            "viewColor": 16049860
+          }
+        }
+      ]
+    },
+    {
+      "id": "decor-19",
+      "components": [
+        {
+          "type": "position",
+          "data": {
+            "x": 580.8512516844081,
+            "y": 524.0
+          }
+        },
+        {
+          "type": "faces",
+          "data": {
+            "names": [
+              "decor-19"
+            ],
+            "resources": [
+              "forest"
+            ],
+            "up": true
+          }
+        },
+        {
+          "type": "properties",
+          "data": {
+            "viewStyle": 1,
+            "viewWidth": 38,
+            "viewHeight": 40,
+            "viewLayer": 1,
+            "viewPassive": 1
+          }
+        }
+      ]
+    },
+    {
+      "id": "edge-1",
+      "components": [
+        {
+          "type": "position",
+          "data": {
+            "x": 386.8615,
+            "y": 196.0
+          }
+        },
+        {
+          "type": "faces",
+          "data": {
+            "names": [
+              "道路 1"
+            ],
+            "resources": [],
+            "up": true
+          }
+        },
+        {
+          "type": "properties",
+          "data": {
+            "a": 1,
+            "b": 2,
+            "player": 0,
+            "viewStyle": 2,
+            "viewLayer": 2,
+            "viewWidth": 18,
+            "viewHeight": 18,
+            "viewLineX": -55,
+            "viewLineY": 32,
+            "viewColor": 5470072,
+            "viewLabel": 0
+          }
+        }
+      ]
+    },
+    {
+      "id": "edge-2",
+      "components": [
+        {
+          "type": "position",
+          "data": {
+            "x": 331.43600000000004,
+            "y": 196.0
+          }
+        },
+        {
+          "type": "faces",
+          "data": {
+            "names": [
+              "道路 2"
+            ],
+            "resources": [],
+            "up": true
+          }
+        },
+        {
+          "type": "properties",
+          "data": {
+            "a": 2,
+            "b": 3,
+            "player": 0,
+            "viewStyle": 2,
+            "viewLayer": 2,
+            "viewWidth": 18,
+            "viewHeight": 18,
+            "viewLineX": -55,
+            "viewLineY": -32,
+            "viewColor": 5470072,
+            "viewLabel": 0
+          }
+        }
+      ]
+    },
+    {
+      "id": "edge-3",
+      "components": [
+        {
+          "type": "position",
+          "data": {
+            "x": 303.723,
+            "y": 148.0
+          }
+        },
+        {
+          "type": "faces",
+          "data": {
+            "names": [
+              "道路 3"
+            ],
+            "resources": [],
+            "up": true
+          }
+        },
+        {
+          "type": "properties",
+          "data": {
+            "a": 3,
+            "b": 4,
+            "player": 0,
+            "viewStyle": 2,
+            "viewLayer": 2,
+            "viewWidth": 18,
+            "viewHeight": 18,
+            "viewLineX": 0,
+            "viewLineY": -64,
+            "viewColor": 5470072,
+            "viewLabel": 0
+          }
+        }
+      ]
+    },
+    {
+      "id": "edge-4",
+      "components": [
+        {
+          "type": "position",
+          "data": {
+            "x": 331.43600000000004,
+            "y": 100.0
+          }
+        },
+        {
+          "type": "faces",
+          "data": {
+            "names": [
+              "道路 4"
+            ],
+            "resources": [],
+            "up": true
+          }
+        },
+        {
+          "type": "properties",
+          "data": {
+            "a": 4,
+            "b": 5,
+            "player": 0,
+            "viewStyle": 2,
+            "viewLayer": 2,
+            "viewWidth": 18,
+            "viewHeight": 18,
+            "viewLineX": 55,
+            "viewLineY": -32,
+            "viewColor": 5470072,
+            "viewLabel": 0
+          }
+        }
+      ]
+    },
+    {
+      "id": "edge-5",
+      "components": [
+        {
+          "type": "position",
+          "data": {
+            "x": 386.8615,
+            "y": 100.0
+          }
+        },
+        {
+          "type": "faces",
+          "data": {
+            "names": [
+              "道路 5"
+            ],
+            "resources": [],
+            "up": true
+          }
+        },
+        {
+          "type": "properties",
+          "data": {
+            "a": 5,
+            "b": 6,
+            "player": 0,
+            "viewStyle": 2,
+            "viewLayer": 2,
+            "viewWidth": 18,
+            "viewHeight": 18,
+            "viewLineX": 55,
+            "viewLineY": 32,
+            "viewColor": 5470072,
+            "viewLabel": 0
+          }
+        }
+      ]
+    },
+    {
+      "id": "edge-6",
+      "components": [
+        {
+          "type": "position",
+          "data": {
+            "x": 414.574,
+            "y": 148.0
+          }
+        },
+        {
+          "type": "faces",
+          "data": {
+            "names": [
+              "道路 6"
+            ],
+            "resources": [],
+            "up": true
+          }
+        },
+        {
+          "type": "properties",
+          "data": {
+            "a": 1,
+            "b": 6,
+            "player": 0,
+            "viewStyle": 2,
+            "viewLayer": 2,
+            "viewWidth": 18,
+            "viewHeight": 18,
+            "viewLineX": 0,
+            "viewLineY": -64,
+            "viewColor": 5470072,
+            "viewLabel": 0
+          }
+        }
+      ]
+    },
+    {
+      "id": "edge-7",
+      "components": [
+        {
+          "type": "position",
+          "data": {
+            "x": 497.713,
+            "y": 196.0
+          }
+        },
+        {
+          "type": "faces",
+          "data": {
+            "names": [
+              "道路 7"
+            ],
+            "resources": [],
+            "up": true
+          }
+        },
+        {
+          "type": "properties",
+          "data": {
+            "a": 7,
+            "b": 8,
+            "player": 0,
+            "viewStyle": 2,
+            "viewLayer": 2,
+            "viewWidth": 18,
+            "viewHeight": 18,
+            "viewLineX": -55,
+            "viewLineY": 32,
+            "viewColor": 5470072,
+            "viewLabel": 0
+          }
+        }
+      ]
+    },
+    {
+      "id": "edge-8",
+      "components": [
+        {
+          "type": "position",
+          "data": {
+            "x": 442.28700000000003,
+            "y": 196.0
+          }
+        },
+        {
+          "type": "faces",
+          "data": {
+            "names": [
+              "道路 8"
+            ],
+            "resources": [],
+            "up": true
+          }
+        },
+        {
+          "type": "properties",
+          "data": {
+            "a": 1,
+            "b": 8,
+            "player": 0,
+            "viewStyle": 2,
+            "viewLayer": 2,
+            "viewWidth": 18,
+            "viewHeight": 18,
+            "viewLineX": 55,
+            "viewLineY": 32,
+            "viewColor": 5470072,
+            "viewLabel": 0
+          }
+        }
+      ]
+    },
+    {
+      "id": "edge-9",
+      "components": [
+        {
+          "type": "position",
+          "data": {
+            "x": 442.28700000000003,
+            "y": 100.0
+          }
+        },
+        {
+          "type": "faces",
+          "data": {
+            "names": [
+              "道路 9"
+            ],
+            "resources": [],
+            "up": true
+          }
+        },
+        {
+          "type": "properties",
+          "data": {
+            "a": 6,
+            "b": 9,
+            "player": 0,
+            "viewStyle": 2,
+            "viewLayer": 2,
+            "viewWidth": 18,
+            "viewHeight": 18,
+            "viewLineX": 55,
+            "viewLineY": -32,
+            "viewColor": 5470072,
+            "viewLabel": 0
+          }
+        }
+      ]
+    },
+    {
+      "id": "edge-10",
+      "components": [
+        {
+          "type": "position",
+          "data": {
+            "x": 497.713,
+            "y": 100.0
+          }
+        },
+        {
+          "type": "faces",
+          "data": {
+            "names": [
+              "道路 10"
+            ],
+            "resources": [],
+            "up": true
+          }
+        },
+        {
+          "type": "properties",
+          "data": {
+            "a": 9,
+            "b": 10,
+            "player": 0,
+            "viewStyle": 2,
+            "viewLayer": 2,
+            "viewWidth": 18,
+            "viewHeight": 18,
+            "viewLineX": 55,
+            "viewLineY": 32,
+            "viewColor": 5470072,
+            "viewLabel": 0
+          }
+        }
+      ]
+    },
+    {
+      "id": "edge-11",
+      "components": [
+        {
+          "type": "position",
+          "data": {
+            "x": 525.426,
+            "y": 148.0
+          }
+        },
+        {
+          "type": "faces",
+          "data": {
+            "names": [
+              "道路 11"
+            ],
+            "resources": [],
+            "up": true
+          }
+        },
+        {
+          "type": "properties",
+          "data": {
+            "a": 7,
+            "b": 10,
+            "player": 0,
+            "viewStyle": 2,
+            "viewLayer": 2,
+            "viewWidth": 18,
+            "viewHeight": 18,
+            "viewLineX": 0,
+            "viewLineY": -64,
+            "viewColor": 5470072,
+            "viewLabel": 0
+          }
+        }
+      ]
+    },
+    {
+      "id": "edge-12",
+      "components": [
+        {
+          "type": "position",
+          "data": {
+            "x": 608.5640000000001,
+            "y": 196.0
+          }
+        },
+        {
+          "type": "faces",
+          "data": {
+            "names": [
+              "道路 12"
+            ],
+            "resources": [],
+            "up": true
+          }
+        },
+        {
+          "type": "properties",
+          "data": {
+            "a": 11,
+            "b": 12,
+            "player": 0,
+            "viewStyle": 2,
+            "viewLayer": 2,
+            "viewWidth": 18,
+            "viewHeight": 18,
+            "viewLineX": -55,
+            "viewLineY": 32,
+            "viewColor": 5470072,
+            "viewLabel": 0
+          }
+        }
+      ]
+    },
+    {
+      "id": "edge-13",
+      "components": [
+        {
+          "type": "position",
+          "data": {
+            "x": 553.1385,
+            "y": 196.0
+          }
+        },
+        {
+          "type": "faces",
+          "data": {
+            "names": [
+              "道路 13"
+            ],
+            "resources": [],
+            "up": true
+          }
+        },
+        {
+          "type": "properties",
+          "data": {
+            "a": 7,
+            "b": 12,
+            "player": 0,
+            "viewStyle": 2,
+            "viewLayer": 2,
+            "viewWidth": 18,
+            "viewHeight": 18,
+            "viewLineX": 55,
+            "viewLineY": 32,
+            "viewColor": 5470072,
+            "viewLabel": 0
+          }
+        }
+      ]
+    },
+    {
+      "id": "edge-14",
+      "components": [
+        {
+          "type": "position",
+          "data": {
+            "x": 553.1385,
+            "y": 100.0
+          }
+        },
+        {
+          "type": "faces",
+          "data": {
+            "names": [
+              "道路 14"
+            ],
+            "resources": [],
+            "up": true
+          }
+        },
+        {
+          "type": "properties",
+          "data": {
+            "a": 10,
+            "b": 13,
+            "player": 0,
+            "viewStyle": 2,
+            "viewLayer": 2,
+            "viewWidth": 18,
+            "viewHeight": 18,
+            "viewLineX": 55,
+            "viewLineY": -32,
+            "viewColor": 5470072,
+            "viewLabel": 0
+          }
+        }
+      ]
+    },
+    {
+      "id": "edge-15",
+      "components": [
+        {
+          "type": "position",
+          "data": {
+            "x": 608.5640000000001,
+            "y": 100.0
+          }
+        },
+        {
+          "type": "faces",
+          "data": {
+            "names": [
+              "道路 15"
+            ],
+            "resources": [],
+            "up": true
+          }
+        },
+        {
+          "type": "properties",
+          "data": {
+            "a": 13,
+            "b": 14,
+            "player": 0,
+            "viewStyle": 2,
+            "viewLayer": 2,
+            "viewWidth": 18,
+            "viewHeight": 18,
+            "viewLineX": 55,
+            "viewLineY": 32,
+            "viewColor": 5470072,
+            "viewLabel": 0
+          }
+        }
+      ]
+    },
+    {
+      "id": "edge-16",
+      "components": [
+        {
+          "type": "position",
+          "data": {
+            "x": 636.277,
+            "y": 148.0
+          }
+        },
+        {
+          "type": "faces",
+          "data": {
+            "names": [
+              "道路 16"
+            ],
+            "resources": [],
+            "up": true
+          }
+        },
+        {
+          "type": "properties",
+          "data": {
+            "a": 11,
+            "b": 14,
+            "player": 0,
+            "viewStyle": 2,
+            "viewLayer": 2,
+            "viewWidth": 18,
+            "viewHeight": 18,
+            "viewLineX": 0,
+            "viewLineY": -64,
+            "viewColor": 5470072,
+            "viewLabel": 0
+          }
+        }
+      ]
+    },
+    {
+      "id": "edge-17",
+      "components": [
+        {
+          "type": "position",
+          "data": {
+            "x": 331.43600000000004,
+            "y": 292.0
+          }
+        },
+        {
+          "type": "faces",
+          "data": {
+            "names": [
+              "道路 17"
+            ],
+            "resources": [],
+            "up": true
+          }
+        },
+        {
+          "type": "properties",
+          "data": {
+            "a": 15,
+            "b": 16,
+            "player": 0,
+            "viewStyle": 2,
+            "viewLayer": 2,
+            "viewWidth": 18,
+            "viewHeight": 18,
+            "viewLineX": -55,
+            "viewLineY": 32,
+            "viewColor": 5470072,
+            "viewLabel": 0
+          }
+        }
+      ]
+    },
+    {
+      "id": "edge-18",
+      "components": [
+        {
+          "type": "position",
+          "data": {
+            "x": 276.01,
+            "y": 292.0
+          }
+        },
+        {
+          "type": "faces",
+          "data": {
+            "names": [
+              "道路 18"
+            ],
+            "resources": [],
+            "up": true
+          }
+        },
+        {
+          "type": "properties",
+          "data": {
+            "a": 16,
+            "b": 17,
+            "player": 0,
+            "viewStyle": 2,
+            "viewLayer": 2,
+            "viewWidth": 18,
+            "viewHeight": 18,
+            "viewLineX": -55,
+            "viewLineY": -32,
+            "viewColor": 5470072,
+            "viewLabel": 0
+          }
+        }
+      ]
+    },
+    {
+      "id": "edge-19",
+      "components": [
+        {
+          "type": "position",
+          "data": {
+            "x": 248.297,
+            "y": 244.0
+          }
+        },
+        {
+          "type": "faces",
+          "data": {
+            "names": [
+              "道路 19"
+            ],
+            "resources": [],
+            "up": true
+          }
+        },
+        {
+          "type": "properties",
+          "data": {
+            "a": 17,
+            "b": 18,
+            "player": 0,
+            "viewStyle": 2,
+            "viewLayer": 2,
+            "viewWidth": 18,
+            "viewHeight": 18,
+            "viewLineX": 0,
+            "viewLineY": -64,
+            "viewColor": 5470072,
+            "viewLabel": 0
+          }
+        }
+      ]
+    },
+    {
+      "id": "edge-20",
+      "components": [
+        {
+          "type": "position",
+          "data": {
+            "x": 276.01,
+            "y": 196.0
+          }
+        },
+        {
+          "type": "faces",
+          "data": {
+            "names": [
+              "道路 20"
+            ],
+            "resources": [],
+            "up": true
+          }
+        },
+        {
+          "type": "properties",
+          "data": {
+            "a": 3,
+            "b": 18,
+            "player": 0,
+            "viewStyle": 2,
+            "viewLayer": 2,
+            "viewWidth": 18,
+            "viewHeight": 18,
+            "viewLineX": -55,
+            "viewLineY": 32,
+            "viewColor": 5470072,
+            "viewLabel": 0
+          }
+        }
+      ]
+    },
+    {
+      "id": "edge-21",
+      "components": [
+        {
+          "type": "position",
+          "data": {
+            "x": 359.149,
+            "y": 244.0
+          }
+        },
+        {
+          "type": "faces",
+          "data": {
+            "names": [
+              "道路 21"
+            ],
+            "resources": [],
+            "up": true
+          }
+        },
+        {
+          "type": "properties",
+          "data": {
+            "a": 2,
+            "b": 15,
+            "player": 0,
+            "viewStyle": 2,
+            "viewLayer": 2,
+            "viewWidth": 18,
+            "viewHeight": 18,
+            "viewLineX": 0,
+            "viewLineY": 64,
+            "viewColor": 5470072,
+            "viewLabel": 0
+          }
+        }
+      ]
+    },
+    {
+      "id": "edge-22",
+      "components": [
+        {
+          "type": "position",
+          "data": {
+            "x": 442.28700000000003,
+            "y": 292.0
+          }
+        },
+        {
+          "type": "faces",
+          "data": {
+            "names": [
+              "道路 22"
+            ],
+            "resources": [],
+            "up": true
+          }
+        },
+        {
+          "type": "properties",
+          "data": {
+            "a": 19,
+            "b": 20,
+            "player": 0,
+            "viewStyle": 2,
+            "viewLayer": 2,
+            "viewWidth": 18,
+            "viewHeight": 18,
+            "viewLineX": -55,
+            "viewLineY": 32,
+            "viewColor": 5470072,
+            "viewLabel": 0
+          }
+        }
+      ]
+    },
+    {
+      "id": "edge-23",
+      "components": [
+        {
+          "type": "position",
+          "data": {
+            "x": 386.8615,
+            "y": 292.0
+          }
+        },
+        {
+          "type": "faces",
+          "data": {
+            "names": [
+              "道路 23"
+            ],
+            "resources": [],
+            "up": true
+          }
+        },
+        {
+          "type": "properties",
+          "data": {
+            "a": 15,
+            "b": 20,
+            "player": 0,
+            "viewStyle": 2,
+            "viewLayer": 2,
+            "viewWidth": 18,
+            "viewHeight": 18,
+            "viewLineX": 55,
+            "viewLineY": 32,
+            "viewColor": 5470072,
+            "viewLabel": 0
+          }
+        }
+      ]
+    },
+    {
+      "id": "edge-24",
+      "components": [
+        {
+          "type": "position",
+          "data": {
+            "x": 470.0,
+            "y": 244.0
+          }
+        },
+        {
+          "type": "faces",
+          "data": {
+            "names": [
+              "道路 24"
+            ],
+            "resources": [],
+            "up": true
+          }
+        },
+        {
+          "type": "properties",
+          "data": {
+            "a": 8,
+            "b": 19,
+            "player": 0,
+            "viewStyle": 2,
+            "viewLayer": 2,
+            "viewWidth": 18,
+            "viewHeight": 18,
+            "viewLineX": 0,
+            "viewLineY": 64,
+            "viewColor": 5470072,
+            "viewLabel": 0
+          }
+        }
+      ]
+    },
+    {
+      "id": "edge-25",
+      "components": [
+        {
+          "type": "position",
+          "data": {
+            "x": 553.1385,
+            "y": 292.0
+          }
+        },
+        {
+          "type": "faces",
+          "data": {
+            "names": [
+              "道路 25"
+            ],
+            "resources": [],
+            "up": true
+          }
+        },
+        {
+          "type": "properties",
+          "data": {
+            "a": 21,
+            "b": 22,
+            "player": 0,
+            "viewStyle": 2,
+            "viewLayer": 2,
+            "viewWidth": 18,
+            "viewHeight": 18,
+            "viewLineX": -55,
+            "viewLineY": 32,
+            "viewColor": 5470072,
+            "viewLabel": 0
+          }
+        }
+      ]
+    },
+    {
+      "id": "edge-26",
+      "components": [
+        {
+          "type": "position",
+          "data": {
+            "x": 497.713,
+            "y": 292.0
+          }
+        },
+        {
+          "type": "faces",
+          "data": {
+            "names": [
+              "道路 26"
+            ],
+            "resources": [],
+            "up": true
+          }
+        },
+        {
+          "type": "properties",
+          "data": {
+            "a": 19,
+            "b": 22,
+            "player": 0,
+            "viewStyle": 2,
+            "viewLayer": 2,
+            "viewWidth": 18,
+            "viewHeight": 18,
+            "viewLineX": 55,
+            "viewLineY": 32,
+            "viewColor": 5470072,
+            "viewLabel": 0
+          }
+        }
+      ]
+    },
+    {
+      "id": "edge-27",
+      "components": [
+        {
+          "type": "position",
+          "data": {
+            "x": 580.851,
+            "y": 244.0
+          }
+        },
+        {
+          "type": "faces",
+          "data": {
+            "names": [
+              "道路 27"
+            ],
+            "resources": [],
+            "up": true
+          }
+        },
+        {
+          "type": "properties",
+          "data": {
+            "a": 12,
+            "b": 21,
+            "player": 0,
+            "viewStyle": 2,
+            "viewLayer": 2,
+            "viewWidth": 18,
+            "viewHeight": 18,
+            "viewLineX": 0,
+            "viewLineY": 64,
+            "viewColor": 5470072,
+            "viewLabel": 0
+          }
+        }
+      ]
+    },
+    {
+      "id": "edge-28",
+      "components": [
+        {
+          "type": "position",
+          "data": {
+            "x": 663.99,
+            "y": 292.0
+          }
+        },
+        {
+          "type": "faces",
+          "data": {
+            "names": [
+              "道路 28"
+            ],
+            "resources": [],
+            "up": true
+          }
+        },
+        {
+          "type": "properties",
+          "data": {
+            "a": 23,
+            "b": 24,
+            "player": 0,
+            "viewStyle": 2,
+            "viewLayer": 2,
+            "viewWidth": 18,
+            "viewHeight": 18,
+            "viewLineX": -55,
+            "viewLineY": 32,
+            "viewColor": 5470072,
+            "viewLabel": 0
+          }
+        }
+      ]
+    },
+    {
+      "id": "edge-29",
+      "components": [
+        {
+          "type": "position",
+          "data": {
+            "x": 608.5640000000001,
+            "y": 292.0
+          }
+        },
+        {
+          "type": "faces",
+          "data": {
+            "names": [
+              "道路 29"
+            ],
+            "resources": [],
+            "up": true
+          }
+        },
+        {
+          "type": "properties",
+          "data": {
+            "a": 21,
+            "b": 24,
+            "player": 0,
+            "viewStyle": 2,
+            "viewLayer": 2,
+            "viewWidth": 18,
+            "viewHeight": 18,
+            "viewLineX": 55,
+            "viewLineY": 32,
+            "viewColor": 5470072,
+            "viewLabel": 0
+          }
+        }
+      ]
+    },
+    {
+      "id": "edge-30",
+      "components": [
+        {
+          "type": "position",
+          "data": {
+            "x": 663.99,
+            "y": 196.0
+          }
+        },
+        {
+          "type": "faces",
+          "data": {
+            "names": [
+              "道路 30"
+            ],
+            "resources": [],
+            "up": true
+          }
+        },
+        {
+          "type": "properties",
+          "data": {
+            "a": 11,
+            "b": 25,
+            "player": 0,
+            "viewStyle": 2,
+            "viewLayer": 2,
+            "viewWidth": 18,
+            "viewHeight": 18,
+            "viewLineX": 55,
+            "viewLineY": 32,
+            "viewColor": 5470072,
+            "viewLabel": 0
+          }
+        }
+      ]
+    },
+    {
+      "id": "edge-31",
+      "components": [
+        {
+          "type": "position",
+          "data": {
+            "x": 691.703,
+            "y": 244.0
+          }
+        },
+        {
+          "type": "faces",
+          "data": {
+            "names": [
+              "道路 31"
+            ],
+            "resources": [],
+            "up": true
+          }
+        },
+        {
+          "type": "properties",
+          "data": {
+            "a": 23,
+            "b": 25,
+            "player": 0,
+            "viewStyle": 2,
+            "viewLayer": 2,
+            "viewWidth": 18,
+            "viewHeight": 18,
+            "viewLineX": 0,
+            "viewLineY": -64,
+            "viewColor": 5470072,
+            "viewLabel": 0
+          }
+        }
+      ]
+    },
+    {
+      "id": "edge-32",
+      "components": [
+        {
+          "type": "position",
+          "data": {
+            "x": 276.01,
+            "y": 388.0
+          }
+        },
+        {
+          "type": "faces",
+          "data": {
+            "names": [
+              "道路 32"
+            ],
+            "resources": [],
+            "up": true
+          }
+        },
+        {
+          "type": "properties",
+          "data": {
+            "a": 26,
+            "b": 27,
+            "player": 0,
+            "viewStyle": 2,
+            "viewLayer": 2,
+            "viewWidth": 18,
+            "viewHeight": 18,
+            "viewLineX": -55,
+            "viewLineY": 32,
+            "viewColor": 5470072,
+            "viewLabel": 0
+          }
+        }
+      ]
+    },
+    {
+      "id": "edge-33",
+      "components": [
+        {
+          "type": "position",
+          "data": {
+            "x": 220.5845,
+            "y": 388.0
+          }
+        },
+        {
+          "type": "faces",
+          "data": {
+            "names": [
+              "道路 33"
+            ],
+            "resources": [],
+            "up": true
+          }
+        },
+        {
+          "type": "properties",
+          "data": {
+            "a": 27,
+            "b": 28,
+            "player": 0,
+            "viewStyle": 2,
+            "viewLayer": 2,
+            "viewWidth": 18,
+            "viewHeight": 18,
+            "viewLineX": -55,
+            "viewLineY": -32,
+            "viewColor": 5470072,
+            "viewLabel": 0
+          }
+        }
+      ]
+    },
+    {
+      "id": "edge-34",
+      "components": [
+        {
+          "type": "position",
+          "data": {
+            "x": 192.872,
+            "y": 340.0
+          }
+        },
+        {
+          "type": "faces",
+          "data": {
+            "names": [
+              "道路 34"
+            ],
+            "resources": [],
+            "up": true
+          }
+        },
+        {
+          "type": "properties",
+          "data": {
+            "a": 28,
+            "b": 29,
+            "player": 0,
+            "viewStyle": 2,
+            "viewLayer": 2,
+            "viewWidth": 18,
+            "viewHeight": 18,
+            "viewLineX": 0,
+            "viewLineY": -64,
+            "viewColor": 5470072,
+            "viewLabel": 0
+          }
+        }
+      ]
+    },
+    {
+      "id": "edge-35",
+      "components": [
+        {
+          "type": "position",
+          "data": {
+            "x": 220.5845,
+            "y": 292.0
+          }
+        },
+        {
+          "type": "faces",
+          "data": {
+            "names": [
+              "道路 35"
+            ],
+            "resources": [],
+            "up": true
+          }
+        },
+        {
+          "type": "properties",
+          "data": {
+            "a": 17,
+            "b": 29,
+            "player": 0,
+            "viewStyle": 2,
+            "viewLayer": 2,
+            "viewWidth": 18,
+            "viewHeight": 18,
+            "viewLineX": -55,
+            "viewLineY": 32,
+            "viewColor": 5470072,
+            "viewLabel": 0
+          }
+        }
+      ]
+    },
+    {
+      "id": "edge-36",
+      "components": [
+        {
+          "type": "position",
+          "data": {
+            "x": 303.723,
+            "y": 340.0
+          }
+        },
+        {
+          "type": "faces",
+          "data": {
+            "names": [
+              "道路 36"
+            ],
+            "resources": [],
+            "up": true
+          }
+        },
+        {
+          "type": "properties",
+          "data": {
+            "a": 16,
+            "b": 26,
+            "player": 0,
+            "viewStyle": 2,
+            "viewLayer": 2,
+            "viewWidth": 18,
+            "viewHeight": 18,
+            "viewLineX": 0,
+            "viewLineY": 64,
+            "viewColor": 5470072,
+            "viewLabel": 0
+          }
+        }
+      ]
+    },
+    {
+      "id": "edge-37",
+      "components": [
+        {
+          "type": "position",
+          "data": {
+            "x": 386.8615,
+            "y": 388.0
+          }
+        },
+        {
+          "type": "faces",
+          "data": {
+            "names": [
+              "道路 37"
+            ],
+            "resources": [],
+            "up": true
+          }
+        },
+        {
+          "type": "properties",
+          "data": {
+            "a": 30,
+            "b": 31,
+            "player": 0,
+            "viewStyle": 2,
+            "viewLayer": 2,
+            "viewWidth": 18,
+            "viewHeight": 18,
+            "viewLineX": -55,
+            "viewLineY": 32,
+            "viewColor": 5470072,
+            "viewLabel": 0
+          }
+        }
+      ]
+    },
+    {
+      "id": "edge-38",
+      "components": [
+        {
+          "type": "position",
+          "data": {
+            "x": 331.43600000000004,
+            "y": 388.0
+          }
+        },
+        {
+          "type": "faces",
+          "data": {
+            "names": [
+              "道路 38"
+            ],
+            "resources": [],
+            "up": true
+          }
+        },
+        {
+          "type": "properties",
+          "data": {
+            "a": 26,
+            "b": 31,
+            "player": 0,
+            "viewStyle": 2,
+            "viewLayer": 2,
+            "viewWidth": 18,
+            "viewHeight": 18,
+            "viewLineX": 55,
+            "viewLineY": 32,
+            "viewColor": 5470072,
+            "viewLabel": 0
+          }
+        }
+      ]
+    },
+    {
+      "id": "edge-39",
+      "components": [
+        {
+          "type": "position",
+          "data": {
+            "x": 414.574,
+            "y": 340.0
+          }
+        },
+        {
+          "type": "faces",
+          "data": {
+            "names": [
+              "道路 39"
+            ],
+            "resources": [],
+            "up": true
+          }
+        },
+        {
+          "type": "properties",
+          "data": {
+            "a": 20,
+            "b": 30,
+            "player": 0,
+            "viewStyle": 2,
+            "viewLayer": 2,
+            "viewWidth": 18,
+            "viewHeight": 18,
+            "viewLineX": 0,
+            "viewLineY": 64,
+            "viewColor": 5470072,
+            "viewLabel": 0
+          }
+        }
+      ]
+    },
+    {
+      "id": "edge-40",
+      "components": [
+        {
+          "type": "position",
+          "data": {
+            "x": 497.713,
+            "y": 388.0
+          }
+        },
+        {
+          "type": "faces",
+          "data": {
+            "names": [
+              "道路 40"
+            ],
+            "resources": [],
+            "up": true
+          }
+        },
+        {
+          "type": "properties",
+          "data": {
+            "a": 32,
+            "b": 33,
+            "player": 0,
+            "viewStyle": 2,
+            "viewLayer": 2,
+            "viewWidth": 18,
+            "viewHeight": 18,
+            "viewLineX": -55,
+            "viewLineY": 32,
+            "viewColor": 5470072,
+            "viewLabel": 0
+          }
+        }
+      ]
+    },
+    {
+      "id": "edge-41",
+      "components": [
+        {
+          "type": "position",
+          "data": {
+            "x": 442.28700000000003,
+            "y": 388.0
+          }
+        },
+        {
+          "type": "faces",
+          "data": {
+            "names": [
+              "道路 41"
+            ],
+            "resources": [],
+            "up": true
+          }
+        },
+        {
+          "type": "properties",
+          "data": {
+            "a": 30,
+            "b": 33,
+            "player": 0,
+            "viewStyle": 2,
+            "viewLayer": 2,
+            "viewWidth": 18,
+            "viewHeight": 18,
+            "viewLineX": 55,
+            "viewLineY": 32,
+            "viewColor": 5470072,
+            "viewLabel": 0
+          }
+        }
+      ]
+    },
+    {
+      "id": "edge-42",
+      "components": [
+        {
+          "type": "position",
+          "data": {
+            "x": 525.426,
+            "y": 340.0
+          }
+        },
+        {
+          "type": "faces",
+          "data": {
+            "names": [
+              "道路 42"
+            ],
+            "resources": [],
+            "up": true
+          }
+        },
+        {
+          "type": "properties",
+          "data": {
+            "a": 22,
+            "b": 32,
+            "player": 0,
+            "viewStyle": 2,
+            "viewLayer": 2,
+            "viewWidth": 18,
+            "viewHeight": 18,
+            "viewLineX": 0,
+            "viewLineY": 64,
+            "viewColor": 5470072,
+            "viewLabel": 0
+          }
+        }
+      ]
+    },
+    {
+      "id": "edge-43",
+      "components": [
+        {
+          "type": "position",
+          "data": {
+            "x": 608.5640000000001,
+            "y": 388.0
+          }
+        },
+        {
+          "type": "faces",
+          "data": {
+            "names": [
+              "道路 43"
+            ],
+            "resources": [],
+            "up": true
+          }
+        },
+        {
+          "type": "properties",
+          "data": {
+            "a": 34,
+            "b": 35,
+            "player": 0,
+            "viewStyle": 2,
+            "viewLayer": 2,
+            "viewWidth": 18,
+            "viewHeight": 18,
+            "viewLineX": -55,
+            "viewLineY": 32,
+            "viewColor": 5470072,
+            "viewLabel": 0
+          }
+        }
+      ]
+    },
+    {
+      "id": "edge-44",
+      "components": [
+        {
+          "type": "position",
+          "data": {
+            "x": 553.1385,
+            "y": 388.0
+          }
+        },
+        {
+          "type": "faces",
+          "data": {
+            "names": [
+              "道路 44"
+            ],
+            "resources": [],
+            "up": true
+          }
+        },
+        {
+          "type": "properties",
+          "data": {
+            "a": 32,
+            "b": 35,
+            "player": 0,
+            "viewStyle": 2,
+            "viewLayer": 2,
+            "viewWidth": 18,
+            "viewHeight": 18,
+            "viewLineX": 55,
+            "viewLineY": 32,
+            "viewColor": 5470072,
+            "viewLabel": 0
+          }
+        }
+      ]
+    },
+    {
+      "id": "edge-45",
+      "components": [
+        {
+          "type": "position",
+          "data": {
+            "x": 636.277,
+            "y": 340.0
+          }
+        },
+        {
+          "type": "faces",
+          "data": {
+            "names": [
+              "道路 45"
+            ],
+            "resources": [],
+            "up": true
+          }
+        },
+        {
+          "type": "properties",
+          "data": {
+            "a": 24,
+            "b": 34,
+            "player": 0,
+            "viewStyle": 2,
+            "viewLayer": 2,
+            "viewWidth": 18,
+            "viewHeight": 18,
+            "viewLineX": 0,
+            "viewLineY": 64,
+            "viewColor": 5470072,
+            "viewLabel": 0
+          }
+        }
+      ]
+    },
+    {
+      "id": "edge-46",
+      "components": [
+        {
+          "type": "position",
+          "data": {
+            "x": 719.4155000000001,
+            "y": 388.0
+          }
+        },
+        {
+          "type": "faces",
+          "data": {
+            "names": [
+              "道路 46"
+            ],
+            "resources": [],
+            "up": true
+          }
+        },
+        {
+          "type": "properties",
+          "data": {
+            "a": 36,
+            "b": 37,
+            "player": 0,
+            "viewStyle": 2,
+            "viewLayer": 2,
+            "viewWidth": 18,
+            "viewHeight": 18,
+            "viewLineX": -55,
+            "viewLineY": 32,
+            "viewColor": 5470072,
+            "viewLabel": 0
+          }
+        }
+      ]
+    },
+    {
+      "id": "edge-47",
+      "components": [
+        {
+          "type": "position",
+          "data": {
+            "x": 663.99,
+            "y": 388.0
+          }
+        },
+        {
+          "type": "faces",
+          "data": {
+            "names": [
+              "道路 47"
+            ],
+            "resources": [],
+            "up": true
+          }
+        },
+        {
+          "type": "properties",
+          "data": {
+            "a": 34,
+            "b": 37,
+            "player": 0,
+            "viewStyle": 2,
+            "viewLayer": 2,
+            "viewWidth": 18,
+            "viewHeight": 18,
+            "viewLineX": 55,
+            "viewLineY": 32,
+            "viewColor": 5470072,
+            "viewLabel": 0
+          }
+        }
+      ]
+    },
+    {
+      "id": "edge-48",
+      "components": [
+        {
+          "type": "position",
+          "data": {
+            "x": 719.4155000000001,
+            "y": 292.0
+          }
+        },
+        {
+          "type": "faces",
+          "data": {
+            "names": [
+              "道路 48"
+            ],
+            "resources": [],
+            "up": true
+          }
+        },
+        {
+          "type": "properties",
+          "data": {
+            "a": 23,
+            "b": 38,
+            "player": 0,
+            "viewStyle": 2,
+            "viewLayer": 2,
+            "viewWidth": 18,
+            "viewHeight": 18,
+            "viewLineX": 55,
+            "viewLineY": 32,
+            "viewColor": 5470072,
+            "viewLabel": 0
+          }
+        }
+      ]
+    },
+    {
+      "id": "edge-49",
+      "components": [
+        {
+          "type": "position",
+          "data": {
+            "x": 747.128,
+            "y": 340.0
+          }
+        },
+        {
+          "type": "faces",
+          "data": {
+            "names": [
+              "道路 49"
+            ],
+            "resources": [],
+            "up": true
+          }
+        },
+        {
+          "type": "properties",
+          "data": {
+            "a": 36,
+            "b": 38,
+            "player": 0,
+            "viewStyle": 2,
+            "viewLayer": 2,
+            "viewWidth": 18,
+            "viewHeight": 18,
+            "viewLineX": 0,
+            "viewLineY": -64,
+            "viewColor": 5470072,
+            "viewLabel": 0
+          }
+        }
+      ]
+    },
+    {
+      "id": "edge-50",
+      "components": [
+        {
+          "type": "position",
+          "data": {
+            "x": 331.43600000000004,
+            "y": 484.0
+          }
+        },
+        {
+          "type": "faces",
+          "data": {
+            "names": [
+              "道路 50"
+            ],
+            "resources": [],
+            "up": true
+          }
+        },
+        {
+          "type": "properties",
+          "data": {
+            "a": 39,
+            "b": 40,
+            "player": 0,
+            "viewStyle": 2,
+            "viewLayer": 2,
+            "viewWidth": 18,
+            "viewHeight": 18,
+            "viewLineX": -55,
+            "viewLineY": 32,
+            "viewColor": 5470072,
+            "viewLabel": 0
+          }
+        }
+      ]
+    },
+    {
+      "id": "edge-51",
+      "components": [
+        {
+          "type": "position",
+          "data": {
+            "x": 276.01,
+            "y": 484.0
+          }
+        },
+        {
+          "type": "faces",
+          "data": {
+            "names": [
+              "道路 51"
+            ],
+            "resources": [],
+            "up": true
+          }
+        },
+        {
+          "type": "properties",
+          "data": {
+            "a": 40,
+            "b": 41,
+            "player": 0,
+            "viewStyle": 2,
+            "viewLayer": 2,
+            "viewWidth": 18,
+            "viewHeight": 18,
+            "viewLineX": -55,
+            "viewLineY": -32,
+            "viewColor": 5470072,
+            "viewLabel": 0
+          }
+        }
+      ]
+    },
+    {
+      "id": "edge-52",
+      "components": [
+        {
+          "type": "position",
+          "data": {
+            "x": 248.297,
+            "y": 436.0
+          }
+        },
+        {
+          "type": "faces",
+          "data": {
+            "names": [
+              "道路 52"
+            ],
+            "resources": [],
+            "up": true
+          }
+        },
+        {
+          "type": "properties",
+          "data": {
+            "a": 27,
+            "b": 41,
+            "player": 0,
+            "viewStyle": 2,
+            "viewLayer": 2,
+            "viewWidth": 18,
+            "viewHeight": 18,
+            "viewLineX": 0,
+            "viewLineY": 64,
+            "viewColor": 5470072,
+            "viewLabel": 0
+          }
+        }
+      ]
+    },
+    {
+      "id": "edge-53",
+      "components": [
+        {
+          "type": "position",
+          "data": {
+            "x": 359.149,
+            "y": 436.0
+          }
+        },
+        {
+          "type": "faces",
+          "data": {
+            "names": [
+              "道路 53"
+            ],
+            "resources": [],
+            "up": true
+          }
+        },
+        {
+          "type": "properties",
+          "data": {
+            "a": 31,
+            "b": 39,
+            "player": 0,
+            "viewStyle": 2,
+            "viewLayer": 2,
+            "viewWidth": 18,
+            "viewHeight": 18,
+            "viewLineX": 0,
+            "viewLineY": 64,
+            "viewColor": 5470072,
+            "viewLabel": 0
+          }
+        }
+      ]
+    },
+    {
+      "id": "edge-54",
+      "components": [
+        {
+          "type": "position",
+          "data": {
+            "x": 442.28700000000003,
+            "y": 484.0
+          }
+        },
+        {
+          "type": "faces",
+          "data": {
+            "names": [
+              "道路 54"
+            ],
+            "resources": [],
+            "up": true
+          }
+        },
+        {
+          "type": "properties",
+          "data": {
+            "a": 42,
+            "b": 43,
+            "player": 0,
+            "viewStyle": 2,
+            "viewLayer": 2,
+            "viewWidth": 18,
+            "viewHeight": 18,
+            "viewLineX": -55,
+            "viewLineY": 32,
+            "viewColor": 5470072,
+            "viewLabel": 0
+          }
+        }
+      ]
+    },
+    {
+      "id": "edge-55",
+      "components": [
+        {
+          "type": "position",
+          "data": {
+            "x": 386.8615,
+            "y": 484.0
+          }
+        },
+        {
+          "type": "faces",
+          "data": {
+            "names": [
+              "道路 55"
+            ],
+            "resources": [],
+            "up": true
+          }
+        },
+        {
+          "type": "properties",
+          "data": {
+            "a": 39,
+            "b": 43,
+            "player": 0,
+            "viewStyle": 2,
+            "viewLayer": 2,
+            "viewWidth": 18,
+            "viewHeight": 18,
+            "viewLineX": 55,
+            "viewLineY": 32,
+            "viewColor": 5470072,
+            "viewLabel": 0
+          }
+        }
+      ]
+    },
+    {
+      "id": "edge-56",
+      "components": [
+        {
+          "type": "position",
+          "data": {
+            "x": 470.0,
+            "y": 436.0
+          }
+        },
+        {
+          "type": "faces",
+          "data": {
+            "names": [
+              "道路 56"
+            ],
+            "resources": [],
+            "up": true
+          }
+        },
+        {
+          "type": "properties",
+          "data": {
+            "a": 33,
+            "b": 42,
+            "player": 0,
+            "viewStyle": 2,
+            "viewLayer": 2,
+            "viewWidth": 18,
+            "viewHeight": 18,
+            "viewLineX": 0,
+            "viewLineY": 64,
+            "viewColor": 5470072,
+            "viewLabel": 0
+          }
+        }
+      ]
+    },
+    {
+      "id": "edge-57",
+      "components": [
+        {
+          "type": "position",
+          "data": {
+            "x": 553.1385,
+            "y": 484.0
+          }
+        },
+        {
+          "type": "faces",
+          "data": {
+            "names": [
+              "道路 57"
+            ],
+            "resources": [],
+            "up": true
+          }
+        },
+        {
+          "type": "properties",
+          "data": {
+            "a": 44,
+            "b": 45,
+            "player": 0,
+            "viewStyle": 2,
+            "viewLayer": 2,
+            "viewWidth": 18,
+            "viewHeight": 18,
+            "viewLineX": -55,
+            "viewLineY": 32,
+            "viewColor": 5470072,
+            "viewLabel": 0
+          }
+        }
+      ]
+    },
+    {
+      "id": "edge-58",
+      "components": [
+        {
+          "type": "position",
+          "data": {
+            "x": 497.713,
+            "y": 484.0
+          }
+        },
+        {
+          "type": "faces",
+          "data": {
+            "names": [
+              "道路 58"
+            ],
+            "resources": [],
+            "up": true
+          }
+        },
+        {
+          "type": "properties",
+          "data": {
+            "a": 42,
+            "b": 45,
+            "player": 0,
+            "viewStyle": 2,
+            "viewLayer": 2,
+            "viewWidth": 18,
+            "viewHeight": 18,
+            "viewLineX": 55,
+            "viewLineY": 32,
+            "viewColor": 5470072,
+            "viewLabel": 0
+          }
+        }
+      ]
+    },
+    {
+      "id": "edge-59",
+      "components": [
+        {
+          "type": "position",
+          "data": {
+            "x": 580.851,
+            "y": 436.0
+          }
+        },
+        {
+          "type": "faces",
+          "data": {
+            "names": [
+              "道路 59"
+            ],
+            "resources": [],
+            "up": true
+          }
+        },
+        {
+          "type": "properties",
+          "data": {
+            "a": 35,
+            "b": 44,
+            "player": 0,
+            "viewStyle": 2,
+            "viewLayer": 2,
+            "viewWidth": 18,
+            "viewHeight": 18,
+            "viewLineX": 0,
+            "viewLineY": 64,
+            "viewColor": 5470072,
+            "viewLabel": 0
+          }
+        }
+      ]
+    },
+    {
+      "id": "edge-60",
+      "components": [
+        {
+          "type": "position",
+          "data": {
+            "x": 663.99,
+            "y": 484.0
+          }
+        },
+        {
+          "type": "faces",
+          "data": {
+            "names": [
+              "道路 60"
+            ],
+            "resources": [],
+            "up": true
+          }
+        },
+        {
+          "type": "properties",
+          "data": {
+            "a": 46,
+            "b": 47,
+            "player": 0,
+            "viewStyle": 2,
+            "viewLayer": 2,
+            "viewWidth": 18,
+            "viewHeight": 18,
+            "viewLineX": -55,
+            "viewLineY": 32,
+            "viewColor": 5470072,
+            "viewLabel": 0
+          }
+        }
+      ]
+    },
+    {
+      "id": "edge-61",
+      "components": [
+        {
+          "type": "position",
+          "data": {
+            "x": 608.5640000000001,
+            "y": 484.0
+          }
+        },
+        {
+          "type": "faces",
+          "data": {
+            "names": [
+              "道路 61"
+            ],
+            "resources": [],
+            "up": true
+          }
+        },
+        {
+          "type": "properties",
+          "data": {
+            "a": 44,
+            "b": 47,
+            "player": 0,
+            "viewStyle": 2,
+            "viewLayer": 2,
+            "viewWidth": 18,
+            "viewHeight": 18,
+            "viewLineX": 55,
+            "viewLineY": 32,
+            "viewColor": 5470072,
+            "viewLabel": 0
+          }
+        }
+      ]
+    },
+    {
+      "id": "edge-62",
+      "components": [
+        {
+          "type": "position",
+          "data": {
+            "x": 691.703,
+            "y": 436.0
+          }
+        },
+        {
+          "type": "faces",
+          "data": {
+            "names": [
+              "道路 62"
+            ],
+            "resources": [],
+            "up": true
+          }
+        },
+        {
+          "type": "properties",
+          "data": {
+            "a": 37,
+            "b": 46,
+            "player": 0,
+            "viewStyle": 2,
+            "viewLayer": 2,
+            "viewWidth": 18,
+            "viewHeight": 18,
+            "viewLineX": 0,
+            "viewLineY": 64,
+            "viewColor": 5470072,
+            "viewLabel": 0
+          }
+        }
+      ]
+    },
+    {
+      "id": "edge-63",
+      "components": [
+        {
+          "type": "position",
+          "data": {
+            "x": 386.8615,
+            "y": 580.0
+          }
+        },
+        {
+          "type": "faces",
+          "data": {
+            "names": [
+              "道路 63"
+            ],
+            "resources": [],
+            "up": true
+          }
+        },
+        {
+          "type": "properties",
+          "data": {
+            "a": 48,
+            "b": 49,
+            "player": 0,
+            "viewStyle": 2,
+            "viewLayer": 2,
+            "viewWidth": 18,
+            "viewHeight": 18,
+            "viewLineX": -55,
+            "viewLineY": 32,
+            "viewColor": 5470072,
+            "viewLabel": 0
+          }
+        }
+      ]
+    },
+    {
+      "id": "edge-64",
+      "components": [
+        {
+          "type": "position",
+          "data": {
+            "x": 331.43600000000004,
+            "y": 580.0
+          }
+        },
+        {
+          "type": "faces",
+          "data": {
+            "names": [
+              "道路 64"
+            ],
+            "resources": [],
+            "up": true
+          }
+        },
+        {
+          "type": "properties",
+          "data": {
+            "a": 49,
+            "b": 50,
+            "player": 0,
+            "viewStyle": 2,
+            "viewLayer": 2,
+            "viewWidth": 18,
+            "viewHeight": 18,
+            "viewLineX": -55,
+            "viewLineY": -32,
+            "viewColor": 5470072,
+            "viewLabel": 0
+          }
+        }
+      ]
+    },
+    {
+      "id": "edge-65",
+      "components": [
+        {
+          "type": "position",
+          "data": {
+            "x": 303.723,
+            "y": 532.0
+          }
+        },
+        {
+          "type": "faces",
+          "data": {
+            "names": [
+              "道路 65"
+            ],
+            "resources": [],
+            "up": true
+          }
+        },
+        {
+          "type": "properties",
+          "data": {
+            "a": 40,
+            "b": 50,
+            "player": 0,
+            "viewStyle": 2,
+            "viewLayer": 2,
+            "viewWidth": 18,
+            "viewHeight": 18,
+            "viewLineX": 0,
+            "viewLineY": 64,
+            "viewColor": 5470072,
+            "viewLabel": 0
+          }
+        }
+      ]
+    },
+    {
+      "id": "edge-66",
+      "components": [
+        {
+          "type": "position",
+          "data": {
+            "x": 414.574,
+            "y": 532.0
+          }
+        },
+        {
+          "type": "faces",
+          "data": {
+            "names": [
+              "道路 66"
+            ],
+            "resources": [],
+            "up": true
+          }
+        },
+        {
+          "type": "properties",
+          "data": {
+            "a": 43,
+            "b": 48,
+            "player": 0,
+            "viewStyle": 2,
+            "viewLayer": 2,
+            "viewWidth": 18,
+            "viewHeight": 18,
+            "viewLineX": 0,
+            "viewLineY": 64,
+            "viewColor": 5470072,
+            "viewLabel": 0
+          }
+        }
+      ]
+    },
+    {
+      "id": "edge-67",
+      "components": [
+        {
+          "type": "position",
+          "data": {
+            "x": 497.713,
+            "y": 580.0
+          }
+        },
+        {
+          "type": "faces",
+          "data": {
+            "names": [
+              "道路 67"
+            ],
+            "resources": [],
+            "up": true
+          }
+        },
+        {
+          "type": "properties",
+          "data": {
+            "a": 51,
+            "b": 52,
+            "player": 0,
+            "viewStyle": 2,
+            "viewLayer": 2,
+            "viewWidth": 18,
+            "viewHeight": 18,
+            "viewLineX": -55,
+            "viewLineY": 32,
+            "viewColor": 5470072,
+            "viewLabel": 0
+          }
+        }
+      ]
+    },
+    {
+      "id": "edge-68",
+      "components": [
+        {
+          "type": "position",
+          "data": {
+            "x": 442.28700000000003,
+            "y": 580.0
+          }
+        },
+        {
+          "type": "faces",
+          "data": {
+            "names": [
+              "道路 68"
+            ],
+            "resources": [],
+            "up": true
+          }
+        },
+        {
+          "type": "properties",
+          "data": {
+            "a": 48,
+            "b": 52,
+            "player": 0,
+            "viewStyle": 2,
+            "viewLayer": 2,
+            "viewWidth": 18,
+            "viewHeight": 18,
+            "viewLineX": 55,
+            "viewLineY": 32,
+            "viewColor": 5470072,
+            "viewLabel": 0
+          }
+        }
+      ]
+    },
+    {
+      "id": "edge-69",
+      "components": [
+        {
+          "type": "position",
+          "data": {
+            "x": 525.426,
+            "y": 532.0
+          }
+        },
+        {
+          "type": "faces",
+          "data": {
+            "names": [
+              "道路 69"
+            ],
+            "resources": [],
+            "up": true
+          }
+        },
+        {
+          "type": "properties",
+          "data": {
+            "a": 45,
+            "b": 51,
+            "player": 0,
+            "viewStyle": 2,
+            "viewLayer": 2,
+            "viewWidth": 18,
+            "viewHeight": 18,
+            "viewLineX": 0,
+            "viewLineY": 64,
+            "viewColor": 5470072,
+            "viewLabel": 0
+          }
+        }
+      ]
+    },
+    {
+      "id": "edge-70",
+      "components": [
+        {
+          "type": "position",
+          "data": {
+            "x": 608.5640000000001,
+            "y": 580.0
+          }
+        },
+        {
+          "type": "faces",
+          "data": {
+            "names": [
+              "道路 70"
+            ],
+            "resources": [],
+            "up": true
+          }
+        },
+        {
+          "type": "properties",
+          "data": {
+            "a": 53,
+            "b": 54,
+            "player": 0,
+            "viewStyle": 2,
+            "viewLayer": 2,
+            "viewWidth": 18,
+            "viewHeight": 18,
+            "viewLineX": -55,
+            "viewLineY": 32,
+            "viewColor": 5470072,
+            "viewLabel": 0
+          }
+        }
+      ]
+    },
+    {
+      "id": "edge-71",
+      "components": [
+        {
+          "type": "position",
+          "data": {
+            "x": 553.1385,
+            "y": 580.0
+          }
+        },
+        {
+          "type": "faces",
+          "data": {
+            "names": [
+              "道路 71"
+            ],
+            "resources": [],
+            "up": true
+          }
+        },
+        {
+          "type": "properties",
+          "data": {
+            "a": 51,
+            "b": 54,
+            "player": 0,
+            "viewStyle": 2,
+            "viewLayer": 2,
+            "viewWidth": 18,
+            "viewHeight": 18,
+            "viewLineX": 55,
+            "viewLineY": 32,
+            "viewColor": 5470072,
+            "viewLabel": 0
+          }
+        }
+      ]
+    },
+    {
+      "id": "edge-72",
+      "components": [
+        {
+          "type": "position",
+          "data": {
+            "x": 636.277,
+            "y": 532.0
+          }
+        },
+        {
+          "type": "faces",
+          "data": {
+            "names": [
+              "道路 72"
+            ],
+            "resources": [],
+            "up": true
+          }
+        },
+        {
+          "type": "properties",
+          "data": {
+            "a": 47,
+            "b": 53,
+            "player": 0,
+            "viewStyle": 2,
+            "viewLayer": 2,
+            "viewWidth": 18,
+            "viewHeight": 18,
+            "viewLineX": 0,
+            "viewLineY": 64,
+            "viewColor": 5470072,
+            "viewLabel": 0
+          }
+        }
+      ]
+    },
+    {
+      "id": "vertex-1",
+      "components": [
+        {
+          "type": "position",
+          "data": {
+            "x": 414.574,
+            "y": 180.0
+          }
+        },
+        {
+          "type": "faces",
+          "data": {
+            "names": [
+              "1",
+              "村庄1",
+              "城市1"
+            ],
+            "resources": [
+              "empty",
+              "village",
+              "city"
+            ],
+            "up": true
+          }
+        },
+        {
+          "type": "properties",
+          "data": {
+            "vertex": 1,
+            "player": 0,
+            "level": 0,
+            "viewStyle": 1,
+            "viewWidth": 16,
+            "viewHeight": 16,
+            "viewLayer": 3,
+            "viewLabel": 1,
+            "viewLabelY": -7,
+            "viewNoImage": 1,
+            "viewColor": 14010017,
+            "t1": 1,
+            "t2": 2,
+            "t3": 5,
+            "n1": 2,
+            "n2": 6,
+            "n3": 8
+          }
+        }
+      ]
+    },
+    {
+      "id": "vertex-2",
+      "components": [
+        {
+          "type": "position",
+          "data": {
+            "x": 359.149,
+            "y": 212.0
+          }
+        },
+        {
+          "type": "faces",
+          "data": {
+            "names": [
+              "2",
+              "村庄2",
+              "城市2"
+            ],
+            "resources": [
+              "empty",
+              "village",
+              "city"
+            ],
+            "up": true
+          }
+        },
+        {
+          "type": "properties",
+          "data": {
+            "vertex": 2,
+            "player": 0,
+            "level": 0,
+            "viewStyle": 1,
+            "viewWidth": 16,
+            "viewHeight": 16,
+            "viewLayer": 3,
+            "viewLabel": 1,
+            "viewLabelY": -7,
+            "viewNoImage": 1,
+            "viewColor": 14010017,
+            "t1": 1,
+            "t2": 4,
+            "t3": 5,
+            "n1": 1,
+            "n2": 3,
+            "n3": 15
+          }
+        }
+      ]
+    },
+    {
+      "id": "vertex-3",
+      "components": [
+        {
+          "type": "position",
+          "data": {
+            "x": 303.723,
+            "y": 180.0
+          }
+        },
+        {
+          "type": "faces",
+          "data": {
+            "names": [
+              "3",
+              "村庄3",
+              "城市3"
+            ],
+            "resources": [
+              "empty",
+              "village",
+              "city"
+            ],
+            "up": true
+          }
+        },
+        {
+          "type": "properties",
+          "data": {
+            "vertex": 3,
+            "player": 0,
+            "level": 0,
+            "viewStyle": 1,
+            "viewWidth": 16,
+            "viewHeight": 16,
+            "viewLayer": 3,
+            "viewLabel": 1,
+            "viewLabelY": -7,
+            "viewNoImage": 1,
+            "viewColor": 14010017,
+            "t1": 1,
+            "t2": 4,
+            "n1": 2,
+            "n2": 4,
+            "n3": 18
+          }
+        }
+      ]
+    },
+    {
+      "id": "vertex-4",
+      "components": [
+        {
+          "type": "position",
+          "data": {
+            "x": 303.723,
+            "y": 116.0
+          }
+        },
+        {
+          "type": "faces",
+          "data": {
+            "names": [
+              "4",
+              "村庄4",
+              "城市4"
+            ],
+            "resources": [
+              "empty",
+              "village",
+              "city"
+            ],
+            "up": true
+          }
+        },
+        {
+          "type": "properties",
+          "data": {
+            "vertex": 4,
+            "player": 0,
+            "level": 0,
+            "viewStyle": 1,
+            "viewWidth": 16,
+            "viewHeight": 16,
+            "viewLayer": 3,
+            "viewLabel": 1,
+            "viewLabelY": -7,
+            "viewNoImage": 1,
+            "viewColor": 14010017,
+            "t1": 1,
+            "n1": 3,
+            "n2": 5
+          }
+        }
+      ]
+    },
+    {
+      "id": "vertex-5",
+      "components": [
+        {
+          "type": "position",
+          "data": {
+            "x": 359.149,
+            "y": 84.0
+          }
+        },
+        {
+          "type": "faces",
+          "data": {
+            "names": [
+              "5",
+              "村庄5",
+              "城市5"
+            ],
+            "resources": [
+              "empty",
+              "village",
+              "city"
+            ],
+            "up": true
+          }
+        },
+        {
+          "type": "properties",
+          "data": {
+            "vertex": 5,
+            "player": 0,
+            "level": 0,
+            "viewStyle": 1,
+            "viewWidth": 16,
+            "viewHeight": 16,
+            "viewLayer": 3,
+            "viewLabel": 1,
+            "viewLabelY": -7,
+            "viewNoImage": 1,
+            "viewColor": 14010017,
+            "t1": 1,
+            "n1": 4,
+            "n2": 6
+          }
+        }
+      ]
+    },
+    {
+      "id": "vertex-6",
+      "components": [
+        {
+          "type": "position",
+          "data": {
+            "x": 414.574,
+            "y": 116.0
+          }
+        },
+        {
+          "type": "faces",
+          "data": {
+            "names": [
+              "6",
+              "村庄6",
+              "城市6"
+            ],
+            "resources": [
+              "empty",
+              "village",
+              "city"
+            ],
+            "up": true
+          }
+        },
+        {
+          "type": "properties",
+          "data": {
+            "vertex": 6,
+            "player": 0,
+            "level": 0,
+            "viewStyle": 1,
+            "viewWidth": 16,
+            "viewHeight": 16,
+            "viewLayer": 3,
+            "viewLabel": 1,
+            "viewLabelY": -7,
+            "viewNoImage": 1,
+            "viewColor": 14010017,
+            "t1": 1,
+            "t2": 2,
+            "n1": 5,
+            "n2": 1,
+            "n3": 9
+          }
+        }
+      ]
+    },
+    {
+      "id": "vertex-7",
+      "components": [
+        {
+          "type": "position",
+          "data": {
+            "x": 525.426,
+            "y": 180.0
+          }
+        },
+        {
+          "type": "faces",
+          "data": {
+            "names": [
+              "7",
+              "村庄7",
+              "城市7"
+            ],
+            "resources": [
+              "empty",
+              "village",
+              "city"
+            ],
+            "up": true
+          }
+        },
+        {
+          "type": "properties",
+          "data": {
+            "vertex": 7,
+            "player": 0,
+            "level": 0,
+            "viewStyle": 1,
+            "viewWidth": 16,
+            "viewHeight": 16,
+            "viewLayer": 3,
+            "viewLabel": 1,
+            "viewLabelY": -7,
+            "viewNoImage": 1,
+            "viewColor": 14010017,
+            "t1": 2,
+            "t2": 3,
+            "t3": 6,
+            "n1": 8,
+            "n2": 10,
+            "n3": 12
+          }
+        }
+      ]
+    },
+    {
+      "id": "vertex-8",
+      "components": [
+        {
+          "type": "position",
+          "data": {
+            "x": 470.0,
+            "y": 212.0
+          }
+        },
+        {
+          "type": "faces",
+          "data": {
+            "names": [
+              "8",
+              "村庄8",
+              "城市8"
+            ],
+            "resources": [
+              "empty",
+              "village",
+              "city"
+            ],
+            "up": true
+          }
+        },
+        {
+          "type": "properties",
+          "data": {
+            "vertex": 8,
+            "player": 0,
+            "level": 0,
+            "viewStyle": 1,
+            "viewWidth": 16,
+            "viewHeight": 16,
+            "viewLayer": 3,
+            "viewLabel": 1,
+            "viewLabelY": -7,
+            "viewNoImage": 1,
+            "viewColor": 14010017,
+            "t1": 2,
+            "t2": 5,
+            "t3": 6,
+            "n1": 7,
+            "n2": 1,
+            "n3": 19
+          }
+        }
+      ]
+    },
+    {
+      "id": "vertex-9",
+      "components": [
+        {
+          "type": "position",
+          "data": {
+            "x": 470.0,
+            "y": 84.0
+          }
+        },
+        {
+          "type": "faces",
+          "data": {
+            "names": [
+              "9",
+              "村庄9",
+              "城市9"
+            ],
+            "resources": [
+              "empty",
+              "village",
+              "city"
+            ],
+            "up": true
+          }
+        },
+        {
+          "type": "properties",
+          "data": {
+            "vertex": 9,
+            "player": 0,
+            "level": 0,
+            "viewStyle": 1,
+            "viewWidth": 16,
+            "viewHeight": 16,
+            "viewLayer": 3,
+            "viewLabel": 1,
+            "viewLabelY": -7,
+            "viewNoImage": 1,
+            "viewColor": 14010017,
+            "t1": 2,
+            "n1": 6,
+            "n2": 10
+          }
+        }
+      ]
+    },
+    {
+      "id": "vertex-10",
+      "components": [
+        {
+          "type": "position",
+          "data": {
+            "x": 525.426,
+            "y": 116.0
+          }
+        },
+        {
+          "type": "faces",
+          "data": {
+            "names": [
+              "10",
+              "村庄10",
+              "城市10"
+            ],
+            "resources": [
+              "empty",
+              "village",
+              "city"
+            ],
+            "up": true
+          }
+        },
+        {
+          "type": "properties",
+          "data": {
+            "vertex": 10,
+            "player": 0,
+            "level": 0,
+            "viewStyle": 1,
+            "viewWidth": 16,
+            "viewHeight": 16,
+            "viewLayer": 3,
+            "viewLabel": 1,
+            "viewLabelY": -7,
+            "viewNoImage": 1,
+            "viewColor": 14010017,
+            "t1": 2,
+            "t2": 3,
+            "n1": 9,
+            "n2": 7,
+            "n3": 13
+          }
+        }
+      ]
+    },
+    {
+      "id": "vertex-11",
+      "components": [
+        {
+          "type": "position",
+          "data": {
+            "x": 636.277,
+            "y": 180.0
+          }
+        },
+        {
+          "type": "faces",
+          "data": {
+            "names": [
+              "11",
+              "村庄11",
+              "城市11"
+            ],
+            "resources": [
+              "empty",
+              "village",
+              "city"
+            ],
+            "up": true
+          }
+        },
+        {
+          "type": "properties",
+          "data": {
+            "vertex": 11,
+            "player": 0,
+            "level": 0,
+            "viewStyle": 1,
+            "viewWidth": 16,
+            "viewHeight": 16,
+            "viewLayer": 3,
+            "viewLabel": 1,
+            "viewLabelY": -7,
+            "viewNoImage": 1,
+            "viewColor": 14010017,
+            "t1": 3,
+            "t2": 7,
+            "n1": 12,
+            "n2": 14,
+            "n3": 25
+          }
+        }
+      ]
+    },
+    {
+      "id": "vertex-12",
+      "components": [
+        {
+          "type": "position",
+          "data": {
+            "x": 580.851,
+            "y": 212.0
+          }
+        },
+        {
+          "type": "faces",
+          "data": {
+            "names": [
+              "12",
+              "村庄12",
+              "城市12"
+            ],
+            "resources": [
+              "empty",
+              "village",
+              "city"
+            ],
+            "up": true
+          }
+        },
+        {
+          "type": "properties",
+          "data": {
+            "vertex": 12,
+            "player": 0,
+            "level": 0,
+            "viewStyle": 1,
+            "viewWidth": 16,
+            "viewHeight": 16,
+            "viewLayer": 3,
+            "viewLabel": 1,
+            "viewLabelY": -7,
+            "viewNoImage": 1,
+            "viewColor": 14010017,
+            "t1": 3,
+            "t2": 6,
+            "t3": 7,
+            "n1": 11,
+            "n2": 7,
+            "n3": 21
+          }
+        }
+      ]
+    },
+    {
+      "id": "vertex-13",
+      "components": [
+        {
+          "type": "position",
+          "data": {
+            "x": 580.851,
+            "y": 84.0
+          }
+        },
+        {
+          "type": "faces",
+          "data": {
+            "names": [
+              "13",
+              "村庄13",
+              "城市13"
+            ],
+            "resources": [
+              "empty",
+              "village",
+              "city"
+            ],
+            "up": true
+          }
+        },
+        {
+          "type": "properties",
+          "data": {
+            "vertex": 13,
+            "player": 0,
+            "level": 0,
+            "viewStyle": 1,
+            "viewWidth": 16,
+            "viewHeight": 16,
+            "viewLayer": 3,
+            "viewLabel": 1,
+            "viewLabelY": -7,
+            "viewNoImage": 1,
+            "viewColor": 14010017,
+            "t1": 3,
+            "n1": 10,
+            "n2": 14
+          }
+        }
+      ]
+    },
+    {
+      "id": "vertex-14",
+      "components": [
+        {
+          "type": "position",
+          "data": {
+            "x": 636.277,
+            "y": 116.0
+          }
+        },
+        {
+          "type": "faces",
+          "data": {
+            "names": [
+              "14",
+              "村庄14",
+              "城市14"
+            ],
+            "resources": [
+              "empty",
+              "village",
+              "city"
+            ],
+            "up": true
+          }
+        },
+        {
+          "type": "properties",
+          "data": {
+            "vertex": 14,
+            "player": 0,
+            "level": 0,
+            "viewStyle": 1,
+            "viewWidth": 16,
+            "viewHeight": 16,
+            "viewLayer": 3,
+            "viewLabel": 1,
+            "viewLabelY": -7,
+            "viewNoImage": 1,
+            "viewColor": 14010017,
+            "t1": 3,
+            "n1": 13,
+            "n2": 11
+          }
+        }
+      ]
+    },
+    {
+      "id": "vertex-15",
+      "components": [
+        {
+          "type": "position",
+          "data": {
+            "x": 359.149,
+            "y": 276.0
+          }
+        },
+        {
+          "type": "faces",
+          "data": {
+            "names": [
+              "15",
+              "村庄15",
+              "城市15"
+            ],
+            "resources": [
+              "empty",
+              "village",
+              "city"
+            ],
+            "up": true
+          }
+        },
+        {
+          "type": "properties",
+          "data": {
+            "vertex": 15,
+            "player": 0,
+            "level": 0,
+            "viewStyle": 1,
+            "viewWidth": 16,
+            "viewHeight": 16,
+            "viewLayer": 3,
+            "viewLabel": 1,
+            "viewLabelY": -7,
+            "viewNoImage": 1,
+            "viewColor": 14010017,
+            "t1": 4,
+            "t2": 5,
+            "t3": 9,
+            "n1": 16,
+            "n2": 2,
+            "n3": 20
+          }
+        }
+      ]
+    },
+    {
+      "id": "vertex-16",
+      "components": [
+        {
+          "type": "position",
+          "data": {
+            "x": 303.723,
+            "y": 308.0
+          }
+        },
+        {
+          "type": "faces",
+          "data": {
+            "names": [
+              "16",
+              "村庄16",
+              "城市16"
+            ],
+            "resources": [
+              "empty",
+              "village",
+              "city"
+            ],
+            "up": true
+          }
+        },
+        {
+          "type": "properties",
+          "data": {
+            "vertex": 16,
+            "player": 0,
+            "level": 0,
+            "viewStyle": 1,
+            "viewWidth": 16,
+            "viewHeight": 16,
+            "viewLayer": 3,
+            "viewLabel": 1,
+            "viewLabelY": -7,
+            "viewNoImage": 1,
+            "viewColor": 14010017,
+            "t1": 4,
+            "t2": 8,
+            "t3": 9,
+            "n1": 15,
+            "n2": 17,
+            "n3": 26
+          }
+        }
+      ]
+    },
+    {
+      "id": "vertex-17",
+      "components": [
+        {
+          "type": "position",
+          "data": {
+            "x": 248.297,
+            "y": 276.0
+          }
+        },
+        {
+          "type": "faces",
+          "data": {
+            "names": [
+              "17",
+              "村庄17",
+              "城市17"
+            ],
+            "resources": [
+              "empty",
+              "village",
+              "city"
+            ],
+            "up": true
+          }
+        },
+        {
+          "type": "properties",
+          "data": {
+            "vertex": 17,
+            "player": 0,
+            "level": 0,
+            "viewStyle": 1,
+            "viewWidth": 16,
+            "viewHeight": 16,
+            "viewLayer": 3,
+            "viewLabel": 1,
+            "viewLabelY": -7,
+            "viewNoImage": 1,
+            "viewColor": 14010017,
+            "t1": 4,
+            "t2": 8,
+            "n1": 16,
+            "n2": 18,
+            "n3": 29
+          }
+        }
+      ]
+    },
+    {
+      "id": "vertex-18",
+      "components": [
+        {
+          "type": "position",
+          "data": {
+            "x": 248.297,
+            "y": 212.0
+          }
+        },
+        {
+          "type": "faces",
+          "data": {
+            "names": [
+              "18",
+              "村庄18",
+              "城市18"
+            ],
+            "resources": [
+              "empty",
+              "village",
+              "city"
+            ],
+            "up": true
+          }
+        },
+        {
+          "type": "properties",
+          "data": {
+            "vertex": 18,
+            "player": 0,
+            "level": 0,
+            "viewStyle": 1,
+            "viewWidth": 16,
+            "viewHeight": 16,
+            "viewLayer": 3,
+            "viewLabel": 1,
+            "viewLabelY": -7,
+            "viewNoImage": 1,
+            "viewColor": 14010017,
+            "t1": 4,
+            "n1": 17,
+            "n2": 3
+          }
+        }
+      ]
+    },
+    {
+      "id": "vertex-19",
+      "components": [
+        {
+          "type": "position",
+          "data": {
+            "x": 470.0,
+            "y": 276.0
+          }
+        },
+        {
+          "type": "faces",
+          "data": {
+            "names": [
+              "19",
+              "村庄19",
+              "城市19"
+            ],
+            "resources": [
+              "empty",
+              "village",
+              "city"
+            ],
+            "up": true
+          }
+        },
+        {
+          "type": "properties",
+          "data": {
+            "vertex": 19,
+            "player": 0,
+            "level": 0,
+            "viewStyle": 1,
+            "viewWidth": 16,
+            "viewHeight": 16,
+            "viewLayer": 3,
+            "viewLabel": 1,
+            "viewLabelY": -7,
+            "viewNoImage": 1,
+            "viewColor": 14010017,
+            "t1": 5,
+            "t2": 6,
+            "t3": 10,
+            "n1": 20,
+            "n2": 8,
+            "n3": 22
+          }
+        }
+      ]
+    },
+    {
+      "id": "vertex-20",
+      "components": [
+        {
+          "type": "position",
+          "data": {
+            "x": 414.574,
+            "y": 308.0
+          }
+        },
+        {
+          "type": "faces",
+          "data": {
+            "names": [
+              "20",
+              "村庄20",
+              "城市20"
+            ],
+            "resources": [
+              "empty",
+              "village",
+              "city"
+            ],
+            "up": true
+          }
+        },
+        {
+          "type": "properties",
+          "data": {
+            "vertex": 20,
+            "player": 0,
+            "level": 0,
+            "viewStyle": 1,
+            "viewWidth": 16,
+            "viewHeight": 16,
+            "viewLayer": 3,
+            "viewLabel": 1,
+            "viewLabelY": -7,
+            "viewNoImage": 1,
+            "viewColor": 14010017,
+            "t1": 5,
+            "t2": 9,
+            "t3": 10,
+            "n1": 19,
+            "n2": 15,
+            "n3": 30
+          }
+        }
+      ]
+    },
+    {
+      "id": "vertex-21",
+      "components": [
+        {
+          "type": "position",
+          "data": {
+            "x": 580.851,
+            "y": 276.0
+          }
+        },
+        {
+          "type": "faces",
+          "data": {
+            "names": [
+              "21",
+              "村庄21",
+              "城市21"
+            ],
+            "resources": [
+              "empty",
+              "village",
+              "city"
+            ],
+            "up": true
+          }
+        },
+        {
+          "type": "properties",
+          "data": {
+            "vertex": 21,
+            "player": 0,
+            "level": 0,
+            "viewStyle": 1,
+            "viewWidth": 16,
+            "viewHeight": 16,
+            "viewLayer": 3,
+            "viewLabel": 1,
+            "viewLabelY": -7,
+            "viewNoImage": 1,
+            "viewColor": 14010017,
+            "t1": 6,
+            "t2": 7,
+            "t3": 11,
+            "n1": 22,
+            "n2": 12,
+            "n3": 24
+          }
+        }
+      ]
+    },
+    {
+      "id": "vertex-22",
+      "components": [
+        {
+          "type": "position",
+          "data": {
+            "x": 525.426,
+            "y": 308.0
+          }
+        },
+        {
+          "type": "faces",
+          "data": {
+            "names": [
+              "22",
+              "村庄22",
+              "城市22"
+            ],
+            "resources": [
+              "empty",
+              "village",
+              "city"
+            ],
+            "up": true
+          }
+        },
+        {
+          "type": "properties",
+          "data": {
+            "vertex": 22,
+            "player": 0,
+            "level": 0,
+            "viewStyle": 1,
+            "viewWidth": 16,
+            "viewHeight": 16,
+            "viewLayer": 3,
+            "viewLabel": 1,
+            "viewLabelY": -7,
+            "viewNoImage": 1,
+            "viewColor": 14010017,
+            "t1": 6,
+            "t2": 10,
+            "t3": 11,
+            "n1": 21,
+            "n2": 19,
+            "n3": 32
+          }
+        }
+      ]
+    },
+    {
+      "id": "vertex-23",
+      "components": [
+        {
+          "type": "position",
+          "data": {
+            "x": 691.703,
+            "y": 276.0
+          }
+        },
+        {
+          "type": "faces",
+          "data": {
+            "names": [
+              "23",
+              "村庄23",
+              "城市23"
+            ],
+            "resources": [
+              "empty",
+              "village",
+              "city"
+            ],
+            "up": true
+          }
+        },
+        {
+          "type": "properties",
+          "data": {
+            "vertex": 23,
+            "player": 0,
+            "level": 0,
+            "viewStyle": 1,
+            "viewWidth": 16,
+            "viewHeight": 16,
+            "viewLayer": 3,
+            "viewLabel": 1,
+            "viewLabelY": -7,
+            "viewNoImage": 1,
+            "viewColor": 14010017,
+            "t1": 7,
+            "t2": 12,
+            "n1": 24,
+            "n2": 25,
+            "n3": 38
+          }
+        }
+      ]
+    },
+    {
+      "id": "vertex-24",
+      "components": [
+        {
+          "type": "position",
+          "data": {
+            "x": 636.277,
+            "y": 308.0
+          }
+        },
+        {
+          "type": "faces",
+          "data": {
+            "names": [
+              "24",
+              "村庄24",
+              "城市24"
+            ],
+            "resources": [
+              "empty",
+              "village",
+              "city"
+            ],
+            "up": true
+          }
+        },
+        {
+          "type": "properties",
+          "data": {
+            "vertex": 24,
+            "player": 0,
+            "level": 0,
+            "viewStyle": 1,
+            "viewWidth": 16,
+            "viewHeight": 16,
+            "viewLayer": 3,
+            "viewLabel": 1,
+            "viewLabelY": -7,
+            "viewNoImage": 1,
+            "viewColor": 14010017,
+            "t1": 7,
+            "t2": 11,
+            "t3": 12,
+            "n1": 23,
+            "n2": 21,
+            "n3": 34
+          }
+        }
+      ]
+    },
+    {
+      "id": "vertex-25",
+      "components": [
+        {
+          "type": "position",
+          "data": {
+            "x": 691.703,
+            "y": 212.0
+          }
+        },
+        {
+          "type": "faces",
+          "data": {
+            "names": [
+              "25",
+              "村庄25",
+              "城市25"
+            ],
+            "resources": [
+              "empty",
+              "village",
+              "city"
+            ],
+            "up": true
+          }
+        },
+        {
+          "type": "properties",
+          "data": {
+            "vertex": 25,
+            "player": 0,
+            "level": 0,
+            "viewStyle": 1,
+            "viewWidth": 16,
+            "viewHeight": 16,
+            "viewLayer": 3,
+            "viewLabel": 1,
+            "viewLabelY": -7,
+            "viewNoImage": 1,
+            "viewColor": 14010017,
+            "t1": 7,
+            "n1": 11,
+            "n2": 23
+          }
+        }
+      ]
+    },
+    {
+      "id": "vertex-26",
+      "components": [
+        {
+          "type": "position",
+          "data": {
+            "x": 303.723,
+            "y": 372.0
+          }
+        },
+        {
+          "type": "faces",
+          "data": {
+            "names": [
+              "26",
+              "村庄26",
+              "城市26"
+            ],
+            "resources": [
+              "empty",
+              "village",
+              "city"
+            ],
+            "up": true
+          }
+        },
+        {
+          "type": "properties",
+          "data": {
+            "vertex": 26,
+            "player": 0,
+            "level": 0,
+            "viewStyle": 1,
+            "viewWidth": 16,
+            "viewHeight": 16,
+            "viewLayer": 3,
+            "viewLabel": 1,
+            "viewLabelY": -7,
+            "viewNoImage": 1,
+            "viewColor": 14010017,
+            "t1": 8,
+            "t2": 9,
+            "t3": 13,
+            "n1": 27,
+            "n2": 16,
+            "n3": 31
+          }
+        }
+      ]
+    },
+    {
+      "id": "vertex-27",
+      "components": [
+        {
+          "type": "position",
+          "data": {
+            "x": 248.297,
+            "y": 404.0
+          }
+        },
+        {
+          "type": "faces",
+          "data": {
+            "names": [
+              "27",
+              "村庄27",
+              "城市27"
+            ],
+            "resources": [
+              "empty",
+              "village",
+              "city"
+            ],
+            "up": true
+          }
+        },
+        {
+          "type": "properties",
+          "data": {
+            "vertex": 27,
+            "player": 0,
+            "level": 0,
+            "viewStyle": 1,
+            "viewWidth": 16,
+            "viewHeight": 16,
+            "viewLayer": 3,
+            "viewLabel": 1,
+            "viewLabelY": -7,
+            "viewNoImage": 1,
+            "viewColor": 14010017,
+            "t1": 8,
+            "t2": 13,
+            "n1": 26,
+            "n2": 28,
+            "n3": 41
+          }
+        }
+      ]
+    },
+    {
+      "id": "vertex-28",
+      "components": [
+        {
+          "type": "position",
+          "data": {
+            "x": 192.872,
+            "y": 372.0
+          }
+        },
+        {
+          "type": "faces",
+          "data": {
+            "names": [
+              "28",
+              "村庄28",
+              "城市28"
+            ],
+            "resources": [
+              "empty",
+              "village",
+              "city"
+            ],
+            "up": true
+          }
+        },
+        {
+          "type": "properties",
+          "data": {
+            "vertex": 28,
+            "player": 0,
+            "level": 0,
+            "viewStyle": 1,
+            "viewWidth": 16,
+            "viewHeight": 16,
+            "viewLayer": 3,
+            "viewLabel": 1,
+            "viewLabelY": -7,
+            "viewNoImage": 1,
+            "viewColor": 14010017,
+            "t1": 8,
+            "n1": 27,
+            "n2": 29
+          }
+        }
+      ]
+    },
+    {
+      "id": "vertex-29",
+      "components": [
+        {
+          "type": "position",
+          "data": {
+            "x": 192.872,
+            "y": 308.0
+          }
+        },
+        {
+          "type": "faces",
+          "data": {
+            "names": [
+              "29",
+              "村庄29",
+              "城市29"
+            ],
+            "resources": [
+              "empty",
+              "village",
+              "city"
+            ],
+            "up": true
+          }
+        },
+        {
+          "type": "properties",
+          "data": {
+            "vertex": 29,
+            "player": 0,
+            "level": 0,
+            "viewStyle": 1,
+            "viewWidth": 16,
+            "viewHeight": 16,
+            "viewLayer": 3,
+            "viewLabel": 1,
+            "viewLabelY": -7,
+            "viewNoImage": 1,
+            "viewColor": 14010017,
+            "t1": 8,
+            "n1": 28,
+            "n2": 17
+          }
+        }
+      ]
+    },
+    {
+      "id": "vertex-30",
+      "components": [
+        {
+          "type": "position",
+          "data": {
+            "x": 414.574,
+            "y": 372.0
+          }
+        },
+        {
+          "type": "faces",
+          "data": {
+            "names": [
+              "30",
+              "村庄30",
+              "城市30"
+            ],
+            "resources": [
+              "empty",
+              "village",
+              "city"
+            ],
+            "up": true
+          }
+        },
+        {
+          "type": "properties",
+          "data": {
+            "vertex": 30,
+            "player": 0,
+            "level": 0,
+            "viewStyle": 1,
+            "viewWidth": 16,
+            "viewHeight": 16,
+            "viewLayer": 3,
+            "viewLabel": 1,
+            "viewLabelY": -7,
+            "viewNoImage": 1,
+            "viewColor": 14010017,
+            "t1": 9,
+            "t2": 10,
+            "t3": 14,
+            "n1": 31,
+            "n2": 20,
+            "n3": 33
+          }
+        }
+      ]
+    },
+    {
+      "id": "vertex-31",
+      "components": [
+        {
+          "type": "position",
+          "data": {
+            "x": 359.149,
+            "y": 404.0
+          }
+        },
+        {
+          "type": "faces",
+          "data": {
+            "names": [
+              "31",
+              "村庄31",
+              "城市31"
+            ],
+            "resources": [
+              "empty",
+              "village",
+              "city"
+            ],
+            "up": true
+          }
+        },
+        {
+          "type": "properties",
+          "data": {
+            "vertex": 31,
+            "player": 0,
+            "level": 0,
+            "viewStyle": 1,
+            "viewWidth": 16,
+            "viewHeight": 16,
+            "viewLayer": 3,
+            "viewLabel": 1,
+            "viewLabelY": -7,
+            "viewNoImage": 1,
+            "viewColor": 14010017,
+            "t1": 9,
+            "t2": 13,
+            "t3": 14,
+            "n1": 30,
+            "n2": 26,
+            "n3": 39
+          }
+        }
+      ]
+    },
+    {
+      "id": "vertex-32",
+      "components": [
+        {
+          "type": "position",
+          "data": {
+            "x": 525.426,
+            "y": 372.0
+          }
+        },
+        {
+          "type": "faces",
+          "data": {
+            "names": [
+              "32",
+              "村庄32",
+              "城市32"
+            ],
+            "resources": [
+              "empty",
+              "village",
+              "city"
+            ],
+            "up": true
+          }
+        },
+        {
+          "type": "properties",
+          "data": {
+            "vertex": 32,
+            "player": 0,
+            "level": 0,
+            "viewStyle": 1,
+            "viewWidth": 16,
+            "viewHeight": 16,
+            "viewLayer": 3,
+            "viewLabel": 1,
+            "viewLabelY": -7,
+            "viewNoImage": 1,
+            "viewColor": 14010017,
+            "t1": 10,
+            "t2": 11,
+            "t3": 15,
+            "n1": 33,
+            "n2": 22,
+            "n3": 35
+          }
+        }
+      ]
+    },
+    {
+      "id": "vertex-33",
+      "components": [
+        {
+          "type": "position",
+          "data": {
+            "x": 470.0,
+            "y": 404.0
+          }
+        },
+        {
+          "type": "faces",
+          "data": {
+            "names": [
+              "33",
+              "村庄33",
+              "城市33"
+            ],
+            "resources": [
+              "empty",
+              "village",
+              "city"
+            ],
+            "up": true
+          }
+        },
+        {
+          "type": "properties",
+          "data": {
+            "vertex": 33,
+            "player": 0,
+            "level": 0,
+            "viewStyle": 1,
+            "viewWidth": 16,
+            "viewHeight": 16,
+            "viewLayer": 3,
+            "viewLabel": 1,
+            "viewLabelY": -7,
+            "viewNoImage": 1,
+            "viewColor": 14010017,
+            "t1": 10,
+            "t2": 14,
+            "t3": 15,
+            "n1": 32,
+            "n2": 30,
+            "n3": 42
+          }
+        }
+      ]
+    },
+    {
+      "id": "vertex-34",
+      "components": [
+        {
+          "type": "position",
+          "data": {
+            "x": 636.277,
+            "y": 372.0
+          }
+        },
+        {
+          "type": "faces",
+          "data": {
+            "names": [
+              "34",
+              "村庄34",
+              "城市34"
+            ],
+            "resources": [
+              "empty",
+              "village",
+              "city"
+            ],
+            "up": true
+          }
+        },
+        {
+          "type": "properties",
+          "data": {
+            "vertex": 34,
+            "player": 0,
+            "level": 0,
+            "viewStyle": 1,
+            "viewWidth": 16,
+            "viewHeight": 16,
+            "viewLayer": 3,
+            "viewLabel": 1,
+            "viewLabelY": -7,
+            "viewNoImage": 1,
+            "viewColor": 14010017,
+            "t1": 11,
+            "t2": 12,
+            "t3": 16,
+            "n1": 35,
+            "n2": 24,
+            "n3": 37
+          }
+        }
+      ]
+    },
+    {
+      "id": "vertex-35",
+      "components": [
+        {
+          "type": "position",
+          "data": {
+            "x": 580.851,
+            "y": 404.0
+          }
+        },
+        {
+          "type": "faces",
+          "data": {
+            "names": [
+              "35",
+              "村庄35",
+              "城市35"
+            ],
+            "resources": [
+              "empty",
+              "village",
+              "city"
+            ],
+            "up": true
+          }
+        },
+        {
+          "type": "properties",
+          "data": {
+            "vertex": 35,
+            "player": 0,
+            "level": 0,
+            "viewStyle": 1,
+            "viewWidth": 16,
+            "viewHeight": 16,
+            "viewLayer": 3,
+            "viewLabel": 1,
+            "viewLabelY": -7,
+            "viewNoImage": 1,
+            "viewColor": 14010017,
+            "t1": 11,
+            "t2": 15,
+            "t3": 16,
+            "n1": 34,
+            "n2": 32,
+            "n3": 44
+          }
+        }
+      ]
+    },
+    {
+      "id": "vertex-36",
+      "components": [
+        {
+          "type": "position",
+          "data": {
+            "x": 747.128,
+            "y": 372.0
+          }
+        },
+        {
+          "type": "faces",
+          "data": {
+            "names": [
+              "36",
+              "村庄36",
+              "城市36"
+            ],
+            "resources": [
+              "empty",
+              "village",
+              "city"
+            ],
+            "up": true
+          }
+        },
+        {
+          "type": "properties",
+          "data": {
+            "vertex": 36,
+            "player": 0,
+            "level": 0,
+            "viewStyle": 1,
+            "viewWidth": 16,
+            "viewHeight": 16,
+            "viewLayer": 3,
+            "viewLabel": 1,
+            "viewLabelY": -7,
+            "viewNoImage": 1,
+            "viewColor": 14010017,
+            "t1": 12,
+            "n1": 37,
+            "n2": 38
+          }
+        }
+      ]
+    },
+    {
+      "id": "vertex-37",
+      "components": [
+        {
+          "type": "position",
+          "data": {
+            "x": 691.703,
+            "y": 404.0
+          }
+        },
+        {
+          "type": "faces",
+          "data": {
+            "names": [
+              "37",
+              "村庄37",
+              "城市37"
+            ],
+            "resources": [
+              "empty",
+              "village",
+              "city"
+            ],
+            "up": true
+          }
+        },
+        {
+          "type": "properties",
+          "data": {
+            "vertex": 37,
+            "player": 0,
+            "level": 0,
+            "viewStyle": 1,
+            "viewWidth": 16,
+            "viewHeight": 16,
+            "viewLayer": 3,
+            "viewLabel": 1,
+            "viewLabelY": -7,
+            "viewNoImage": 1,
+            "viewColor": 14010017,
+            "t1": 12,
+            "t2": 16,
+            "n1": 36,
+            "n2": 34,
+            "n3": 46
+          }
+        }
+      ]
+    },
+    {
+      "id": "vertex-38",
+      "components": [
+        {
+          "type": "position",
+          "data": {
+            "x": 747.128,
+            "y": 308.0
+          }
+        },
+        {
+          "type": "faces",
+          "data": {
+            "names": [
+              "38",
+              "村庄38",
+              "城市38"
+            ],
+            "resources": [
+              "empty",
+              "village",
+              "city"
+            ],
+            "up": true
+          }
+        },
+        {
+          "type": "properties",
+          "data": {
+            "vertex": 38,
+            "player": 0,
+            "level": 0,
+            "viewStyle": 1,
+            "viewWidth": 16,
+            "viewHeight": 16,
+            "viewLayer": 3,
+            "viewLabel": 1,
+            "viewLabelY": -7,
+            "viewNoImage": 1,
+            "viewColor": 14010017,
+            "t1": 12,
+            "n1": 23,
+            "n2": 36
+          }
+        }
+      ]
+    },
+    {
+      "id": "vertex-39",
+      "components": [
+        {
+          "type": "position",
+          "data": {
+            "x": 359.149,
+            "y": 468.0
+          }
+        },
+        {
+          "type": "faces",
+          "data": {
+            "names": [
+              "39",
+              "村庄39",
+              "城市39"
+            ],
+            "resources": [
+              "empty",
+              "village",
+              "city"
+            ],
+            "up": true
+          }
+        },
+        {
+          "type": "properties",
+          "data": {
+            "vertex": 39,
+            "player": 0,
+            "level": 0,
+            "viewStyle": 1,
+            "viewWidth": 16,
+            "viewHeight": 16,
+            "viewLayer": 3,
+            "viewLabel": 1,
+            "viewLabelY": -7,
+            "viewNoImage": 1,
+            "viewColor": 14010017,
+            "t1": 13,
+            "t2": 14,
+            "t3": 17,
+            "n1": 40,
+            "n2": 31,
+            "n3": 43
+          }
+        }
+      ]
+    },
+    {
+      "id": "vertex-40",
+      "components": [
+        {
+          "type": "position",
+          "data": {
+            "x": 303.723,
+            "y": 500.0
+          }
+        },
+        {
+          "type": "faces",
+          "data": {
+            "names": [
+              "40",
+              "村庄40",
+              "城市40"
+            ],
+            "resources": [
+              "empty",
+              "village",
+              "city"
+            ],
+            "up": true
+          }
+        },
+        {
+          "type": "properties",
+          "data": {
+            "vertex": 40,
+            "player": 0,
+            "level": 0,
+            "viewStyle": 1,
+            "viewWidth": 16,
+            "viewHeight": 16,
+            "viewLayer": 3,
+            "viewLabel": 1,
+            "viewLabelY": -7,
+            "viewNoImage": 1,
+            "viewColor": 14010017,
+            "t1": 13,
+            "t2": 17,
+            "n1": 39,
+            "n2": 41,
+            "n3": 50
+          }
+        }
+      ]
+    },
+    {
+      "id": "vertex-41",
+      "components": [
+        {
+          "type": "position",
+          "data": {
+            "x": 248.297,
+            "y": 468.0
+          }
+        },
+        {
+          "type": "faces",
+          "data": {
+            "names": [
+              "41",
+              "村庄41",
+              "城市41"
+            ],
+            "resources": [
+              "empty",
+              "village",
+              "city"
+            ],
+            "up": true
+          }
+        },
+        {
+          "type": "properties",
+          "data": {
+            "vertex": 41,
+            "player": 0,
+            "level": 0,
+            "viewStyle": 1,
+            "viewWidth": 16,
+            "viewHeight": 16,
+            "viewLayer": 3,
+            "viewLabel": 1,
+            "viewLabelY": -7,
+            "viewNoImage": 1,
+            "viewColor": 14010017,
+            "t1": 13,
+            "n1": 40,
+            "n2": 27
+          }
+        }
+      ]
+    },
+    {
+      "id": "vertex-42",
+      "components": [
+        {
+          "type": "position",
+          "data": {
+            "x": 470.0,
+            "y": 468.0
+          }
+        },
+        {
+          "type": "faces",
+          "data": {
+            "names": [
+              "42",
+              "村庄42",
+              "城市42"
+            ],
+            "resources": [
+              "empty",
+              "village",
+              "city"
+            ],
+            "up": true
+          }
+        },
+        {
+          "type": "properties",
+          "data": {
+            "vertex": 42,
+            "player": 0,
+            "level": 0,
+            "viewStyle": 1,
+            "viewWidth": 16,
+            "viewHeight": 16,
+            "viewLayer": 3,
+            "viewLabel": 1,
+            "viewLabelY": -7,
+            "viewNoImage": 1,
+            "viewColor": 14010017,
+            "t1": 14,
+            "t2": 15,
+            "t3": 18,
+            "n1": 43,
+            "n2": 33,
+            "n3": 45
+          }
+        }
+      ]
+    },
+    {
+      "id": "vertex-43",
+      "components": [
+        {
+          "type": "position",
+          "data": {
+            "x": 414.574,
+            "y": 500.0
+          }
+        },
+        {
+          "type": "faces",
+          "data": {
+            "names": [
+              "43",
+              "村庄43",
+              "城市43"
+            ],
+            "resources": [
+              "empty",
+              "village",
+              "city"
+            ],
+            "up": true
+          }
+        },
+        {
+          "type": "properties",
+          "data": {
+            "vertex": 43,
+            "player": 0,
+            "level": 0,
+            "viewStyle": 1,
+            "viewWidth": 16,
+            "viewHeight": 16,
+            "viewLayer": 3,
+            "viewLabel": 1,
+            "viewLabelY": -7,
+            "viewNoImage": 1,
+            "viewColor": 14010017,
+            "t1": 14,
+            "t2": 17,
+            "t3": 18,
+            "n1": 42,
+            "n2": 39,
+            "n3": 48
+          }
+        }
+      ]
+    },
+    {
+      "id": "vertex-44",
+      "components": [
+        {
+          "type": "position",
+          "data": {
+            "x": 580.851,
+            "y": 468.0
+          }
+        },
+        {
+          "type": "faces",
+          "data": {
+            "names": [
+              "44",
+              "村庄44",
+              "城市44"
+            ],
+            "resources": [
+              "empty",
+              "village",
+              "city"
+            ],
+            "up": true
+          }
+        },
+        {
+          "type": "properties",
+          "data": {
+            "vertex": 44,
+            "player": 0,
+            "level": 0,
+            "viewStyle": 1,
+            "viewWidth": 16,
+            "viewHeight": 16,
+            "viewLayer": 3,
+            "viewLabel": 1,
+            "viewLabelY": -7,
+            "viewNoImage": 1,
+            "viewColor": 14010017,
+            "t1": 15,
+            "t2": 16,
+            "t3": 19,
+            "n1": 45,
+            "n2": 35,
+            "n3": 47
+          }
+        }
+      ]
+    },
+    {
+      "id": "vertex-45",
+      "components": [
+        {
+          "type": "position",
+          "data": {
+            "x": 525.426,
+            "y": 500.0
+          }
+        },
+        {
+          "type": "faces",
+          "data": {
+            "names": [
+              "45",
+              "村庄45",
+              "城市45"
+            ],
+            "resources": [
+              "empty",
+              "village",
+              "city"
+            ],
+            "up": true
+          }
+        },
+        {
+          "type": "properties",
+          "data": {
+            "vertex": 45,
+            "player": 0,
+            "level": 0,
+            "viewStyle": 1,
+            "viewWidth": 16,
+            "viewHeight": 16,
+            "viewLayer": 3,
+            "viewLabel": 1,
+            "viewLabelY": -7,
+            "viewNoImage": 1,
+            "viewColor": 14010017,
+            "t1": 15,
+            "t2": 18,
+            "t3": 19,
+            "n1": 44,
+            "n2": 42,
+            "n3": 51
+          }
+        }
+      ]
+    },
+    {
+      "id": "vertex-46",
+      "components": [
+        {
+          "type": "position",
+          "data": {
+            "x": 691.703,
+            "y": 468.0
+          }
+        },
+        {
+          "type": "faces",
+          "data": {
+            "names": [
+              "46",
+              "村庄46",
+              "城市46"
+            ],
+            "resources": [
+              "empty",
+              "village",
+              "city"
+            ],
+            "up": true
+          }
+        },
+        {
+          "type": "properties",
+          "data": {
+            "vertex": 46,
+            "player": 0,
+            "level": 0,
+            "viewStyle": 1,
+            "viewWidth": 16,
+            "viewHeight": 16,
+            "viewLayer": 3,
+            "viewLabel": 1,
+            "viewLabelY": -7,
+            "viewNoImage": 1,
+            "viewColor": 14010017,
+            "t1": 16,
+            "n1": 47,
+            "n2": 37
+          }
+        }
+      ]
+    },
+    {
+      "id": "vertex-47",
+      "components": [
+        {
+          "type": "position",
+          "data": {
+            "x": 636.277,
+            "y": 500.0
+          }
+        },
+        {
+          "type": "faces",
+          "data": {
+            "names": [
+              "47",
+              "村庄47",
+              "城市47"
+            ],
+            "resources": [
+              "empty",
+              "village",
+              "city"
+            ],
+            "up": true
+          }
+        },
+        {
+          "type": "properties",
+          "data": {
+            "vertex": 47,
+            "player": 0,
+            "level": 0,
+            "viewStyle": 1,
+            "viewWidth": 16,
+            "viewHeight": 16,
+            "viewLayer": 3,
+            "viewLabel": 1,
+            "viewLabelY": -7,
+            "viewNoImage": 1,
+            "viewColor": 14010017,
+            "t1": 16,
+            "t2": 19,
+            "n1": 46,
+            "n2": 44,
+            "n3": 53
+          }
+        }
+      ]
+    },
+    {
+      "id": "vertex-48",
+      "components": [
+        {
+          "type": "position",
+          "data": {
+            "x": 414.574,
+            "y": 564.0
+          }
+        },
+        {
+          "type": "faces",
+          "data": {
+            "names": [
+              "48",
+              "村庄48",
+              "城市48"
+            ],
+            "resources": [
+              "empty",
+              "village",
+              "city"
+            ],
+            "up": true
+          }
+        },
+        {
+          "type": "properties",
+          "data": {
+            "vertex": 48,
+            "player": 0,
+            "level": 0,
+            "viewStyle": 1,
+            "viewWidth": 16,
+            "viewHeight": 16,
+            "viewLayer": 3,
+            "viewLabel": 1,
+            "viewLabelY": -7,
+            "viewNoImage": 1,
+            "viewColor": 14010017,
+            "t1": 17,
+            "t2": 18,
+            "n1": 49,
+            "n2": 43,
+            "n3": 52
+          }
+        }
+      ]
+    },
+    {
+      "id": "vertex-49",
+      "components": [
+        {
+          "type": "position",
+          "data": {
+            "x": 359.149,
+            "y": 596.0
+          }
+        },
+        {
+          "type": "faces",
+          "data": {
+            "names": [
+              "49",
+              "村庄49",
+              "城市49"
+            ],
+            "resources": [
+              "empty",
+              "village",
+              "city"
+            ],
+            "up": true
+          }
+        },
+        {
+          "type": "properties",
+          "data": {
+            "vertex": 49,
+            "player": 0,
+            "level": 0,
+            "viewStyle": 1,
+            "viewWidth": 16,
+            "viewHeight": 16,
+            "viewLayer": 3,
+            "viewLabel": 1,
+            "viewLabelY": -7,
+            "viewNoImage": 1,
+            "viewColor": 14010017,
+            "t1": 17,
+            "n1": 48,
+            "n2": 50
+          }
+        }
+      ]
+    },
+    {
+      "id": "vertex-50",
+      "components": [
+        {
+          "type": "position",
+          "data": {
+            "x": 303.723,
+            "y": 564.0
+          }
+        },
+        {
+          "type": "faces",
+          "data": {
+            "names": [
+              "50",
+              "村庄50",
+              "城市50"
+            ],
+            "resources": [
+              "empty",
+              "village",
+              "city"
+            ],
+            "up": true
+          }
+        },
+        {
+          "type": "properties",
+          "data": {
+            "vertex": 50,
+            "player": 0,
+            "level": 0,
+            "viewStyle": 1,
+            "viewWidth": 16,
+            "viewHeight": 16,
+            "viewLayer": 3,
+            "viewLabel": 1,
+            "viewLabelY": -7,
+            "viewNoImage": 1,
+            "viewColor": 14010017,
+            "t1": 17,
+            "n1": 49,
+            "n2": 40
+          }
+        }
+      ]
+    },
+    {
+      "id": "vertex-51",
+      "components": [
+        {
+          "type": "position",
+          "data": {
+            "x": 525.426,
+            "y": 564.0
+          }
+        },
+        {
+          "type": "faces",
+          "data": {
+            "names": [
+              "51",
+              "村庄51",
+              "城市51"
+            ],
+            "resources": [
+              "empty",
+              "village",
+              "city"
+            ],
+            "up": true
+          }
+        },
+        {
+          "type": "properties",
+          "data": {
+            "vertex": 51,
+            "player": 0,
+            "level": 0,
+            "viewStyle": 1,
+            "viewWidth": 16,
+            "viewHeight": 16,
+            "viewLayer": 3,
+            "viewLabel": 1,
+            "viewLabelY": -7,
+            "viewNoImage": 1,
+            "viewColor": 14010017,
+            "t1": 18,
+            "t2": 19,
+            "n1": 52,
+            "n2": 45,
+            "n3": 54
+          }
+        }
+      ]
+    },
+    {
+      "id": "vertex-52",
+      "components": [
+        {
+          "type": "position",
+          "data": {
+            "x": 470.0,
+            "y": 596.0
+          }
+        },
+        {
+          "type": "faces",
+          "data": {
+            "names": [
+              "52",
+              "村庄52",
+              "城市52"
+            ],
+            "resources": [
+              "empty",
+              "village",
+              "city"
+            ],
+            "up": true
+          }
+        },
+        {
+          "type": "properties",
+          "data": {
+            "vertex": 52,
+            "player": 0,
+            "level": 0,
+            "viewStyle": 1,
+            "viewWidth": 16,
+            "viewHeight": 16,
+            "viewLayer": 3,
+            "viewLabel": 1,
+            "viewLabelY": -7,
+            "viewNoImage": 1,
+            "viewColor": 14010017,
+            "t1": 18,
+            "n1": 51,
+            "n2": 48
+          }
+        }
+      ]
+    },
+    {
+      "id": "vertex-53",
+      "components": [
+        {
+          "type": "position",
+          "data": {
+            "x": 636.277,
+            "y": 564.0
+          }
+        },
+        {
+          "type": "faces",
+          "data": {
+            "names": [
+              "53",
+              "村庄53",
+              "城市53"
+            ],
+            "resources": [
+              "empty",
+              "village",
+              "city"
+            ],
+            "up": true
+          }
+        },
+        {
+          "type": "properties",
+          "data": {
+            "vertex": 53,
+            "player": 0,
+            "level": 0,
+            "viewStyle": 1,
+            "viewWidth": 16,
+            "viewHeight": 16,
+            "viewLayer": 3,
+            "viewLabel": 1,
+            "viewLabelY": -7,
+            "viewNoImage": 1,
+            "viewColor": 14010017,
+            "t1": 19,
+            "n1": 54,
+            "n2": 47
+          }
+        }
+      ]
+    },
+    {
+      "id": "vertex-54",
+      "components": [
+        {
+          "type": "position",
+          "data": {
+            "x": 580.851,
+            "y": 596.0
+          }
+        },
+        {
+          "type": "faces",
+          "data": {
+            "names": [
+              "54",
+              "村庄54",
+              "城市54"
+            ],
+            "resources": [
+              "empty",
+              "village",
+              "city"
+            ],
+            "up": true
+          }
+        },
+        {
+          "type": "properties",
+          "data": {
+            "vertex": 54,
+            "player": 0,
+            "level": 0,
+            "viewStyle": 1,
+            "viewWidth": 16,
+            "viewHeight": 16,
+            "viewLayer": 3,
+            "viewLabel": 1,
+            "viewLabelY": -7,
+            "viewNoImage": 1,
+            "viewColor": 14010017,
+            "t1": 19,
+            "n1": 53,
+            "n2": 51
+          }
+        }
+      ]
+    },
+    {
+      "id": "robber",
+      "components": [
+        {
+          "type": "position",
+          "data": {
+            "x": 470.0,
+            "y": 352.0
+          }
+        },
+        {
+          "type": "faces",
+          "data": {
+            "names": [
+              "强盗封锁"
+            ],
+            "resources": [
+              "robber"
+            ],
+            "up": true
+          }
+        },
+        {
+          "type": "properties",
+          "data": {
+            "viewStyle": 1,
+            "viewWidth": 28,
+            "viewHeight": 40,
+            "viewLayer": 4,
+            "viewLabel": 0
+          }
+        }
+      ]
+    },
+    {
+      "id": "stock-p1",
+      "components": [
+        {
+          "type": "position",
+          "data": {
+            "x": 100,
+            "y": 145
+          }
+        },
+        {
+          "type": "faces",
+          "data": {
+            "names": [
+              "珊瑚 · p1\n{score} 分 · 声望 {prestige}\n木{wood}  砖{brick}  羊{wool}\n麦{grain}  矿{ore}"
+            ],
+            "resources": [],
+            "up": true
+          }
+        },
+        {
+          "type": "properties",
+          "data": {
+            "wood": 2,
+            "brick": 2,
+            "wool": 2,
+            "grain": 2,
+            "ore": 2,
+            "prestige": 0,
+            "score": 0,
+            "roads": 0,
+            "buildings": 0,
+            "cities": 0,
+            "played": 0,
+            "viewStyle": 3,
+            "viewWidth": 170,
+            "viewHeight": 102,
+            "viewLayer": 5,
+            "viewColor": 14645338,
+            "viewLabel": 1
+          }
+        }
+      ]
+    },
+    {
+      "id": "hand-p1",
+      "components": [
+        {
+          "type": "position",
+          "data": {
+            "x": 270,
+            "y": 640
+          }
+        },
+        {
+          "type": "faces",
+          "data": {
+            "names": [
+              "p1 发展牌"
+            ],
+            "resources": [],
+            "up": true
+          }
+        },
+        {
+          "type": "properties",
+          "data": {
+            "viewWidth": 140,
+            "viewHeight": 144,
+            "viewCardWidth": 60,
+            "viewCardHeight": 88,
+            "viewFanY": 10
+          }
+        },
+        {
+          "type": "container",
+          "data": {
+            "capacity": 30,
+            "ordered": true,
+            "contents": []
+          }
+        },
+        {
+          "type": "owner",
+          "data": {
+            "seat": "p1"
+          }
+        }
+      ]
+    },
+    {
+      "id": "stock-p2",
+      "components": [
+        {
+          "type": "position",
+          "data": {
+            "x": 100,
+            "y": 261
+          }
+        },
+        {
+          "type": "faces",
+          "data": {
+            "names": [
+              "海蓝 · p2\n{score} 分 · 声望 {prestige}\n木{wood}  砖{brick}  羊{wool}\n麦{grain}  矿{ore}"
+            ],
+            "resources": [],
+            "up": true
+          }
+        },
+        {
+          "type": "properties",
+          "data": {
+            "wood": 2,
+            "brick": 2,
+            "wool": 2,
+            "grain": 2,
+            "ore": 2,
+            "prestige": 0,
+            "score": 0,
+            "roads": 0,
+            "buildings": 0,
+            "cities": 0,
+            "played": 0,
+            "viewStyle": 3,
+            "viewWidth": 170,
+            "viewHeight": 102,
+            "viewLayer": 5,
+            "viewColor": 5746640,
+            "viewLabel": 1
+          }
+        }
+      ]
+    },
+    {
+      "id": "hand-p2",
+      "components": [
+        {
+          "type": "position",
+          "data": {
+            "x": 420,
+            "y": 640
+          }
+        },
+        {
+          "type": "faces",
+          "data": {
+            "names": [
+              "p2 发展牌"
+            ],
+            "resources": [],
+            "up": true
+          }
+        },
+        {
+          "type": "properties",
+          "data": {
+            "viewWidth": 140,
+            "viewHeight": 144,
+            "viewCardWidth": 60,
+            "viewCardHeight": 88,
+            "viewFanY": 10
+          }
+        },
+        {
+          "type": "container",
+          "data": {
+            "capacity": 30,
+            "ordered": true,
+            "contents": []
+          }
+        },
+        {
+          "type": "owner",
+          "data": {
+            "seat": "p2"
+          }
+        }
+      ]
+    },
+    {
+      "id": "stock-p3",
+      "components": [
+        {
+          "type": "position",
+          "data": {
+            "x": 100,
+            "y": 377
+          }
+        },
+        {
+          "type": "faces",
+          "data": {
+            "names": [
+              "金麦 · p3\n{score} 分 · 声望 {prestige}\n木{wood}  砖{brick}  羊{wool}\n麦{grain}  矿{ore}"
+            ],
+            "resources": [],
+            "up": true
+          }
+        },
+        {
+          "type": "properties",
+          "data": {
+            "wood": 2,
+            "brick": 2,
+            "wool": 2,
+            "grain": 2,
+            "ore": 2,
+            "prestige": 0,
+            "score": 0,
+            "roads": 0,
+            "buildings": 0,
+            "cities": 0,
+            "played": 0,
+            "viewStyle": 3,
+            "viewWidth": 170,
+            "viewHeight": 102,
+            "viewLayer": 5,
+            "viewColor": 14332759,
+            "viewLabel": 1
+          }
+        }
+      ]
+    },
+    {
+      "id": "hand-p3",
+      "components": [
+        {
+          "type": "position",
+          "data": {
+            "x": 570,
+            "y": 640
+          }
+        },
+        {
+          "type": "faces",
+          "data": {
+            "names": [
+              "p3 发展牌"
+            ],
+            "resources": [],
+            "up": true
+          }
+        },
+        {
+          "type": "properties",
+          "data": {
+            "viewWidth": 140,
+            "viewHeight": 144,
+            "viewCardWidth": 60,
+            "viewCardHeight": 88,
+            "viewFanY": 10
+          }
+        },
+        {
+          "type": "container",
+          "data": {
+            "capacity": 30,
+            "ordered": true,
+            "contents": []
+          }
+        },
+        {
+          "type": "owner",
+          "data": {
+            "seat": "p3"
+          }
+        }
+      ]
+    },
+    {
+      "id": "stock-p4",
+      "components": [
+        {
+          "type": "position",
+          "data": {
+            "x": 100,
+            "y": 493
+          }
+        },
+        {
+          "type": "faces",
+          "data": {
+            "names": [
+              "松绿 · p4\n{score} 分 · 声望 {prestige}\n木{wood}  砖{brick}  羊{wool}\n麦{grain}  矿{ore}"
+            ],
+            "resources": [],
+            "up": true
+          }
+        },
+        {
+          "type": "properties",
+          "data": {
+            "wood": 2,
+            "brick": 2,
+            "wool": 2,
+            "grain": 2,
+            "ore": 2,
+            "prestige": 0,
+            "score": 0,
+            "roads": 0,
+            "buildings": 0,
+            "cities": 0,
+            "played": 0,
+            "viewStyle": 3,
+            "viewWidth": 170,
+            "viewHeight": 102,
+            "viewLayer": 5,
+            "viewColor": 8764035,
+            "viewLabel": 1
+          }
+        }
+      ]
+    },
+    {
+      "id": "hand-p4",
+      "components": [
+        {
+          "type": "position",
+          "data": {
+            "x": 720,
+            "y": 640
+          }
+        },
+        {
+          "type": "faces",
+          "data": {
+            "names": [
+              "p4 发展牌"
+            ],
+            "resources": [],
+            "up": true
+          }
+        },
+        {
+          "type": "properties",
+          "data": {
+            "viewWidth": 140,
+            "viewHeight": 144,
+            "viewCardWidth": 60,
+            "viewCardHeight": 88,
+            "viewFanY": 10
+          }
+        },
+        {
+          "type": "container",
+          "data": {
+            "capacity": 30,
+            "ordered": true,
+            "contents": []
+          }
+        },
+        {
+          "type": "owner",
+          "data": {
+            "seat": "p4"
+          }
+        }
+      ]
+    },
+    {
+      "id": "dev-1",
+      "components": [
+        {
+          "type": "position",
+          "data": {
+            "x": 0,
+            "y": 0
+          }
+        },
+        {
+          "type": "faces",
+          "data": {
+            "names": [
+              "骑士 · 声望 +1"
+            ],
+            "resources": [
+              "development-1"
+            ],
+            "up": true
+          }
+        },
+        {
+          "type": "properties",
+          "data": {
+            "cardType": 1
+          }
+        },
+        {
+          "type": "visibility",
+          "data": {
+            "mode": "hidden"
+          }
+        }
+      ]
+    },
+    {
+      "id": "dev-2",
+      "components": [
+        {
+          "type": "position",
+          "data": {
+            "x": 0,
+            "y": 0
+          }
+        },
+        {
+          "type": "faces",
+          "data": {
+            "names": [
+              "丰收 · 每种资源 +1"
+            ],
+            "resources": [
+              "development-2"
+            ],
+            "up": true
+          }
+        },
+        {
+          "type": "properties",
+          "data": {
+            "cardType": 2
+          }
+        },
+        {
+          "type": "visibility",
+          "data": {
+            "mode": "hidden"
+          }
+        }
+      ]
+    },
+    {
+      "id": "dev-3",
+      "components": [
+        {
+          "type": "position",
+          "data": {
+            "x": 0,
+            "y": 0
+          }
+        },
+        {
+          "type": "faces",
+          "data": {
+            "names": [
+              "工匠 · 木砖各 +2"
+            ],
+            "resources": [
+              "development-3"
+            ],
+            "up": true
+          }
+        },
+        {
+          "type": "properties",
+          "data": {
+            "cardType": 3
+          }
+        },
+        {
+          "type": "visibility",
+          "data": {
+            "mode": "hidden"
+          }
+        }
+      ]
+    },
+    {
+      "id": "dev-4",
+      "components": [
+        {
+          "type": "position",
+          "data": {
+            "x": 0,
+            "y": 0
+          }
+        },
+        {
+          "type": "faces",
+          "data": {
+            "names": [
+              "骑士 · 声望 +1"
+            ],
+            "resources": [
+              "development-1"
+            ],
+            "up": true
+          }
+        },
+        {
+          "type": "properties",
+          "data": {
+            "cardType": 1
+          }
+        },
+        {
+          "type": "visibility",
+          "data": {
+            "mode": "hidden"
+          }
+        }
+      ]
+    },
+    {
+      "id": "dev-5",
+      "components": [
+        {
+          "type": "position",
+          "data": {
+            "x": 0,
+            "y": 0
+          }
+        },
+        {
+          "type": "faces",
+          "data": {
+            "names": [
+              "丰收 · 每种资源 +1"
+            ],
+            "resources": [
+              "development-2"
+            ],
+            "up": true
+          }
+        },
+        {
+          "type": "properties",
+          "data": {
+            "cardType": 2
+          }
+        },
+        {
+          "type": "visibility",
+          "data": {
+            "mode": "hidden"
+          }
+        }
+      ]
+    },
+    {
+      "id": "dev-6",
+      "components": [
+        {
+          "type": "position",
+          "data": {
+            "x": 0,
+            "y": 0
+          }
+        },
+        {
+          "type": "faces",
+          "data": {
+            "names": [
+              "工匠 · 木砖各 +2"
+            ],
+            "resources": [
+              "development-3"
+            ],
+            "up": true
+          }
+        },
+        {
+          "type": "properties",
+          "data": {
+            "cardType": 3
+          }
+        },
+        {
+          "type": "visibility",
+          "data": {
+            "mode": "hidden"
+          }
+        }
+      ]
+    },
+    {
+      "id": "dev-7",
+      "components": [
+        {
+          "type": "position",
+          "data": {
+            "x": 0,
+            "y": 0
+          }
+        },
+        {
+          "type": "faces",
+          "data": {
+            "names": [
+              "骑士 · 声望 +1"
+            ],
+            "resources": [
+              "development-1"
+            ],
+            "up": true
+          }
+        },
+        {
+          "type": "properties",
+          "data": {
+            "cardType": 1
+          }
+        },
+        {
+          "type": "visibility",
+          "data": {
+            "mode": "hidden"
+          }
+        }
+      ]
+    },
+    {
+      "id": "dev-8",
+      "components": [
+        {
+          "type": "position",
+          "data": {
+            "x": 0,
+            "y": 0
+          }
+        },
+        {
+          "type": "faces",
+          "data": {
+            "names": [
+              "丰收 · 每种资源 +1"
+            ],
+            "resources": [
+              "development-2"
+            ],
+            "up": true
+          }
+        },
+        {
+          "type": "properties",
+          "data": {
+            "cardType": 2
+          }
+        },
+        {
+          "type": "visibility",
+          "data": {
+            "mode": "hidden"
+          }
+        }
+      ]
+    },
+    {
+      "id": "dev-9",
+      "components": [
+        {
+          "type": "position",
+          "data": {
+            "x": 0,
+            "y": 0
+          }
+        },
+        {
+          "type": "faces",
+          "data": {
+            "names": [
+              "工匠 · 木砖各 +2"
+            ],
+            "resources": [
+              "development-3"
+            ],
+            "up": true
+          }
+        },
+        {
+          "type": "properties",
+          "data": {
+            "cardType": 3
+          }
+        },
+        {
+          "type": "visibility",
+          "data": {
+            "mode": "hidden"
+          }
+        }
+      ]
+    },
+    {
+      "id": "dev-10",
+      "components": [
+        {
+          "type": "position",
+          "data": {
+            "x": 0,
+            "y": 0
+          }
+        },
+        {
+          "type": "faces",
+          "data": {
+            "names": [
+              "骑士 · 声望 +1"
+            ],
+            "resources": [
+              "development-1"
+            ],
+            "up": true
+          }
+        },
+        {
+          "type": "properties",
+          "data": {
+            "cardType": 1
+          }
+        },
+        {
+          "type": "visibility",
+          "data": {
+            "mode": "hidden"
+          }
+        }
+      ]
+    },
+    {
+      "id": "dev-11",
+      "components": [
+        {
+          "type": "position",
+          "data": {
+            "x": 0,
+            "y": 0
+          }
+        },
+        {
+          "type": "faces",
+          "data": {
+            "names": [
+              "丰收 · 每种资源 +1"
+            ],
+            "resources": [
+              "development-2"
+            ],
+            "up": true
+          }
+        },
+        {
+          "type": "properties",
+          "data": {
+            "cardType": 2
+          }
+        },
+        {
+          "type": "visibility",
+          "data": {
+            "mode": "hidden"
+          }
+        }
+      ]
+    },
+    {
+      "id": "dev-12",
+      "components": [
+        {
+          "type": "position",
+          "data": {
+            "x": 0,
+            "y": 0
+          }
+        },
+        {
+          "type": "faces",
+          "data": {
+            "names": [
+              "工匠 · 木砖各 +2"
+            ],
+            "resources": [
+              "development-3"
+            ],
+            "up": true
+          }
+        },
+        {
+          "type": "properties",
+          "data": {
+            "cardType": 3
+          }
+        },
+        {
+          "type": "visibility",
+          "data": {
+            "mode": "hidden"
+          }
+        }
+      ]
+    },
+    {
+      "id": "dev-13",
+      "components": [
+        {
+          "type": "position",
+          "data": {
+            "x": 0,
+            "y": 0
+          }
+        },
+        {
+          "type": "faces",
+          "data": {
+            "names": [
+              "骑士 · 声望 +1"
+            ],
+            "resources": [
+              "development-1"
+            ],
+            "up": true
+          }
+        },
+        {
+          "type": "properties",
+          "data": {
+            "cardType": 1
+          }
+        },
+        {
+          "type": "visibility",
+          "data": {
+            "mode": "hidden"
+          }
+        }
+      ]
+    },
+    {
+      "id": "dev-14",
+      "components": [
+        {
+          "type": "position",
+          "data": {
+            "x": 0,
+            "y": 0
+          }
+        },
+        {
+          "type": "faces",
+          "data": {
+            "names": [
+              "丰收 · 每种资源 +1"
+            ],
+            "resources": [
+              "development-2"
+            ],
+            "up": true
+          }
+        },
+        {
+          "type": "properties",
+          "data": {
+            "cardType": 2
+          }
+        },
+        {
+          "type": "visibility",
+          "data": {
+            "mode": "hidden"
+          }
+        }
+      ]
+    },
+    {
+      "id": "dev-15",
+      "components": [
+        {
+          "type": "position",
+          "data": {
+            "x": 0,
+            "y": 0
+          }
+        },
+        {
+          "type": "faces",
+          "data": {
+            "names": [
+              "工匠 · 木砖各 +2"
+            ],
+            "resources": [
+              "development-3"
+            ],
+            "up": true
+          }
+        },
+        {
+          "type": "properties",
+          "data": {
+            "cardType": 3
+          }
+        },
+        {
+          "type": "visibility",
+          "data": {
+            "mode": "hidden"
+          }
+        }
+      ]
+    },
+    {
+      "id": "dev-16",
+      "components": [
+        {
+          "type": "position",
+          "data": {
+            "x": 0,
+            "y": 0
+          }
+        },
+        {
+          "type": "faces",
+          "data": {
+            "names": [
+              "骑士 · 声望 +1"
+            ],
+            "resources": [
+              "development-1"
+            ],
+            "up": true
+          }
+        },
+        {
+          "type": "properties",
+          "data": {
+            "cardType": 1
+          }
+        },
+        {
+          "type": "visibility",
+          "data": {
+            "mode": "hidden"
+          }
+        }
+      ]
+    },
+    {
+      "id": "dev-17",
+      "components": [
+        {
+          "type": "position",
+          "data": {
+            "x": 0,
+            "y": 0
+          }
+        },
+        {
+          "type": "faces",
+          "data": {
+            "names": [
+              "丰收 · 每种资源 +1"
+            ],
+            "resources": [
+              "development-2"
+            ],
+            "up": true
+          }
+        },
+        {
+          "type": "properties",
+          "data": {
+            "cardType": 2
+          }
+        },
+        {
+          "type": "visibility",
+          "data": {
+            "mode": "hidden"
+          }
+        }
+      ]
+    },
+    {
+      "id": "dev-18",
+      "components": [
+        {
+          "type": "position",
+          "data": {
+            "x": 0,
+            "y": 0
+          }
+        },
+        {
+          "type": "faces",
+          "data": {
+            "names": [
+              "工匠 · 木砖各 +2"
+            ],
+            "resources": [
+              "development-3"
+            ],
+            "up": true
+          }
+        },
+        {
+          "type": "properties",
+          "data": {
+            "cardType": 3
+          }
+        },
+        {
+          "type": "visibility",
+          "data": {
+            "mode": "hidden"
+          }
+        }
+      ]
+    },
+    {
+      "id": "dev-19",
+      "components": [
+        {
+          "type": "position",
+          "data": {
+            "x": 0,
+            "y": 0
+          }
+        },
+        {
+          "type": "faces",
+          "data": {
+            "names": [
+              "骑士 · 声望 +1"
+            ],
+            "resources": [
+              "development-1"
+            ],
+            "up": true
+          }
+        },
+        {
+          "type": "properties",
+          "data": {
+            "cardType": 1
+          }
+        },
+        {
+          "type": "visibility",
+          "data": {
+            "mode": "hidden"
+          }
+        }
+      ]
+    },
+    {
+      "id": "dev-20",
+      "components": [
+        {
+          "type": "position",
+          "data": {
+            "x": 0,
+            "y": 0
+          }
+        },
+        {
+          "type": "faces",
+          "data": {
+            "names": [
+              "丰收 · 每种资源 +1"
+            ],
+            "resources": [
+              "development-2"
+            ],
+            "up": true
+          }
+        },
+        {
+          "type": "properties",
+          "data": {
+            "cardType": 2
+          }
+        },
+        {
+          "type": "visibility",
+          "data": {
+            "mode": "hidden"
+          }
+        }
+      ]
+    },
+    {
+      "id": "dev-21",
+      "components": [
+        {
+          "type": "position",
+          "data": {
+            "x": 0,
+            "y": 0
+          }
+        },
+        {
+          "type": "faces",
+          "data": {
+            "names": [
+              "工匠 · 木砖各 +2"
+            ],
+            "resources": [
+              "development-3"
+            ],
+            "up": true
+          }
+        },
+        {
+          "type": "properties",
+          "data": {
+            "cardType": 3
+          }
+        },
+        {
+          "type": "visibility",
+          "data": {
+            "mode": "hidden"
+          }
+        }
+      ]
+    },
+    {
+      "id": "dev-22",
+      "components": [
+        {
+          "type": "position",
+          "data": {
+            "x": 0,
+            "y": 0
+          }
+        },
+        {
+          "type": "faces",
+          "data": {
+            "names": [
+              "骑士 · 声望 +1"
+            ],
+            "resources": [
+              "development-1"
+            ],
+            "up": true
+          }
+        },
+        {
+          "type": "properties",
+          "data": {
+            "cardType": 1
+          }
+        },
+        {
+          "type": "visibility",
+          "data": {
+            "mode": "hidden"
+          }
+        }
+      ]
+    },
+    {
+      "id": "dev-23",
+      "components": [
+        {
+          "type": "position",
+          "data": {
+            "x": 0,
+            "y": 0
+          }
+        },
+        {
+          "type": "faces",
+          "data": {
+            "names": [
+              "丰收 · 每种资源 +1"
+            ],
+            "resources": [
+              "development-2"
+            ],
+            "up": true
+          }
+        },
+        {
+          "type": "properties",
+          "data": {
+            "cardType": 2
+          }
+        },
+        {
+          "type": "visibility",
+          "data": {
+            "mode": "hidden"
+          }
+        }
+      ]
+    },
+    {
+      "id": "dev-24",
+      "components": [
+        {
+          "type": "position",
+          "data": {
+            "x": 0,
+            "y": 0
+          }
+        },
+        {
+          "type": "faces",
+          "data": {
+            "names": [
+              "工匠 · 木砖各 +2"
+            ],
+            "resources": [
+              "development-3"
+            ],
+            "up": true
+          }
+        },
+        {
+          "type": "properties",
+          "data": {
+            "cardType": 3
+          }
+        },
+        {
+          "type": "visibility",
+          "data": {
+            "mode": "hidden"
+          }
+        }
+      ]
+    },
+    {
+      "id": "deck",
+      "components": [
+        {
+          "type": "position",
+          "data": {
+            "x": 840,
+            "y": 630
+          }
+        },
+        {
+          "type": "faces",
+          "data": {
+            "names": [
+              "发展牌库"
+            ],
+            "resources": [],
+            "up": true
+          }
+        },
+        {
+          "type": "properties",
+          "data": {
+            "viewHidden": 1
+          }
+        },
+        {
+          "type": "container",
+          "data": {
+            "capacity": 24,
+            "ordered": true,
+            "contents": [
+              "dev-1",
+              "dev-2",
+              "dev-3",
+              "dev-4",
+              "dev-5",
+              "dev-6",
+              "dev-7",
+              "dev-8",
+              "dev-9",
+              "dev-10",
+              "dev-11",
+              "dev-12",
+              "dev-13",
+              "dev-14",
+              "dev-15",
+              "dev-16",
+              "dev-17",
+              "dev-18",
+              "dev-19",
+              "dev-20",
+              "dev-21",
+              "dev-22",
+              "dev-23",
+              "dev-24"
+            ]
+          }
+        }
+      ]
+    },
+    {
+      "id": "discard",
+      "components": [
+        {
+          "type": "position",
+          "data": {
+            "x": 0,
+            "y": 0
+          }
+        },
+        {
+          "type": "faces",
+          "data": {
+            "names": [
+              "已使用"
+            ],
+            "resources": [],
+            "up": true
+          }
+        },
+        {
+          "type": "properties",
+          "data": {
+            "viewHidden": 1
+          }
+        },
+        {
+          "type": "container",
+          "data": {
+            "capacity": 24,
+            "ordered": true,
+            "contents": []
+          }
+        }
+      ]
+    },
+    {
+      "id": "die-1",
+      "components": [
+        {
+          "type": "position",
+          "data": {
+            "x": 800,
+            "y": 175
+          }
+        },
+        {
+          "type": "faces",
+          "data": {
+            "names": [
+              "骰子",
+              "骰子",
+              "骰子",
+              "骰子",
+              "骰子",
+              "骰子"
+            ],
+            "resources": [
+              "dice-1",
+              "dice-2",
+              "dice-3",
+              "dice-4",
+              "dice-5",
+              "dice-6"
+            ],
+            "up": true
+          }
+        },
+        {
+          "type": "properties",
+          "data": {
+            "value": 1,
+            "viewStyle": 1,
+            "viewWidth": 48,
+            "viewHeight": 48,
+            "viewLayer": 5,
+            "viewLabel": 0
+          }
+        },
+        {
+          "type": "dice",
+          "data": {
+            "values": [
+              1,
+              2,
+              3,
+              4,
+              5,
+              6
+            ]
+          }
+        }
+      ]
+    },
+    {
+      "id": "die-2",
+      "components": [
+        {
+          "type": "position",
+          "data": {
+            "x": 862,
+            "y": 175
+          }
+        },
+        {
+          "type": "faces",
+          "data": {
+            "names": [
+              "骰子",
+              "骰子",
+              "骰子",
+              "骰子",
+              "骰子",
+              "骰子"
+            ],
+            "resources": [
+              "dice-1",
+              "dice-2",
+              "dice-3",
+              "dice-4",
+              "dice-5",
+              "dice-6"
+            ],
+            "up": true
+          }
+        },
+        {
+          "type": "properties",
+          "data": {
+            "value": 1,
+            "viewStyle": 1,
+            "viewWidth": 48,
+            "viewHeight": 48,
+            "viewLayer": 5,
+            "viewLabel": 0
+          }
+        },
+        {
+          "type": "dice",
+          "data": {
+            "values": [
+              1,
+              2,
+              3,
+              4,
+              5,
+              6
+            ]
+          }
+        }
+      ]
+    },
+    {
+      "id": "match",
+      "components": [
+        {
+          "type": "position",
+          "data": {
+            "x": 470,
+            "y": 42
+          }
+        },
+        {
+          "type": "faces",
+          "data": {
+            "names": [
+              "群岛开拓  /  ISLAND SETTLERS\n第 {round}/12 轮  ·  7 分获胜  ·  骰子 {lastRoll} 点  ·  简化规则 / M3 总体示例"
+            ],
+            "resources": [],
+            "up": true
+          }
+        },
+        {
+          "type": "properties",
+          "data": {
+            "viewStyle": 3,
+            "viewWidth": 860,
+            "viewHeight": 70,
+            "viewLayer": 6,
+            "viewLabel": 1,
+            "viewColor": 14928007,
+            "setup": 0,
+            "lastVertex": 0,
+            "round": 1,
+            "turns": 0,
+            "actions": 0,
+            "auction": 1,
+            "robber": 10,
+            "lastRoll": 0,
+            "auctionWinner": 0,
+            "auctionPrice": 0,
+            "targetScore": 7,
+            "maxRounds": 12
+          }
+        }
+      ]
+    },
+    {
+      "id": "guide",
+      "components": [
+        {
+          "type": "position",
+          "data": {
+            "x": 470,
+            "y": 592
+          }
+        },
+        {
+          "type": "faces",
+          "data": {
+            "names": [
+              "道路 木1砖1  ·  村庄 木1砖1羊1麦1  ·  城市 麦2矿3"
+            ],
+            "resources": [],
+            "up": true
+          }
+        },
+        {
+          "type": "properties",
+          "data": {
+            "viewStyle": 1,
+            "viewWidth": 700,
+            "viewHeight": 28,
+            "viewLayer": 5,
+            "viewLabel": 1,
+            "viewColor": 14145724
+          }
+        }
+      ]
+    },
+    {
+      "id": "trade-counter",
+      "components": [
+        {
+          "type": "position",
+          "data": {
+            "x": 833,
+            "y": 280
+          }
+        },
+        {
+          "type": "faces",
+          "data": {
+            "names": [
+              "港口成交\n{wasm.counter} 次"
+            ],
+            "resources": [],
+            "up": true
+          }
+        },
+        {
+          "type": "properties",
+          "data": {
+            "viewStyle": 3,
+            "viewWidth": 140,
+            "viewHeight": 74,
+            "viewLayer": 5,
+            "viewLabel": 1,
+            "viewColor": 14928007
+          }
+        },
+        {
+          "type": "wasm.counter",
+          "data": {
+            "value": 0,
+            "min": 0,
+            "max": 1000
+          }
+        }
+      ]
+    }
+  ]
+}

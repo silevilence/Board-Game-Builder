@@ -22,6 +22,37 @@ public static class ScenePainter
         foreach(var item in (peek==null?scene.Items:scene.Items.Append(peek)).Where(i=>i.Kind!="tablecloth"))
         {
             var b=item.Bounds;
+            if(item.Kind is "sprite" or "line" or "panel")
+            {
+                var tint=new Color((item.Color>>16)&255,(item.Color>>8)&255,item.Color&255);
+                var rect=new Rectangle((int)b.X,(int)b.Y,(int)b.Width,(int)b.Height);
+                var cx=rect.Center.X;var cy=rect.Center.Y;
+                if(item.Entity!=null && (item.Entity==selected || item.Entity==target)) Outline(renderer,new(rect.X-3,rect.Y-3,rect.Width+6,rect.Height+6),new Color(255,224,125),2);
+                if(item.Kind=="panel")
+                {
+                    renderer.Box(new(rect.X+3,rect.Y+4,rect.Width,rect.Height),new Color(8,23,31,140));
+                    renderer.Box(rect,new Color(27,51,60));
+                    renderer.Box(new(rect.X,rect.Y,3,rect.Height),tint);
+                    renderer.Text(item.Label,rect.X+12,rect.Y+10,tint,14);
+                }
+                else if(item.Kind=="line")
+                {
+                    var from=new Vector2(cx-item.LineX/2f,cy-item.LineY/2f);var to=new Vector2(cx+item.LineX/2f,cy+item.LineY/2f);
+                    for(var offset=-2;offset<=2;offset++) renderer.Line(from+new Vector2(offset,0),to+new Vector2(offset,0),tint);
+                }
+                else
+                {
+                    if(item.Resource!=null) renderer.Image(item.Resource,scene.Resources,rect);
+                    if(rect.Width<=44) renderer.Box(new(rect.X,rect.Bottom-3,rect.Width,3),tint);
+                    if(item.Label.Length>0)
+                    {
+                        if(item.Resource!=null && rect.Width>44) renderer.Box(new(cx-36,cy+item.LabelY-1,76,23),new Color(18,40,45,215));
+                        if(rect.Width<=20 && item.Resource==null) renderer.Box(rect,new Color(18,40,45));
+                        renderer.Text(item.Label,rect.Width<=44?cx-item.Label.Length*3:item.Resource!=null?cx-32:rect.X,cy+item.LabelY,tint,rect.Width<=44?10:13);
+                    }
+                }
+                continue;
+            }
             var color=item.Kind switch { "region"=>new Color(27,66,72),"back"=>new Color(63,89,114),"piece"=>new Color(34,49,60),_=>new Color(234,209,157) };
             if(item.Entity!=null && item.Entity==target) color=new Color(47,114,97);
             if(item.Entity!=null && item.Entity==selected) renderer.Box(new((int)b.X-3,(int)b.Y-3,(int)b.Width+6,(int)b.Height+6),new Color(255,196,74));

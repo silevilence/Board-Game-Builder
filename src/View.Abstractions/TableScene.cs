@@ -5,7 +5,7 @@ public sealed record TableRect(float X,float Y,float Width,float Height)
 {
     public bool Contains(float x,float y) => x>=X && y>=Y && x<X+Width && y<Y+Height;
 }
-public sealed record TableItem(string? Entity, string Kind, string Label, TableRect Bounds, string? Resource=null,double PositionX=0,double PositionY=0,BoardLayout? Layout=null,string? Detail=null,string? Container=null,int Hotkey=0,int Mark=0,float SlotHeight=0)
+public sealed record TableItem(string? Entity, string Kind, string Label, TableRect Bounds, string? Resource=null,double PositionX=0,double PositionY=0,BoardLayout? Layout=null,string? Detail=null,string? Container=null,int Hotkey=0,int Mark=0,float SlotHeight=0,int Color=0xE3C887,int Layer=0,int LineX=0,int LineY=0,int LabelY=0)
 {
     public (double X,double Y) MoveBy(float dx,float dy)
     {
@@ -57,6 +57,23 @@ public sealed record TableScene(IReadOnlyList<TableItem> Items, IReadOnlyDiction
         foreach(var e in projection.Entities.Where(e=>!e.IsContainer && e.Container==null && e.Properties.GetValueOrDefault("viewHidden")!=1 && e.Properties.GetValueOrDefault("viewTablecloth")!=1))
         {
             var label=e.Face ?? e.Id;
+            // Data-driven labels and sprites keep game-specific UI out of the shared renderer.
+            var style=e.Properties.GetValueOrDefault("viewStyle");
+            if(style is >=1 and <=3)
+            {
+                foreach(var p in e.Properties) label=label.Replace("{"+p.Key+"}",p.Value.ToString(System.Globalization.CultureInfo.InvariantCulture));
+                var pos=projection.Layout?.World(e.X,e.Y) ?? (e.X,e.Y);
+                var w=Math.Clamp(e.Properties.GetValueOrDefault("viewWidth",48),4,2000);
+                var h=Math.Clamp(e.Properties.GetValueOrDefault("viewHeight",48),4,2000);
+                var resource=e.Properties.GetValueOrDefault("viewNoImage")==1?null:e.Resource;
+                if(resource!=null && resources!=null && resources.TryGetValue(resource,out var sprite)) used[resource]=sprite;
+                items.Add(new(e.Properties.GetValueOrDefault("viewPassive")==1?null:e.Id,style==2?"line":style==3?"panel":"sprite",
+                    e.Properties.GetValueOrDefault("viewLabel")==1?label:"",new((float)pos.Item1-w/2f,(float)pos.Item2-h/2f,w,h),resource,e.X,e.Y,projection.Layout,
+                    Color:e.Properties.GetValueOrDefault("viewColor",0xE3C887),Layer:e.Properties.GetValueOrDefault("viewLayer"),
+                    LineX:Math.Clamp(e.Properties.GetValueOrDefault("viewLineX"),-4000,4000),LineY:Math.Clamp(e.Properties.GetValueOrDefault("viewLineY"),-4000,4000),
+                    LabelY:e.Properties.GetValueOrDefault("viewLabelY",h/2+2)));
+                continue;
+            }
             var detail=e.Properties.Count>0?string.Join(" ",e.Properties.Select(p=>$"{p.Key}:{p.Value}")):null;
             if(projection.Layout==null && detail!=null) label+="  "+detail;
             if(e.Resource!=null && resources!=null && resources.TryGetValue(e.Resource,out var bytes)) used[e.Resource]=bytes;
@@ -64,6 +81,6 @@ public sealed record TableScene(IReadOnlyList<TableItem> Items, IReadOnlyDiction
             var bounds=point==null?new TableRect((float)e.X+30,(float)e.Y+40+(regions.Length+1)/2*235+loose++*48,360,40):new TableRect((float)point.Value.X-36,(float)point.Value.Y-24,76,48);
             items.Add(new(e.Id,"piece",label,bounds,e.Resource,e.X,e.Y,projection.Layout,projection.Layout==null?null:detail));
         }
-        return new(items,used,projection.Layout,classic);
+        return new(items.OrderBy(i=>i.Layer).ToArray(),used,projection.Layout,classic);
     }
 }
