@@ -5,6 +5,7 @@ try
 {
     tests.Add("local-table",LocalTableTests.Run);
     tests.Add("secrets",SecretTests.Run);
+    tests.Add("auction",AuctionTests.Run);
     if(args.Any(a=>!tests.ContainsKey(a))) throw new ArgumentException("Unknown test group.");
     foreach (var test in tests.Where(t => (args.Length == 0 && t.Key != "m2-gate" && t.Key != "export") || args.Contains(t.Key))) { test.Value(); Console.WriteLine($"PASS {test.Key}"); }
     return 0;

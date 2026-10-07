@@ -1,0 +1,21 @@
+{
+  "format": 1,
+  "id": "sealed-auction",
+  "version": "1.0.0",
+  "rules": "rules.lua",
+  "cpu": "cpu.lua",
+  "resources": {},
+  "seats": [
+    {"id":"p1","team":"one","controller":"human"},
+    {"id":"p2","team":"two","controller":"cpu"},
+    {"id":"p3","team":"three","controller":"cpu"}
+  ],
+  "phases": ["auction"],
+  "entities": [
+    {"id":"lot","components":[
+      {"type":"position","data":{"x":120,"y":120}},
+      {"type":"faces","data":{"names":["密封拍卖 · 最高价得标"],"up":true,"resources":[]}},
+      {"type":"properties","data":{"price":0,"winner":0}}
+    ]}
+  ]
+}
