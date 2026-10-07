@@ -19,6 +19,9 @@ public sealed partial class PlayerWindow : Window
     private readonly Button start=new() { Content="开始 / 重新开局",IsEnabled=false };
     private LoadedModule? module;
     private PlayBoard? board;
+    private LocalBoard? localBoard;
+    private readonly ComboBox mode=new() {Width=130,ItemsSource=new[] {"单人 + CPU","本地热座","同屏分视角"},SelectedIndex=0};
+    private readonly TextBox localHumans=new() {Width=140,PlaceholderText="真人席位，如 p1,p2"};
     private int generation;
     private uint? activeSeed;
     private bool classic;
@@ -26,7 +29,7 @@ public sealed partial class PlayerWindow : Window
     private readonly WrapPanel top=new() {Orientation=Orientation.Horizontal,Margin=new Thickness(10)};
     public PlayerWindow(string? initial=null,string? smoke=null,string? smokeActions=null)
     {
-        Title="Board Game Builder · 单人 Player"; Width=1200; Height=880; MinWidth=800; MinHeight=600;
+        Title="Board Game Builder · 本地 Player"; Width=1200; Height=880; MinWidth=800; MinHeight=600;
         path.Text=initial ?? (File.Exists(Path.Combine(AppContext.BaseDirectory,"game.bgm"))?Path.Combine(AppContext.BaseDirectory,"game.bgm"):"samples/quick-cards");
         var load=new Button { Content="加载" }; load.Click+=async (_,_)=>await Load();
         var browse=new Button { Content="选择文件" }; browse.Click+=async (_,_)=>
@@ -35,11 +38,12 @@ public sealed partial class PlayerWindow : Window
             if(files.Count==1 && files[0].TryGetLocalPath() is {} file) { path.Text=Path.GetFileName(file)=="module.json"?Path.GetDirectoryName(file):file; await Load(); }
         };
         start.Click+=async (_,_)=>await Start();
-        var stop=new Button { Content="结束对局" }; stop.Click+=(_,_)=> { generation++; board?.Dispose(); board=null; play.Content=null; message.Text="对局已结束，可重新开局。"; start.IsEnabled=module!=null; };
+        var stop=new Button { Content="结束对局" }; stop.Click+=(_,_)=> { generation++; localBoard?.Dispose();localBoard=null; board?.Dispose(); board=null; play.Content=null; message.Text="对局已结束，可重新开局。"; start.IsEnabled=module!=null; };
         foreach(var control in new Control[] {path,browse,load,new TextBlock {Text=" 真人：",VerticalAlignment=VerticalAlignment.Center},seat,new TextBlock {Text=" 种子：",VerticalAlignment=VerticalAlignment.Center},seed,start,stop}) { control.Margin=new Thickness(3); top.Children.Add(control); }
+        top.Children.Add(mode);top.Children.Add(localHumans);
         classicBar.Child=ClassicMenu();
         var root=new DockPanel(); DockPanel.SetDock(classicBar,Dock.Top); DockPanel.SetDock(top,Dock.Top); DockPanel.SetDock(message,Dock.Top); root.Children.Add(classicBar); root.Children.Add(top); root.Children.Add(message); root.Children.Add(play); Content=root;
-        Closed+=(_,_)=> { generation++; board?.Dispose(); };
+        Closed+=(_,_)=> { generation++; board?.Dispose();localBoard?.Dispose(); };
         TableKeyInput.Attach(this,key=>
         {
             if(key is "new-game" or "restart" or "choose-seed" || board==null && key=="confirm") _=HostKey(key);
@@ -63,12 +67,14 @@ public sealed partial class PlayerWindow : Window
     private async Task Load()
     {
         var current=++generation; board?.Dispose(); board=null; play.Content=null; module=null; activeSeed=null; start.IsEnabled=false;
+        localBoard?.Dispose();localBoard=null;
         var location=path.Text ?? ""; message.Text="正在加载模块…";
         try
         {
             var loaded=await Task.Run(()=>ModulePackage.Load(location));
             if(current!=generation) return;
             module=loaded; seat.ItemsSource=loaded.Initial.Seats.Select(s=>s.Id).ToArray(); seat.SelectedIndex=0;
+            localHumans.Text=string.Join(",",loaded.Initial.Seats.Select(s=>s.Id));
             classic=loaded.Initial.Entities.Values.Any(e=>e.Properties.GetValueOrDefault("viewTheme")==1);
             classicBar.IsVisible=classic; top.IsVisible=!classic; message.IsVisible=!classic;
             RequestedThemeVariant=classic?Avalonia.Styling.ThemeVariant.Light:Avalonia.Styling.ThemeVariant.Default;
@@ -83,8 +89,16 @@ public sealed partial class PlayerWindow : Window
         if(module==null || seat.SelectedItem is not string human) return;
         if(!uint.TryParse(seed.Text,out var value)) { message.Text="种子必须是 0 至 4294967295 的整数。"; return; }
         var current=++generation; var loaded=module; board?.Dispose(); board=null; play.Content=null; start.IsEnabled=false; message.Text="正在开始新对局…";
+        localBoard?.Dispose();localBoard=null;
         try
         {
+            if(mode.SelectedIndex>0 && !classic)
+            {
+                var humans=(localHumans.Text ?? "").Split(',',StringSplitOptions.TrimEntries|StringSplitOptions.RemoveEmptyEntries);
+                if(humans.Length==0 || humans.Any(id=>!loaded.Initial.Seats.Any(s=>s.Id==id))) throw new InvalidDataException("请输入有效的真人席位，以逗号分隔；其余席位由 CPU 控制。");
+                localBoard=new(loaded,value,loaded.Initial.Seats.ToDictionary(s=>s.Id,s=>humans.Contains(s.Id)?"human":"cpu"),mode.SelectedIndex==1?LocalTableMode.HotSeat:LocalTableMode.SplitScreen);
+                play.Content=localBoard;activeSeed=value;message.Text="热座交接请移开视线；同屏各视口显示其控制席位。";await localBoard.PumpCpu();return;
+            }
             var session=await PlayerSession.CreateAsync(loaded,value,human);
             if(current!=generation) { session.Stop(); return; }
             activeSeed=value; board=new(session,loaded); board.HostShortcut+=key=>_=HostKey(key); play.Content=board;
