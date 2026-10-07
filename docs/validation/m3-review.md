@@ -41,3 +41,10 @@ Editor 使用的 DebugSession 中加载；错误版本、哈希、权限、第�
 `samples/wasm-counter` 可在配置及 Lua 使用扩展；可选 `author.extensions` 面板管理组件草稿。
 正式 Player 已自包含发布到 `artifacts/m3/player-release`，由其导出到 `wasm-export`。
 `artifacts/m3/wasm-gui.json` 记录该导出真实窗口的两局终局，最终属性为 3，无编辑器依赖。
+
+## WASM 隔离与限制
+
+`wasm-isolation` 使用真实二进制覆盖 WASI 文件访问、伪造隐藏真值 host import、
+初始化死循环／异常、初始内存超额、运行时 memory.grow 超额、线性内存越界及无权注册。
+命令中的死循环／异常／超范围返回均拒绝且权威哈希不变、效果日志为空；随后正常插件仍可执行。
+同一模块最多 32 个插件，每个实例受 fuel／内存／表限制。此接口无状态内存句柄。

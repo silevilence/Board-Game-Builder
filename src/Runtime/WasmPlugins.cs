@@ -17,7 +17,9 @@ public sealed class WasmPlugins : IDisposable
         engine=new Engine(config);
         try
         {
-            foreach(var original in definitions ?? [])
+            var declared=(definitions ?? []).Take(33).ToArray();
+            if(declared.Length>32) throw new InvalidDataException("At most 32 WASM plugins are permitted");
+            foreach(var original in declared)
             {
                 var d=Wire.Copy(original);
                 ModulePackage.ValidateDependencies([new(d.Id,d.Version,d.Api,Kind:"wasm",File:d.File,Sha256:d.Sha256,Permissions:d.Permissions)]);

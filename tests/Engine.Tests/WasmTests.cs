@@ -32,6 +32,9 @@ public static class WasmTests
         Check.Throws(()=>new WasmPlugins([Plugin("(module (import \"host\" \"authority\" (func)))")]),"imports");
         Check.Throws(()=>new WasmPlugins([Plugin(prefix+"(func (export \"bgb_init\") (result i32) (loop $forever br $forever) i32.const 0))")]),"fuel");
         Check.Throws(()=>new WasmPlugins([Plugin(prefix+"(memory 65) (func (export \"bgb_init\") (result i32) i32.const 0))")]),"memory");
+        Check.Throws(()=>new WasmPlugins([Plugin(prefix+"(memory 1) (func (export \"bgb_init\") (result i32) i32.const 100 memory.grow))")]),"registration");
+        Check.Throws(()=>new WasmPlugins([Plugin(prefix+"(memory 1) (func (export \"bgb_init\") (result i32) i32.const 1000000 i32.load))")]),"memory");
+        Check.Throws(()=>new WasmPlugins(Enumerable.Repeat(Plugin(),33)),"32");
         Check.Throws(()=>new WasmPlugins([Plugin(prefix+"(func (export \"bgb_init\") (result i32) unreachable))")]),"unreachable");
         Check.Throws(()=>new WasmPlugins([Plugin(prefix+"(func (export \"bgb_init\") (result i32) i32.const 1))")]),"registration");
         var normal=DirectoryModule.Load("samples/wasm-counter");
