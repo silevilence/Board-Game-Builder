@@ -23,15 +23,16 @@ public sealed class PlayBoard : UserControl,IDisposable
     private string? hostError;
     private SoundEffect? tone;
     public SessionFrame Frame=>session.Frame;
+    internal bool ActionsVisible=>side.IsVisible;
     public event Action<string>? HostShortcut;
-    public PlayBoard(PlayerSession session,LoadedModule module)
+    public PlayBoard(PlayerSession session,LoadedModule module,bool showActions=true)
     {
         this.session=session; this.module=module;
         classic=TableScene.From(session.Frame.View).ClassicCards;
         var panel=new DockPanel();
         if(classic)
         {
-            side.IsVisible=false; side.Background=new SolidColorBrush(Color.Parse("#e3e3d9"));
+            side.Background=new SolidColorBrush(Color.Parse("#e3e3d9"));
             side.Children.Add(new ScrollViewer {Content=actions});
             status.FontSize=13; status.Margin=new Thickness(10,5); status.VerticalAlignment=Avalonia.Layout.VerticalAlignment.Center;
             var footer=new DockPanel {Background=new SolidColorBrush(Color.Parse("#d4d0c8")),MinHeight=34};
@@ -40,6 +41,7 @@ public sealed class PlayBoard : UserControl,IDisposable
         }
         else
         { DockPanel.SetDock(status,Dock.Top); side.Children.Add(status); DockPanel.SetDock(sound,Dock.Bottom); side.Children.Add(sound); side.Children.Add(new ScrollViewer {Content=actions}); }
+        side.IsVisible=showActions;
         DockPanel.SetDock(side,Dock.Right); panel.Children.Add(side); panel.Children.Add(table); Content=panel;
         table.Gesture+=g=> { _=Act(new(g.Kind,g.Entity,g.Target,g.X,g.Y),session.Frame.Revision); };
         table.SelectionChanged+=RefreshActions;

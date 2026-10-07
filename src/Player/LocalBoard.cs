@@ -13,29 +13,31 @@ public sealed class LocalBoard : UserControl,IDisposable
     private readonly Grid views=new();
     private readonly List<InteractiveTable> tables=[];
     private bool disposed,busy;
+    private bool showActions;
+    private readonly List<ScrollViewer> sidebars=[];
     internal LocalTableFrame Frame=>session.Frame;
     internal int LiveTables=>tables.Count;
     internal int RenderedFrames=>tables.Sum(t=>t.RenderedFrames);
-    public static async Task<LocalBoard> Create(LoadedModule module,uint seed,IReadOnlyDictionary<string,string> controllers,LocalTableMode mode)
+    internal bool ActionsVisible=>showActions;
+    public static async Task<LocalBoard> Create(LoadedModule module,uint seed,IReadOnlyDictionary<string,string> controllers,LocalTableMode mode,bool showActions=true)
     {
         var session=await Task.Run(()=>new LocalTableSession(module,seed,controllers,mode));
-        try {return new(module,session);}catch {session.Dispose();throw;}
+        try {return new(module,session,showActions);}catch {session.Dispose();throw;}
     }
-    private LocalBoard(LoadedModule module,LocalTableSession session)
+    private LocalBoard(LoadedModule module,LocalTableSession session,bool showActions)
     {
-        this.module=module;this.session=session;
+        this.module=module;this.session=session;this.showActions=showActions;
         var root=new DockPanel();DockPanel.SetDock(header,Dock.Top);root.Children.Add(header);root.Children.Add(views);Content=root;
         Refresh();
     }
     private void Clear()
     {
         foreach(var table in tables) {table.InputEnabled=false;table.Show(new([],new Dictionary<string,byte[]>()));table.Dispose();}
-        tables.Clear();views.Children.Clear();views.ColumnDefinitions.Clear();header.Children.Clear();
+        tables.Clear();sidebars.Clear();views.Children.Clear();views.ColumnDefinitions.Clear();header.Children.Clear();
     }
     private void Refresh()
     {
         Clear();if(disposed) return;
-        header.Children.Add(new TextBlock {Text="本地多人 · 同屏内容可被旁观；身份投影隔离数据，不能阻止旁观屏幕。"});
         var frame=session.Frame;
         if(frame.Ended) header.Children.Add(new TextBlock {Text="对局结束 · 胜者："+string.Join("、",frame.Winners ?? []),FontSize=22,Margin=new Avalonia.Thickness(12)});
         if(frame.Fault!=null) header.Children.Add(new TextBlock {Text="对局故障："+frame.Fault.Code+" · "+frame.Fault.Detail});
@@ -55,7 +57,8 @@ public sealed class LocalBoard : UserControl,IDisposable
             var column=tables.Count;views.ColumnDefinitions.Add(new ColumnDefinition());
             var panel=new DockPanel();Grid.SetColumn(panel,column);views.Children.Add(panel);
             var controls=new StackPanel {Spacing=6,Margin=new Avalonia.Thickness(8)};
-            var sidebar=new ScrollViewer {Content=controls,Width=270};DockPanel.SetDock(sidebar,Dock.Right);panel.Children.Add(sidebar);
+            var sidebar=new ScrollViewer {Content=controls,Width=270,IsVisible=showActions};sidebars.Add(sidebar);DockPanel.SetDock(sidebar,Dock.Right);panel.Children.Add(sidebar);
+            var identity=new TextBlock {Text="控制席位："+seat.View.Seat,Margin=new Avalonia.Thickness(8,4)};DockPanel.SetDock(identity,Dock.Top);panel.Children.Add(identity);
             controls.Children.Add(new TextBlock {Text=$"控制席位：{seat.View.Seat} · 当前：{seat.View.CurrentSeat} · {seat.View.Phase}"});
             if(seat.View.Ended) controls.Children.Add(new TextBlock {Text="结算："+string.Join(", ",seat.View.Winners)});
             if(seat.Fault!=null) controls.Children.Add(new TextBlock {Text=seat.Fault.Detail});
@@ -81,6 +84,8 @@ public sealed class LocalBoard : UserControl,IDisposable
         if(!disposed) Refresh();
     }
     public Task PumpCpu()=>Run(()=>Task.CompletedTask);
+    public void Fit() {foreach(var table in tables) table.Fit();}
+    public void ToggleActions() {showActions=!showActions;foreach(var sidebar in sidebars) sidebar.IsVisible=showActions;}
     internal async Task VerifyStep()
     {
         var frame=session.Frame;

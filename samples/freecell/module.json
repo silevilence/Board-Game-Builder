@@ -5,6 +5,7 @@
   "rules": "rules.lua",
   "cpu": "cpu.lua",
   "resources": {
+    "player.presentation": "player.json",
     "card-01": "assets/card_clubs_A.png",
     "card-02": "assets/card_clubs_02.png",
     "card-03": "assets/card_clubs_03.png",

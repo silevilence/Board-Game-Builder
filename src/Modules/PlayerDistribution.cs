@@ -46,7 +46,7 @@ public static class PlayerDistribution
             progress?.Report("打包模块…");
             ModulePackage.Pack(moduleDirectory,Path.Combine(staging,"game.bgm"));
             File.Copy(Path.Combine(staging,"Player.exe"),Path.Combine(staging,"Play.exe"));
-            File.WriteAllText(Path.Combine(staging,"README.txt"),"Board Game Builder — Windows x64\r\n双击 Play.exe。选择真人席位和种子，点击开始；其余席位自动由 CPU 控制。\r\n右侧按钮执行规则动作；右键平移，滚轮或按钮缩放。\r\n使用结束对局停止故障对局，重新开局创建全新会话。\r\n无需编辑器、.NET SDK 或 .NET 运行时。需要 Direct3D 11 图形设备。\r\n");
+            File.WriteAllText(Path.Combine(staging,"README.txt"),"Board Game Builder — Windows x64\r\n双击 Play.exe，按模块默认席位直接进入游戏。\r\n游戏 → 开局设置（F3）可选择种子、真人／CPU 和本地模式；确认后开始新对局，取消保留当前对局。\r\n游戏菜单可新开、重开或结束对局；文件菜单可加载模块或显示工具栏。\r\n查看菜单可适应窗口、显示／隐藏动作栏；棋盘支持中键平移、滚轮缩放。\r\n热座交接时由下一位玩家确认接手；同屏模式可被旁观。\r\n需工具界面时运行 Play.exe gui --shell tools。\r\n无需编辑器、.NET SDK 或 .NET 运行时。需要 Direct3D 11 图形设备。\r\n");
             var module=ModulePackage.Load(Path.Combine(staging,"game.bgm"));
             File.WriteAllText(Path.Combine(staging,"versions.json"),Wire.Json(new {api=manifest.Api,player=manifest.Version,module=module.Id,module.Version,module.Fingerprint,rules=Wire.Hash(module.Rules),cpu=Wire.Hash(module.Cpu),kind="formal-player"}));
             var protectedFiles=Directory.GetFiles(staging,"*",SearchOption.AllDirectories).ToDictionary(p=>Path.GetRelativePath(staging,p).Replace('\\','/'),p=>ModulePackage.Hash(File.ReadAllBytes(p)));

@@ -7,7 +7,7 @@ root = Path(__file__).resolve().parents[1] / 'samples/island-settlers'
 root.mkdir(parents=True, exist_ok=True)
 (root/'assets').mkdir(exist_ok=True)
 archives = {name: ZipFile(Path(sys.argv[1])/f'kenney_{name}-pack.zip') for name in ['playing-cards','boardgame','hexagon']}
-resources, entities = {}, []
+resources, entities = {'player.presentation':'player.json'}, []
 def asset(key, pack, path):
     dest = 'assets/'+key+'.png'
     (root/dest).write_bytes(archives[pack].read(path)); resources[key]=dest

@@ -5,6 +5,7 @@
   "rules": "rules.lua",
   "cpu": "cpu.lua",
   "resources": {
+    "player.presentation": "player.json",
     "terrain-1": "assets/terrain-1.png",
     "terrain-2": "assets/terrain-2.png",
     "terrain-3": "assets/terrain-3.png",

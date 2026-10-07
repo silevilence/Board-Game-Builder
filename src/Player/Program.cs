@@ -5,7 +5,8 @@ internal static class Program
     [STAThread] private static int Main(string[] args)
     {
         if(args.Length==2 && args[0]=="--verify-local") return ViewportApp.Run("",[],()=>LocalTableVerification.Create(args[1]));
-        if(args.Length==2 && args[0]=="--verify-background") return ViewportApp.Run("",[],()=>new PlayerWindow("samples/quick-cards",verifyBackground:args[1]));
+        if(args.Length==2 && args[0]=="--verify-background") return ViewportApp.Run("",[],()=>new PlayerWindow("samples/quick-cards",verifyBackground:args[1],shell:PlayerShell.Tools));
+        if(args.Length==2 && args[0]=="--verify-shell") return ViewportApp.Run("",[],()=>new PlayerWindow("samples/quick-cards",verifyShell:args[1]));
 #if EDITOR_DEBUG
         if(args.FirstOrDefault()=="--editor-debug")
         {
@@ -15,10 +16,10 @@ internal static class Program
 #endif
         if(args.Length==0 || args[0]=="gui")
         {
-            var module=args.Length>1?args[1]:null;
-            var smoke=args.Length>=4 && args[2]=="--smoke"?args[3]:null;
-            var actions=args.Length==6 && args[4]=="--actions"?args[5]:null;
-            return ViewportApp.Run("",[],()=>new PlayerWindow(module,smoke,actions));
+            PlayerLaunch launch;
+            try {launch=PlayerLaunch.Parse(args.Length==0?[]:args[1..]);}
+            catch(ArgumentException error) {Console.Error.WriteLine(error.Message);return 2;}
+            return ViewportApp.Run("",[],()=>new PlayerWindow(launch.Module,launch.Smoke,launch.Actions,shell:launch.Shell));
         }
         if(args.Length>0 && args[0]=="viewport") return ViewportApp.Run("Board Game Builder — Player viewport probe",args[1..]);
         if(args.Length==2 && args[0]=="table") return ViewportApp.Run("",[],()=>TablePreview.Create(args[1]));
