@@ -10,3 +10,4 @@
 - 需求在 ROADMAP.md，工单在 `.scratch/<功能>/issues/`；详见 [工单规范](docs/agents/issue-tracker.md)。
 - 工单使用五个默认分类状态；详见 [状态规范](docs/agents/triage-labels.md)。
 - 领域术语在 CONTEXT.md，架构决策在 `docs/adr/`；探索代码前按 [领域文档规范](docs/agents/domain.md) 读取，文件不存在时直接继续。
+- 涉及编辑器功能新增、修改或修复时，自动使用项目技能 [editor-cordis](.agents/skills/editor-cordis/SKILL.md)；纯引擎、共享 Runtime 或 Player 功能不触发。
