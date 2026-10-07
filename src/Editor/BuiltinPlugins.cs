@@ -50,6 +50,8 @@ public static class BuiltinPlugins
         Panel("author.extensions","WASM 媒介",scope=>new ExtensionPanel(scope));
         app.Install(new("author.images",1,[],["documents","commands","panels"],scope=>
             scope.Service<PanelContributions>("panels").Register(scope,"author.images","图片与卡图导入",()=>new ImageImportPanel(scope))));
+        app.Install(new("author.tts",1,[],["documents","commands","panels"],scope=>
+            scope.Service<PanelContributions>("panels").Register(scope,"author.tts","TTS 导入",()=>new TtsImportPanel(scope))));
         app.Install(new("author.export",1,["exports"],["documents","contributions","panels","workspace"],scope=>
         {
             var workflow=new ExportWorkflow(scope.Service<DocumentWorkspace>("documents"),scope.Service<EditorContributions>("contributions"));scope.Provide("exports",workflow);

@@ -46,7 +46,15 @@ internal static class M3Verification
                     await app.Disable("author.images");
                     if(panels.Count!=baseline || commands.Items.Any(c=>c.Id.StartsWith("images."))) throw new Exception("Image registration leaked");
                 }
-                File.WriteAllText(output,Wire.Json(new {success=true,imageCycles=3,wasmWithoutUi=true}));
+                for(var cycle=0;cycle<3;cycle++)
+                {
+                    await app.Enable("author.tts");docs.EditForm("TTS 导入",Wire.Json(new[] {"samples/tts-subset/save.json","tts"}));
+                    await app.Reload("author.tts");await commands.Execute("tts.preview");await commands.Execute("tts.apply");
+                    if(docs.Current!.Snapshot().ResourceData!.Count!=5) throw new Exception("TTS UI conversion failed");
+                    docs.Current.Undo();await app.Disable("author.tts");
+                    if(panels.Count!=baseline || commands.Items.Any(c=>c.Id.StartsWith("tts."))) throw new Exception("TTS contributions leaked");
+                }
+                File.WriteAllText(output,Wire.Json(new {success=true,imageCycles=3,ttsCycles=3,wasmWithoutUi=true}));
                 docs.Set(null);
             }
             catch(Exception error) {File.WriteAllText(output,Wire.Json(new {success=false,error=error.ToString()}));host.Application.Service<DocumentWorkspace>("documents").Set(null);}

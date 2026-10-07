@@ -56,3 +56,10 @@ Editor 使用的 DebugSession 中加载；错误版本、哈希、权限、第�
 `Editor --verify-m3 artifacts/m3/editor-images.json` 在真实编辑器连续三轮启停图片插件，
 重建后草稿恢复、预览／应用／撤销及入口注销均通过；截图保存同名 `.png`。
 该入口同时确认禁用 WASM 配套 UI 后计数器仍可终局。
+
+## TTS 子集转换
+
+已固定用户确认的 `samples/tts-subset/save.json` 合成样例。`tts-import` 通过牌堆顺序、
+卡图切分、posX／posZ 映射、桌布、原始输入逐字节保留、命名冲突、Undo 与保存重开。
+不支持对象、未转换字段及远程／缺失图片出现在预览报告中，Lua 原样留档不执行。
+`artifacts/m3/editor-tts.json` 通过真实 TTS 面板三轮重建、转换、撤销与命令注销。

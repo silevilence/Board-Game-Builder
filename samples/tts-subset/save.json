@@ -1,0 +1,15 @@
+{
+  "SaveName":"M3 synthetic import fixture",
+  "TableURL":"cards.png",
+  "LuaScript":"error('SOURCE SCRIPTS MUST NEVER RUN')",
+  "ObjectStates":[
+    {"Name":"Card","GUID":"plain1","Nickname":"普通卡牌","CardID":0,"Transform":{"posX":1,"posZ":2}},
+    {"Name":"DeckCustom","GUID":"deck01","Nickname":"本地自定义牌堆","DeckIDs":[100,101],
+      "Transform":{"posX":3,"posZ":4},
+      "CustomDeck":{"1":{"FaceURL":"cards.png","BackURL":"cards.png","NumWidth":2,"NumHeight":2}},
+      "ContainedObjects":[{"Name":"CardCustom","GUID":"card01","CardID":100,"Nickname":"橙色卡"},{"Name":"CardCustom","GUID":"card02","CardID":101,"Nickname":"另一张卡"}]},
+    {"Name":"Deck","GUID":"deck02","DeckIDs":[2,3]},
+    {"Name":"CardCustom","GUID":"remote","CardID":200,"CustomDeck":{"2":{"FaceURL":"https://example.invalid/cards.png","NumWidth":1,"NumHeight":1}}},
+    {"Name":"Custom_Model","GUID":"model1","LuaScript":"error('never run')"}
+  ]
+}

@@ -6,6 +6,24 @@ using System.Drawing.Imaging;
 namespace Engine.Tests;
 public static class ImportTests
 {
+    public static void Tts() {if(OperatingSystem.IsWindowsVersionAtLeast(6,1)) TtsWindows();}
+    [System.Runtime.Versioning.SupportedOSPlatform("windows6.1")]
+    private static void TtsWindows()
+    {
+        var doc=ModuleDocument.Create();var initial=doc.Revision;
+        var preview=TtsImport.Preview(doc,"samples/tts-subset/save.json","tts");
+        Check.That(preview.Report.Any(r=>r.Contains("远程")) && preview.Report.Any(r=>r.Contains("Custom_Model")) && preview.Report.Any(r=>r.Contains("LuaScript")));
+        Check.That(doc.Revision==initial);preview.Apply(doc);var module=doc.Snapshot();
+        Check.That(module.Initial.Entities["tts-001"].X==100 && module.Initial.Entities["tts-001"].Y==200);
+        Check.That(module.Initial.Entities["tts-002"].Contents.SequenceEqual(new[] {"tts-003","tts-004"}));
+        Check.That(module.ResourceData!.Count==5);
+        Check.That(doc.Bytes("imports/tts-source.json").SequenceEqual(File.ReadAllBytes("samples/tts-subset/save.json")));
+        Check.Throws(()=>TtsImport.Preview(doc,"samples/tts-subset/save.json","tts"),"冲突");
+        doc.Undo();Check.That(initial==doc.Revision);doc.Redo();
+        var directory=Path.Combine(Path.GetTempPath(),"bgb-tts-"+Guid.NewGuid());
+        try {doc.Save(directory);Check.That(ModuleDocument.Open(directory).Snapshot().Fingerprint==module.Fingerprint);}
+        finally {if(Directory.Exists(directory)) Directory.Delete(directory,true);}
+    }
     public static void Images() {if(OperatingSystem.IsWindowsVersionAtLeast(6,1)) ImagesWindows();}
     [System.Runtime.Versioning.SupportedOSPlatform("windows6.1")]
     private static void ImagesWindows()
