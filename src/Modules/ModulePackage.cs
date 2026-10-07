@@ -41,7 +41,8 @@ public static class ModulePackage
                    d.File==null || !d.File.EndsWith(".wasm",StringComparison.Ordinal) || d.Sha256==null || d.Sha256.Length!=64 || !d.Sha256.All(Uri.IsHexDigit))
                     throw new InvalidDataException($"plugins[{d.Id}]: incompatible WASM API/version/file/hash");
                 ValidatePath(d.File);
-                if(d.Permissions is {Count:>0}) throw new InvalidDataException($"plugins[{d.Id}]: unsupported permission");
+                if(d.Id.Any(c=>!char.IsAsciiLetterOrDigit(c) && c!='-' && c!='_')) throw new InvalidDataException($"plugins[{d.Id}]: invalid WASM identity");
+                if(d.Permissions!=null && (d.Permissions.Distinct().Count()!=d.Permissions.Count || d.Permissions.Any(p=>p is not ("component" or "command" or "snap" or "container")))) throw new InvalidDataException($"plugins[{d.Id}]: unsupported permission");
                 continue;
             }
             if(d.Kind is not (null or "native")) throw new InvalidDataException($"plugins[{d.Id}]: unsupported plugin kind");

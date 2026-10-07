@@ -34,3 +34,10 @@ Lua 通过 `secret-open` 声明参与席位、数值范围、可修改性、逻�
 固定 Wasmtime 48.0.2；`wasm packages replay` 通过。真实 WASM 在 PlaySession 与
 Editor 使用的 DebugSession 中加载；错误版本、哈希、权限、第三方原生依赖、
 缺失文件均失败；数据包往返保留指纹，运行时插件变更必须重开会话。
+
+## WASM 媒介扩展
+
+`wasm-extensions` 通过计数器三步终局、标准效果回放、数据包往返、整数吸附和隐藏目标拒绝。
+`samples/wasm-counter` 可在配置及 Lua 使用扩展；可选 `author.extensions` 面板管理组件草稿。
+正式 Player 已自包含发布到 `artifacts/m3/player-release`，由其导出到 `wasm-export`。
+`artifacts/m3/wasm-gui.json` 记录该导出真实窗口的两局终局，最终属性为 3，无编辑器依赖。

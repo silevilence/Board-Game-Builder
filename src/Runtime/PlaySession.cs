@@ -37,7 +37,7 @@ public sealed class PlaySession : IDisposable
         try
         {
             if(module.RuntimePlugins!=null) plugins=new WasmPlugins(module.RuntimePlugins);
-            engine.ReplaceRules(new LuaRules(module.Rules,module.RulesPath,seed,worker));
+            engine.ReplaceRules(CreateRules(module));
         }
         catch {plugins?.Dispose();worker.Dispose();throw;}
     }
@@ -106,9 +106,14 @@ public sealed class PlaySession : IDisposable
             probe.Invoke(candidate.Cpu,candidate.CpuPath,"__validate_cpu","{}",seed);
         }
         var next=Wire.Copy(candidate);
-        engine.ReplaceRules(new LuaRules(next.Rules,next.RulesPath,seed,worker)); module=next;
+        engine.ReplaceRules(CreateRules(next)); module=next;
         versions[next.Fingerprint]=Wire.Copy(next); switches.Add(new(engine.ExportLog().EntryCount,next.Fingerprint));
     }
     public SessionRecording ExportRecording() => SessionRecording.Create(engine.ExportLog(),switches,versions);
+    private IGameRules CreateRules(LoadedModule value)
+    {
+        var rules=new LuaRules(value.Rules,value.RulesPath,seed,worker);
+        return plugins==null?rules:new WasmRules(rules,plugins);
+    }
     public void Dispose() { if(disposed) return;disposed=true;worker.Dispose();plugins?.Dispose(); }
 }

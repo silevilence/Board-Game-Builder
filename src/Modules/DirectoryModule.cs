@@ -82,6 +82,24 @@ public static class DirectoryModule
                             entity.DiceFaces=data.GetProperty("values").EnumerateArray().Select(v=>v.GetInt32()).ToList();
                             if(entity.DiceFaces.Count==0) Fail($"{entity.Id}.dice: empty values"); break;
                         default:
+                            var type=Text(component,"type");
+                            var plugin=plugins.FirstOrDefault(p=>type=="wasm."+p.Id || type=="wasm."+p.Id+".container");
+                            if(plugin!=null)
+                            {
+                                if(type.EndsWith(".container",StringComparison.Ordinal) && plugin.Permissions.Contains("container"))
+                                {
+                                    if(entity.IsContainer) Fail($"{entity.Id}: duplicate container capability");
+                                    entity.IsContainer=true;entity.Capacity=data.GetProperty("capacity").GetInt32();entity.Ordered=data.GetProperty("ordered").GetBoolean();
+                                    entity.Contents=data.GetProperty("contents").EnumerateArray().Select(v=>v.GetString()!).ToList();
+                                }
+                                else if(type=="wasm."+plugin.Id && plugin.Permissions.Contains("component"))
+                                {
+                                    entity.Properties.Add(type,data.GetProperty("value").GetInt32());
+                                    entity.CounterBounds.Add(type,new(data.GetProperty("min").GetInt32(),data.GetProperty("max").GetInt32()));
+                                }
+                                else Fail($"{entity.Id}: WASM component permission missing");
+                                break;
+                            }
                             if (!component.TryGetProperty("required", out var required) || required.GetBoolean()) Fail($"$.entities[{entity.Id}].components: unknown required component {Text(component, "type")}");
                             break;
                     }

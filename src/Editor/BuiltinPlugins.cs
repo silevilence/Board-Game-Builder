@@ -47,6 +47,7 @@ public static class BuiltinPlugins
         Panel("author.prototypes","原型与实例",scope=>new AuthorPanel(scope));
         Panel("author.media","媒介组件",scope=>new MediaInspector(scope));
         Panel("author.turns","席位与阶段",scope=>new TurnPanel(scope));
+        Panel("author.extensions","WASM 媒介",scope=>new ExtensionPanel(scope));
         app.Install(new("author.export",1,["exports"],["documents","contributions","panels","workspace"],scope=>
         {
             var workflow=new ExportWorkflow(scope.Service<DocumentWorkspace>("documents"),scope.Service<EditorContributions>("contributions"));scope.Provide("exports",workflow);

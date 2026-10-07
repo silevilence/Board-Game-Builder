@@ -99,6 +99,9 @@ public sealed partial class GameEngine
         var entity = Access(state, actor, command.Entity,ruleEffect);
         switch (command.Kind)
         {
+            case "resize-container":
+                if(!entity.IsContainer || command.Value<entity.Contents.Count || command.Value>4096) throw new CommandRejected("invalid-capacity");
+                entity.Capacity=command.Value;break;
             case "roll":
                 if(entity.DiceFaces.Count==0) throw new CommandRejected("invalid-dice");
                 var diceRandom=state.RandomState;

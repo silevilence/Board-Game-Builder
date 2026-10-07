@@ -5,6 +5,47 @@ using Wasmtime;
 namespace Engine.Tests;
 public static class WasmTests
 {
+    public static void Extensions()
+    {
+        var module=DirectoryModule.Load("samples/wasm-counter");
+        using var session=new PlaySession(module,42);
+        for(var i=0;i<3;i++) Check.That(session.SubmitHuman("p1",session.Actions()[0].Command).Accepted);
+        Check.That(session.Ended && session.View("p1").Entities.Single().Properties["wasm.counter"]==3);
+        Check.That(Wire.Json(session.ExportRecording().Replay().Project("p1"))==Wire.Json(session.View("p1")));
+        var path=Path.Combine(Path.GetTempPath(),"wasm-"+Guid.NewGuid()+".bgm");
+        try {ModulePackage.Pack("samples/wasm-counter",path);using var packed=new PlaySession(ModulePackage.Load(path));Check.That(packed.Actions().Count==1);}
+        finally {File.Delete(path);}
+        var p=Plugin("""
+        (module (func (export "bgb_api") (result i32) i32.const 1) (func (export "bgb_version") (result i32) i32.const 1)
+          (func (export "bgb_init") (result i32) i32.const 12)
+          (func (export "bgb_snap") (param i32 i32) (result i32) local.get 1 i32.const 10 i32.div_s i32.const 10 i32.mul)
+          (func (export "bgb_container") (param i32 i32) (result i32) local.get 1))
+        """) with {Permissions=["snap","container"]};
+        using var runtime=new WasmPlugins([p]);var view=session.View("p1");
+        Check.That(runtime.Expand(view,new() {Kind="wasm.sample.snap",Entity="counter",X=24,Y=38}) is {X:20,Y:30});
+        Check.Throws(()=>runtime.Expand(view,new() {Kind="wasm.sample.snap",Entity="hidden"}),"visible");
+    }
+    public static void Isolation()
+    {
+        var prefix="(module (func (export \"bgb_api\") (result i32) i32.const 1) (func (export \"bgb_version\") (result i32) i32.const 1) ";
+        Check.Throws(()=>new WasmPlugins([Plugin("(module (import \"wasi_snapshot_preview1\" \"path_open\" (func)))")]),"imports");
+        Check.Throws(()=>new WasmPlugins([Plugin("(module (import \"host\" \"authority\" (func)))")]),"imports");
+        Check.Throws(()=>new WasmPlugins([Plugin(prefix+"(func (export \"bgb_init\") (result i32) (loop $forever br $forever) i32.const 0))")]),"fuel");
+        Check.Throws(()=>new WasmPlugins([Plugin(prefix+"(memory 65) (func (export \"bgb_init\") (result i32) i32.const 0))")]),"memory");
+        Check.Throws(()=>new WasmPlugins([Plugin(prefix+"(func (export \"bgb_init\") (result i32) unreachable))")]),"unreachable");
+        Check.Throws(()=>new WasmPlugins([Plugin(prefix+"(func (export \"bgb_init\") (result i32) i32.const 1))")]),"registration");
+        var normal=DirectoryModule.Load("samples/wasm-counter");
+        foreach(var body in new[] {"(loop $forever br $forever) i32.const 0","unreachable","i32.const 1000"})
+        {
+            var bad=Plugin(prefix+"(func (export \"bgb_init\") (result i32) i32.const 3) (func (export \"bgb_command\") (param i32 i32) (result i32) "+body+"))") with {Id="counter",Permissions=["component","command"]};
+            var module=normal with {RuntimePlugins=[bad]};module=module with {Fingerprint=ModuleSnapshot.Fingerprint(module)};
+            using var session=new PlaySession(module);var before=session.AuthorityStateHash();
+            Check.That(!session.SubmitHuman("p1",new() {Kind="add"}).Accepted);
+            Check.That(before==session.AuthorityStateHash(),"WASM failure partially committed");
+            Check.That(session.ExportAuthorityLog().Entries.Single().Effects.Count==0);
+        }
+        using var recovered=new PlaySession(normal);Check.That(recovered.SubmitHuman("p1",new() {Kind="add"}).Accepted);
+    }
     public static RuntimePlugin Plugin(string wat="(module (func (export \"bgb_api\") (result i32) i32.const 1) (func (export \"bgb_version\") (result i32) i32.const 1) (func (export \"bgb_init\") (result i32) i32.const 0))")
     {
         var bytes=Module.ConvertText(wat);return new("sample","1",1,"sample.wasm",ModulePackage.Hash(bytes),[],bytes);
