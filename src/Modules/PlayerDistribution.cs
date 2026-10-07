@@ -22,7 +22,9 @@ public static class PlayerDistribution
         using(var executable=File.OpenRead(Path.Combine(release,"Player.exe")))
         using(var pe=new System.Reflection.PortableExecutable.PEReader(executable))
             if(pe.PEHeaders.PEHeader?.Subsystem!=System.Reflection.PortableExecutable.Subsystem.WindowsGui) throw new InvalidDataException("Player.exe: console subsystem is forbidden in formal exports");
-        _=DirectoryModule.Load(moduleDirectory);
+        var module=DirectoryModule.Load(moduleDirectory);
+        if(module.RuntimePlugins is {Count:>0} && (!manifest.Files.ContainsKey("Wasmtime.Dotnet.dll") || !manifest.Files.ContainsKey("wasmtime.dll")))
+            throw new InvalidDataException("release.json: Player release is missing the WASM runtime; use an updated official Player distribution");
         return manifest;
     }
     public static void Export(string release,string moduleDirectory,string destination,Action<string>? additionalSteps=null,IProgress<string>? progress=null)

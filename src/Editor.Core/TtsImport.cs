@@ -11,11 +11,12 @@ public static class TtsImport
     public static ImportPreview Preview(ModuleDocument document,string file,string prefix)
     {
         if(string.IsNullOrWhiteSpace(prefix) || prefix.Length>60 || prefix.Any(c=>!char.IsAsciiLetterOrDigit(c) && c is not ('-' or '_'))) throw new InvalidDataException("导入名称无效");
+        if(new FileInfo(file).Length>8*1024*1024) throw new InvalidDataException("TTS 存档超过 8 MiB");
         var input=File.ReadAllBytes(file);if(input.Length>8*1024*1024) throw new InvalidDataException("TTS 存档超过 8 MiB");
         var save=JsonNode.Parse(input)!.AsObject();var root=document.Configuration;var entities=root["entities"]!.AsArray();var resources=root["resources"]!.AsObject();
         if(root["layout"]==null) root["layout"]=new JsonObject {["kind"]="free",["size"]=100};
         var files=new Dictionary<string,byte[]> {["imports/"+prefix+"-source.json"]=input};var report=new List<string> {"来源脚本不会执行；原始存档将保留在 imports。"};
-        var basePath=Path.GetDirectoryName(Path.GetFullPath(file))!;var count=0;
+        var basePath=Path.GetDirectoryName(Path.GetFullPath(file))!;var count=0;long resourceBytes=input.Length;
         foreach(var item in save["ObjectStates"]?.AsArray() ?? throw new InvalidDataException("缺少 ObjectStates")) Convert(item!.AsObject(),null,0);
         if(save["TableURL"]?.GetValue<string>() is {Length:>0} tableUrl)
         {
@@ -96,7 +97,8 @@ public static class TtsImport
             using var tile=bitmap.Clone(new Rectangle(index%columns*bitmap.Width/columns,index/columns*bitmap.Height/rows,bitmap.Width/columns,bitmap.Height/rows),PixelFormat.Format32bppArgb);
             using var stream=new MemoryStream();tile.Save(stream,ImageFormat.Png);var output="assets/"+id+".png";
             if(resources.ContainsKey(id) || files.ContainsKey(output)) throw new InvalidDataException("资源命名冲突："+id);
-            resources.Add(id,output);files.Add(output,stream.ToArray());return id;
+            if(resourceBytes+stream.Length>64*1024*1024) throw new InvalidDataException("转换资源超过 64 MiB");
+            resourceBytes+=stream.Length;resources.Add(id,output);files.Add(output,stream.ToArray());return id;
         }
     }
     private static JsonObject Component(string type,JsonObject data)=>new() {["type"]=type,["data"]=data};

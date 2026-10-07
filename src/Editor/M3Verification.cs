@@ -34,6 +34,10 @@ internal static class M3Verification
                     await app.Reload("author.images");
                     if(panels.Count!=baseline+1) throw new Exception("Image panel duplicated");
                     await commands.Execute("images.preview");
+                    docs.EditForm("图片导入",Wire.Json(new[] {source,"changed","2","2","false"}));
+                    await commands.Execute("images.apply");
+                    if(docs.Current!.Snapshot().ResourceData!.Count!=0 || !docs.HasPendingForms) throw new Exception("Stale image preview consumed newer fields");
+                    docs.EditForm("图片导入",Wire.Json(new[] {source,"cards","2","2","false"}));
                     await commands.Execute("images.apply");
                     if(docs.Current!.Snapshot().ResourceData!.Count!=4) throw new Exception("Image UI import failed");
                     if(cycle==2)
@@ -49,7 +53,10 @@ internal static class M3Verification
                 for(var cycle=0;cycle<3;cycle++)
                 {
                     await app.Enable("author.tts");docs.EditForm("TTS 导入",Wire.Json(new[] {"samples/tts-subset/save.json","tts"}));
-                    await app.Reload("author.tts");await commands.Execute("tts.preview");await commands.Execute("tts.apply");
+                    await app.Reload("author.tts");await commands.Execute("tts.preview");
+                    docs.EditForm("TTS 导入",Wire.Json(new[] {"samples/tts-subset/save.json","changed"}));await commands.Execute("tts.apply");
+                    if(docs.Current!.Snapshot().ResourceData!.Count!=0 || !docs.HasPendingForms) throw new Exception("Stale TTS preview consumed newer fields");
+                    docs.EditForm("TTS 导入",Wire.Json(new[] {"samples/tts-subset/save.json","tts"}));await commands.Execute("tts.apply");
                     if(docs.Current!.Snapshot().ResourceData!.Count!=5) throw new Exception("TTS UI conversion failed");
                     docs.Current.Undo();await app.Disable("author.tts");
                     if(panels.Count!=baseline || commands.Items.Any(c=>c.Id.StartsWith("tts."))) throw new Exception("TTS contributions leaked");

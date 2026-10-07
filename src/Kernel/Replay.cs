@@ -34,11 +34,13 @@ public sealed partial class GameEngine
                 if (s.Accepted)
                 {
                     if (!CanAct(engine.state,s.Actor) || entry.Effects.Count is < 1 or > 64) throw new InvalidDataException("Invalid replay actor/effects.");
+                    var submittedInBatch=false;
                     foreach (var effect in entry.Effects)
                     {
                         if ((effect.Command.Kind=="shuffle") != (effect.Order!=null)) throw new InvalidDataException("Missing or unexpected random outcome.");
                         if((effect.Command.Kind=="roll")!=(effect.Roll!=null)) throw new InvalidDataException("Missing or unexpected dice outcome.");
-                        Apply(engine.state,s.Actor,effect.Command,effect.Order,effect.RuleEffect,effect.Roll);
+                        Apply(engine.state,s.Actor,effect.Command,effect.Order,effect.RuleEffect,effect.Roll,submittedInBatch);
+                        submittedInBatch|=effect.Command.Kind=="secret-submit";
                         if (effect.RandomAfter==0 || (effect.Command.Kind is not ("shuffle" or "roll") && effect.RandomAfter!=engine.state.RandomState)) throw new InvalidDataException("Invalid random state.");
                         engine.state.RandomState=effect.RandomAfter;
                     }

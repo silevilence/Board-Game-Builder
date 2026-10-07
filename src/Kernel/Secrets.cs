@@ -2,7 +2,7 @@ namespace BoardGame.Kernel;
 
 public sealed partial class GameEngine
 {
-    private static void ApplySecret(GameState state,string actor,Command command,bool ruleEffect)
+    private static void ApplySecret(GameState state,string actor,Command command,bool ruleEffect,bool submittedInBatch)
     {
         void Require([System.Diagnostics.CodeAnalysis.DoesNotReturnIf(false)] bool condition) {if(!condition) throw new CommandRejected("secret-condition-not-met");}
         if(command.Kind=="secret-open")
@@ -29,7 +29,7 @@ public sealed partial class GameEngine
                 if(command.Kind=="secret-abstain") round.Locked.Add(actor);
                 round.Remaining--;Schedule();break;
             case "secret-lock":
-                Require(round.Status=="collecting" && declaration.Participants.Contains(actor) && round.Choices.ContainsKey(actor) && !round.Locked.Contains(actor));
+                Require(round.Status=="collecting" && (round.Remaining>0 || submittedInBatch) && declaration.Participants.Contains(actor) && round.Choices.ContainsKey(actor) && !round.Locked.Contains(actor));
                 round.Locked.Add(actor);Schedule();break;
             case "secret-tick":
                 Require(actor==round.Coordinator && round.Status=="collecting" && round.Remaining>0);

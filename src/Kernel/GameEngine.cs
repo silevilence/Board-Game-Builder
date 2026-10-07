@@ -14,7 +14,8 @@ public sealed partial class GameEngine
     public IReadOnlyList<Diagnostic> ExportDiagnostics() => Wire.Copy(diagnostics);
     public bool CanAct(string actor)=>CanAct(state,actor);
     private static bool CanAct(GameState state,string actor)=>!state.Ended && state.Seats.Any(s=>s.Id==actor) &&
-        (state.Seats[state.CurrentSeat].Id==actor || state.Secret is {Status:"collecting"} round && round.Declaration.Participants.Contains(actor) && !round.Locked.Contains(actor));
+        (state.Seats[state.CurrentSeat].Id==actor || state.Secret is {Status:"collecting"} round &&
+            (round.Coordinator==actor || round.Remaining>0 && round.Declaration.Participants.Contains(actor) && !round.Locked.Contains(actor)));
     public IReadOnlyList<ActionOffer> Actions(string actor)
     {
         var view = Project(actor);
@@ -50,7 +51,7 @@ public sealed partial class GameEngine
                 var decision = rules.Decide(Project(state,actor),Wire.Copy(command));
                 if (!decision.Allowed) { diagnostics.Add(new(sequence,actor,"decide",decision.Reason)); throw new CommandRejected("rule-rejected"); }
                 if (decision.Commands.Count is < 1 or > 64) throw new CommandRejected("rule-command-limit");
-                foreach (var effect in decision.Commands) effects.Add(Execute(candidate,actor,effect,true));
+                foreach (var effect in decision.Commands) effects.Add(Execute(candidate,actor,effect,true,effects.Any(e=>e.Command.Kind=="secret-submit")));
             }
             Record(new(sequence, actor, Wire.Copy(command), true, "accepted"), effects, candidate);
             return new(sequence, true, "accepted");
@@ -74,15 +75,15 @@ public sealed partial class GameEngine
             throw new CommandRejected("operation-not-allowed");
         return entity;
     }
-    private static AppliedCommand Execute(GameState state, string actor, Command command, bool ruleEffect = false)
+    private static AppliedCommand Execute(GameState state, string actor, Command command, bool ruleEffect = false,bool submittedInBatch=false)
     {
-        Apply(state,actor,command,ruleEffect:ruleEffect);
+        Apply(state,actor,command,ruleEffect:ruleEffect,submittedInBatch:submittedInBatch);
         return new(Wire.Copy(command),ruleEffect,command.Kind == "shuffle" ? [..state.Entities[command.Entity!].Contents] : null,state.RandomState,command.Kind=="roll"?state.Entities[command.Entity!].Properties["value"]:null);
     }
-    private static void Apply(GameState state, string actor, Command command, List<string>? recordedOrder = null, bool ruleEffect = false,int? recordedRoll=null)
+    private static void Apply(GameState state, string actor, Command command, List<string>? recordedOrder = null, bool ruleEffect = false,int? recordedRoll=null,bool submittedInBatch=false)
     {
         if (state.Ended) throw new CommandRejected("operation-not-allowed");
-        if(command.Kind.StartsWith("secret-",StringComparison.Ordinal)) {ApplySecret(state,actor,command,ruleEffect);return;}
+        if(command.Kind.StartsWith("secret-",StringComparison.Ordinal)) {ApplySecret(state,actor,command,ruleEffect,submittedInBatch);return;}
         if (command.Kind is "next" or "phase" or "finish")
         {
             if (command.Kind == "finish")

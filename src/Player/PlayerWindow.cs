@@ -96,7 +96,8 @@ public sealed partial class PlayerWindow : Window
             {
                 var humans=(localHumans.Text ?? "").Split(',',StringSplitOptions.TrimEntries|StringSplitOptions.RemoveEmptyEntries);
                 if(humans.Length==0 || humans.Any(id=>!loaded.Initial.Seats.Any(s=>s.Id==id))) throw new InvalidDataException("请输入有效的真人席位，以逗号分隔；其余席位由 CPU 控制。");
-                localBoard=new(loaded,value,loaded.Initial.Seats.ToDictionary(s=>s.Id,s=>humans.Contains(s.Id)?"human":"cpu"),mode.SelectedIndex==1?LocalTableMode.HotSeat:LocalTableMode.SplitScreen);
+                var created=await LocalBoard.Create(loaded,value,loaded.Initial.Seats.ToDictionary(s=>s.Id,s=>humans.Contains(s.Id)?"human":"cpu"),mode.SelectedIndex==1?LocalTableMode.HotSeat:LocalTableMode.SplitScreen);
+                if(current!=generation) {created.Dispose();return;}localBoard=created;
                 play.Content=localBoard;activeSeed=value;message.Text="热座交接请移开视线；同屏各视口显示其控制席位。";await localBoard.PumpCpu();return;
             }
             var session=await PlayerSession.CreateAsync(loaded,value,human);

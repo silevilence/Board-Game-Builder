@@ -13,9 +13,17 @@ public sealed class LocalBoard : UserControl,IDisposable
     private readonly Grid views=new();
     private readonly List<InteractiveTable> tables=[];
     private bool disposed,busy;
-    public LocalBoard(LoadedModule module,uint seed,IReadOnlyDictionary<string,string> controllers,LocalTableMode mode)
+    internal LocalTableFrame Frame=>session.Frame;
+    internal int LiveTables=>tables.Count;
+    internal int RenderedFrames=>tables.Sum(t=>t.RenderedFrames);
+    public static async Task<LocalBoard> Create(LoadedModule module,uint seed,IReadOnlyDictionary<string,string> controllers,LocalTableMode mode)
     {
-        this.module=module;session=new(module,seed,controllers,mode);
+        var session=await Task.Run(()=>new LocalTableSession(module,seed,controllers,mode));
+        try {return new(module,session);}catch {session.Dispose();throw;}
+    }
+    private LocalBoard(LoadedModule module,LocalTableSession session)
+    {
+        this.module=module;this.session=session;
         var root=new DockPanel();DockPanel.SetDock(header,Dock.Top);root.Children.Add(header);root.Children.Add(views);Content=root;
         Refresh();
     }
@@ -29,6 +37,13 @@ public sealed class LocalBoard : UserControl,IDisposable
         Clear();if(disposed) return;
         header.Children.Add(new TextBlock {Text="本地多人 · 同屏内容可被旁观；身份投影隔离数据，不能阻止旁观屏幕。"});
         var frame=session.Frame;
+        if(frame.Fault!=null) header.Children.Add(new TextBlock {Text="对局故障："+frame.Fault.Code+" · "+frame.Fault.Detail});
+        foreach(var seat in frame.CanTake ?? [])
+        {
+            if(seat==frame.WaitingFor || frame.Views.Any(v=>v.View.Seat==seat)) continue;
+            var handoff=new Button {Content="交接至 "+seat+"（同时收集／处理缺席）"};
+            handoff.Click+=async (_,_)=>await Run(async ()=> {await session.HandoffAsync(frame.Revision,seat);});header.Children.Add(handoff);
+        }
         if(frame.WaitingFor is {} next)
         {
             var take=new Button {Content="请交给 "+next+" · 我已接手，显示本席位"};
@@ -48,7 +63,7 @@ public sealed class LocalBoard : UserControl,IDisposable
                 button.Click+=async (_,_)=>await Run(async ()=> {await session.SubmitAsync(frame.Revision,seat.View.Seat,new("action",Action:offer.Id));});
                 controls.Children.Add(button);
             }
-            var table=new InteractiveTable {InputEnabled=!seat.Cpu && !seat.View.Ended && seat.Fault==null && seat.View.CurrentSeat==seat.View.Seat};tables.Add(table);
+            var table=new InteractiveTable {InputEnabled=!seat.Cpu && !seat.View.Ended && seat.Fault==null && seat.Actions.Count>0};tables.Add(table);
             table.Show(TableScene.From(seat.View,module.ResourceData));panel.Children.Add(table);
             table.Gesture+=g=>_=Run(async ()=> {await session.SubmitAsync(frame.Revision,seat.View.Seat,new(g.Kind,g.Entity,g.Target,g.X,g.Y));});
             table.RenderingError+=error=> {Clear();header.Children.Add(new TextBlock {Text=error});session.Dispose();};
@@ -64,5 +79,15 @@ public sealed class LocalBoard : UserControl,IDisposable
         if(!disposed) Refresh();
     }
     public Task PumpCpu()=>Run(()=>Task.CompletedTask);
+    internal async Task VerifyStep()
+    {
+        var frame=session.Frame;
+        if(frame.WaitingFor is {} next) await Run(async ()=> {await session.TakeSeatAsync(frame.Revision,next);});
+        else
+        {
+            var view=frame.Views.First(v=>v.Actions.Count>0);
+            await Run(async ()=> {await session.SubmitAsync(frame.Revision,view.View.Seat,new("action",Action:view.Actions[0].Id));});
+        }
+    }
     public void Dispose() {disposed=true;session.Dispose();Clear();}
 }

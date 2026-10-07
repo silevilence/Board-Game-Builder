@@ -7,7 +7,7 @@ public static class SecretTests
     private sealed class Rules : IGameRules
     {
         public IReadOnlyList<ActionOffer> Actions(SeatView view)=>[];
-        public RuleDecision Decide(SeatView view,Command command)=>new(true,"",[command]);
+        public RuleDecision Decide(SeatView view,Command command)=>new(true,"",command.Kind=="atomic-bid"?[new() {Kind="secret-submit",Value=command.Value},new() {Kind="secret-lock"}]:[command]);
     }
     public static void Run()
     {
@@ -41,6 +41,20 @@ public static class SecretTests
             Check.That(!deadline.Submit("p1",new() {Kind="secret-submit",Value=4}).Accepted);
             Check.That(deadline.Submit("p1",new() {Kind="secret-reveal"}).Accepted);
             Check.That(deadline.Project("p1").Secret!.Revealed!["p2"]==(missing=="default"?3:null));
+        }
+        foreach(var actor in new[] {"p1","p2"})
+        {
+            var deadline=new GameEngine(module.Initial,42,module.Fingerprint,new Rules());
+            Check.That(deadline.Submit("p1",Open(1)).Accepted);
+            Check.That(deadline.Submit(actor,new() {Kind="secret-submit",Value=7}).Accepted);
+            Check.That(!deadline.Submit(actor,new() {Kind="secret-lock"}).Accepted,"Late separate lock accepted");
+            Check.That(deadline.Submit("p1",new() {Kind="secret-close"}).Accepted);
+            Check.That(deadline.Submit("p1",new() {Kind="secret-reveal"}).Accepted);
+            Check.That(deadline.Project("p1").Secret!.Revealed![actor]==null);
+            var atomic=new GameEngine(module.Initial,42,module.Fingerprint,new Rules());
+            Check.That(atomic.Submit("p1",Open(1)).Accepted);
+            Check.That(atomic.Submit(actor,new() {Kind="atomic-bid",Value=7}).Accepted,"Final atomic bid rejected");
+            Check.That(Wire.Json(GameEngine.Replay(module,atomic.ExportLog()).ExportAuthorityState())==Wire.Json(atomic.ExportAuthorityState()));
         }
         var source="""
         local function action(v)

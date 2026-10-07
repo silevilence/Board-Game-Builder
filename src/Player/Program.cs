@@ -4,6 +4,7 @@ internal static class Program
 {
     [STAThread] private static int Main(string[] args)
     {
+        if(args.Length==2 && args[0]=="--verify-local") return ViewportApp.Run("",[],()=>LocalTableVerification.Create(args[1]));
 #if EDITOR_DEBUG
         if(args.FirstOrDefault()=="--editor-debug")
         {

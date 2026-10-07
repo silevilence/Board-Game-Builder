@@ -14,7 +14,8 @@ public sealed class ImageImportPanel : UserControl,IDisposable
         var path=new TextBox {PlaceholderText="图片文件路径"};var prefix=new TextBox {PlaceholderText="资源名称前缀"};
         var rows=new TextBox {Width=90};var columns=new TextBox {Width=90};var cloth=new CheckBox {Content="桌布（不切分）"};
         var report=new TextBlock {TextWrapping=Avalonia.Media.TextWrapping.Wrap};var images=new WrapPanel();
-        ImportPreview? preview=null;var loading=false;
+        ImportPreview? preview=null;ModuleDocument? previewDocument=null;string? previewFields=null;var loading=false;
+        string Fields()=>Wire.Json(new[] {path.Text ?? "",prefix.Text ?? "",rows.Text ?? "",columns.Text ?? "",cloth.IsChecked==true?"true":"false"});
         void Refresh()
         {
             loading=true;
@@ -37,6 +38,7 @@ public sealed class ImageImportPanel : UserControl,IDisposable
         {
             preview=null;Dispose();images.Children.Clear();
             preview=ImageImport.Preview(documents.Current!,path.Text ?? "",prefix.Text ?? "",int.Parse(rows.Text ?? ""),int.Parse(columns.Text ?? ""),cloth.IsChecked==true);
+            previewDocument=documents.Current;previewFields=Fields();
             report.Text=string.Join("\n",preview.Report)+"\n确认后点击应用；命名冲突不会覆盖现有内容。";
             foreach(var file in preview.Files.Take(200))
             {
@@ -47,6 +49,7 @@ public sealed class ImageImportPanel : UserControl,IDisposable
         Register("images.apply","应用预览中的图片导入",()=>
         {
             var selected=preview ?? throw new InvalidOperationException("请先预览");
+            if(!ReferenceEquals(previewDocument,documents.Current) || previewFields!=Fields()) throw new InvalidOperationException("输入或文档已改变，请重新预览；草稿已保留。");
             documents.ApplyForm(key,selected.Apply);preview=null;report.Text="已导入；一次撤销可移除所有新增资源与卡牌。";
         },()=>preview!=null && documents.Current!=null);
         var show=new Button {Content="预览切分"};var apply=new Button {Content="应用导入"};var discard=new Button {Content="放弃输入"};

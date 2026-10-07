@@ -11,7 +11,8 @@ Player 顶部选择本地热座／同屏分视角，输入逗号分隔的真人�
 
 验证：Release 解决方案构建 0 警告／0 错误；`local-table interaction` 通过。
 覆盖双真人／真人 CPU、两种展示模式终局、遮蔽帧、他席位与旧帧拒绝。
-真实窗口与全量回归留到最终整体验证。
+真实窗口 `artifacts/m3/local-reviewed.json` 通过快牌／密封拍卖 × 热座／同屏 × 全真人／混合 CPU
+共 8 个场景，均有实际渲染并完成对局；交接遮蔽时没有视口，关闭后图形设备计数归零。
 
 ## 同时行动与秘密提交
 
@@ -39,8 +40,9 @@ Editor 使用的 DebugSession 中加载；错误版本、哈希、权限、第�
 
 `wasm-extensions` 通过计数器三步终局、标准效果回放、数据包往返、整数吸附和隐藏目标拒绝。
 `samples/wasm-counter` 可在配置及 Lua 使用扩展；可选 `author.extensions` 面板管理组件草稿。
-正式 Player 已自包含发布到 `artifacts/m3/player-release`，由其导出到 `wasm-export`。
-`artifacts/m3/wasm-gui.json` 记录该导出真实窗口的两局终局，最终属性为 3，无编辑器依赖。
+正式 Player 已自包含发布到 `artifacts/m3/player-release-final`，由其导出到 `wasm-export-final`。
+`artifacts/m3/wasm-gui-final.json` 记录该导出真实窗口的两局终局，最终属性为 3，无编辑器依赖。
+预检会拒绝缺少 Wasmtime 托管／原生依赖的旧发行目录。
 
 ## WASM 隔离与限制
 
@@ -72,3 +74,37 @@ Poppler `pdfinfo` 确认 4 页、595.276×841.89 pt、PDF 1.4；4 页逐页渲�
 `artifacts/m3/editor-print.json` 通过真实打印面板三轮草稿恢复、预览、导出和入口注销。
 仅编辑器包含打印实现，Player 不依赖 System.Drawing 打印代码；不支持未定义的 lam 格式。
 纸质打印机未连接；文件按实际尺寸 / 100% 打印，翻页方式须与面板所选相符。
+
+## 整体审核与回归
+
+审核范围为基线 `cddeb9fbc6a318415d1d07c3305a4534c75ab5a3` 后的 M3 修改。
+两个独立审核代理分别检查仓库规范与 ROADMAP 验收，修复后再次复核，均确认无剩余阻塞。
+
+### Standards
+
+确认 1 项规范问题（P2）：图片／TTS 预览后修改字段仍应用旧结果并消耗新草稿，
+违反 editor-cordis 的持久草稿归属要求。现在同时绑定文档实例、文档修订及字段快照，拒绝时保留草稿。
+另有 1 项判断性风险：本地多人在 UI 线程执行 Lua 读帧可能阻塞窗口。
+会话创建与读帧现已移至后台，迟到创建的会话会释放。
+复核结论：两项均解决，无剩余阻塞。
+
+### Spec
+
+确认 3 项问题：主持席位已锁定时无法推进缺席截止（P1）、截止后独立锁定仍被接受（P2）、
+同屏非当前参与席位无法同时提交（P2）。最后一步提交与锁定现可原子完成，
+截止后另发锁定会拒绝，记录重放采用同样的批次语义；同屏按各自席位查询动作，热座可遮蔽后交还主持。
+另处理资源预算建议：图片和 TTS 输出逐图累计检查 64 MiB 限额，TTS 在读取前检查存档大小。
+复核结论：三项均解决，相关五组测试由审核代理独立重跑通过，无剩余阻塞。
+
+### 最终验证
+
+最终 Release 解决方案构建为 0 警告、0 错误；`scripts/check-boundaries.ps1` 通过。
+`dotnet tests/Engine.Tests/bin/Release/net10.0/Engine.Tests.dll` 默认全量 40 组全部通过，
+完整输出在 `artifacts/m3/regression-final.log`，包含旧单人／CPU／回放／两种试玩模式和全部 M3 测试。
+
+`Editor --verify-m3 artifacts/m3/editor-reviewed.json` 在真实编辑器完成每类面板 3 轮
+启停／重建／操作／注销，额外验证修改预览字段后拒绝应用并保留草稿；WASM 无配套 UI 仍可运行。
+相关测试覆盖独立逾期锁定拒绝、最终原子锁定和回放、缺席时已锁定主持推进、同屏同时行动。
+物理打印和新建干净 Windows 环境未在本轮验证；正式自包含产物在当前 Windows 主机验证。
+
+审核计数：Standards 为 1 项规范问题和 1 项判断性风险，原最高 P2；Spec 为 3 项确认问题，原最高 P1；修复后两轴均无待办问题。

@@ -42,10 +42,10 @@ public sealed class PlaySession : IDisposable
         catch {plugins?.Dispose();worker.Dispose();throw;}
     }
     public SeatView View(string seat) => engine.Project(seat);
-    public IReadOnlyList<ActionOffer> Actions()
+    public IReadOnlyList<ActionOffer> Actions(string? seat=null)
     {
         if(disposed || Fault!=null || Ended) return [];
-        try { return engine.Actions(CurrentSeat); }
+        try { return engine.Actions(seat ?? CurrentSeat); }
         catch(Exception e) { Stop("rule-failure",e.Message);return []; }
     }
     public CommandResult SubmitHuman(string seat,Command command)

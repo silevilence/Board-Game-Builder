@@ -36,5 +36,28 @@ public static class LocalTableTests
             }
             Check.That(table.Frame.Ended,"Mixed/local game did not finish");
         }
+        var auction=DirectoryModule.Load("samples/sealed-auction");var humans=auction.Initial.Seats.ToDictionary(s=>s.Id,_=>"human");
+        using(var split=new LocalTableSession(auction,42,humans,LocalTableMode.SplitScreen))
+        {
+            Check.That((await split.SubmitAsync(split.Frame.Revision,"p1",new("action",Action:"open"))).Accepted);
+            Check.That(split.Frame.Views.All(v=>v.Actions.Any(a=>a.Id=="bid3")));
+            Check.That((await split.SubmitAsync(split.Frame.Revision,"p2",new("action",Action:"bid3"))).Accepted,"Simultaneous non-current UI submission rejected");
+            Check.That(split.Frame.Views.Single(v=>v.View.Seat=="p1").View.Secret!.Revealed==null);
+        }
+        using(var hotseat=new LocalTableSession(auction,42,humans,LocalTableMode.HotSeat))
+        {
+            await hotseat.TakeSeatAsync(hotseat.Frame.Revision,"p1");
+            Check.That((await hotseat.SubmitAsync(hotseat.Frame.Revision,"p1",new("action",Action:"open"))).Accepted);
+            Check.That((await hotseat.SubmitAsync(hotseat.Frame.Revision,"p1",new("action",Action:"bid3"))).Accepted);
+            Check.That(await hotseat.HandoffAsync(hotseat.Frame.Revision,"p1"));Check.That(hotseat.Frame.Views.Count==0);
+            for(var i=0;i<25 && !hotseat.Frame.Ended;i++)
+            {
+                var frame=hotseat.Frame;
+                if(frame.WaitingFor is {} next) {Check.That(next=="p1");await hotseat.TakeSeatAsync(frame.Revision,next);continue;}
+                var view=frame.Views.Single();var offer=view.Actions.Single();
+                Check.That((await hotseat.SubmitAsync(frame.Revision,"p1",new("action",Action:offer.Id))).Accepted);
+            }
+            Check.That(hotseat.Frame.Ended,"Locked coordinator could not resolve absent seats");
+        }
     }
 }
