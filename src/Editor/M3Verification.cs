@@ -54,7 +54,23 @@ internal static class M3Verification
                     docs.Current.Undo();await app.Disable("author.tts");
                     if(panels.Count!=baseline || commands.Items.Any(c=>c.Id.StartsWith("tts."))) throw new Exception("TTS contributions leaked");
                 }
-                File.WriteAllText(output,Wire.Json(new {success=true,imageCycles=3,ttsCycles=3,wasmWithoutUi=true}));
+                TtsImport.Preview(docs.Current!,"samples/tts-subset/save.json","print").Apply(docs.Current!);
+                var printIds=string.Join("\n",docs.Current!.Snapshot().Initial.Entities.Values.Where(e=>!e.IsContainer && e.Properties.GetValueOrDefault("viewTablecloth")!=1).Select(e=>e.Id));
+                var pdfs=new List<string>();
+                for(var cycle=0;cycle<3;cycle++)
+                {
+                    var pdf=output+"."+cycle+".pdf";await app.Enable("author.print");
+                    docs.EditForm("打印拼版",Wire.Json(new[] {printIds,"63","88","10","3","long-edge",pdf}));
+                    await app.Reload("author.print");await commands.Execute("print.preview");
+                    if(cycle==0)
+                    {
+                        app.Service<WorkspaceShell>("workspace").Tabs.SelectedItem=app.Service<WorkspaceShell>("workspace").Tabs.Items.OfType<TabItem>().Single(t=>Equals(t.Tag,"author.print"));await Task.Delay(150);
+                        using var screenshot=new RenderTargetBitmap(new(1400,900));screenshot.Render(host.Window);screenshot.Save(output+".print.png",PngBitmapEncoderOptions.Default);
+                    }
+                    await commands.Execute("print.export");if(!File.Exists(pdf)) throw new Exception("PDF UI export failed");pdfs.Add(pdf);
+                    await app.Disable("author.print");if(panels.Count!=baseline || commands.Items.Any(c=>c.Id.StartsWith("print."))) throw new Exception("Print contribution leaked");
+                }
+                File.WriteAllText(output,Wire.Json(new {success=true,imageCycles=3,ttsCycles=3,printCycles=3,pdfs,wasmWithoutUi=true}));
                 docs.Set(null);
             }
             catch(Exception error) {File.WriteAllText(output,Wire.Json(new {success=false,error=error.ToString()}));host.Application.Service<DocumentWorkspace>("documents").Set(null);}

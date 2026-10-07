@@ -52,6 +52,8 @@ public static class BuiltinPlugins
             scope.Service<PanelContributions>("panels").Register(scope,"author.images","图片与卡图导入",()=>new ImageImportPanel(scope))));
         app.Install(new("author.tts",1,[],["documents","commands","panels"],scope=>
             scope.Service<PanelContributions>("panels").Register(scope,"author.tts","TTS 导入",()=>new TtsImportPanel(scope))));
+        app.Install(new("author.print",1,[],["documents","commands","panels"],scope=>
+            scope.Service<PanelContributions>("panels").Register(scope,"author.print","打印拼版",()=>new PrintPanel(scope))));
         app.Install(new("author.export",1,["exports"],["documents","contributions","panels","workspace"],scope=>
         {
             var workflow=new ExportWorkflow(scope.Service<DocumentWorkspace>("documents"),scope.Service<EditorContributions>("contributions"));scope.Provide("exports",workflow);
