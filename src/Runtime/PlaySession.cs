@@ -4,12 +4,39 @@ namespace BoardGame.Runtime;
 public sealed record SessionFault(string Code,string Seat,string Detail);
 public sealed class PlaySession : IGameSession
 {
+    private readonly RuntimeHost host;
+    private readonly IGameSession session;
+    public PlaySession(LoadedModule module,uint seed=1,IReadOnlyDictionary<string,string>? controllers=null,int maxSteps=500)
+    {
+        host=RuntimeComposition.Start(module,seed,controllers,maxSteps);
+        session=host.Service<IGameSession>("session");
+    }
+    public SessionFault? Fault=>session.Fault;
+    public int Steps=>session.Steps;
+    public bool Ended=>session.Ended;
+    public string CurrentSeat=>session.CurrentSeat;
+    public bool IsCpu=>session.IsCpu;
+    public SeatView View(string seat)=>session.View(seat);
+    public IReadOnlyList<ActionOffer> Actions(string? seat=null)=>session.Actions(seat);
+    public CommandResult SubmitHuman(string seat,Command command)=>session.SubmitHuman(seat,command);
+    public bool StepCpu()=>session.StepCpu();
+    public ReplayLog ExportAuthorityLog()=>session.ExportAuthorityLog();
+    public SessionRecording ExportRecording()=>session.ExportRecording();
+    public IReadOnlyList<Diagnostic> ExportDiagnostics()=>session.ExportDiagnostics();
+    public GameState ExportAuthorityState()=>session.ExportAuthorityState();
+    public string AuthorityStateHash()=>session.AuthorityStateHash();
+    public void ReloadScripts(LoadedModule candidate)=>session.ReloadScripts(candidate);
+    public void Dispose()=>host.Dispose();
+}
+
+internal sealed class LocalGameSession : IGameSession
+{
+    private readonly object commands=new();
     private LoadedModule module;
     private readonly Dictionary<string,LoadedModule> versions=new(StringComparer.Ordinal);
     private readonly List<ScriptSwitch> switches=[];
     private readonly List<Diagnostic> cpuDiagnostics=[];
     private readonly IAuthoritySession engine;
-    private readonly RuntimeHost host;
     private readonly RuleBinding ruleBinding;
     private readonly IEffectProvider? effects;
     private readonly Dictionary<string,string> controllers;
@@ -23,50 +50,34 @@ public sealed class PlaySession : IGameSession
     public bool Ended => engine.Project(module.Initial.Seats[0].Id).Ended;
     public string CurrentSeat => engine.Project(module.Initial.Seats[0].Id).CurrentSeat;
     public bool IsCpu => controllers[CurrentSeat]=="cpu";
-    public PlaySession(LoadedModule module,uint seed=1,IReadOnlyDictionary<string,string>? controllers=null,int maxSteps=500)
+    internal LocalGameSession(LoadedModule module,uint seed,IReadOnlyDictionary<string,string> controllers,int maxSteps,
+        IAuthoritySession engine,RuleBinding ruleBinding,IRuleProvider rules,ICpuDecisionProvider? cpu,IEffectProvider? effects)
     {
         if(maxSteps<1) throw new ArgumentOutOfRangeException(nameof(maxSteps));
         this.module=Wire.Copy(module);this.seed=seed;this.maxSteps=maxSteps;
         versions.Add(module.Fingerprint,Wire.Copy(module)); switches.Add(new(0,module.Fingerprint));
-        this.controllers=module.Initial.Seats.ToDictionary(s=>s.Id,s=>s.Controller);
-        if(controllers!=null) foreach(var c in controllers)
-        {
-            if(!this.controllers.ContainsKey(c.Key) || c.Value is not ("human" or "cpu")) throw new ArgumentException("Invalid seat/controller configuration.");
-            this.controllers[c.Key]=c.Value;
-        }
-        // Kernel and official runtime are ready before module WASM, followed by Lua rules.
-        var definition=RuntimeDefinition.From(module);
-        var startup=module.RuntimeIdentity?.Startup ?? new(1,module.Id,module.Version,
-            [AuthorityPlugin.Selection,LuaRuntimePlugins.Select(module.Rules.Length==0?"rules.commands":"lua.rules"),
-                ..(module.Cpu.Length==0?Array.Empty<RuntimePluginSelection>():[LuaRuntimePlugins.Select("lua.cpu")]),
-                ..(module.RuntimePlugins is not {Count:>0}?Array.Empty<RuntimePluginSelection>():[LuaRuntimePlugins.Select("wasm")])]);
-        host=RuntimeHost.StartAsync(startup,
-            [AuthorityPlugin.Create(module,seed),LuaRuntimePlugins.Rules(definition,seed),LuaRuntimePlugins.Cpu(definition),CommandRuleProvider.Plugin,WasmRuntimePlugin.Create(definition)],
-            AuthorityPlugin.Required.Concat(this.controllers.Values.Contains("cpu")?["rules","cpu"]:["rules"])
-                .Concat(module.RuntimePlugins is {Count:>0}?["effects"]:[])).GetAwaiter().GetResult();
-        engine=host.Service<IAuthoritySession>("authority");
-        ruleBinding=host.Service<RuleBinding>("rule-binding");
-        rules=host.Service<IRuleProvider>("rules");cpu=startup.Plugins.Any(p=>p.Id=="lua.cpu")?host.Service<ICpuDecisionProvider>("cpu"):null;
-        effects=startup.Plugins.Any(p=>p.Id=="wasm")?host.Service<IEffectProvider>("effects"):null;
-        try
-        {
-            ruleBinding.Replace(ComposeRules(rules.Rules));
-        }
-        catch {host.Dispose();throw;}
+        this.controllers=new(controllers);this.engine=engine;this.ruleBinding=ruleBinding;this.rules=rules;this.cpu=cpu;this.effects=effects;
+        ruleBinding.Replace(ComposeRules(rules.Rules));
     }
     public SeatView View(string seat) => engine.Project(seat);
     public IReadOnlyList<ActionOffer> Actions(string? seat=null)
+    {lock(commands) return ReadActions(seat);}
+    private IReadOnlyList<ActionOffer> ReadActions(string? seat)
     {
         if(disposed || Fault!=null || Ended) return [];
         try { return engine.Actions(seat ?? CurrentSeat); }
         catch(Exception e) { Stop("rule-failure",e.Message);return []; }
     }
     public CommandResult SubmitHuman(string seat,Command command)
+    {lock(commands) return SubmitHumanCore(seat,command);}
+    private CommandResult SubmitHumanCore(string seat,Command command)
     {
         if(disposed || Fault!=null || Ended || !engine.CanAct(seat) || controllers.GetValueOrDefault(seat)!="human") return new(0,false,"operation-not-allowed");
         return Submit(command,false,seat);
     }
     public bool StepCpu()
+    {lock(commands) return StepCpuCore();}
+    private bool StepCpuCore()
     {
         if(disposed || Fault!=null || Ended || !IsCpu) return false;
         var actions=Actions();if(Fault!=null) return false;
@@ -85,6 +96,7 @@ public sealed class PlaySession : IGameSession
     }
     private CommandResult Submit(Command command,bool cpu,string? actor=null)
     {
+        if(disposed) return new(0,false,"operation-not-allowed");
         // The runaway guard is for automatic play; a human may keep thinking, moving and undoing.
         if(cpu && Steps>=maxSteps) { Stop("step-limit",$"Exceeded {maxSteps} steps.");return new(0,false,"step-limit"); }
         var before=Wire.Json(engine.ExportAuthorityState());
@@ -107,6 +119,8 @@ public sealed class PlaySession : IGameSession
     public GameState ExportAuthorityState() => engine.ExportAuthorityState();
     // The owner serializes this with commands. A successful switch affects the next submission.
     public void ReloadScripts(LoadedModule candidate)
+    {lock(commands) ReloadScriptsCore(candidate);}
+    private void ReloadScriptsCore(LoadedModule candidate)
     {
         ObjectDisposedException.ThrowIf(disposed,this);
         if(Fault!=null || Ended) throw new InvalidOperationException("Session ended or faulted; restart required.");
@@ -122,5 +136,10 @@ public sealed class PlaySession : IGameSession
     }
     public SessionRecording ExportRecording() => SessionRecording.Create(engine.ExportLog(),switches,versions);
     private IGameRules ComposeRules(IGameRules value)=>effects==null?value:new EffectRules(value,effects);
-    public void Dispose() { if(disposed) return;disposed=true;StopExecution();host.Dispose(); }
+    public void Dispose()
+    {
+        if(disposed) return;disposed=true;
+        StopExecution(); // Interrupt workers before waiting for the active command boundary.
+        lock(commands) { }
+    }
 }

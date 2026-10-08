@@ -52,6 +52,10 @@ public interface IGameSession : IDisposable
     bool StepCpu();
     ReplayLog ExportAuthorityLog();
     SessionRecording ExportRecording();
+    IReadOnlyList<Diagnostic> ExportDiagnostics();
+    GameState ExportAuthorityState();
+    string AuthorityStateHash();
+    void ReloadScripts(LoadedModule candidate);
 }
 
 public interface IRecordingProvider
