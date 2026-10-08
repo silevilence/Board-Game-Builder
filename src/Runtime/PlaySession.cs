@@ -11,7 +11,7 @@ public sealed class PlaySession : IGameSession
     private readonly IAuthoritySession engine;
     private readonly RuntimeHost host;
     private readonly RuleBinding ruleBinding;
-    private readonly WasmPlugins? plugins;
+    private readonly IEffectProvider? effects;
     private readonly Dictionary<string,string> controllers;
     private readonly uint seed;
     private readonly int maxSteps;
@@ -37,19 +37,22 @@ public sealed class PlaySession : IGameSession
         // Kernel and official runtime are ready before module WASM, followed by Lua rules.
         var definition=RuntimeDefinition.From(module);
         var startup=module.RuntimeIdentity?.Startup ?? new(1,module.Id,module.Version,
-            [AuthorityPlugin.Selection,LuaRuntimePlugins.Select(module.Rules.Length==0?"rules.commands":"lua.rules"),..(module.Cpu.Length==0?Array.Empty<RuntimePluginSelection>():[LuaRuntimePlugins.Select("lua.cpu")])]);
+            [AuthorityPlugin.Selection,LuaRuntimePlugins.Select(module.Rules.Length==0?"rules.commands":"lua.rules"),
+                ..(module.Cpu.Length==0?Array.Empty<RuntimePluginSelection>():[LuaRuntimePlugins.Select("lua.cpu")]),
+                ..(module.RuntimePlugins is not {Count:>0}?Array.Empty<RuntimePluginSelection>():[LuaRuntimePlugins.Select("wasm")])]);
         host=RuntimeHost.StartAsync(startup,
-            [AuthorityPlugin.Create(module,seed),LuaRuntimePlugins.Rules(definition,seed),LuaRuntimePlugins.Cpu(definition),CommandRuleProvider.Plugin],
-            AuthorityPlugin.Required.Concat(this.controllers.Values.Contains("cpu")?["rules","cpu"]:["rules"])).GetAwaiter().GetResult();
+            [AuthorityPlugin.Create(module,seed),LuaRuntimePlugins.Rules(definition,seed),LuaRuntimePlugins.Cpu(definition),CommandRuleProvider.Plugin,WasmRuntimePlugin.Create(definition)],
+            AuthorityPlugin.Required.Concat(this.controllers.Values.Contains("cpu")?["rules","cpu"]:["rules"])
+                .Concat(module.RuntimePlugins is {Count:>0}?["effects"]:[])).GetAwaiter().GetResult();
         engine=host.Service<IAuthoritySession>("authority");
         ruleBinding=host.Service<RuleBinding>("rule-binding");
         rules=host.Service<IRuleProvider>("rules");cpu=startup.Plugins.Any(p=>p.Id=="lua.cpu")?host.Service<ICpuDecisionProvider>("cpu"):null;
+        effects=startup.Plugins.Any(p=>p.Id=="wasm")?host.Service<IEffectProvider>("effects"):null;
         try
         {
-            if(module.RuntimePlugins!=null) plugins=new WasmPlugins(module.RuntimePlugins);
             ruleBinding.Replace(ComposeRules(rules.Rules));
         }
-        catch {plugins?.Dispose();host.Dispose();throw;}
+        catch {host.Dispose();throw;}
     }
     public SeatView View(string seat) => engine.Project(seat);
     public IReadOnlyList<ActionOffer> Actions(string? seat=null)
@@ -118,6 +121,6 @@ public sealed class PlaySession : IGameSession
         versions[next.Fingerprint]=Wire.Copy(next); switches.Add(new(engine.ExportLog().EntryCount,next.Fingerprint));
     }
     public SessionRecording ExportRecording() => SessionRecording.Create(engine.ExportLog(),switches,versions);
-    private IGameRules ComposeRules(IGameRules value)=>plugins==null?value:new WasmRules(value,plugins);
-    public void Dispose() { if(disposed) return;disposed=true;StopExecution();plugins?.Dispose();host.Dispose(); }
+    private IGameRules ComposeRules(IGameRules value)=>effects==null?value:new EffectRules(value,effects);
+    public void Dispose() { if(disposed) return;disposed=true;StopExecution();host.Dispose(); }
 }

@@ -5,7 +5,7 @@ using Wasmtime;
 namespace BoardGame.Runtime;
 
 // No WASI, imports, filesystem, network, state handles or hidden authority objects enter a guest.
-public sealed class WasmPlugins : IDisposable
+public sealed class WasmPlugins : IEffectProvider, IDisposable
 {
     private readonly Engine engine;
     private readonly Dictionary<string,(RuntimePlugin Definition,Module Module)> plugins=new(StringComparer.Ordinal);
@@ -72,7 +72,7 @@ public sealed class WasmPlugins : IDisposable
     public void Dispose() {lock(gate) {foreach(var plugin in plugins.Values) plugin.Module.Dispose();plugins.Clear();engine.Dispose();}}
 }
 
-internal sealed class WasmRules(IGameRules rules,WasmPlugins plugins) : IGameRules
+internal sealed class EffectRules(IGameRules rules,IEffectProvider plugins) : IGameRules
 {
     public IReadOnlyList<ActionOffer> Actions(SeatView view)=>rules.Actions(view);
     public RuleDecision Decide(SeatView view,Command command)
@@ -82,4 +82,10 @@ internal sealed class WasmRules(IGameRules rules,WasmPlugins plugins) : IGameRul
         // Expansion is pure: the Kernel applies the entire resulting batch or none of it.
         return decision with {Commands=decision.Commands.Select(c=>plugins.Expand(view,c)).ToList()};
     }
+}
+
+internal static class WasmRuntimePlugin
+{
+    public static RuntimePluginDefinition Create(GameDefinition definition)=>new("wasm","1",1,["effects"],[],scope=>
+        scope.Provide("effects",scope.Own(new WasmPlugins(RuntimeDefinition.Configuration<List<RuntimePlugin>>(definition,"wasm")))));
 }

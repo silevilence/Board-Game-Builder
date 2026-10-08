@@ -13,7 +13,8 @@ internal static class RuntimeDefinition
         new(StringComparer.Ordinal)
         {
             ["lua.rules"]=JsonSerializer.SerializeToElement(new LuaScript(module.Rules,module.RulesPath),Wire.Options),
-            ["lua.cpu"]=JsonSerializer.SerializeToElement(new LuaScript(module.Cpu,module.CpuPath),Wire.Options)
+            ["lua.cpu"]=JsonSerializer.SerializeToElement(new LuaScript(module.Cpu,module.CpuPath),Wire.Options),
+            ["wasm"]=JsonSerializer.SerializeToElement(module.RuntimePlugins ?? [],Wire.Options)
         });
     public static T Configuration<T>(GameDefinition definition,string capability)=>
         definition.CapabilityData.TryGetValue(capability,out var configuration)
