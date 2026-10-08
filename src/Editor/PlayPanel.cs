@@ -93,7 +93,7 @@ public sealed class PlayPanel : UserControl,IDisposable
             : "玩家可读记录\n"+string.Join("\n",(reply.PlayerLog ?? []).Select(e=>$"#{e.Sequence} {e.Actor} {e.Reason}"));
         if(controller.Frame is not {} frame || controller.Module is not {} module) {Table.Show(new([],new Dictionary<string,byte[]>()));return;}
         var view=frame.View;
-        if(reply?.AuthorityState is {} authority) {var state=Wire.Copy(authority);foreach(var e in state.Entities.Values) {e.Visibility="public";e.FaceUp=true;}view=new GameEngine(state).Project(frame.View.Seat);}
+        if(reply?.AuthorityState is {} authority) {var state=Wire.Copy(authority);foreach(var e in state.Entities.Values) {e.Visibility="public";e.FaceUp=true;}view=GameEngine.ProjectSnapshot(state,frame.View.Seat);}
         var resources=frame.IsReplay && reply?.Recording is {} history?history.Versions[history.Log.ModuleFingerprint].ResourceData:module.ResourceData;
         Table.Show(TableScene.From(view,resources));
         status.Text=$"试玩 · {frame.View.Seat} | 当前 {frame.View.CurrentSeat}\n{frame.View.Phase} · {frame.View.Turn} · {(frame.Paused?"已暂停":"运行中")}\n"+controller.Status+"\n"+(frame.View.Ended?"结算："+string.Join(",",frame.View.Winners):frame.Fault?.Detail ?? "");

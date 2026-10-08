@@ -19,7 +19,7 @@ internal static class LocalTableVerification
                 foreach(var name in new[] {"quick-cards","sealed-auction"})
                 foreach(var mixed in new[] {false,true})
                 {
-                    var module=DirectoryModule.Load("samples/"+name);
+                    var module=GameRuntime.Load("samples/"+name);
                     board=await LocalBoard.Create(module,42,module.Initial.Seats.ToDictionary(s=>s.Id,s=>mixed && s.Id==module.Initial.Seats[^1].Id?"cpu":"human"),mode);window.Content=board;await board.PumpCpu();
                     var renders=0;var curtains=0;
                     for(var i=0;i<80 && !board.Frame.Ended;i++)

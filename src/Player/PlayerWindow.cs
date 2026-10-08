@@ -80,7 +80,7 @@ public sealed partial class PlayerWindow : Window
         presentation=new();classic=false;ApplyTheme();Title="Board Game Builder · 本地 Player";
         try
         {
-            var loaded=await Task.Run(()=>ModulePackage.Load(location));
+            var loaded=await Task.Run(()=>GameRuntime.Load(location));
             if(current!=generation) return;
             presentation=PlayerPresentation.Read(loaded);
             module=loaded; seat.ItemsSource=loaded.Initial.Seats.Select(s=>s.Id).ToArray();

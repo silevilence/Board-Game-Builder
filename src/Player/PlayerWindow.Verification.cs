@@ -1,3 +1,4 @@
+using BoardGame.Runtime;
 using Avalonia;
 using Avalonia.Media;
 using Avalonia.Styling;
@@ -59,7 +60,7 @@ public sealed partial class PlayerWindow
             path.Text="samples/quick-cards";await Load();Check(board!=null && presentation.Title=="quick-cards","Cannot recover after failed load");
             var fallback=PlayerPresentation.Read(module!);Check(fallback.Title==module!.Id && fallback.ShowActions,"Presentation defaults failed");
             var package=System.IO.Path.GetFullPath("artifacts/shell-"+Guid.NewGuid()+".bgm");
-            BoardGame.Modules.ModulePackage.Pack("samples/island-settlers",package);path.Text=package;await Load();
+            BoardGame.Runtime.GamePackage.Pack("samples/island-settlers",package);path.Text=package;await Load();
             Check(localBoard!=null && presentation.Title=="群岛开拓" && !top.IsVisible,"Package presentation / automatic start failed");
             Check(presentation.Help?.Contains("秘密竞拍")==true,"Package help did not load");
             var bad=module with {ResourceData=new(StringComparer.Ordinal) {{"player.presentation",System.Text.Encoding.UTF8.GetBytes("{\"unknown\":true}")}}};

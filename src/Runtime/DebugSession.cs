@@ -9,7 +9,7 @@ public interface IDebugSession : IDisposable { Task<DebugReply> SendAsync(DebugR
 // A local author control surface; ordinary PlayerSession never exposes it to players or scripts.
 public sealed class DebugSession : IDisposable
 {
-    private readonly PlaySession session;
+    private readonly IGameSession session;
     private string observer;
     private bool authority;
     private long revision;

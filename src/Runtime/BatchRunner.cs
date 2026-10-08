@@ -12,7 +12,7 @@ public static class BatchRunner
         File.WriteAllText(snapshotPath,Wire.Json(module));
         var results=new List<BatchResult>();
         var controllers=module.Initial.Seats.ToDictionary(s=>s.Id,_=>"cpu");
-        PlaySession Play(uint seed)
+        IGameSession Play(uint seed)
         {
             var session=new PlaySession(module,seed,controllers,maxSteps);
             try

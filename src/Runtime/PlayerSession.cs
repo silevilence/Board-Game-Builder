@@ -7,14 +7,14 @@ public sealed record SessionFrame(long Revision,SeatView View,IReadOnlyList<Acti
 // One owner for each PlaySession. UI code keeps the last immutable projection during worker execution.
 public sealed class PlayerSession : IDisposable
 {
-    private readonly PlaySession session;
+    private readonly IGameSession session;
     private readonly string observer;
     private int busy;
     private volatile bool stopped;
     public bool Busy => Volatile.Read(ref busy)!=0;
     public SessionFrame Frame { get; private set; }
     public string LastMessage { get; private set; }="";
-    private PlayerSession(PlaySession session,string observer)
+    private PlayerSession(IGameSession session,string observer)
     {
         this.session=session; this.observer=observer; Frame=ReadFrame(0);
     }

@@ -8,7 +8,7 @@ public sealed record LocalTableFrame(long Revision,string? WaitingFor,IReadOnlyL
 // The authority stays behind this boundary. Each displayed view is a detached seat projection.
 public sealed class LocalTableSession : IDisposable
 {
-    private readonly PlaySession session;
+    private readonly IGameSession session;
     private readonly string[] humans;
     private readonly LocalTableMode mode;
     private readonly SemaphoreSlim gate=new(1);
@@ -22,7 +22,7 @@ public sealed class LocalTableSession : IDisposable
         if(module.Initial.Seats.Any(s=>!controllers.ContainsKey(s.Id))) throw new ArgumentException("Every seat requires a controller.");
         humans=module.Initial.Seats.Where(s=>controllers[s.Id]=="human").Select(s=>s.Id).ToArray();
         if(humans.Length==0) throw new ArgumentException("Local table requires a human seat.");
-        this.mode=mode;session=new(module,seed,controllers);Frame=Read();
+        this.mode=mode;session=new PlaySession(module,seed,controllers);Frame=Read();
     }
     private LocalTableFrame Read()
     {

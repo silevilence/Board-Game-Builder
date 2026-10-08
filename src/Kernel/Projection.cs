@@ -1,6 +1,7 @@
 namespace BoardGame.Kernel;
 public sealed partial class GameEngine
 {
+    public static SeatView ProjectSnapshot(GameState state,string seat)=>Project(Wire.Copy(state),seat);
     public SeatView Project(string seat) => Project(state, seat);
     public IReadOnlyList<PlayerEvent> PlayerLog(string seat)
     {

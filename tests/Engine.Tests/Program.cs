@@ -7,6 +7,7 @@ try
     tests.Add("startup",StartupTests.Run);
     tests.Add("definition-plugins",DefinitionPluginTests.Run);
     tests.Add("runtime-recording",RuntimeRecordingTests.Run);
+    tests.Add("runtime-entry",RuntimeEntryTests.Run);
     tests.Add("island",IslandTests.Run);
     tests.Add("island-modes",IslandTests.Modes);
     tests.Add("local-table",LocalTableTests.Run);

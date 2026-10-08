@@ -7,7 +7,7 @@ public static class TablePreview
 {
     public static Window Create(string path)
     {
-        var module=DirectoryModule.Load(path);
+        var module=GameRuntime.Load(path);
         var window=new Window { Title="Board Game Builder — seat projection",Width=1100,Height=800 };
         PlayBoard? board=null;
         var closed=false;
