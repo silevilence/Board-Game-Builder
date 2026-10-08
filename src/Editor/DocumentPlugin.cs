@@ -46,7 +46,7 @@ public static class DocumentPlugin
 public sealed class ConfigurationPanel : UserControl
 {
     public TextBox Source { get; }=new() {AcceptsReturn=true,FontFamily=Avalonia.Media.FontFamily.Parse("Consolas")};
-    public ConfigurationPanel(EditorPluginScope scope,string draftName="module.json")
+    public ConfigurationPanel(EditorPluginScope scope,string draftName="definition")
     {
         var documents=scope.Service<DocumentWorkspace>("documents");
         var reset=new Button {Content="放弃此草稿并重新读取"};reset.Click+=(_,_)=>documents.DiscardDraft(draftName);

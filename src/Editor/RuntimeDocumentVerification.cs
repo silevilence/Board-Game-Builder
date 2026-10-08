@@ -1,0 +1,62 @@
+using Avalonia.Controls;
+using BoardGame.Kernel;
+
+namespace BoardGame.Editor;
+
+internal static class RuntimeDocumentVerification
+{
+    public static Window Create(string output)
+    {
+        var host=new EditorHost(baseOnly:true);
+        host.Window.Opened+=async (_,_)=>
+        {
+            void Trace(string message)=>File.WriteAllText(output+".progress",message);
+            Trace("opened");
+            string? error=null;
+            try
+            {
+                await host.Ready;Trace("host ready");var app=host.Application;var documents=app.Service<DocumentWorkspace>("documents");
+                foreach(var id in new[]{"author.configuration","author.files","author.startup","author.scripts","author.media","author.turns"}) {Trace("enable "+id);await app.Enable(id);}
+                Control Panel(string id)=>(Control)app.Service<WorkspaceShell>("workspace").Tabs.Items.OfType<TabItem>().Single(t=>Equals(t.Tag,id)).Content!;
+                async Task WaitFor<T>()
+                {
+                    for(var i=0;i<100;i++) {if(((FormatPanel)Panel("author.configuration")).Content is T) return;await Task.Delay(20);}
+                    throw new Exception("Format panel did not become "+typeof(T).Name);
+                }
+                await WaitFor<ConfigurationPanel>();
+                Trace("first panels ready");
+                documents.EditDraft("definition",documents.Draft("definition").Text+"\n");
+                await app.Reload("author.configuration");await WaitFor<ConfigurationPanel>();
+                if(!documents.Draft("definition").Dirty) throw new Exception("Draft lost during format panel rebuild");
+                documents.DiscardDraft("definition");
+                for(var i=0;i<3;i++)
+                {
+                    Trace("cycle "+i+" switch alternate");
+                    documents.Set(ModuleDocument.Open("samples/state-minimal"));await WaitFor<TextBlock>();
+                    if(documents.Current!.SupportsStructuredEditing) throw new Exception("Unsupported format advertised structured editing");
+                    documents.EditDraft("position.json",documents.Draft("position.json").Text+"\n");
+                    await app.Reload("author.files");
+                    if(!documents.Draft("position.json").Dirty) throw new Exception("Generic draft lost");
+                    documents.ApplyDrafts();_=documents.Current.Snapshot();
+                    var sessions=app.Service<SessionController>("sessions");await sessions.Start();
+                    Trace("cycle "+i+" session started");
+                    if(!sessions.Active || sessions.Frame==null) throw new Exception("Alternate format did not start");
+                    var revision=sessions.Frame.Revision;
+                    await app.Reload("author.configuration");await WaitFor<TextBlock>();
+                    if(!sessions.Active || sessions.Frame.Revision!=revision) throw new Exception("Panel rebuilt the live session");
+                    sessions.Stop();documents.Set(ModuleDocument.Create());await WaitFor<ConfigurationPanel>();
+                }
+                Trace("dispose");documents.Set(null);await app.DisposeAsync();
+                if(app.Root.Fiber.DisposableCount!=0) throw new Exception("Format child fibers leaked effects");
+            }
+            catch(Exception failure) {error=failure.ToString();}
+            finally
+            {
+                File.WriteAllText(output,Wire.Json(new {success=error==null,error}));
+                try {host.Application.Service<DocumentWorkspace>("documents").Set(null);} catch(ObjectDisposedException) { }
+                await host.Application.DisposeAsync();host.Window.Close();
+            }
+        };
+        return host.Window;
+    }
+}

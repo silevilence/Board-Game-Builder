@@ -22,16 +22,17 @@ public sealed class ScriptPanel : UserControl
         void Refresh()
         {
             loaded=context.Document;
-            rulePath=loaded?.Configuration["rules"]?.GetValue<string>() ?? ""; cpuPath=loaded?.Configuration["cpu"]?.GetValue<string>() ?? "";
-            var ruleText=loaded?.Text(rulePath); var cpuText=loaded?.Text(cpuPath);
+            rulePath=loaded?.ScriptPath("lua.rules") ?? ""; cpuPath=loaded?.ScriptPath("lua.cpu") ?? "";
+            rules.IsEnabled=rulePath.Length>0;cpu.IsEnabled=cpuPath.Length>0;
+            var ruleText=rulePath.Length==0?"未启用 Lua 规则":loaded?.Text(rulePath); var cpuText=cpuPath.Length==0?"未启用 Lua CPU":loaded?.Text(cpuPath);
             if(rules.Text!=ruleText) rules.Text=ruleText; if(cpu.Text!=cpuText) cpu.Text=cpuText;
             ruleTab.Header=rulePath+" · actions / decide"; cpuTab.Header=cpuPath+" · decide";
         }
         // Editing immediately joins document undo/save/dirty handling; loading is guarded.
         var loading=false;
         void Sync() { if(loading) return; loading=true; try { Refresh(); } finally {loading=false;} }
-        rules.PropertyChanged+=(_,e)=> { if(e.Property==TextBox.TextProperty && !loading && loaded!=null) loaded.EditText(rulePath,rules.Text ?? ""); };
-        cpu.PropertyChanged+=(_,e)=> { if(e.Property==TextBox.TextProperty && !loading && loaded!=null) loaded.EditText(cpuPath,cpu.Text ?? ""); };
+        rules.PropertyChanged+=(_,e)=> { if(e.Property==TextBox.TextProperty && !loading && loaded!=null && rulePath.Length>0) loaded.EditText(rulePath,rules.Text ?? ""); };
+        cpu.PropertyChanged+=(_,e)=> { if(e.Property==TextBox.TextProperty && !loading && loaded!=null && cpuPath.Length>0) loaded.EditText(cpuPath,cpu.Text ?? ""); };
         apply.Click+=(_,_)=>diagnostics.Text="脚本修改已进入文档；保存写入模块。配置变化需要重开对局。";
         hot.Click+=async (_,_)=> {
             hot.IsEnabled=false;

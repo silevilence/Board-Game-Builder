@@ -195,6 +195,7 @@ public sealed class EditorPluginScope
     public string Id=>definition.Id;
     public CancellationToken Cancellation { get; }
     private readonly CancellationTokenSource cancellation;
+    private bool requiresStructuredFormat;
     internal EditorPluginScope(EditorApplication application,Context context,EditorPluginDefinition definition,CancellationToken parent=default)
     {
         this.application=application;Context=context;this.definition=definition;
@@ -231,11 +232,17 @@ public sealed class EditorPluginScope
         Context.On(key,(_,value)=> {if(!Cancellation.IsCancellationRequested) application.OnOwnerThread(()=>handler(value));return null;});
     }
     public void Emit<T>(EventKey<T> key,T value) {Cancellation.ThrowIfCancellationRequested();Context.Emit(key,value);}
-    public EditorPluginScope ForContext(Context context) {Cancellation.ThrowIfCancellationRequested();return new(application,context,definition,Cancellation);}
-    public ModuleDocument? Document=>Service<DocumentWorkspace>("documents").Current;
+    public EditorPluginScope ForContext(Context context,bool requiresStructuredFormat=false)
+    {Cancellation.ThrowIfCancellationRequested();return new(application,context,definition,Cancellation) {requiresStructuredFormat=requiresStructuredFormat};}
+    public ModuleDocument? Document
+    {
+        get {var document=Service<DocumentWorkspace>("documents").Current;return requiresStructuredFormat && document?.SupportsStructuredEditing!=true?null:document;}
+    }
     public void OnDocumentChanged(Action action)
     {
-        var documents=Service<DocumentWorkspace>("documents");documents.Changed+=action;
-        Own(new Cleanup(()=>documents.Changed-=action));
+        var documents=Service<DocumentWorkspace>("documents");
+        void Refresh() {if(!Cancellation.IsCancellationRequested && (!requiresStructuredFormat || documents.Current?.SupportsStructuredEditing==true)) action();}
+        documents.Changed+=Refresh;
+        Own(new Cleanup(()=>documents.Changed-=Refresh));
     }
 }

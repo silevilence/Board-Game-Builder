@@ -2,6 +2,7 @@ using System.Text;
 using System.Text.Json.Nodes;
 using BoardGame.Kernel;
 using BoardGame.Modules;
+using BoardGame.Runtime;
 namespace BoardGame.Editor;
 
 // Author data is owned by the document. Runtime instances only receive validated copies.
@@ -18,16 +19,11 @@ public sealed class ModuleDocument
     public IReadOnlyList<string> Paths => files.Keys.Order(StringComparer.Ordinal).ToArray();
     public event Action? Changed;
     private ModuleDocument(Dictionary<string,byte[]> files,string? path) { this.files=files; DirectoryPath=path; saved=path==null?"":Hash(files); }
-    public static ModuleDocument Create() => new(new(StringComparer.Ordinal) {
-        ["module.json"]=Encoding.UTF8.GetBytes("""
-        {"format":1,"id":"untitled","version":"1.0.0","rules":"rules.lua","cpu":"cpu.lua","resources":{},"seats":[{"id":"p1","team":"one","controller":"human"}],"phases":["play"],"entities":[]}
-        """),
-        ["rules.lua"]=Encoding.UTF8.GetBytes("return { actions=function(v) return {{id='finish',label='结束',command={kind='finish'}}} end, decide=function(v) return {allowed=true,reason='',commands={{kind='finish',winners={}}}} end }"),
-        ["cpu.lua"]=Encoding.UTF8.GetBytes("return { decide=function(ctx) return ctx.actions[1].command end }") },null);
+    public static ModuleDocument Create() => new(GameAuthorFormats.Template(),null);
     public static ModuleDocument Open(string path)
     {
         path=Path.GetFullPath(path);
-        _=DirectoryModule.Load(path);
+        _=GameRuntime.Load(path);
         return new(ReadFiles(path),path);
     }
     private static Dictionary<string,byte[]> ReadFiles(string path)
@@ -48,7 +44,13 @@ public sealed class ModuleDocument
         }
     }
     public string Text(string path) => Encoding.UTF8.GetString(files[path]);
-    public JsonObject Configuration => JsonNode.Parse(Text("module.json"))!.AsObject();
+    public JsonObject Startup=>JsonNode.Parse(Text(GameRuntime.Entry))!.AsObject();
+    public IGameAuthorFormat? AuthorFormat=>GameAuthorFormats.Resolve(this);
+    public bool SupportsStructuredEditing=>AuthorFormat!=null;
+    public string DefinitionPath=>(AuthorFormat ?? throw new InvalidOperationException("此定义格式没有专用作者界面；请使用文件编辑与试玩。")).DefinitionPath;
+    public JsonObject Configuration=>(AuthorFormat ?? throw new InvalidOperationException("此定义格式没有专用作者界面；请使用文件编辑与试玩。")).Read(this);
+    public string? ScriptPath(string plugin)=>Startup["plugins"]!.AsArray().FirstOrDefault(p=>p!["id"]!.GetValue<string>()==plugin)?["configuration"]?["file"]?.GetValue<string>();
+    public void EditStartup(Action<JsonObject> edit) {var root=Startup;edit(root);EditText(GameRuntime.Entry,root.ToJsonString(new(){WriteIndented=true}));}
     public byte[] Bytes(string path)=>files[path].ToArray();
     public string Revision=>Hash(files);
     public void Import(string revision,JsonObject configuration,IReadOnlyDictionary<string,byte[]> additions)
@@ -61,14 +63,14 @@ public sealed class ModuleDocument
             if(candidate.Keys.Any(p=>p.Equals(file.Key,StringComparison.OrdinalIgnoreCase))) throw new InvalidDataException("导入路径冲突："+file.Key);
             candidate.Add(file.Key,file.Value.ToArray());
         }
-        candidate["module.json"]=Encoding.UTF8.GetBytes(configuration.ToJsonString(new() {WriteIndented=true}));
+        candidate[DefinitionPath]=Encoding.UTF8.GetBytes(configuration.ToJsonString(new() {WriteIndented=true}));
         var probe=new ModuleDocument(candidate,null);_=probe.Snapshot();
         undo.Push(files);redo.Clear();files=candidate;Changed?.Invoke();
     }
     public void EditText(string path,string text) => Edit(path,Encoding.UTF8.GetBytes(text));
     public void EditConfiguration(Action<JsonObject> edit)
     {
-        var value=Configuration; edit(value); EditText("module.json",value.ToJsonString(new() {WriteIndented=true}));
+        var value=Configuration; edit(value); EditText(DefinitionPath,value.ToJsonString(new() {WriteIndented=true}));
     }
     private void Edit(string path,byte[] data)
     {
@@ -81,7 +83,7 @@ public sealed class ModuleDocument
     public LoadedModule Snapshot()
     {
         var temp=Path.Combine(Path.GetTempPath(),"bgb-author-"+Guid.NewGuid());
-        try { Write(temp); return DirectoryModule.Load(temp); }
+        try { Write(temp); return GameRuntime.Load(temp); }
         finally { if(Directory.Exists(temp)) Directory.Delete(temp,true); }
     }
     public void Save(string? destination=null)

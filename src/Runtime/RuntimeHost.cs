@@ -59,12 +59,18 @@ public sealed class RuntimeHost : IDisposable, IAsyncDisposable
             visiting.Remove(id);done.Add(id);order.Add(selected[id]);
         }
     }
-    public static async Task<RuntimeHost> StartAsync(RuntimeStartup startup,
+    public static Task<RuntimeHost> StartAsync(RuntimeStartup startup,
         IReadOnlyList<RuntimePluginDefinition> catalog,IEnumerable<string> required)
     {
-        // Freeze caller-owned metadata before starting any effects.
+        // Runtime fibers must never capture an editor/UI synchronization context.
+        // Freeze inputs before scheduling, so the graph cannot change in the queue.
         startup=Wire.Copy(startup);
         catalog=catalog.Select(p=>p with {Provides=p.Provides?.ToArray()!,Requires=p.Requires?.ToArray()!}).ToArray();
+        var requiredCopy=required.ToArray();
+        return Task.Run(()=>StartCore(startup,catalog,requiredCopy));
+    }
+    private static async Task<RuntimeHost> StartCore(RuntimeStartup startup,IReadOnlyList<RuntimePluginDefinition> catalog,IEnumerable<string> required)
+    {
         var order=Validate(startup,catalog,required);
         var host=new RuntimeHost();
         try
@@ -108,7 +114,7 @@ public sealed class RuntimeHost : IDisposable, IAsyncDisposable
         lock(shutdown)
         {
             disposed=true;
-            return new(cleanup ??= DisposeCore());
+            return new(cleanup ??= Task.Run(DisposeCore));
         }
     }
     private async Task DisposeCore()

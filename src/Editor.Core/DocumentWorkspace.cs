@@ -31,17 +31,18 @@ public sealed class DocumentWorkspace : IDisposable
     }
     public DocumentDraft Draft(string name)
     {
+        if(name=="definition") name=Current?.DefinitionPath ?? throw new InvalidOperationException("请打开模块");
         if(drafts.TryGetValue(name,out var draft)) return draft;
         var doc=Current ?? throw new InvalidOperationException("请打开模块");
-        var yaml=name=="module.yaml";var path=yaml?"module.json":name;
+        var yaml=name=="module.yaml";var path=yaml || name=="definition"?doc.DefinitionPath:name;
         draft=new DocumentDraft(path,doc.Text(path),yaml?AuthorConfiguration.ToYaml(doc.Configuration):doc.Text(path),yaml);
         drafts.Add(name,draft);return draft;
     }
     public void EditDraft(string name,string text) {Draft(name).Edit(text);Changed?.Invoke();}
-    public void DiscardDraft(string name) {drafts.Remove(name);Changed?.Invoke();}
+    public void DiscardDraft(string name) {if(name=="definition") name=Current?.DefinitionPath ?? name;drafts.Remove(name);Changed?.Invoke();}
     public DocumentDraft Form(string name,Func<string> initial)
     {
-        var baseline=Current?.Text("module.json") ?? throw new InvalidOperationException("请打开模块");
+        var baseline=Current is {} current?current.Text(current.DefinitionPath):throw new InvalidOperationException("请打开模块");
         if(forms.TryGetValue(name,out var draft) && (draft.Dirty || draft.Baseline==baseline)) return draft;
         return forms[name]=new(name,baseline,initial(),false);
     }
@@ -52,7 +53,7 @@ public sealed class DocumentWorkspace : IDisposable
     public void ApplyForm(string name,Action<ModuleDocument> apply)
     {
         var draft=forms[name];var document=Current ?? throw new InvalidOperationException("请打开模块");
-        if(document.Text("module.json")!=draft.Baseline) throw new InvalidOperationException("其他面板已修改配置；字段草稿已保留，请放弃并重新读取后合并。");
+        if(document.Text(document.DefinitionPath)!=draft.Baseline) throw new InvalidOperationException("其他面板已修改配置；字段草稿已保留，请放弃并重新读取后合并。");
         apply(document);forms.Remove(name);Notify();
     }
     public void ApplyDrafts()
@@ -113,7 +114,7 @@ public sealed class DocumentDraft(string path,string baseline,string text,bool y
     public string Serialize()
     {
         if(yaml) return AuthorConfiguration.FromYaml(Text).ToJsonString(new() {WriteIndented=true});
-        if(Path=="module.json") _=System.Text.Json.Nodes.JsonNode.Parse(Text)!.AsObject();
+        if(Path.EndsWith(".json",StringComparison.OrdinalIgnoreCase)) _=System.Text.Json.Nodes.JsonNode.Parse(Text);
         return Text;
     }
     public void Accept(string source) {Baseline=source;accepted=Text;undo.Clear();redo.Clear();}

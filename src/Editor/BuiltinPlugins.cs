@@ -35,13 +35,17 @@ public static class BuiltinPlugins
             }
         });
         app.Install(new("author.layout",1,[],["documents","viewports","panels"],scope=>
-            scope.Service<PanelContributions>("panels").Register(scope,"author.layout","布局视口",()=>new LayoutPanel(scope))));
+            scope.Service<PanelContributions>("panels").Register(scope,"author.layout","布局视口",()=>new FormatPanel(scope,s=>new LayoutPanel(s)))));
         app.Install(new("play.controls",1,[],["sessions","viewports","panels"],scope=>
             scope.Service<PanelContributions>("panels").Register(scope,"play.controls","试玩与调试",()=>new PlayPanel(scope))));
         app.Install(new("author.scripts",1,[],["documents","sessions","panels"],scope=>
             scope.Service<PanelContributions>("panels").Register(scope,"author.scripts","Lua 脚本",()=>new ScriptPanel(scope))));
         app.Install(new("author.configuration",1,[],["documents","panels"],scope=>
-            scope.Service<PanelContributions>("panels").Register(scope,"author.configuration","模块配置",()=>new ConfigurationPanel(scope))));
+            scope.Service<PanelContributions>("panels").Register(scope,"author.configuration","模块配置",()=>new FormatPanel(scope,s=>new ConfigurationPanel(s)))));
+        app.Install(new("author.startup",1,[],["documents","panels"],scope=>
+            scope.Service<PanelContributions>("panels").Register(scope,"author.startup","运行插件配置",()=>new ConfigurationPanel(scope,BoardGame.Runtime.GameRuntime.Entry))));
+        app.Install(new("author.files",1,[],["documents","panels"],scope=>
+            scope.Service<PanelContributions>("panels").Register(scope,"author.files","游戏文件",()=>new GameFilePanel(scope))));
         Panel("author.resources","资源树",scope=>new ResourcePanel(scope));
         Panel("author.yaml","模块 YAML",scope=>new ConfigurationPanel(scope,"module.yaml"));
         Panel("author.prototypes","原型与实例",scope=>new AuthorPanel(scope));
@@ -49,9 +53,9 @@ public static class BuiltinPlugins
         Panel("author.turns","席位与阶段",scope=>new TurnPanel(scope));
         Panel("author.extensions","WASM 媒介",scope=>new ExtensionPanel(scope));
         app.Install(new("author.images",1,[],["documents","commands","panels"],scope=>
-            scope.Service<PanelContributions>("panels").Register(scope,"author.images","图片与卡图导入",()=>new ImageImportPanel(scope))));
+            scope.Service<PanelContributions>("panels").Register(scope,"author.images","图片与卡图导入",()=>new FormatPanel(scope,s=>new ImageImportPanel(s)))));
         app.Install(new("author.tts",1,[],["documents","commands","panels"],scope=>
-            scope.Service<PanelContributions>("panels").Register(scope,"author.tts","TTS 导入",()=>new TtsImportPanel(scope))));
+            scope.Service<PanelContributions>("panels").Register(scope,"author.tts","TTS 导入",()=>new FormatPanel(scope,s=>new TtsImportPanel(s)))));
         app.Install(new("author.print",1,[],["documents","commands","panels"],scope=>
             scope.Service<PanelContributions>("panels").Register(scope,"author.print","打印拼版",()=>new PrintPanel(scope))));
         app.Install(new("author.export",1,["exports"],["documents","contributions","panels","workspace"],scope=>
@@ -66,7 +70,7 @@ public static class BuiltinPlugins
             scope.Service<PanelContributions>("panels").Register(scope,"author.export","独立导出",()=>new ExportPanel(scope));
         }));
         void Panel(string id,string title,Func<EditorPluginScope,Control> factory)=>app.Install(new(id,1,[],["documents","panels"],scope=>
-            scope.Service<PanelContributions>("panels").Register(scope,id,title,()=>factory(scope))));
+            scope.Service<PanelContributions>("panels").Register(scope,id,title,()=>id=="author.resources"?factory(scope):new FormatPanel(scope,factory))));
         app.Install(new("base.plugins",1,[],["panels","workspace","assemblies"],scope=>
         {
             var list=new StackPanel {Spacing=8};

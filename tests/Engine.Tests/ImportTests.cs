@@ -41,7 +41,7 @@ public static class ImportTests
             var saved=Path.Combine(folder,"module");doc.Save(saved);Check.That(ModuleDocument.Open(saved).Snapshot().Fingerprint==imported.Fingerprint);
             ModulePackage.Pack(saved,Path.Combine(folder,"cards.bgm"));Check.That(ModulePackage.Load(Path.Combine(folder,"cards.bgm")).ResourceData!.Count==4);
             Check.Throws(()=>ImageImport.Preview(doc,path,"bad",3,1),"整除");
-            var stale=ImageImport.Preview(doc,path,"other");doc.EditConfiguration(root=>root["id"]="modified");Check.Throws(()=>stale.Apply(doc),"重新预览");
+            var stale=ImageImport.Preview(doc,path,"other");doc.EditStartup(root=>root["id"]="modified");Check.Throws(()=>stale.Apply(doc),"重新预览");
             var cloth=ImageImport.Preview(doc,path,"cloth",tablecloth:true);cloth.Apply(doc);
             var scene=BoardGame.View.TableScene.From(new GameEngine(doc.Snapshot().Initial).Project("p1"),doc.Snapshot().ResourceData);
             Check.That(scene.Items[0].Kind=="tablecloth" && scene.Items[0].Entity==null);

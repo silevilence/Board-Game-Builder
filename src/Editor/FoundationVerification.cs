@@ -93,7 +93,7 @@ internal static class FoundationVerification
                 documents.Select("entities","probe-instance");
                 await app.Reload("author.media");await app.Reload("author.prototypes");
                 if(documents.Selection!=("entities","probe-instance")) throw new Exception("Shared selection lost");
-                T Panel<T>(string id) where T:Control=>(T)app.Service<WorkspaceShell>("workspace").Tabs.Items.OfType<TabItem>().Single(t=>Equals(t.Tag,id)).Content!;
+                T Panel<T>(string id) where T:Control {var content=app.Service<WorkspaceShell>("workspace").Tabs.Items.OfType<TabItem>().Single(t=>Equals(t.Tag,id)).Content;return (T)(content is FormatPanel format?format.Content!:content!);}
                 var turnInput=Panel<TurnPanel>("author.turns").GetLogicalDescendants().OfType<TextBox>().First();
                 var turnDraft=turnInput.Text+"\n";turnInput.Text=turnDraft;
                 await app.Reload("author.turns");
@@ -106,7 +106,7 @@ internal static class FoundationVerification
                 var component=Panel<AuthorPanel>("author.prototypes").GetLogicalDescendants().OfType<TextBox>().Single(t=>t.AcceptsReturn);
                 component.Text="value: 7\n";await app.Reload("author.prototypes");
                 if(Panel<AuthorPanel>("author.prototypes").GetLogicalDescendants().OfType<TextBox>().Single(t=>t.AcceptsReturn).Text!="value: 7\n") throw new Exception("Component draft lost");
-                document.EditConfiguration(c=>c["version"]="changed");
+                document.EditConfiguration(c=>c["phases"]!.AsArray().Add("phase-changed"));
                 try {documents.ApplyForm("组件 YAML/entities/probe-instance/properties",doc=>Authoring.SetComponent(doc,"entities","probe-instance","properties",new() {["value"]=7}));throw new Exception("Stale YAML silently overwrote changes");}
                 catch(InvalidOperationException e) when(e.Message.Contains("草稿")) { }
                 document.Undo();documents.DiscardForm("组件 YAML/entities/probe-instance/properties");
@@ -119,7 +119,7 @@ internal static class FoundationVerification
                 {
                     await app.Enable("author.layout");SessionVerification.Select(app,"author.layout");
                     host.Window.Width+=30;host.Window.Height+=20;await Task.Delay(250);
-                    var layout=(LayoutPanel)((TabItem)app.Service<WorkspaceShell>("workspace").Tabs.SelectedItem!).Content!;
+                    var layout=Panel<LayoutPanel>("author.layout");
                     layout.Table.ChangeZoom(1.1f);layout.Table.Hint("probe-instance",null);layout.Table.CancelInput();
                     if(layout.Table.Selected!=null || layout.Table.RenderedFrames==0) throw new Exception("Layout input cancellation/render failed");
                     SessionVerification.Select(app,"base.settings");await app.Disable("author.layout");await Task.Delay(50);
@@ -129,13 +129,13 @@ internal static class FoundationVerification
                 var original=documents.Draft("module.json").Text;
                 documents.EditDraft("module.json",original+"\n ");
                 await app.Reload("author.configuration");
-                var config=(ConfigurationPanel)app.Service<WorkspaceShell>("workspace").Tabs.Items.OfType<TabItem>().Single(t=>Equals(t.Tag,"author.configuration")).Content!;
+                var config=Panel<ConfigurationPanel>("author.configuration");
                 if(config.Source.Text!=original+"\n ") throw new Exception("Draft was lost with panel");
                 documents.Undo();if(documents.Draft("module.json").Text!=original) throw new Exception("Draft undo lost");
                 documents.Redo();if(documents.Draft("module.json").Text==original) throw new Exception("Draft redo lost");
                 if(await documents.CanLeave(()=>Task.FromResult(UnsavedChoice.Cancel))) throw new Exception("Cancel left document");
                 if(!documents.Draft("module.json").Dirty) throw new Exception("Cancel lost draft");
-                document.EditConfiguration(c=>c["version"]="conflict");
+                document.EditConfiguration(c=>c["phases"]!.AsArray().Add("phase-conflict"));
                 try {documents.ApplyDrafts();throw new Exception("Conflict ignored");}
                 catch(InvalidOperationException e) when(e.Message.Contains("草稿")) { }
                 documents.DiscardDraft("module.json");document.Undo();

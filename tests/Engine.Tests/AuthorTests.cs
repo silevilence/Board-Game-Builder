@@ -54,7 +54,7 @@ public static class AuthorTests
             var doc=ModuleDocument.Create(); Check.That(doc.Dirty);
             doc.Save(path); Check.That(!doc.Dirty);
             var original=doc.Snapshot().Fingerprint;
-            doc.EditConfiguration(c=>c["version"]="2"); Check.That(doc.Dirty);
+            doc.EditStartup(c=>c["version"]="2"); Check.That(doc.Dirty);
             doc.Undo(); Check.That(!doc.Dirty && doc.Snapshot().Fingerprint==original);
             doc.Redo(); var edited=doc.Snapshot(); doc.Save();
             Check.That(ModuleDocument.Open(path).Snapshot().Fingerprint==edited.Fingerprint);
@@ -66,7 +66,7 @@ public static class AuthorTests
             session.SubmitHuman("p1",new() {Kind="finish"});
             Check.That(!doc.Snapshot().Initial.Ended,"Play changed author state");
             File.WriteAllText(Path.Combine(path,"outside.txt"),"external change");
-            doc.EditConfiguration(c=>c["version"]="3");
+            doc.EditStartup(c=>c["version"]="3");
             Check.Throws(()=>doc.Save(),"changed outside");
             Check.That(File.ReadAllText(Path.Combine(path,"outside.txt"))=="external change" && ModuleDocument.Open(path).Snapshot().Version=="2","External edit was overwritten");
         }
