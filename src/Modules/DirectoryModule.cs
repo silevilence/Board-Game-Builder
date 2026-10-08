@@ -77,6 +77,7 @@ public static class DirectoryModule
                         case "owner": entity.Owner = Text(data, "seat"); break;
                         case "visibility": entity.Visibility = Text(data, "mode"); break;
                         case "container":
+                            if(entity.IsContainer) Fail($"{entity.Id}: duplicate container capability");
                             entity.IsContainer = true; entity.Capacity = data.GetProperty("capacity").GetInt32(); entity.Ordered = data.GetProperty("ordered").GetBoolean();
                             entity.Contents = data.GetProperty("contents").EnumerateArray().Select(v => v.GetString()!).ToList(); break;
                         case "faces":
@@ -166,6 +167,7 @@ public static class DirectoryModule
     {
         ModulePackage.ValidatePath(relative);
         var root = Path.TrimEndingDirectorySeparator(Path.GetFullPath(directory)); var path = Path.GetFullPath(Path.Combine(root, relative));
+        if((File.GetAttributes(root) & FileAttributes.ReparsePoint)!=0) Fail("Linked module roots are unsupported");
         if (Path.IsPathRooted(relative) || !path.StartsWith(root + Path.DirectorySeparatorChar, StringComparison.OrdinalIgnoreCase)) Fail($"{relative}: path escapes module");
         if (!File.Exists(path)) Fail($"{relative}: missing file");
         for (FileSystemInfo? current = new FileInfo(path); current != null && current.FullName != root; current = Directory.GetParent(current.FullName))
