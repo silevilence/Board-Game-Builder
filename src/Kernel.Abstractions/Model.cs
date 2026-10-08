@@ -79,6 +79,8 @@ public sealed class GameState
     public uint RandomState { get; set; } = 1;
 }
 public sealed record LoadedModule(string Id, string Version, string Fingerprint, GameState Initial,
-    string Rules, string Cpu, string RulesPath, string CpuPath, SortedDictionary<string,string>? ResourceHashes = null,
+    string Rules="", string Cpu="", string RulesPath="", string CpuPath="", SortedDictionary<string,string>? ResourceHashes = null,
     SortedDictionary<string,byte[]>? ResourceData = null, SortedDictionary<string,string>? RuntimeHashes = null,
-    [property:JsonIgnore(Condition=JsonIgnoreCondition.WhenWritingNull)] List<RuntimePlugin>? RuntimePlugins=null);
+    [property:JsonIgnore(Condition=JsonIgnoreCondition.WhenWritingNull)] List<RuntimePlugin>? RuntimePlugins=null,
+    [property:JsonIgnore(Condition=JsonIgnoreCondition.WhenWritingNull)] RuntimeIdentity? RuntimeIdentity=null,
+    [property:JsonIgnore(Condition=JsonIgnoreCondition.WhenWritingNull)] GameDefinition? Definition=null);

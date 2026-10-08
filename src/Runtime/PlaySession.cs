@@ -1,6 +1,5 @@
 using System.Globalization;
 using BoardGame.Kernel;
-using BoardGame.Lua;
 namespace BoardGame.Runtime;
 public sealed record SessionFault(string Code,string Seat,string Detail);
 public sealed class PlaySession : IGameSession
@@ -16,7 +15,8 @@ public sealed class PlaySession : IGameSession
     private readonly Dictionary<string,string> controllers;
     private readonly uint seed;
     private readonly int maxSteps;
-    private readonly LuaWorkerSession worker=new();
+    private readonly IRuleProvider rules;
+    private readonly ICpuDecisionProvider? cpu;
     private volatile bool disposed;
     public SessionFault? Fault { get; private set; }
     public int Steps { get; private set; }
@@ -35,16 +35,21 @@ public sealed class PlaySession : IGameSession
             this.controllers[c.Key]=c.Value;
         }
         // Kernel and official runtime are ready before module WASM, followed by Lua rules.
-        host=RuntimeHost.StartAsync(new(1,module.Id,module.Version,[AuthorityPlugin.Selection]),
-            [AuthorityPlugin.Create(module,seed)],AuthorityPlugin.Required).GetAwaiter().GetResult();
+        var definition=RuntimeDefinition.From(module);
+        var startup=module.RuntimeIdentity?.Startup ?? new(1,module.Id,module.Version,
+            [AuthorityPlugin.Selection,LuaRuntimePlugins.Select(module.Rules.Length==0?"rules.commands":"lua.rules"),..(module.Cpu.Length==0?Array.Empty<RuntimePluginSelection>():[LuaRuntimePlugins.Select("lua.cpu")])]);
+        host=RuntimeHost.StartAsync(startup,
+            [AuthorityPlugin.Create(module,seed),LuaRuntimePlugins.Rules(definition,seed),LuaRuntimePlugins.Cpu(definition),CommandRuleProvider.Plugin],
+            AuthorityPlugin.Required.Concat(this.controllers.Values.Contains("cpu")?["rules","cpu"]:["rules"])).GetAwaiter().GetResult();
         engine=host.Service<IAuthoritySession>("authority");
         ruleBinding=host.Service<RuleBinding>("rule-binding");
+        rules=host.Service<IRuleProvider>("rules");cpu=startup.Plugins.Any(p=>p.Id=="lua.cpu")?host.Service<ICpuDecisionProvider>("cpu"):null;
         try
         {
             if(module.RuntimePlugins!=null) plugins=new WasmPlugins(module.RuntimePlugins);
-            ruleBinding.Replace(CreateRules(module));
+            ruleBinding.Replace(ComposeRules(rules.Rules));
         }
-        catch {plugins?.Dispose();worker.Dispose();host.Dispose();throw;}
+        catch {plugins?.Dispose();host.Dispose();throw;}
     }
     public SeatView View(string seat) => engine.Project(seat);
     public IReadOnlyList<ActionOffer> Actions(string? seat=null)
@@ -67,9 +72,8 @@ public sealed class PlaySession : IGameSession
         {
             var view=View(CurrentSeat);
             var random=uint.Parse(Wire.Hash($"{seed}:{Steps}:{CurrentSeat}")[..8],NumberStyles.HexNumber,CultureInfo.InvariantCulture);
-            var json=worker.Invoke(module.Cpu,module.CpuPath,"decide",Wire.Json(new { view,actions }),random);
-            var command=Wire.Read<Command>(json);
-            cpuDiagnostics.Add(new(engine.ExportLog().EntryCount+1,CurrentSeat,module.CpuPath+":decide",Wire.Json(command)));
+            var command=(cpu ?? throw new InvalidOperationException("Missing CPU capability")).Decide(view,actions,random);
+            cpuDiagnostics.Add(new(engine.ExportLog().EntryCount+1,CurrentSeat,cpu.Entry,Wire.Json(command)));
             if(!actions.Any(a=>Wire.Json(a.Command)==Wire.Json(command)))
             { Stop("cpu-illegal-command","CPU returned a command not offered by the rules.");return false; }
             return Submit(command,true).Accepted;
@@ -89,10 +93,11 @@ public sealed class PlaySession : IGameSession
         }
         Steps++;
         if(before==Wire.Json(engine.ExportAuthorityState())) Stop("no-progress","Command left state unchanged.");
-        if(Ended) worker.Dispose();
+        if(Ended) StopExecution();
         return result;
     }
-    private void Stop(string code,string detail) { Fault ??=new(code,CurrentSeat,detail); cpuDiagnostics.Add(new(engine.ExportLog().EntryCount+1,CurrentSeat,module.CpuPath+":decide",code+": "+detail)); worker.Dispose(); }
+    private void StopExecution() { (rules as IDisposable)?.Dispose();(cpu as IDisposable)?.Dispose(); }
+    private void Stop(string code,string detail) { Fault ??=new(code,CurrentSeat,detail); cpuDiagnostics.Add(new(engine.ExportLog().EntryCount+1,CurrentSeat,cpu?.Entry ?? "session",code+": "+detail)); StopExecution(); }
     public ReplayLog ExportAuthorityLog() => engine.ExportLog();
     public IReadOnlyList<Diagnostic> ExportDiagnostics() => engine.ExportDiagnostics().Concat(Wire.Copy(cpuDiagnostics)).OrderBy(d=>d.Sequence).ToArray();
     public string AuthorityStateHash() => Wire.Hash(Wire.Json(engine.ExportAuthorityState()));
@@ -105,20 +110,14 @@ public sealed class PlaySession : IGameSession
         if(Wire.Json(candidate.Initial)!=Wire.Json(module.Initial) || Wire.Json(candidate.ResourceHashes)!=Wire.Json(module.ResourceHashes) || Wire.Json(candidate.RuntimeHashes)!=Wire.Json(module.RuntimeHashes) || Wire.Json(candidate.RuntimePlugins)!=Wire.Json(module.RuntimePlugins) || candidate.Id!=module.Id)
             throw new InvalidOperationException("Configuration, resources or dependencies changed; restart required.");
         if(candidate.Fingerprint!=BoardGame.Modules.ModuleSnapshot.Fingerprint(candidate)) throw new InvalidDataException("Script version fingerprint mismatch");
-        using(var probe=new LuaWorkerSession())
-        {
-            probe.Invoke(candidate.Rules,candidate.RulesPath,"__validate_rules","{}",seed);
-            probe.Invoke(candidate.Cpu,candidate.CpuPath,"__validate_cpu","{}",seed);
-        }
+        var definition=RuntimeDefinition.From(candidate);
+        var preparedRules=rules.Prepare(definition);
+        var applyCpu=cpu?.Prepare(definition);
         var next=Wire.Copy(candidate);
-        ruleBinding.Replace(CreateRules(next)); module=next;
+        rules.Apply(preparedRules);applyCpu?.Invoke();ruleBinding.Replace(ComposeRules(rules.Rules));module=next;
         versions[next.Fingerprint]=Wire.Copy(next); switches.Add(new(engine.ExportLog().EntryCount,next.Fingerprint));
     }
     public SessionRecording ExportRecording() => SessionRecording.Create(engine.ExportLog(),switches,versions);
-    private IGameRules CreateRules(LoadedModule value)
-    {
-        var rules=new LuaRules(value.Rules,value.RulesPath,seed,worker);
-        return plugins==null?rules:new WasmRules(rules,plugins);
-    }
-    public void Dispose() { if(disposed) return;disposed=true;worker.Dispose();plugins?.Dispose();host.Dispose(); }
+    private IGameRules ComposeRules(IGameRules value)=>plugins==null?value:new WasmRules(value,plugins);
+    public void Dispose() { if(disposed) return;disposed=true;StopExecution();plugins?.Dispose();host.Dispose(); }
 }

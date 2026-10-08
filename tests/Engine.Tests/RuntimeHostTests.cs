@@ -52,5 +52,12 @@ public static class RuntimeHostTests
         Check.Throws(()=>retained!.Own(new Resource(()=>released=true)),"disposed");
         Check.That(released,"Late registration leaked resource");
         Check.Throws(()=>RuntimeHost.Validate(Plan("a"),[catalog[0] with {Requires=[""]}],[]),"invalid capability");
+        var minimal=new LoadedModule("minimal","1","minimal",CommandTests.Initial());
+        using(var session=new PlaySession(minimal))
+        {
+            Check.That(session.Actions().Count==0 && session.Fault==null,"No-script combination invoked Lua");
+            Check.That(!session.SubmitHuman("p1",new(){Kind="finish"}).Accepted,"Unconfigured action bypassed rules");
+        }
+        Check.Throws(()=>new PlaySession(minimal,controllers:new Dictionary<string,string>{{"p1","cpu"}}),"required capability: cpu");
     }
 }
