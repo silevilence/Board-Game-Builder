@@ -11,6 +11,8 @@ public sealed record OnlineIdentity(int Protocol, string Fingerprint)
 public sealed record SeatLease(string Token, string Seat);
 public sealed record OnlineFrame(long Revision, SeatView View, IReadOnlyList<ActionOffer> Actions,
     bool Started, bool Closed, string? Fault);
+public sealed record OnlineProposal(long Sequence, long ExpectedRevision, string Actor, Command Command);
+public sealed record OnlineReceipt(long Sequence, long NextSequence, CommandResult Result, OnlineFrame Frame);
 public sealed class OnlineException(string code) : Exception(code);
 
 // Only the trusted host owns this object. Remote callers receive detached projections.
@@ -19,7 +21,15 @@ public sealed class OnlineSession : IDisposable
     private readonly object gate = new();
     private readonly IGameSession game;
     private readonly Dictionary<string, string> controllers;
-    private readonly Dictionary<string, SeatLease> members = new(StringComparer.Ordinal);
+    private sealed class MemberState(SeatLease lease)
+    {
+        public SeatLease Lease { get; } = lease;
+        public long NextSequence { get; set; } = 1;
+        public string? LastHash { get; set; }
+        public OnlineReceipt? LastReceipt { get; set; }
+    }
+    private readonly Dictionary<string, MemberState> members = new(StringComparer.Ordinal);
+    private readonly Dictionary<string, List<OnlineFrame>> history = new(StringComparer.Ordinal);
     private bool started;
     private bool closed;
     private long revision;
@@ -34,6 +44,8 @@ public sealed class OnlineSession : IDisposable
         this.controllers = new(controllers);
         game = new PlaySession(module, seed, controllers);
         started = !controllers.Values.Contains("human");
+        foreach (var seat in controllers.Keys) history.Add(seat, []);
+        Capture();
     }
 
     public SeatLease Join(OnlineIdentity identity, string? requestedSeat = null)
@@ -43,31 +55,45 @@ public sealed class OnlineSession : IDisposable
             EnsureOpen();
             if (identity != Identity) throw new OnlineException("version-mismatch");
             var seat = controllers.Keys.FirstOrDefault(s => controllers[s] == "human" &&
-                (requestedSeat == null || s == requestedSeat) && !members.Values.Any(m => m.Seat == s));
+                (requestedSeat == null || s == requestedSeat) && !members.Values.Any(m => m.Lease.Seat == s));
             if (seat == null) throw new OnlineException("seat-unavailable");
             var lease = new SeatLease(Convert.ToHexString(RandomNumberGenerator.GetBytes(32)), seat);
-            members.Add(lease.Token, lease);
-            started = controllers.Where(p => p.Value == "human").All(p => members.Values.Any(m => m.Seat == p.Key));
+            members.Add(lease.Token, new(lease));
+            started = controllers.Where(p => p.Value == "human").All(p => members.Values.Any(m => m.Lease.Seat == p.Key));
+            Advance();
             return lease;
         }
     }
 
     public OnlineFrame Read(string token)
     {
-        lock (gate) return Frame(Member(token).Seat);
+        lock (gate) return Wire.Copy(history[Member(token).Lease.Seat][^1]);
     }
 
-    public CommandResult Submit(string token, string actor, Command command)
+    public OnlineReceipt Submit(string token, OnlineProposal proposal)
     {
         lock (gate)
         {
             EnsureOpen();
             var member = Member(token);
-            if (member.Seat != actor) throw new OnlineException("identity-mismatch");
+            if (proposal.Actor != member.Lease.Seat) throw new OnlineException("identity-mismatch");
+            var hash = Wire.Hash(Wire.Json(proposal));
+            if (proposal.Sequence == member.NextSequence - 1 && member.LastReceipt != null)
+            {
+                if (hash != member.LastHash) throw new OnlineException("sequence-conflict");
+                return Wire.Copy(member.LastReceipt);
+            }
+            if (proposal.Sequence != member.NextSequence) throw new OnlineException("out-of-order");
             if (!started) throw new OnlineException("waiting-for-players");
-            var result = game.SubmitHuman(member.Seat, command);
-            revision++;
-            return result;
+            var result = proposal.ExpectedRevision == revision
+                ? game.SubmitHuman(member.Lease.Seat, proposal.Command) : new CommandResult(0, false, "stale-revision");
+            // Script diagnostics and commands belong only in the host recording.
+            if (!result.Accepted && result.Reason != "stale-revision") result = result with { Reason = "operation-rejected" };
+            Advance();
+            member.NextSequence++;
+            member.LastHash = hash;
+            member.LastReceipt = new(proposal.Sequence, member.NextSequence, result, history[member.Lease.Seat][^1]);
+            return Wire.Copy(member.LastReceipt);
         }
     }
 
@@ -77,7 +103,7 @@ public sealed class OnlineSession : IDisposable
         {
             if (closed || !started || !game.IsCpu || game.Ended || game.Fault != null) return false;
             var result = game.StepCpu();
-            revision++;
+            Advance();
             return result;
         }
     }
@@ -89,12 +115,30 @@ public sealed class OnlineSession : IDisposable
             _ = Member(token);
             members.Remove(token);
             closed = true; // Explicit leave ends the session; never silently substitutes a CPU.
+            Advance();
         }
     }
 
     private OnlineFrame Frame(string seat) => new(revision, game.View(seat),
         started && !closed ? game.Actions(seat) : [], started, closed, game.Fault?.Code);
-    private SeatLease Member(string token) => members.GetValueOrDefault(token) ?? throw new OnlineException("invalid-identity");
+    private MemberState Member(string token) => members.GetValueOrDefault(token) ?? throw new OnlineException("invalid-identity");
+    private void Capture()
+    {
+        // Query first: rule failures must appear consistently in every identity's frame.
+        var actions = controllers.Keys.ToDictionary(s => s, s => started && !closed ? game.Actions(s) : []);
+        foreach (var seat in controllers.Keys)
+            history[seat].Add(Wire.Copy(new OnlineFrame(revision, game.View(seat), game.Fault == null ? actions[seat] : [], started, closed, game.Fault?.Code)));
+    }
+    private void Advance() { revision++; Capture(); }
+    public IReadOnlyList<OnlineFrame> CatchUp(string token, long afterRevision)
+    {
+        lock (gate)
+        {
+            var member = Member(token);
+            if (afterRevision < -1 || afterRevision > revision) throw new OnlineException("invalid-cursor");
+            return Wire.Copy(history[member.Lease.Seat].Where(f => f.Revision > afterRevision).ToArray());
+        }
+    }
     private void EnsureOpen() { if (closed) throw new OnlineException("session-closed"); }
     public SessionRecording ExportAuthorityRecording() { lock (gate) return game.ExportRecording(); }
     public void Dispose() { lock (gate) { closed = true; game.Dispose(); } }
