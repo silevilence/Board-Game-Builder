@@ -6,7 +6,7 @@ public static class InteractionTests
     public static void Run() => RunAsync().GetAwaiter().GetResult();
     private static async Task RunAsync()
     {
-        var module=DirectoryModule.Load("samples/quick-cards"); using var ui=await PlayerSession.CreateAsync(module,42,"p1");
+        var module=TestModules.Load("samples/quick-cards"); using var ui=await PlayerSession.CreateAsync(module,42,"p1");
         var start=ui.SubmitAsync(0,new("action",Action:"start")); var duplicate=await ui.SubmitAsync(0,new("action",Action:"start"));
         Check.That(!duplicate.Accepted); Check.That((await start).Accepted);
         var old=ui.Frame; var card=old.Actions[0].Command.Entity;

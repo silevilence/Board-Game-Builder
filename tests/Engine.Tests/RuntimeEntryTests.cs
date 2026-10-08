@@ -10,7 +10,7 @@ public static class RuntimeEntryTests
         var directory=Path.Combine(Path.GetTempPath(),"bgb-entry-"+Guid.NewGuid());
         try
         {
-            GameMigration.Migrate("samples/quick-cards",directory);
+            TestModules.CopyGame("samples/quick-cards",directory);
             var module=GameRuntime.Load(directory);var controllers=module.Initial.Seats.ToDictionary(s=>s.Id,_=>"cpu");
             using IDebugSession local=new InProcessDebugSession(module,7,controllers,"p1");
             using IDebugSession remote=ExternalDebugSession.Launch("src/Player/bin/Release/net10.0-windows/Player.exe",module,7,controllers,"p1",true).GetAwaiter().GetResult();

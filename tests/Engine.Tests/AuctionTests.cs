@@ -6,7 +6,7 @@ public static class AuctionTests
 {
     public static void Run()
     {
-        var module=DirectoryModule.Load("samples/sealed-auction");
+        var module=TestModules.Load("samples/sealed-auction");
         foreach(var mixed in new[] {false,true})
         for(uint seed=1;seed<=20;seed++)
         {

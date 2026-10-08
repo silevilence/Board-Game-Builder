@@ -1,9 +1,5 @@
 {
   "format": 1,
-  "id": "hex-skirmish",
-  "version": "1.0.0",
-  "rules": "rules.lua",
-  "cpu": "cpu.lua",
   "resources": {},
   "seats": [
     {
@@ -68,7 +64,7 @@
           "type": "faces",
           "data": {
             "names": [
-              "p1 红队"
+              "p1 \u7EA2\u961F"
             ],
             "resources": [],
             "up": true
@@ -111,7 +107,7 @@
           "type": "faces",
           "data": {
             "names": [
-              "p2 红队"
+              "p2 \u7EA2\u961F"
             ],
             "resources": [],
             "up": true
@@ -154,7 +150,7 @@
           "type": "faces",
           "data": {
             "names": [
-              "p3 蓝队"
+              "p3 \u84DD\u961F"
             ],
             "resources": [],
             "up": true

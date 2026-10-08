@@ -7,8 +7,8 @@ public static class ReviewTests
 {
     public static void Run()
     {
-        var module=DirectoryModule.Load("samples/quick-cards");
-        Check.That(DirectoryModule.Load("samples/quick-cards/").Fingerprint==module.Fingerprint);
+        var module=TestModules.Load("samples/quick-cards");
+        Check.That(TestModules.Load("samples/quick-cards/").Fingerprint==module.Fingerprint);
         var engine=new GameEngine(CommandTests.Initial());var before=Wire.Json(engine.ExportAuthorityState());
         Check.That(!engine.Submit("p1",new() { Kind="move",Entity="card",X=double.NaN }).Accepted);
         Check.That(before==Wire.Json(engine.ExportAuthorityState()));

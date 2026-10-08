@@ -7,7 +7,7 @@ public static class LocalTableTests
     public static void Run()=>RunAsync().GetAwaiter().GetResult();
     private static async Task RunAsync()
     {
-        var module=DirectoryModule.Load("samples/quick-cards");
+        var module=TestModules.Load("samples/quick-cards");
         foreach(var mode in Enum.GetValues<LocalTableMode>())
         foreach(var mixed in new[] {false,true})
         {
@@ -36,7 +36,7 @@ public static class LocalTableTests
             }
             Check.That(table.Frame.Ended,"Mixed/local game did not finish");
         }
-        var auction=DirectoryModule.Load("samples/sealed-auction");var humans=auction.Initial.Seats.ToDictionary(s=>s.Id,_=>"human");
+        var auction=TestModules.Load("samples/sealed-auction");var humans=auction.Initial.Seats.ToDictionary(s=>s.Id,_=>"human");
         using(var split=new LocalTableSession(auction,42,humans,LocalTableMode.SplitScreen))
         {
             Check.That((await split.SubmitAsync(split.Frame.Revision,"p1",new("action",Action:"open"))).Accepted);

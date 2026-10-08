@@ -10,7 +10,7 @@ public static class M2Acceptance
         var results=new List<object>(); var root=Path.GetFullPath("artifacts/m2-mode-gate"); Directory.CreateDirectory(root);
         foreach(var name in new[]{"quick-cards","hex-skirmish"})
         {
-            var module=DirectoryModule.Load("samples/"+name); var controllers=module.Initial.Seats.ToDictionary(s=>s.Id,_=>"cpu");
+            var module=GameRuntime.Load("samples/"+name); var controllers=module.Initial.Seats.ToDictionary(s=>s.Id,_=>"cpu");
             for(uint seed=1;seed<=20;seed++)
             {
                 using IDebugSession local=new InProcessDebugSession(module,seed,controllers,"p1");

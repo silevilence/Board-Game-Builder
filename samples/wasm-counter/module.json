@@ -1,1 +1,35 @@
-{"format":1,"id":"wasm-counter","version":"1","rules":"rules.lua","cpu":"cpu.lua","resources":{},"seats":[{"id":"p1","team":"one"}],"phases":["play"],"plugins":[{"id":"counter","version":"1","api":1,"kind":"wasm","file":"counter.wasm","sha256":"386DD6D65D4753BDD831857013B50AAD30CCC2C2A6938CBC01142B13C50D3C26","permissions":["component","command"]}],"entities":[{"id":"counter","components":[{"type":"wasm.counter","data":{"value":0,"min":0,"max":10}},{"type":"position","data":{"x":150,"y":100}}]}]}
+{
+  "format": 1,
+  "resources": {},
+  "seats": [
+    {
+      "id": "p1",
+      "team": "one"
+    }
+  ],
+  "phases": [
+    "play"
+  ],
+  "entities": [
+    {
+      "id": "counter",
+      "components": [
+        {
+          "type": "wasm.counter",
+          "data": {
+            "value": 0,
+            "min": 0,
+            "max": 10
+          }
+        },
+        {
+          "type": "position",
+          "data": {
+            "x": 150,
+            "y": 100
+          }
+        }
+      ]
+    }
+  ]
+}

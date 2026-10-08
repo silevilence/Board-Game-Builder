@@ -11,7 +11,7 @@ public static class SecretTests
     }
     public static void Run()
     {
-        var module=DirectoryModule.Load("samples/quick-cards");
+        var module=TestModules.Load("samples/quick-cards");
         var engine=new GameEngine(module.Initial,42,module.Fingerprint,new Rules());
         Command Open(int steps=6,string missing="abstain",string reveal="all-locked")=>new() {Kind="secret-open",Collection=new("choice",["p1","p2"],0,10,steps,missing,3,true,reveal)};
         Check.That(engine.Submit("p1",Open()).Accepted);

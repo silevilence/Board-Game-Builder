@@ -44,10 +44,10 @@
 
 ## 作者与验收
 
-编辑器打开此目录的 `module.json`，使用同一规则、资源和 PlaySession；规则修改位于 `rules.lua`。
+编辑器打开此目录的 `game.start.json`，使用同一规则、资源和运行时会话；规则修改位于 `rules.lua`。
 `dotnet run --project tests/Engine.Tests -c Release -- freecell freecell-shortcuts freecell-modes` 运行规则、布局、输入状态机、快捷动作、种子、回放、模块包与完整胜利路径测试。
 CPU 仅优先收牌并最终认输，用于运行时冒烟，不是解算器，不以 CPU 正常退出作为解局证明。
 
 容器使用通用整数表现属性 `viewFanY`、`viewWidth`、`viewHeight`、`viewCardWidth`、`viewCardHeight`；`viewHidden=1` 仅隐藏图形项，不影响投影权限。`viewTheme=1` 选择经典牌桌，`viewSuit=1..4` 标记梅花／方块／红桃／黑桃牌位，`viewHotkey=1..8` 声明列键位。容器显示顺序来自投影的 `contents`，不按实体 ID 排序。主题属性不参与规则判断。
 
-重新导入原始资源（会重建初始 module.json）：`python scripts/import-freecell.py <kenney_playing-cards-pack.zip>`。
+重新导入原始资源（会重建初始 module.json 和 game.start.json）：`python scripts/import-freecell.py <kenney_playing-cards-pack.zip>`。

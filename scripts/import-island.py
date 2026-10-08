@@ -88,6 +88,7 @@ asset('empty','boardgame','PNG/Pieces (White)/pieceWhite_single00.png')
 for e in entities:
     for c in e['components']:
         if c['type']=='faces': c['data']['resources']=['empty' if x=='' else x for x in c['data']['resources']]
-(root/'module.json').write_text(json.dumps(module,ensure_ascii=False,indent=2)+'\n',encoding='utf-8')
+from runtime_startup import write_game
+write_game(root, module)
 for archive in archives.values(): archive.close()
 print(f'{len(tiles)} tiles, {len(vertices)} intersections, {len(edges)} edges; {len(resources)} resources')

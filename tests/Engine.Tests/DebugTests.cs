@@ -6,7 +6,7 @@ public static class DebugTests
 {
     public static void Observers()
     {
-        var module=DirectoryModule.Load("samples/quick-cards"); var controllers=module.Initial.Seats.ToDictionary(s=>s.Id,_=>"cpu");
+        var module=TestModules.Load("samples/quick-cards"); var controllers=module.Initial.Seats.ToDictionary(s=>s.Id,_=>"cpu");
         using var a=new DebugSession(module,42,controllers,"p1"); using var b=new DebugSession(module,42,controllers,"p1");
         var left=a.Handle(new("cpu",0)); var right=b.Handle(new("cpu",0));
         Check.That(left.AuthorityState==null && left.Frame.View.Entities.All(e=>e.Container!="hand-p2"));
@@ -19,7 +19,7 @@ public static class DebugTests
     }
     public static void Timeline()
     {
-        var module=DirectoryModule.Load("samples/quick-cards"); var controllers=module.Initial.Seats.ToDictionary(s=>s.Id,s=>s.Controller);
+        var module=TestModules.Load("samples/quick-cards"); var controllers=module.Initial.Seats.ToDictionary(s=>s.Id,s=>s.Controller);
         foreach(var external in new[]{false,true})
         {
             using IDebugSession client=external?ExternalDebugSession.Launch("src/Player/bin/Release/net10.0-windows/Player.exe",module,9,controllers,"p1",true).Result:new InProcessDebugSession(module,9,controllers,"p1");
@@ -38,7 +38,7 @@ public static class DebugTests
     }
     public static void External()
     {
-        var module=DirectoryModule.Load("samples/quick-cards"); var controllers=module.Initial.Seats.ToDictionary(s=>s.Id,_=>"cpu");
+        var module=TestModules.Load("samples/quick-cards"); var controllers=module.Initial.Seats.ToDictionary(s=>s.Id,_=>"cpu");
         using IDebugSession local=new InProcessDebugSession(module,7,controllers,"p1");
         using IDebugSession remote=ExternalDebugSession.Launch("src/Player/bin/Release/net10.0-windows/Player.exe",module,7,controllers,"p1",true).GetAwaiter().GetResult();
         var a=local.SendAsync(new("frame")).Result; var b=remote.SendAsync(new("frame")).Result;
@@ -55,7 +55,7 @@ public static class DebugTests
     }
     public static void InProcess()
     {
-        var module=DirectoryModule.Load("samples/quick-cards"); var initial=Wire.Json(module.Initial); string? previous=null;
+        var module=TestModules.Load("samples/quick-cards"); var initial=Wire.Json(module.Initial); string? previous=null;
         for(var cycle=0;cycle<3;cycle++)
         {
             using IDebugSession session=new InProcessDebugSession(module,42,module.Initial.Seats.ToDictionary(s=>s.Id,s=>s.Controller),"p1");

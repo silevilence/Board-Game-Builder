@@ -18,6 +18,8 @@ try {
 } finally {$env:BGB_TEST_RELEASE=$previousRelease}
 dotnet run --project tests/Engine.Tests -c Release --no-build -- m2-gate
 if($LASTEXITCODE -ne 0) {throw 'Two-mode seed gate failed'}
+dotnet run --project tests/Engine.Tests -c Release --no-build -- m35-gate
+if($LASTEXITCODE -ne 0) {throw 'Runtime plugin/sample migration gate failed'}
 foreach($sample in @('quick-cards','hex-skirmish')) {
   dotnet run --project src/Player -c Release --no-build -- batch "samples/$sample" --seed 1 --count 20 --out "$root/$sample-seeds"
   if($LASTEXITCODE -ne 0) {throw "Seed gate failed: $sample"}
@@ -43,5 +45,5 @@ $process=[Diagnostics.Process]::Start($start)
 if(-not $process.WaitForExit(120000)) {$process.Kill($true);throw 'Foundation verification timed out'}
 if(-not (Get-Content -Raw "$root/foundation.json" | ConvertFrom-Json).success) {throw 'Foundation verification failed'}
 
-Write-Output "Local M2/M2.5 verification complete: $root"
-Write-Output 'Clean Windows verification remains separate; see docs/validation/m25-integration.md.'
+Write-Output "Local M2/M2.5/M3.5 verification complete: $root"
+Write-Output 'Clean Windows verification remains separate; see docs/validation/m3.5-review.md.'

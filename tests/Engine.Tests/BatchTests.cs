@@ -7,7 +7,7 @@ public static class BatchTests
     public static void Run()
     {
         var root=Path.Combine("artifacts","fault-tests",Guid.NewGuid().ToString());
-        var m=DirectoryModule.Load("samples/quick-cards");
+        var m=TestModules.Load("samples/quick-cards");
         var faults=new Dictionary<string,LoadedModule> {
             ["cpu-failure"]=m with { Cpu="return {decide=function(c) error('injected') end}" },
             ["no-progress"]=m with { Rules="return {actions=function(c) return {{id='wait',label='Wait',command={kind='wait'}}} end, decide=function(c) return {allowed=true,reason='',commands={{kind='set',entity='match',property='rounds',value=3}}} end}" },

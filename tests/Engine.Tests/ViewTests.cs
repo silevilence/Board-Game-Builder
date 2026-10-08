@@ -7,7 +7,7 @@ public static class ViewTests
 {
     public static void Run()
     {
-        var module=DirectoryModule.Load("samples/quick-cards"); using var session=new PlaySession(module,42);
+        var module=TestModules.Load("samples/quick-cards"); using var session=new PlaySession(module,42);
         Check.That(session.SubmitHuman("p1",session.Actions()[0].Command).Accepted);
         var projection=session.View("p1"); var scene=TableScene.From(projection);
         var enemy=projection.Entities.Single(e=>e.Id=="hand-p2");

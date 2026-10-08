@@ -8,7 +8,7 @@ public static class FreeCellShortcutTests
 {
     public static void Run()
     {
-        var module=DirectoryModule.Load("samples/freecell");
+        var module=TestModules.Load("samples/freecell");
         using var ui=PlayerSession.CreateAsync(module,1,"p1").Result;
         void Submit(InteractionIntent intent,bool expected=true)
         { Check.That(ui.SubmitAsync(ui.Frame.Revision,intent).Result.Accepted==expected); }

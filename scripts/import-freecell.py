@@ -51,4 +51,5 @@ module = {'format': 1, 'id': 'freecell', 'version': '1.2.0', 'rules': 'rules.lua
           'seats': [{'id': 'p1', 'team': 'solo', 'controller': 'human'}],
           'phases': ['setup', 'deal', 'play'], 'layout': {'kind': 'free', 'originX': 20, 'originY': 12},
           'entities': entities}
-(root / 'module.json').write_text(json.dumps(module, ensure_ascii=False, indent=2)+'\n', encoding='utf-8')
+from runtime_startup import write_game
+write_game(root, module)

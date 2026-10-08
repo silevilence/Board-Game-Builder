@@ -7,7 +7,7 @@ namespace Engine.Tests;
 
 public static class IslandTests
 {
-    private static LoadedModule Load()=>DirectoryModule.Load("samples/island-settlers");
+    private static LoadedModule Load()=>TestModules.Load("samples/island-settlers");
     private static Dictionary<string,string> Humans(LoadedModule m)=>m.Initial.Seats.ToDictionary(s=>s.Id,_=>"human");
     private static void Act(PlaySession s,string id)
     {
@@ -105,12 +105,12 @@ public static class IslandTests
     public static void Modes()=>ModesAsync().GetAwaiter().GetResult();
     private static async Task ModesAsync()
     {
-        var m=Load();Directory.CreateDirectory("artifacts/island-validation");
-        var package="artifacts/island-validation/island-"+Guid.NewGuid()+".bgm";ModulePackage.Pack("samples/island-settlers",package);
-        var packed=ModulePackage.Load(package);Check.That(m.Fingerprint==packed.Fingerprint);
+        var m=GameRuntime.Load("samples/island-settlers");Directory.CreateDirectory("artifacts/island-validation");
+        var package="artifacts/island-validation/island-"+Guid.NewGuid()+".bgm";TestModules.Pack("samples/island-settlers",package);
+        var packed=GameRuntime.Load(package);Check.That(m.Fingerprint==packed.Fingerprint);
         var cpus=m.Initial.Seats.ToDictionary(s=>s.Id,_=>"cpu");
         using IDebugSession local=new InProcessDebugSession(m,42,cpus,"p1");
-        using IDebugSession remote=await ExternalDebugSession.Launch("src/Player/bin/Debug/net10.0-windows/Player.exe",packed,42,cpus,"p1",true);
+        using IDebugSession remote=await ExternalDebugSession.Launch("src/Player/bin/Release/net10.0-windows/Player.exe",packed,42,cpus,"p1",true);
         var frame=(await local.SendAsync(new("frame"))).Frame;
         for(var n=0;n<500 && !frame.View.Ended;n++)
         {

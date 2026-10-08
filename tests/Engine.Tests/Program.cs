@@ -9,6 +9,7 @@ try
     tests.Add("runtime-recording",RuntimeRecordingTests.Run);
     tests.Add("runtime-entry",RuntimeEntryTests.Run);
     tests.Add("alternative-definition",AlternativeDefinitionTests.Run);
+    tests.Add("m35-gate",M35Acceptance.Run);
     tests.Add("island",IslandTests.Run);
     tests.Add("island-modes",IslandTests.Modes);
     tests.Add("local-table",LocalTableTests.Run);
@@ -21,7 +22,7 @@ try
     tests.Add("tts-import",ImportTests.Tts);
     tests.Add("print",PrintTests.Run);
     if(args.Any(a=>!tests.ContainsKey(a))) throw new ArgumentException("Unknown test group.");
-    foreach (var test in tests.Where(t => (args.Length == 0 && t.Key != "m2-gate" && t.Key != "export") || args.Contains(t.Key))) { test.Value(); Console.WriteLine($"PASS {test.Key}"); }
+    foreach (var test in tests.Where(t => (args.Length == 0 && t.Key != "m2-gate" && t.Key != "m35-gate" && t.Key != "export") || args.Contains(t.Key))) { test.Value(); Console.WriteLine($"PASS {test.Key}"); }
     return 0;
 }
 catch (Exception error) { Console.Error.WriteLine(error); return 1; }

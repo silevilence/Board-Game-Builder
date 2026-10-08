@@ -11,7 +11,7 @@ public static class FreeCellTests
     private static Command Place(string card,string target)=>new() {Kind="place",Entity=card,Target=target};
     public static void Run()
     {
-        var module=DirectoryModule.Load(Source);
+        var module=TestModules.Load(Source);
         Check.That(module.ResourceData!.Count==53 && module.ResourceData.ContainsKey("player.presentation") && module.Initial.Seats.Count==1);
         Check.That(ModuleSnapshot.Fingerprint(Wire.Copy(module))==module.Fingerprint,"Mixed-case runtime paths changed fingerprint at wire boundary");
         var output=Path.GetFullPath("artifacts/freecell-validation"); Directory.CreateDirectory(output);
@@ -95,8 +95,8 @@ public static class FreeCellTests
         for(var rank=1;rank<=13;rank++) for(var suit=1;suit<=4;suit++) Accept(winner,Place($"card-{(suit-1)*13+rank:00}",$"home-{suit}"));
         Check.That(winner.Project("p1").Ended && winner.Project("p1").Winners.SequenceEqual(new[]{"p1"}));
         Check.That(winner.ExportAuthorityState().Entities["match"].Properties["home"]==52); Reject(winner,new(){Kind="undo"});
-        var package=Path.Combine(output,Guid.NewGuid()+".bgm"); ModulePackage.Pack(Source,package);
-        var packed=ModulePackage.Load(package); Check.That(packed.Fingerprint==module.Fingerprint && packed.ResourceData!.Count==53);
+        var package=Path.Combine(output,Guid.NewGuid()+".bgm"); TestModules.Pack(Source,package);
+        var packed=TestModules.Load(package); Check.That(packed.Fingerprint==module.Fingerprint && packed.ResourceData!.Count==53);
         Check.That(packed.ResourceData!["player.presentation"].SequenceEqual(module.ResourceData!["player.presentation"]),"Player presentation lost during packaging");
         using(var human=new PlaySession(packed,42,maxSteps:1))
         {
@@ -123,7 +123,7 @@ public static class FreeCellTests
 
     public static void Modes()
     {
-        var module=DirectoryModule.Load(Source); var controls=new Dictionary<string,string>{{"p1","human"}};
+        var module=GameRuntime.Load(Source); var controls=new Dictionary<string,string>{{"p1","human"}};
         using IDebugSession local=new InProcessDebugSession(module,1,controls,"p1");
         using IDebugSession remote=ExternalDebugSession.Launch("src/Player/bin/Release/net10.0-windows/Player.exe",module,1,controls,"p1",true).Result;
         using var player=PlayerSession.CreateAsync(module,1,"p1").Result;

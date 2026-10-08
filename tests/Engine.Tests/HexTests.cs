@@ -6,7 +6,7 @@ public static class HexTests
 {
     public static void Run()
     {
-        var module=DirectoryModule.Load("samples/hex-skirmish");
+        var module=TestModules.Load("samples/hex-skirmish");
         Check.That(module.Initial.Seats.Count==3 && module.Initial.Seats[0].Team==module.Initial.Seats[1].Team);
         using var session=new PlaySession(module,42);
         while(!session.Ended && session.Fault==null)

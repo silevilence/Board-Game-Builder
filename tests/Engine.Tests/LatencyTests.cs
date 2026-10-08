@@ -9,7 +9,7 @@ public static class LatencyTests
     public static void Run() => RunAsync().GetAwaiter().GetResult();
     private static async Task RunAsync()
     {
-        var module=DirectoryModule.Load("samples/quick-cards");
+        var module=TestModules.Load("samples/quick-cards");
         var calls=new List<(string Path,string Entry,double Ms)>();
         using var listener=new ActivityListener
         {

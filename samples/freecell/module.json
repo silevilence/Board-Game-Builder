@@ -1,9 +1,5 @@
 {
   "format": 1,
-  "id": "freecell",
-  "version": "1.2.0",
-  "rules": "rules.lua",
-  "cpu": "cpu.lua",
   "resources": {
     "player.presentation": "player.json",
     "card-01": "assets/card_clubs_A.png",
@@ -156,7 +152,7 @@
           "type": "faces",
           "data": {
             "names": [
-              "牌库"
+              "\u724C\u5E93"
             ],
             "resources": [],
             "up": true
@@ -202,7 +198,7 @@
           "type": "faces",
           "data": {
             "names": [
-              "第 1 列"
+              "\u7B2C 1 \u5217"
             ],
             "resources": [],
             "up": true
@@ -248,7 +244,7 @@
           "type": "faces",
           "data": {
             "names": [
-              "第 2 列"
+              "\u7B2C 2 \u5217"
             ],
             "resources": [],
             "up": true
@@ -294,7 +290,7 @@
           "type": "faces",
           "data": {
             "names": [
-              "第 3 列"
+              "\u7B2C 3 \u5217"
             ],
             "resources": [],
             "up": true
@@ -340,7 +336,7 @@
           "type": "faces",
           "data": {
             "names": [
-              "第 4 列"
+              "\u7B2C 4 \u5217"
             ],
             "resources": [],
             "up": true
@@ -386,7 +382,7 @@
           "type": "faces",
           "data": {
             "names": [
-              "第 5 列"
+              "\u7B2C 5 \u5217"
             ],
             "resources": [],
             "up": true
@@ -432,7 +428,7 @@
           "type": "faces",
           "data": {
             "names": [
-              "第 6 列"
+              "\u7B2C 6 \u5217"
             ],
             "resources": [],
             "up": true
@@ -478,7 +474,7 @@
           "type": "faces",
           "data": {
             "names": [
-              "第 7 列"
+              "\u7B2C 7 \u5217"
             ],
             "resources": [],
             "up": true
@@ -524,7 +520,7 @@
           "type": "faces",
           "data": {
             "names": [
-              "第 8 列"
+              "\u7B2C 8 \u5217"
             ],
             "resources": [],
             "up": true
@@ -570,7 +566,7 @@
           "type": "faces",
           "data": {
             "names": [
-              "空当 1"
+              "\u7A7A\u5F53 1"
             ],
             "resources": [],
             "up": true
@@ -616,7 +612,7 @@
           "type": "faces",
           "data": {
             "names": [
-              "空当 2"
+              "\u7A7A\u5F53 2"
             ],
             "resources": [],
             "up": true
@@ -662,7 +658,7 @@
           "type": "faces",
           "data": {
             "names": [
-              "空当 3"
+              "\u7A7A\u5F53 3"
             ],
             "resources": [],
             "up": true
@@ -708,7 +704,7 @@
           "type": "faces",
           "data": {
             "names": [
-              "空当 4"
+              "\u7A7A\u5F53 4"
             ],
             "resources": [],
             "up": true
@@ -754,7 +750,7 @@
           "type": "faces",
           "data": {
             "names": [
-              "梅花 A→K"
+              "\u6885\u82B1 A\u2192K"
             ],
             "resources": [],
             "up": true
@@ -800,7 +796,7 @@
           "type": "faces",
           "data": {
             "names": [
-              "方块 A→K"
+              "\u65B9\u5757 A\u2192K"
             ],
             "resources": [],
             "up": true
@@ -846,7 +842,7 @@
           "type": "faces",
           "data": {
             "names": [
-              "红桃 A→K"
+              "\u7EA2\u6843 A\u2192K"
             ],
             "resources": [],
             "up": true
@@ -892,7 +888,7 @@
           "type": "faces",
           "data": {
             "names": [
-              "黑桃 A→K"
+              "\u9ED1\u6843 A\u2192K"
             ],
             "resources": [],
             "up": true
@@ -923,7 +919,7 @@
           "type": "faces",
           "data": {
             "names": [
-              "梅花A"
+              "\u6885\u82B1A"
             ],
             "resources": [
               "card-01"
@@ -949,7 +945,7 @@
           "type": "faces",
           "data": {
             "names": [
-              "梅花2"
+              "\u6885\u82B12"
             ],
             "resources": [
               "card-02"
@@ -975,7 +971,7 @@
           "type": "faces",
           "data": {
             "names": [
-              "梅花3"
+              "\u6885\u82B13"
             ],
             "resources": [
               "card-03"
@@ -1001,7 +997,7 @@
           "type": "faces",
           "data": {
             "names": [
-              "梅花4"
+              "\u6885\u82B14"
             ],
             "resources": [
               "card-04"
@@ -1027,7 +1023,7 @@
           "type": "faces",
           "data": {
             "names": [
-              "梅花5"
+              "\u6885\u82B15"
             ],
             "resources": [
               "card-05"
@@ -1053,7 +1049,7 @@
           "type": "faces",
           "data": {
             "names": [
-              "梅花6"
+              "\u6885\u82B16"
             ],
             "resources": [
               "card-06"
@@ -1079,7 +1075,7 @@
           "type": "faces",
           "data": {
             "names": [
-              "梅花7"
+              "\u6885\u82B17"
             ],
             "resources": [
               "card-07"
@@ -1105,7 +1101,7 @@
           "type": "faces",
           "data": {
             "names": [
-              "梅花8"
+              "\u6885\u82B18"
             ],
             "resources": [
               "card-08"
@@ -1131,7 +1127,7 @@
           "type": "faces",
           "data": {
             "names": [
-              "梅花9"
+              "\u6885\u82B19"
             ],
             "resources": [
               "card-09"
@@ -1157,7 +1153,7 @@
           "type": "faces",
           "data": {
             "names": [
-              "梅花10"
+              "\u6885\u82B110"
             ],
             "resources": [
               "card-10"
@@ -1183,7 +1179,7 @@
           "type": "faces",
           "data": {
             "names": [
-              "梅花J"
+              "\u6885\u82B1J"
             ],
             "resources": [
               "card-11"
@@ -1209,7 +1205,7 @@
           "type": "faces",
           "data": {
             "names": [
-              "梅花Q"
+              "\u6885\u82B1Q"
             ],
             "resources": [
               "card-12"
@@ -1235,7 +1231,7 @@
           "type": "faces",
           "data": {
             "names": [
-              "梅花K"
+              "\u6885\u82B1K"
             ],
             "resources": [
               "card-13"
@@ -1261,7 +1257,7 @@
           "type": "faces",
           "data": {
             "names": [
-              "方块A"
+              "\u65B9\u5757A"
             ],
             "resources": [
               "card-14"
@@ -1287,7 +1283,7 @@
           "type": "faces",
           "data": {
             "names": [
-              "方块2"
+              "\u65B9\u57572"
             ],
             "resources": [
               "card-15"
@@ -1313,7 +1309,7 @@
           "type": "faces",
           "data": {
             "names": [
-              "方块3"
+              "\u65B9\u57573"
             ],
             "resources": [
               "card-16"
@@ -1339,7 +1335,7 @@
           "type": "faces",
           "data": {
             "names": [
-              "方块4"
+              "\u65B9\u57574"
             ],
             "resources": [
               "card-17"
@@ -1365,7 +1361,7 @@
           "type": "faces",
           "data": {
             "names": [
-              "方块5"
+              "\u65B9\u57575"
             ],
             "resources": [
               "card-18"
@@ -1391,7 +1387,7 @@
           "type": "faces",
           "data": {
             "names": [
-              "方块6"
+              "\u65B9\u57576"
             ],
             "resources": [
               "card-19"
@@ -1417,7 +1413,7 @@
           "type": "faces",
           "data": {
             "names": [
-              "方块7"
+              "\u65B9\u57577"
             ],
             "resources": [
               "card-20"
@@ -1443,7 +1439,7 @@
           "type": "faces",
           "data": {
             "names": [
-              "方块8"
+              "\u65B9\u57578"
             ],
             "resources": [
               "card-21"
@@ -1469,7 +1465,7 @@
           "type": "faces",
           "data": {
             "names": [
-              "方块9"
+              "\u65B9\u57579"
             ],
             "resources": [
               "card-22"
@@ -1495,7 +1491,7 @@
           "type": "faces",
           "data": {
             "names": [
-              "方块10"
+              "\u65B9\u575710"
             ],
             "resources": [
               "card-23"
@@ -1521,7 +1517,7 @@
           "type": "faces",
           "data": {
             "names": [
-              "方块J"
+              "\u65B9\u5757J"
             ],
             "resources": [
               "card-24"
@@ -1547,7 +1543,7 @@
           "type": "faces",
           "data": {
             "names": [
-              "方块Q"
+              "\u65B9\u5757Q"
             ],
             "resources": [
               "card-25"
@@ -1573,7 +1569,7 @@
           "type": "faces",
           "data": {
             "names": [
-              "方块K"
+              "\u65B9\u5757K"
             ],
             "resources": [
               "card-26"
@@ -1599,7 +1595,7 @@
           "type": "faces",
           "data": {
             "names": [
-              "红桃A"
+              "\u7EA2\u6843A"
             ],
             "resources": [
               "card-27"
@@ -1625,7 +1621,7 @@
           "type": "faces",
           "data": {
             "names": [
-              "红桃2"
+              "\u7EA2\u68432"
             ],
             "resources": [
               "card-28"
@@ -1651,7 +1647,7 @@
           "type": "faces",
           "data": {
             "names": [
-              "红桃3"
+              "\u7EA2\u68433"
             ],
             "resources": [
               "card-29"
@@ -1677,7 +1673,7 @@
           "type": "faces",
           "data": {
             "names": [
-              "红桃4"
+              "\u7EA2\u68434"
             ],
             "resources": [
               "card-30"
@@ -1703,7 +1699,7 @@
           "type": "faces",
           "data": {
             "names": [
-              "红桃5"
+              "\u7EA2\u68435"
             ],
             "resources": [
               "card-31"
@@ -1729,7 +1725,7 @@
           "type": "faces",
           "data": {
             "names": [
-              "红桃6"
+              "\u7EA2\u68436"
             ],
             "resources": [
               "card-32"
@@ -1755,7 +1751,7 @@
           "type": "faces",
           "data": {
             "names": [
-              "红桃7"
+              "\u7EA2\u68437"
             ],
             "resources": [
               "card-33"
@@ -1781,7 +1777,7 @@
           "type": "faces",
           "data": {
             "names": [
-              "红桃8"
+              "\u7EA2\u68438"
             ],
             "resources": [
               "card-34"
@@ -1807,7 +1803,7 @@
           "type": "faces",
           "data": {
             "names": [
-              "红桃9"
+              "\u7EA2\u68439"
             ],
             "resources": [
               "card-35"
@@ -1833,7 +1829,7 @@
           "type": "faces",
           "data": {
             "names": [
-              "红桃10"
+              "\u7EA2\u684310"
             ],
             "resources": [
               "card-36"
@@ -1859,7 +1855,7 @@
           "type": "faces",
           "data": {
             "names": [
-              "红桃J"
+              "\u7EA2\u6843J"
             ],
             "resources": [
               "card-37"
@@ -1885,7 +1881,7 @@
           "type": "faces",
           "data": {
             "names": [
-              "红桃Q"
+              "\u7EA2\u6843Q"
             ],
             "resources": [
               "card-38"
@@ -1911,7 +1907,7 @@
           "type": "faces",
           "data": {
             "names": [
-              "红桃K"
+              "\u7EA2\u6843K"
             ],
             "resources": [
               "card-39"
@@ -1937,7 +1933,7 @@
           "type": "faces",
           "data": {
             "names": [
-              "黑桃A"
+              "\u9ED1\u6843A"
             ],
             "resources": [
               "card-40"
@@ -1963,7 +1959,7 @@
           "type": "faces",
           "data": {
             "names": [
-              "黑桃2"
+              "\u9ED1\u68432"
             ],
             "resources": [
               "card-41"
@@ -1989,7 +1985,7 @@
           "type": "faces",
           "data": {
             "names": [
-              "黑桃3"
+              "\u9ED1\u68433"
             ],
             "resources": [
               "card-42"
@@ -2015,7 +2011,7 @@
           "type": "faces",
           "data": {
             "names": [
-              "黑桃4"
+              "\u9ED1\u68434"
             ],
             "resources": [
               "card-43"
@@ -2041,7 +2037,7 @@
           "type": "faces",
           "data": {
             "names": [
-              "黑桃5"
+              "\u9ED1\u68435"
             ],
             "resources": [
               "card-44"
@@ -2067,7 +2063,7 @@
           "type": "faces",
           "data": {
             "names": [
-              "黑桃6"
+              "\u9ED1\u68436"
             ],
             "resources": [
               "card-45"
@@ -2093,7 +2089,7 @@
           "type": "faces",
           "data": {
             "names": [
-              "黑桃7"
+              "\u9ED1\u68437"
             ],
             "resources": [
               "card-46"
@@ -2119,7 +2115,7 @@
           "type": "faces",
           "data": {
             "names": [
-              "黑桃8"
+              "\u9ED1\u68438"
             ],
             "resources": [
               "card-47"
@@ -2145,7 +2141,7 @@
           "type": "faces",
           "data": {
             "names": [
-              "黑桃9"
+              "\u9ED1\u68439"
             ],
             "resources": [
               "card-48"
@@ -2171,7 +2167,7 @@
           "type": "faces",
           "data": {
             "names": [
-              "黑桃10"
+              "\u9ED1\u684310"
             ],
             "resources": [
               "card-49"
@@ -2197,7 +2193,7 @@
           "type": "faces",
           "data": {
             "names": [
-              "黑桃J"
+              "\u9ED1\u6843J"
             ],
             "resources": [
               "card-50"
@@ -2223,7 +2219,7 @@
           "type": "faces",
           "data": {
             "names": [
-              "黑桃Q"
+              "\u9ED1\u6843Q"
             ],
             "resources": [
               "card-51"
@@ -2249,7 +2245,7 @@
           "type": "faces",
           "data": {
             "names": [
-              "黑桃K"
+              "\u9ED1\u6843K"
             ],
             "resources": [
               "card-52"

@@ -7,13 +7,13 @@ public static class WasmTests
 {
     public static void Extensions()
     {
-        var module=DirectoryModule.Load("samples/wasm-counter");
+        var module=TestModules.Load("samples/wasm-counter");
         using var session=new PlaySession(module,42);
         for(var i=0;i<3;i++) Check.That(session.SubmitHuman("p1",session.Actions()[0].Command).Accepted);
         Check.That(session.Ended && session.View("p1").Entities.Single().Properties["wasm.counter"]==3);
         Check.That(Wire.Json(session.ExportRecording().Replay().Project("p1"))==Wire.Json(session.View("p1")));
         var path=Path.Combine(Path.GetTempPath(),"wasm-"+Guid.NewGuid()+".bgm");
-        try {ModulePackage.Pack("samples/wasm-counter",path);using var packed=new PlaySession(ModulePackage.Load(path));Check.That(packed.Actions().Count==1);}
+        try {TestModules.Pack("samples/wasm-counter",path);using var packed=new PlaySession(TestModules.Load(path));Check.That(packed.Actions().Count==1);}
         finally {File.Delete(path);}
         var p=Plugin("""
         (module (func (export "bgb_api") (result i32) i32.const 1) (func (export "bgb_version") (result i32) i32.const 1)
@@ -37,7 +37,7 @@ public static class WasmTests
         Check.Throws(()=>new WasmPlugins(Enumerable.Repeat(Plugin(),33)),"32");
         Check.Throws(()=>new WasmPlugins([Plugin(prefix+"(func (export \"bgb_init\") (result i32) unreachable))")]),"unreachable");
         Check.Throws(()=>new WasmPlugins([Plugin(prefix+"(func (export \"bgb_init\") (result i32) i32.const 1))")]),"registration");
-        var normal=DirectoryModule.Load("samples/wasm-counter");
+        var normal=TestModules.Load("samples/wasm-counter");
         foreach(var body in new[] {"(loop $forever br $forever) i32.const 0","unreachable","i32.const 1000"})
         {
             var bad=Plugin(prefix+"(func (export \"bgb_init\") (result i32) i32.const 3) (func (export \"bgb_command\") (param i32 i32) (result i32) "+body+"))") with {Id="counter",Permissions=["component","command"]};
@@ -60,7 +60,7 @@ public static class WasmTests
         Check.Throws(()=>new WasmPlugins([p with {Sha256=new string('0',64)}]),"hash");
         Check.Throws(()=>new WasmPlugins([p with {Permissions=["filesystem"]}]),"permission");
         Check.Throws(()=>ModulePackage.ValidateDependencies([new("third-party","1",1)]),"unsupported");
-        var module=DirectoryModule.Load("samples/quick-cards") with {RuntimePlugins=[p]};
+        var module=TestModules.Load("samples/quick-cards") with {RuntimePlugins=[p]};
         module=module with {Fingerprint=ModuleSnapshot.Fingerprint(module)};
         using var player=new PlaySession(module,1);Check.That(player.Actions().Count>0);
         using var editor=new DebugSession(module,1,module.Initial.Seats.ToDictionary(s=>s.Id,_=>"human"),"p1");
@@ -76,11 +76,11 @@ public static class WasmTests
             var root=System.Text.Json.Nodes.JsonNode.Parse(File.ReadAllText(Path.Combine(directory,"module.json")))!;
             root["plugins"]=System.Text.Json.JsonSerializer.SerializeToNode(new[] {new RuntimeDependency(p.Id,p.Version,p.Api,Kind:"wasm",File:p.File,Sha256:p.Sha256)},Wire.Options);
             File.WriteAllText(Path.Combine(directory,"module.json"),root.ToJsonString());
-            Check.Throws(()=>DirectoryModule.Load(directory),"missing file");
+            Check.Throws(()=>TestModules.Load(directory),"missing file");
             File.WriteAllBytes(Path.Combine(directory,p.File),p.Code);
-            var loaded=DirectoryModule.Load(directory);var packed=Path.Combine(directory,"test.bgm");ModulePackage.Pack(directory,packed);
-            Check.That(ModulePackage.Load(packed).Fingerprint==loaded.Fingerprint);
-            using var runtime=new WasmPlugins(ModulePackage.Load(packed).RuntimePlugins);
+            var loaded=TestModules.Load(directory);var packed=Path.Combine(directory,"test.bgm");TestModules.Pack(directory,packed);
+            Check.That(TestModules.Load(packed).Fingerprint==loaded.Fingerprint);
+            using var runtime=new WasmPlugins(TestModules.Load(packed).RuntimePlugins);
         }
         finally {Directory.Delete(directory,true);}
     }

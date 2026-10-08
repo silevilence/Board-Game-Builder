@@ -22,7 +22,7 @@ public static class AlternativeDefinitionTests
         var directory=Path.Combine(Path.GetTempPath(),"bgb-alternative-"+Guid.NewGuid());
         try
         {
-            GameMigration.Migrate("samples/quick-cards",directory);var original=GameRuntime.Load(directory);
+            TestModules.CopyGame("samples/quick-cards",directory);var original=GameRuntime.Load(directory);
             Convert(directory);var alternative=GameRuntime.Load(directory);
             Check.That(Wire.Json(original.Initial)==Wire.Json(alternative.Initial));
             var controllers=original.Initial.Seats.ToDictionary(s=>s.Id,_=>"cpu");

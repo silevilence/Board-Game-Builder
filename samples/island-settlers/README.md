@@ -4,7 +4,7 @@
 
 ## 开始
 
-在 Editor 打开本目录的 module.json，或运行：
+在 Editor 打开本目录的 game.start.json，或运行：
 
 ```powershell
 dotnet run --project src/Player -- gui samples/island-settlers
@@ -43,6 +43,6 @@ dotnet run --project src/Player -- gui samples/island-settlers
 | 编辑、热重载、暂停单步、两种 Play、日志 | 复用 Editor 对本模块的通用作者工作流 |
 | 图片导入、卡图切分、打印、TTS | 可在 Editor 对资源／发展牌使用图片和打印工具；本示例不需要 TTS 导入，不声称覆盖其转换语义 |
 
-重建资源与 module.json：`python scripts/import-island.py E:/silev/Downloads`。规则和 CPU 文件不会被生成器覆盖。
+重建资源、module.json 与 game.start.json：`python scripts/import-island.py E:/silev/Downloads`。规则和 CPU 文件不会被生成器覆盖。
 
 自动验证：`dotnet run --project tests/Engine.Tests -- island`。批量：`dotnet run --project src/Player -- batch samples/island-settlers --count 20 --out artifacts/island-batch`。验收结果见 `docs/validation/island-review.md`。

@@ -14,7 +14,7 @@ public static class DefinitionPluginTests
             var source="samples/"+sample;var target=Path.Combine(Path.GetTempPath(),"bgb-definition-"+Guid.NewGuid());
             try
             {
-                var legacy=DirectoryModule.Load(source);GameMigration.Migrate(source,target);
+                var legacy=TestModules.Load(source);TestModules.CopyGame(source,target);
                 var loaded=GameRuntime.Load(target);
                 Check.That(Wire.Json(legacy.Initial)==Wire.Json(loaded.Initial),sample+": definition changed initial state");
                 Check.That(Wire.Json(legacy.ResourceHashes)==Wire.Json(loaded.ResourceHashes),sample+": definition changed resources");
