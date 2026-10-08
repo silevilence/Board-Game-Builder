@@ -126,4 +126,30 @@ public static class OnlineTests
             Check.That(Wire.Json(replica.Frame) == Wire.Json(frames[^1]));
         }
     }
+
+    public static void Audience()
+    {
+        var module = TestModules.Load("samples/quick-cards");
+        using var room = new OnlineSession(module, 42, module.Initial.Seats.ToDictionary(s => s.Id, _ => "human"));
+        var first = room.Join(OnlineIdentity.For(module), "p1");
+        var second = room.Join(OnlineIdentity.For(module), "p2");
+        var frame = room.Read(first.Token);
+        Check.That(room.Submit(first.Token, new(1, frame.Revision, first.Seat, frame.Actions[0].Command)).Result.Accepted);
+        var observer = room.Watch(OnlineIdentity.For(module));
+        var view = room.Read(observer.Token);
+        Check.That(view.View.Seat == "" && view.Actions.Count == 0 && view.Revision > 0);
+        Check.That(view.View.Entities.All(e => e.Container?.StartsWith("hand-") != true));
+        Check.Throws(() => room.Submit(observer.Token, new(1, view.Revision, "", new() { Kind = "draw" })), "audience-read-only");
+        Check.That(Wire.Json(room.CatchUp(observer.Token, -1)[^1]) == Wire.Json(view));
+        foreach (var player in new[] { first, second, observer })
+        {
+            var recording = room.ExportPlayerRecording(player.Token);
+            Check.That(Wire.Json(recording.Replay().Frame) == Wire.Json(room.Read(player.Token)));
+            Check.That(!Wire.Json(recording).Contains("randomAfter") && !Wire.Json(recording).Contains("resumeToken"));
+            var malformed = recording with { Frames = recording.Frames.Reverse().ToArray() };
+            Check.Throws(() => malformed.Replay(), "invalid-recording");
+        }
+        room.Leave(observer.Token);
+        Check.That(!room.Read(first.Token).Closed);
+    }
 }

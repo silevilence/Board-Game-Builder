@@ -16,7 +16,7 @@ public sealed record OnlineOptions(TimeSpan IdleTimeout, TimeSpan ReconnectGrace
 }
 public sealed record OnlineResume(SeatLease Lease, long NextSequence, IReadOnlyList<OnlineFrame> Frames);
 public sealed record OnlineFrame(long Revision, SeatView View, IReadOnlyList<ActionOffer> Actions,
-    bool Started, bool Closed, string? Fault);
+    bool Started, bool Closed, string? Fault, PlayerEvent? Event = null);
 public sealed record OnlineProposal(long Sequence, long ExpectedRevision, string Actor, Command Command);
 public sealed record OnlineReceipt(long Sequence, long NextSequence, CommandResult Result, OnlineFrame Frame);
 public sealed class OnlineException(string code) : Exception(code);
@@ -67,6 +67,7 @@ public sealed class OnlineSession : IDisposable
         catch { game.Dispose(); throw; }
         started = !controllers.Values.Contains("human");
         foreach (var seat in controllers.Keys) history.Add(seat, []);
+        history.Add("", []); // An audience is not a playable seat.
         Capture();
     }
 
@@ -92,12 +93,25 @@ public sealed class OnlineSession : IDisposable
         lock (gate) return Wire.Copy(history[Member(token).Lease.Seat][^1]);
     }
 
+    public SeatLease Watch(OnlineIdentity identity)
+    {
+        lock (gate)
+        {
+            EnsureOpen();
+            if (identity != Identity) throw new OnlineException("version-mismatch");
+            var lease = new SeatLease(NewToken(), "", NewToken());
+            members.Add(lease.Token, new(lease) { LastSeen = time.GetUtcNow() });
+            return lease;
+        }
+    }
+
     public OnlineReceipt Submit(string token, OnlineProposal proposal)
     {
         lock (gate)
         {
             EnsureOpen();
             var member = Member(token);
+            if (member.Lease.Seat == "") throw new OnlineException("audience-read-only");
             if (proposal.Actor != member.Lease.Seat) throw new OnlineException("identity-mismatch");
             var hash = Wire.Hash(Wire.Json(proposal));
             if (proposal.Sequence == member.NextSequence - 1 && member.LastReceipt != null)
@@ -111,7 +125,7 @@ public sealed class OnlineSession : IDisposable
                 ? game.SubmitHuman(member.Lease.Seat, proposal.Command) : new CommandResult(0, false, "stale-revision");
             // Script diagnostics and commands belong only in the host recording.
             if (!result.Accepted && result.Reason != "stale-revision") result = result with { Reason = "operation-rejected" };
-            Advance();
+            Advance(new(result.Sequence, member.Lease.Seat, result.Accepted, result.Reason));
             member.NextSequence++;
             member.LastHash = hash;
             member.LastReceipt = new(proposal.Sequence, member.NextSequence, result, history[member.Lease.Seat][^1]);
@@ -125,7 +139,7 @@ public sealed class OnlineSession : IDisposable
         {
             if (closed || !started || !game.IsCpu || game.Ended || game.Fault != null) return false;
             var result = game.StepCpu();
-            Advance();
+            Advance(new(game.ExportAuthorityLog().EntryCount, "", result, result ? "accepted" : "cpu-failure"));
             return result;
         }
     }
@@ -134,8 +148,9 @@ public sealed class OnlineSession : IDisposable
     {
         lock (gate)
         {
-            _ = Member(token);
+            var member = Member(token);
             members.Remove(token);
+            if (member.Lease.Seat == "") return;
             closed = true; // Explicit leave ends the session; never silently substitutes a CPU.
             Advance();
         }
@@ -182,6 +197,7 @@ public sealed class OnlineSession : IDisposable
                 if (member.DisconnectedAt == null && now - member.LastSeen >= options.IdleTimeout)
                     member.DisconnectedAt = member.LastSeen + options.IdleTimeout;
                 if (member.DisconnectedAt == null || now - member.DisconnectedAt < options.ReconnectGrace || member.TakenOver) continue;
+                if (member.Lease.Seat == "") continue;
                 if (options.OnTimeout == DisconnectPolicy.EndSession) { closed = true; Advance(); return; }
                 if (options.OnTimeout == DisconnectPolicy.Cpu)
                 {
@@ -202,14 +218,15 @@ public sealed class OnlineSession : IDisposable
         member.LastSeen = time.GetUtcNow();
         return member;
     }
-    private void Capture()
+    private void Capture(PlayerEvent? entry = null)
     {
         // Query first: rule failures must appear consistently in every identity's frame.
         var actions = controllers.Keys.ToDictionary(s => s, s => started && !closed ? game.Actions(s) : []);
         foreach (var seat in controllers.Keys)
-            history[seat].Add(Wire.Copy(new OnlineFrame(revision, game.View(seat), game.Fault == null ? actions[seat] : [], started, closed, game.Fault?.Code)));
+            history[seat].Add(Wire.Copy(new OnlineFrame(revision, game.View(seat), game.Fault == null ? actions[seat] : [], started, closed, game.Fault?.Code, entry)));
+        history[""].Add(Wire.Copy(new OnlineFrame(revision, GameEngine.ProjectAudienceSnapshot(game.ExportAuthorityState()), [], started, closed, game.Fault?.Code, entry)));
     }
-    private void Advance() { revision++; Capture(); }
+    private void Advance(PlayerEvent? entry = null) { revision++; Capture(entry); }
     public IReadOnlyList<OnlineFrame> CatchUp(string token, long afterRevision)
     {
         lock (gate)
@@ -217,6 +234,14 @@ public sealed class OnlineSession : IDisposable
             var member = Member(token);
             if (afterRevision < -1 || afterRevision > revision) throw new OnlineException("invalid-cursor");
             return Wire.Copy(history[member.Lease.Seat].Where(f => f.Revision > afterRevision).ToArray());
+        }
+    }
+    public OnlineRecording ExportPlayerRecording(string token)
+    {
+        lock (gate)
+        {
+            var seat = Member(token).Lease.Seat;
+            return new(1, Identity, seat, Wire.Copy(history[seat]));
         }
     }
     private void EnsureOpen() { if (closed) throw new OnlineException("session-closed"); }
