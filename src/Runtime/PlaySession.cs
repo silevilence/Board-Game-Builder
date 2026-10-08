@@ -3,13 +3,15 @@ using BoardGame.Kernel;
 using BoardGame.Lua;
 namespace BoardGame.Runtime;
 public sealed record SessionFault(string Code,string Seat,string Detail);
-public sealed class PlaySession : IDisposable
+public sealed class PlaySession : IGameSession
 {
     private LoadedModule module;
     private readonly Dictionary<string,LoadedModule> versions=new(StringComparer.Ordinal);
     private readonly List<ScriptSwitch> switches=[];
     private readonly List<Diagnostic> cpuDiagnostics=[];
-    private readonly GameEngine engine;
+    private readonly IAuthoritySession engine;
+    private readonly RuntimeHost host;
+    private readonly RuleBinding ruleBinding;
     private readonly WasmPlugins? plugins;
     private readonly Dictionary<string,string> controllers;
     private readonly uint seed;
@@ -33,13 +35,16 @@ public sealed class PlaySession : IDisposable
             this.controllers[c.Key]=c.Value;
         }
         // Kernel and official runtime are ready before module WASM, followed by Lua rules.
-        engine=new GameEngine(module.Initial,seed,module.Fingerprint);
+        host=RuntimeHost.StartAsync(new(1,module.Id,module.Version,[AuthorityPlugin.Selection]),
+            [AuthorityPlugin.Create(module,seed)],AuthorityPlugin.Required).GetAwaiter().GetResult();
+        engine=host.Service<IAuthoritySession>("authority");
+        ruleBinding=host.Service<RuleBinding>("rule-binding");
         try
         {
             if(module.RuntimePlugins!=null) plugins=new WasmPlugins(module.RuntimePlugins);
-            engine.ReplaceRules(CreateRules(module));
+            ruleBinding.Replace(CreateRules(module));
         }
-        catch {plugins?.Dispose();worker.Dispose();throw;}
+        catch {plugins?.Dispose();worker.Dispose();host.Dispose();throw;}
     }
     public SeatView View(string seat) => engine.Project(seat);
     public IReadOnlyList<ActionOffer> Actions(string? seat=null)
@@ -106,7 +111,7 @@ public sealed class PlaySession : IDisposable
             probe.Invoke(candidate.Cpu,candidate.CpuPath,"__validate_cpu","{}",seed);
         }
         var next=Wire.Copy(candidate);
-        engine.ReplaceRules(CreateRules(next)); module=next;
+        ruleBinding.Replace(CreateRules(next)); module=next;
         versions[next.Fingerprint]=Wire.Copy(next); switches.Add(new(engine.ExportLog().EntryCount,next.Fingerprint));
     }
     public SessionRecording ExportRecording() => SessionRecording.Create(engine.ExportLog(),switches,versions);
@@ -115,5 +120,5 @@ public sealed class PlaySession : IDisposable
         var rules=new LuaRules(value.Rules,value.RulesPath,seed,worker);
         return plugins==null?rules:new WasmRules(rules,plugins);
     }
-    public void Dispose() { if(disposed) return;disposed=true;worker.Dispose();plugins?.Dispose(); }
+    public void Dispose() { if(disposed) return;disposed=true;worker.Dispose();plugins?.Dispose();host.Dispose(); }
 }
