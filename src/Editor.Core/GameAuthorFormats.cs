@@ -10,17 +10,38 @@ public interface IGameAuthorFormat
 {
     string DefinitionPath {get;}
     JsonObject Read(ModuleDocument document);
+    string Serialize(ModuleDocument document,JsonObject configuration);
 }
 
-public static class GameAuthorFormats
+public sealed record GameAuthorFormatProvider(string LoaderId,string Version,int Api,Func<RuntimePluginSelection,IGameAuthorFormat> Create);
+
+// Per-workspace author support. Runtime loader availability does not imply a matching editor.
+public sealed class GameAuthorFormats
 {
-    private sealed record ModuleJson(string DefinitionPath) : IGameAuthorFormat
-    {public JsonObject Read(ModuleDocument document)=>JsonNode.Parse(document.Text(DefinitionPath))!.AsObject();}
-    public static IGameAuthorFormat? Resolve(ModuleDocument document)
+    private readonly Dictionary<(string Id,string Version,int Api),GameAuthorFormatProvider> providers=new();
+    public event Action? Changed;
+    public GameAuthorFormats()
     {
-        var plugins=document.Startup["plugins"]!.AsArray();
-        var selection=plugins.SingleOrDefault(p=>p!["id"]!.GetValue<string>()=="definition.module");
-        return selection==null?null:new ModuleJson(selection["configuration"]!["path"]!.GetValue<string>());
+        Register(new("definition.module","1",1,selection=>new ModuleJson(selection.Configuration.GetProperty("path").GetString()!)));
+    }
+    public IDisposable Register(GameAuthorFormatProvider provider)
+    {
+        var key=(provider.LoaderId,provider.Version,provider.Api);
+        if(!providers.TryAdd(key,provider)) throw new InvalidOperationException("Duplicate author format provider: "+provider.LoaderId);
+        Changed?.Invoke();
+        return new Cleanup(()=> {if(providers.Remove(key)) Changed?.Invoke();});
+    }
+    private sealed record ModuleJson(string DefinitionPath) : IGameAuthorFormat
+    {
+        public JsonObject Read(ModuleDocument document)=>JsonNode.Parse(document.Text(DefinitionPath))!.AsObject();
+        public string Serialize(ModuleDocument document,JsonObject configuration)=>configuration.ToJsonString(new(){WriteIndented=true});
+    }
+    public IGameAuthorFormat? Resolve(ModuleDocument document)
+    {
+        var startup=document.Startup.Deserialize<RuntimeStartup>(Wire.Options)!;
+        var matches=startup.Plugins.Where(p=>providers.ContainsKey((p.Id,p.Version,p.Api))).ToArray();
+        if(matches.Length>1) throw new InvalidOperationException("Multiple author format providers match this document");
+        return matches.Length==0?null:providers[(matches[0].Id,matches[0].Version,matches[0].Api)].Create(matches[0]);
     }
     public static Dictionary<string,byte[]> Template()
     {

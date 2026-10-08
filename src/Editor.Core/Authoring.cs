@@ -4,7 +4,7 @@ namespace BoardGame.Editor;
 
 public static class Authoring
 {
-    public static void ApplyYaml(ModuleDocument doc,string yaml) => doc.EditText(doc.DefinitionPath,AuthorConfiguration.FromYaml(yaml).ToJsonString(new() {WriteIndented=true}));
+    public static void ApplyYaml(ModuleDocument doc,string yaml) => doc.ReplaceConfiguration(AuthorConfiguration.FromYaml(yaml));
     public static void CreatePrototype(ModuleDocument doc,string id,string? fromEntity=null) => doc.EditConfiguration(root=> {
         ValidateId(id);
         var prototypes=root["prototypes"] as JsonArray ?? new JsonArray();

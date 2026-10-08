@@ -8,14 +8,13 @@ namespace BoardGame.Runtime;
 public sealed record GamePackageManifest(int Format,string Fingerprint,SortedDictionary<string,string> Files);
 public static class GamePackage
 {
-    private const int MaxFile=32*1024*1024,MaxTotal=128*1024*1024;
     public static void Pack(string directory,string destination)
     {
         var module=GameRuntime.LoadDirectory(directory);
         var files=new SortedDictionary<string,byte[]>(StringComparer.Ordinal);
         foreach(var path in module.RuntimeIdentity!.ContentHashes.Keys.Append(GameRuntime.Entry))
             files.Add(path,File.ReadAllBytes(DirectoryModule.SafeFile(directory,path)));
-        if(files.Count>2048 || files.Any(f=>f.Value.Length>MaxFile) || files.Sum(f=>(long)f.Value.Length)>MaxTotal) throw new InvalidDataException("Package size budget exceeded");
+        if(files.Count>ModuleContentLimits.MaxFiles || files.Any(f=>f.Value.Length>ModuleContentLimits.MaxFileBytes) || files.Sum(f=>(long)f.Value.Length)>ModuleContentLimits.MaxTotalBytes) throw new InvalidDataException("Package size budget exceeded");
         var hashes=new SortedDictionary<string,string>(files.ToDictionary(f=>f.Key,f=>ModulePackage.Hash(f.Value)),StringComparer.Ordinal);
         var manifest=new GamePackageManifest(2,module.Fingerprint,hashes);
         var target=Path.GetFullPath(destination);Directory.CreateDirectory(Path.GetDirectoryName(target)!);
@@ -37,7 +36,7 @@ public static class GamePackage
         try
         {
             using var zip=ZipFile.OpenRead(path);
-            if(zip.Entries.Count>2049 || zip.Entries.Any(e=>e.Length>MaxFile) || zip.Entries.Sum(e=>e.Length)>MaxTotal) throw new InvalidDataException("Package size budget exceeded");
+            if(zip.Entries.Count>ModuleContentLimits.MaxFiles+1 || zip.Entries.Any(e=>e.Length>ModuleContentLimits.MaxFileBytes) || zip.Entries.Sum(e=>e.Length)>ModuleContentLimits.MaxTotalBytes) throw new InvalidDataException("Package size budget exceeded");
             var entries=new Dictionary<string,byte[]>(StringComparer.OrdinalIgnoreCase);
             foreach(var entry in zip.Entries)
             {
@@ -45,14 +44,16 @@ public static class GamePackage
                 using var stream=entry.Open();using var data=new MemoryStream();var buffer=new byte[81920];int read;
                 while((read=stream.Read(buffer))>0)
                 {
-                    if(data.Length+read>MaxFile || data.Length+read>entry.Length) throw new InvalidDataException(entry.FullName+": expanded size exceeded");
+                    if(data.Length+read>ModuleContentLimits.MaxFileBytes || data.Length+read>entry.Length) throw new InvalidDataException(entry.FullName+": expanded size exceeded");
                     data.Write(buffer,0,read);
                 }
                 if(!entries.TryAdd(entry.FullName,data.ToArray())) throw new InvalidDataException(entry.FullName+": duplicate package path");
             }
             if(!entries.Remove("package.manifest.json",out var bytes)) throw new InvalidDataException("Missing package manifest");
+            using var header=System.Text.Json.JsonDocument.Parse(bytes);
+            if(!header.RootElement.TryGetProperty("format",out var format) || !format.TryGetInt32(out var version) || version!=2)
+                throw new InvalidDataException("Legacy/incompatible package format: explicitly migrate the source directory and repack");
             var manifest=Wire.Read<GamePackageManifest>(Encoding.UTF8.GetString(bytes));
-            if(manifest.Format!=2) throw new InvalidDataException("Legacy/incompatible package format: explicitly migrate the source directory and repack");
             if(manifest.Files.Count!=entries.Count) throw new InvalidDataException("Package file count mismatch");
             foreach(var file in manifest.Files)
             {

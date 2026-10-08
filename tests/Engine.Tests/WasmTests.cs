@@ -41,7 +41,7 @@ public static class WasmTests
         foreach(var body in new[] {"(loop $forever br $forever) i32.const 0","unreachable","i32.const 1000"})
         {
             var bad=Plugin(prefix+"(func (export \"bgb_init\") (result i32) i32.const 3) (func (export \"bgb_command\") (param i32 i32) (result i32) "+body+"))") with {Id="counter",Permissions=["component","command"]};
-            var module=normal with {RuntimePlugins=[bad]};module=module with {Fingerprint=ModuleSnapshot.Fingerprint(module)};
+            var module=normal with {RuntimePlugins=[bad]};module=TestModules.Rebuild(module);
             using var session=new PlaySession(module);var before=session.AuthorityStateHash();
             Check.That(!session.SubmitHuman("p1",new() {Kind="add"}).Accepted);
             Check.That(before==session.AuthorityStateHash(),"WASM failure partially committed");
@@ -61,11 +61,11 @@ public static class WasmTests
         Check.Throws(()=>new WasmPlugins([p with {Permissions=["filesystem"]}]),"permission");
         Check.Throws(()=>ModulePackage.ValidateDependencies([new("third-party","1",1)]),"unsupported");
         var module=TestModules.Load("samples/quick-cards") with {RuntimePlugins=[p]};
-        module=module with {Fingerprint=ModuleSnapshot.Fingerprint(module)};
+        module=TestModules.Rebuild(module);
         using var player=new PlaySession(module,1);Check.That(player.Actions().Count>0);
         using var editor=new DebugSession(module,1,module.Initial.Seats.ToDictionary(s=>s.Id,_=>"human"),"p1");
         Check.That(editor.Handle(new("frame")).Frame.Actions.Count>0);
-        Check.Throws(()=>player.ReloadScripts(module with {RuntimePlugins=[]}),"restart");
+        Check.Throws(()=>player.ReloadScripts(TestModules.Rebuild(module with {RuntimePlugins=[]})),"restart");
         var directory=Path.Combine(Path.GetTempPath(),"bgb-wasm-"+Guid.NewGuid());Directory.CreateDirectory(directory);
         try
         {
@@ -76,11 +76,11 @@ public static class WasmTests
             var root=System.Text.Json.Nodes.JsonNode.Parse(File.ReadAllText(Path.Combine(directory,"module.json")))!;
             root["plugins"]=System.Text.Json.JsonSerializer.SerializeToNode(new[] {new RuntimeDependency(p.Id,p.Version,p.Api,Kind:"wasm",File:p.File,Sha256:p.Sha256)},Wire.Options);
             File.WriteAllText(Path.Combine(directory,"module.json"),root.ToJsonString());
-            Check.Throws(()=>TestModules.Load(directory),"missing file");
+            Check.Throws(()=>DirectoryModule.Load(directory),"missing file");
             File.WriteAllBytes(Path.Combine(directory,p.File),p.Code);
-            var loaded=TestModules.Load(directory);var packed=Path.Combine(directory,"test.bgm");TestModules.Pack(directory,packed);
-            Check.That(TestModules.Load(packed).Fingerprint==loaded.Fingerprint);
-            using var runtime=new WasmPlugins(TestModules.Load(packed).RuntimePlugins);
+            var loaded=DirectoryModule.Load(directory);var packed=Path.Combine(directory,"test.bgm");ModulePackage.Pack(directory,packed);
+            Check.That(ModulePackage.Load(packed).Fingerprint==loaded.Fingerprint);
+            using var runtime=new WasmPlugins(ModulePackage.Load(packed).RuntimePlugins);
         }
         finally {Directory.Delete(directory,true);}
     }

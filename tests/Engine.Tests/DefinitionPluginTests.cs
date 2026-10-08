@@ -11,10 +11,10 @@ public static class DefinitionPluginTests
     {
         foreach(var sample in new[]{"quick-cards","hex-skirmish","freecell","sealed-auction","wasm-counter","island-settlers"})
         {
-            var source="samples/"+sample;var target=Path.Combine(Path.GetTempPath(),"bgb-definition-"+Guid.NewGuid());
+            var source="samples/"+sample;var target=Path.Combine(Path.GetTempPath(),"bgb-definition-"+Guid.NewGuid());var legacyDirectory=target+"-legacy";
             try
             {
-                var legacy=TestModules.Load(source);TestModules.CopyGame(source,target);
+                TestModules.CopyLegacy(source,legacyDirectory);var legacy=DirectoryModule.Load(legacyDirectory);TestModules.CopyGame(source,target);
                 var loaded=GameRuntime.Load(target);
                 Check.That(Wire.Json(legacy.Initial)==Wire.Json(loaded.Initial),sample+": definition changed initial state");
                 Check.That(Wire.Json(legacy.ResourceHashes)==Wire.Json(loaded.ResourceHashes),sample+": definition changed resources");
@@ -32,7 +32,7 @@ public static class DefinitionPluginTests
                 File.WriteAllText(entry,startup.ToJsonString());
                 Check.Throws(()=>GameRuntime.Load(target),"required capability: definition");
             }
-            finally {if(Directory.Exists(target)) Directory.Delete(target,true);}
+            finally {if(Directory.Exists(target)) Directory.Delete(target,true);if(Directory.Exists(legacyDirectory)) Directory.Delete(legacyDirectory,true);}
         }
     }
 }

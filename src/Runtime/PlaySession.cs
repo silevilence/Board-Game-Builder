@@ -129,7 +129,7 @@ internal sealed class LocalGameSession : IGameSession
             var nextIdentity=candidate.RuntimeIdentity!;
             if(Wire.Json(identity.Startup)!=Wire.Json(nextIdentity.Startup) || identity.DefinitionSource!=nextIdentity.DefinitionSource)
                 throw new InvalidOperationException("Runtime plugin configuration changed; restart required.");
-            var scripts=identity.Startup.Plugins.Where(p=>p.Id is "lua.rules" or "lua.cpu").Select(p=>p.Configuration.GetProperty("file").GetString()).ToHashSet();
+            var scripts=RuntimeContent.ScriptFiles(identity.Startup).ToHashSet();
             if(Wire.Json(identity.ContentHashes.Where(p=>!scripts.Contains(p.Key)).ToArray())!=Wire.Json(nextIdentity.ContentHashes.Where(p=>!scripts.Contains(p.Key)).ToArray()))
                 throw new InvalidOperationException("Non-script content changed; restart required.");
         }

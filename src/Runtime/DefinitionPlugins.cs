@@ -32,6 +32,6 @@ internal sealed class ModuleDefinitionLoader(RuntimeStartup startup,string sourc
 
 internal static class DefinitionPlugins
 {
-    public static RuntimePluginDefinition Module(RuntimeStartup startup)=>new("definition.module","1",1,["definition"],[],scope=>
-        scope.Provide("definition",new ModuleDefinitionLoader(startup,scope.Configuration.GetProperty("path").GetString()!)));
+    public static RuntimePluginDefinition Module(Func<RuntimeStartup> startup)=>new("definition.module","1",1,["definition"],[],scope=>
+        scope.Provide("definition",new ModuleDefinitionLoader(startup(),scope.Configuration.GetProperty("path").GetString()!)));
 }

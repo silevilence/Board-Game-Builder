@@ -18,6 +18,9 @@
 工厂和资源清理在 UI 线程，返回现有 Control/UserControl 即可；ID/标题必须有效且 ID 唯一。
 UI 通过 CordiSharp Avalonia 的 Slot 挂载，面板控件 IDisposable 随贡献注销释放。
 不要存放跨重建状态在控件中，也不要将强引用存入静态字段。
+作者格式支持在每个 `DocumentWorkspace.AuthorFormats` 目录中单独声明，以加载器 ID、实现版本和 API 精确匹配。插件使用 `scope.Own(documents.AuthorFormats.Register(provider))` 注册 `GameAuthorFormatProvider`，卸载时撤销支持并通知格式面板；不会影响另一编辑器工作区。
+`IGameAuthorFormat.Read` 提供面板使用的作者配置模型，`Serialize` 负责写回该格式；文档修改／导入经此接口，不直接假定原始文件就是作者模型。没有 provider 的加载器继续使用通用文件编辑和试玩，`definition.state` 不自动获得结构化 UI。
+草稿用真实路径和 `DocumentDraftTarget(path, Yaml:true)` 显式区分 JSON／YAML 视图；字符串路径没有 `definition` 或 `module.yaml` 别名，文件同名也不会被当成控制标记。
 命令通过 `EditorCommands.Register` 贡献，菜单、工具栏、快捷键共用状态及执行体；
 TextBox 和原生视口有各自焦点边界，作者命令不得误触发。
 导入动作注册为命令；导出附加步骤为 `EditorContributions.Register(scope,"export-step",id,Action<ExportContext>)`，

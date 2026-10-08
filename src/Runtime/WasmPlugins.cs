@@ -86,6 +86,6 @@ internal sealed class EffectRules(IGameRules rules,IEffectProvider plugins) : IG
 
 internal static class WasmRuntimePlugin
 {
-    public static RuntimePluginDefinition Create(GameDefinition definition)=>new("wasm","1",1,["effects"],[],scope=>
-        scope.Provide("effects",scope.Own(new WasmPlugins(RuntimeDefinition.Configuration<List<RuntimePlugin>>(definition,"wasm")))));
+    public static RuntimePluginDefinition Create(Func<GameDefinition> definition)=>new("wasm","1",1,["effects"],[],scope=>
+        scope.Provide("effects",scope.Own(new WasmPlugins(RuntimeDefinition.Configuration<List<RuntimePlugin>>(definition(),"wasm")))));
 }

@@ -2,13 +2,16 @@ using BoardGame.Modules;
 namespace BoardGame.Editor;
 
 public enum UnsavedChoice { Cancel, Save, Discard }
+public sealed record DocumentDraftTarget(string Path,bool Yaml=false);
 
 // Data survives panel reconstruction; controls never own author state.
 public sealed class DocumentWorkspace : IDisposable
 {
-    private readonly Dictionary<string,DocumentDraft> drafts=new(StringComparer.Ordinal);
+    private readonly Dictionary<DocumentDraftTarget,DocumentDraft> drafts=new();
     private readonly Dictionary<string,DocumentDraft> forms=new(StringComparer.Ordinal);
     public Dictionary<string,string> ViewState { get; }=new(StringComparer.Ordinal);
+    public GameAuthorFormats AuthorFormats {get;}=new();
+    public DocumentWorkspace() {AuthorFormats.Changed+=Notify;}
     public ModuleDocument? Current { get; private set; }
     public string Location { get; set; }="";
     private IEnumerable<DocumentDraft> AllDrafts=>drafts.Values.Concat(forms.Values);
@@ -26,20 +29,22 @@ public sealed class DocumentWorkspace : IDisposable
     {
         if(Current!=null) Current.Changed-=Notify;
         Current=document;drafts.Clear();forms.Clear();ViewState.Clear();Selection=null;Location=document?.DirectoryPath ?? "";
-        if(Current!=null) Current.Changed+=Notify;
+        if(Current!=null) {Current.AuthorFormats=AuthorFormats;Current.Changed+=Notify;}
         Replaced?.Invoke();Notify();
     }
-    public DocumentDraft Draft(string name)
+    public DocumentDraft Draft(string path)=>Draft(new DocumentDraftTarget(path));
+    public DocumentDraft Draft(DocumentDraftTarget target)
     {
-        if(name=="definition") name=Current?.DefinitionPath ?? throw new InvalidOperationException("请打开模块");
-        if(drafts.TryGetValue(name,out var draft)) return draft;
+        if(drafts.TryGetValue(target,out var draft)) return draft;
         var doc=Current ?? throw new InvalidOperationException("请打开模块");
-        var yaml=name=="module.yaml";var path=yaml || name=="definition"?doc.DefinitionPath:name;
-        draft=new DocumentDraft(path,doc.Text(path),yaml?AuthorConfiguration.ToYaml(doc.Configuration):doc.Text(path),yaml);
-        drafts.Add(name,draft);return draft;
+        var source=doc.Text(target.Path);
+        draft=new DocumentDraft(target.Path,source,target.Yaml?AuthorConfiguration.ToYaml(System.Text.Json.Nodes.JsonNode.Parse(source)!.AsObject()):source,target.Yaml);
+        drafts.Add(target,draft);return draft;
     }
-    public void EditDraft(string name,string text) {Draft(name).Edit(text);Changed?.Invoke();}
-    public void DiscardDraft(string name) {if(name=="definition") name=Current?.DefinitionPath ?? name;drafts.Remove(name);Changed?.Invoke();}
+    public void EditDraft(string path,string text)=>EditDraft(new DocumentDraftTarget(path),text);
+    public void EditDraft(DocumentDraftTarget target,string text) {Draft(target).Edit(text);Changed?.Invoke();}
+    public void DiscardDraft(string path)=>DiscardDraft(new DocumentDraftTarget(path));
+    public void DiscardDraft(DocumentDraftTarget target) {drafts.Remove(target);Changed?.Invoke();}
     public DocumentDraft Form(string name,Func<string> initial)
     {
         var baseline=Current is {} current?current.Text(current.DefinitionPath):throw new InvalidOperationException("请打开模块");
@@ -95,7 +100,7 @@ public sealed class DocumentWorkspace : IDisposable
             if(!draft.Dirty && Current.Paths.Contains(draft.Path)) draft.Reload(Current.Text(draft.Path));
         Changed?.Invoke();
     }
-    public void Dispose() {if(Current!=null) Current.Changed-=Notify;Current=null;Changed=null;Replaced=null;SelectionChanged=null;drafts.Clear();forms.Clear();ViewState.Clear();}
+    public void Dispose() {AuthorFormats.Changed-=Notify;if(Current!=null) Current.Changed-=Notify;Current=null;Changed=null;Replaced=null;SelectionChanged=null;drafts.Clear();forms.Clear();ViewState.Clear();}
 }
 
 public sealed class DocumentDraft(string path,string baseline,string text,bool yaml)

@@ -81,9 +81,8 @@ internal sealed class LuaCpuProvider(GameDefinition definition) : ICpuDecisionPr
 
 internal static class LuaRuntimePlugins
 {
-    public static RuntimePluginSelection Select(string id)=>new(id,"1",1,JsonSerializer.SerializeToElement(new {}));
-    public static RuntimePluginDefinition Rules(GameDefinition definition,uint seed)=>new("lua.rules","1",1,["rules"],[],scope=>
-        scope.Provide("rules",scope.Own(new LuaRuleProvider(definition,seed))));
-    public static RuntimePluginDefinition Cpu(GameDefinition definition)=>new("lua.cpu","1",1,["cpu"],[],scope=>
-        scope.Provide("cpu",scope.Own(new LuaCpuProvider(definition))));
+    public static RuntimePluginDefinition Rules(Func<GameDefinition> definition,uint seed)=>new("lua.rules","1",1,["rules"],[],scope=>
+        scope.Provide("rules",scope.Own(new LuaRuleProvider(definition(),seed))));
+    public static RuntimePluginDefinition Cpu(Func<GameDefinition> definition)=>new("lua.cpu","1",1,["cpu"],[],scope=>
+        scope.Provide("cpu",scope.Own(new LuaCpuProvider(definition()))));
 }

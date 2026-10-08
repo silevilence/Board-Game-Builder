@@ -10,13 +10,37 @@ namespace BoardGame.Runtime;
 internal sealed class StateDefinitionLoader(RuntimeStartup startup,string source) : IDefinitionLoader
 {
     public string Source=>source;
-    private JsonObject Read(string directory)=>JsonNode.Parse(File.ReadAllText(DirectoryModule.SafeFile(directory,Source)))!.AsObject();
+    private JsonObject Read(string directory)
+    {
+        var location="definition.state: "+Source;
+        try
+        {
+            var root=JsonNode.Parse(File.ReadAllText(DirectoryModule.SafeFile(directory,Source))) as JsonObject
+                ?? throw new InvalidDataException("$: expected object");
+            if(root["format"] is not JsonValue format || !format.TryGetValue<int>(out var version) || version!=1)
+                throw new InvalidDataException("$.format: expected supported version 1");
+            if(root.Any(p=>p.Key is not ("format" or "state" or "resources"))) throw new InvalidDataException("$: unknown state definition field");
+            if(root["state"] is not JsonObject) throw new InvalidDataException("$.state: required object");
+            if(root["resources"] is not JsonObject resources) throw new InvalidDataException("$.resources: required object");
+            foreach(var resource in resources)
+                if(resource.Value is not JsonValue value || !value.TryGetValue<string>(out var path) || string.IsNullOrWhiteSpace(path))
+                    throw new InvalidDataException("$.resources."+resource.Key+": required file path string");
+            return root;
+        }
+        catch(Exception error) when(error is not OutOfMemoryException)
+        {throw new InvalidDataException(location+": "+error.Message,error);}
+    }
     public GameDefinition Load(string directory)
     {
         var root=Read(directory);
-        if(root["format"]?.GetValue<int>()!=1 || root.Any(p=>p.Key is not ("format" or "state" or "resources"))) throw new InvalidDataException(Source+": unsupported state definition format/field");
-        var state=root["state"]!.Deserialize<GameState>(Wire.Options) ?? throw new InvalidDataException(Source+": missing state");
-        StateValidation.Validate(state);
+        GameState state;
+        try
+        {
+            state=root["state"]!.Deserialize<GameState>(Wire.Options) ?? throw new InvalidDataException("required object");
+            StateValidation.Validate(state);
+        }
+        catch(Exception error) when(error is not OutOfMemoryException)
+        {throw new InvalidDataException("definition.state: "+Source+" $.state: "+error.Message,error);}
         var data=new SortedDictionary<string,byte[]>(StringComparer.Ordinal);var hashes=new SortedDictionary<string,string>(StringComparer.Ordinal);
         foreach(var file in root["resources"]!.AsObject())
         {data[file.Key]=File.ReadAllBytes(DirectoryModule.SafeFile(directory,file.Value!.GetValue<string>()));hashes[file.Key]=ModulePackage.Hash(data[file.Key]);}
@@ -29,7 +53,7 @@ internal sealed class StateDefinitionLoader(RuntimeStartup startup,string source
             var path=selection?.Configuration.GetProperty("file").GetString() ?? "";
             payload[capability]=JsonSerializer.SerializeToElement(new LuaScript(path.Length==0?"":File.ReadAllText(DirectoryModule.SafeFile(directory,path)),path),Wire.Options);
         }
-        var extensions=startup.Plugins.FirstOrDefault(p=>p.Id=="wasm")?.Configuration.GetProperty("extensions").Deserialize<List<RuntimeDependency>>(Wire.Options) ?? [];
+        var extensions=RuntimeContent.Extensions(startup);
         var wasm=new List<RuntimePlugin>();
         foreach(var extension in extensions)
         {
@@ -41,6 +65,6 @@ internal sealed class StateDefinitionLoader(RuntimeStartup startup,string source
         return new(state,hashes,data,payload);
     }
     public IReadOnlyList<string> ContentFiles(string directory)=>[Source,..Read(directory)["resources"]!.AsObject().Select(p=>p.Value!.GetValue<string>())];
-    public static RuntimePluginDefinition Plugin(RuntimeStartup startup)=>new("definition.state","1",1,["definition"],[],s=>
-        s.Provide("definition",new StateDefinitionLoader(startup,s.Configuration.GetProperty("path").GetString()!)));
+    public static RuntimePluginDefinition Plugin(Func<RuntimeStartup> startup)=>new("definition.state","1",1,["definition"],[],s=>
+        s.Provide("definition",new StateDefinitionLoader(startup(),s.Configuration.GetProperty("path").GetString()!)));
 }

@@ -46,19 +46,20 @@ public static class DocumentPlugin
 public sealed class ConfigurationPanel : UserControl
 {
     public TextBox Source { get; }=new() {AcceptsReturn=true,FontFamily=Avalonia.Media.FontFamily.Parse("Consolas")};
-    public ConfigurationPanel(EditorPluginScope scope,string draftName="definition")
+    public ConfigurationPanel(EditorPluginScope scope,string? file=null,bool yaml=false)
     {
         var documents=scope.Service<DocumentWorkspace>("documents");
-        var reset=new Button {Content="放弃此草稿并重新读取"};reset.Click+=(_,_)=>documents.DiscardDraft(draftName);
+        DocumentDraftTarget Target()=>new(file ?? documents.Current!.DefinitionPath,yaml);
+        var reset=new Button {Content="放弃此草稿并重新读取"};reset.Click+=(_,_)=> {if(documents.Current!=null) documents.DiscardDraft(Target());};
         var root=new DockPanel();DockPanel.SetDock(reset,Dock.Top);root.Children.Add(reset);root.Children.Add(new ScrollViewer {Content=Source});Content=root;
         var loading=false;
         void Refresh()
         {
             loading=true;
-            try {Source.IsEnabled=documents.Current!=null;var text=documents.Current==null?"":documents.Draft(draftName).Text;if(Source.Text!=text) Source.Text=text;}
+            try {Source.IsEnabled=documents.Current!=null;var text=documents.Current==null?"":documents.Draft(Target()).Text;if(Source.Text!=text) Source.Text=text;}
             finally {loading=false;}
         }
-        Source.PropertyChanged+=(_,e)=> {if(e.Property==TextBox.TextProperty && !loading && documents.Current!=null) documents.EditDraft(draftName,Source.Text ?? "");};
+        Source.PropertyChanged+=(_,e)=> {if(e.Property==TextBox.TextProperty && !loading && documents.Current!=null) documents.EditDraft(Target(),Source.Text ?? "");};
         scope.OnDocumentChanged(Refresh);Refresh();
     }
 }

@@ -20,7 +20,7 @@ public static class ReviewTests
         var ended=new GameEngine(CommandTests.Initial(),rules:new LuaRules(source,"after-end.lua"));
         Check.That(!ended.Submit("p1",new() { Kind="play" }).Accepted);
         Check.That(!ended.Project("p1").Ended);
-        using var invalidActions=new PlaySession(module with { Rules="return {actions=function(c) return {{id='bad',label='Bad'}} end}" });
+        using var invalidActions=new PlaySession(TestModules.Rebuild(module with { Rules="return {actions=function(c) return {{id='bad',label='Bad'}} end}" }));
         Check.That(invalidActions.Actions().Count==0 && invalidActions.Fault?.Code=="rule-failure");
         var dir=Path.Combine("artifacts","review-tests");Directory.CreateDirectory(dir);var path=Path.Combine(dir,"snapshot.json");
         File.WriteAllText(path,Wire.Json(module));Check.That(ModuleSnapshot.Load(path).Fingerprint==module.Fingerprint);

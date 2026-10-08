@@ -47,7 +47,7 @@ public static class BuiltinPlugins
         app.Install(new("author.files",1,[],["documents","panels"],scope=>
             scope.Service<PanelContributions>("panels").Register(scope,"author.files","游戏文件",()=>new GameFilePanel(scope))));
         Panel("author.resources","资源树",scope=>new ResourcePanel(scope));
-        Panel("author.yaml","模块 YAML",scope=>new ConfigurationPanel(scope,"module.yaml"));
+        Panel("author.yaml","模块 YAML",scope=>new ConfigurationPanel(scope,yaml:true));
         Panel("author.prototypes","原型与实例",scope=>new AuthorPanel(scope));
         Panel("author.media","媒介组件",scope=>new MediaInspector(scope));
         Panel("author.turns","席位与阶段",scope=>new TurnPanel(scope));

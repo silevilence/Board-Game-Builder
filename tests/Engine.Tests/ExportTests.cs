@@ -1,4 +1,4 @@
-using BoardGame.Modules;
+using BoardGame.Runtime;
 namespace Engine.Tests;
 public static class ExportTests
 {

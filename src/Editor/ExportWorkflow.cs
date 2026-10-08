@@ -1,5 +1,5 @@
 using Avalonia.Threading;
-using BoardGame.Modules;
+using BoardGame.Runtime;
 
 namespace BoardGame.Editor;
 

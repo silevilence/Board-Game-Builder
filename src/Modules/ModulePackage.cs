@@ -16,7 +16,6 @@ public sealed record PackageManifest(int Format,int Api,string Source,string Mod
     List<RuntimeDependency> Dependencies,SortedDictionary<string,string> Files);
 public static class ModulePackage
 {
-    private const int MaxFile=32*1024*1024, MaxTotal=128*1024*1024;
     public static readonly IReadOnlyDictionary<string,string> Official=new Dictionary<string,string>
     { ["kernel"]="1",["lua"]="2.0.0",["view.monogame"]="3.8.4.1" };
     public static List<RuntimeDependency> Dependencies(JsonObject root)
@@ -60,7 +59,7 @@ public static class ModulePackage
         var deps=Dependencies(root); root["plugins"]=System.Text.Json.JsonSerializer.SerializeToNode(deps,Wire.Options);
         var files=new SortedDictionary<string,byte[]>(StringComparer.Ordinal) { ["module.json"]=Encoding.UTF8.GetBytes(root.ToJsonString()) };
         foreach(var relative in ReferencedFiles(root)) files[relative]=File.ReadAllBytes(DirectoryModule.SafeFile(directory,relative));
-        if(files.Count>2048 || files.Any(f=>f.Value.Length>MaxFile) || files.Sum(f=>(long)f.Value.Length)>MaxTotal) throw new InvalidDataException("Package size budget exceeded");
+        if(files.Count>ModuleContentLimits.MaxFiles || files.Any(f=>f.Value.Length>ModuleContentLimits.MaxFileBytes) || files.Sum(f=>(long)f.Value.Length)>ModuleContentLimits.MaxTotalBytes) throw new InvalidDataException("Package size budget exceeded");
         var hashes=new SortedDictionary<string,string>(StringComparer.Ordinal);
         foreach(var f in files) hashes[f.Key]=Hash(f.Value);
         var manifest=new PackageManifest(1,EngineVersion.Api,module.Id+"@"+module.Version,module.Id,module.Version,module.Fingerprint,deps,hashes);
@@ -104,7 +103,7 @@ public static class ModulePackage
         try
         {
             using var zip=ZipFile.OpenRead(path);
-            if(zip.Entries.Count>2049 || zip.Entries.Any(e=>e.Length>MaxFile) || zip.Entries.Sum(e=>e.Length)>MaxTotal) throw new InvalidDataException("Package size budget exceeded");
+            if(zip.Entries.Count>ModuleContentLimits.MaxFiles+1 || zip.Entries.Any(e=>e.Length>ModuleContentLimits.MaxFileBytes) || zip.Entries.Sum(e=>e.Length)>ModuleContentLimits.MaxTotalBytes) throw new InvalidDataException("Package size budget exceeded");
             var entries=new Dictionary<string,byte[]>(StringComparer.OrdinalIgnoreCase);
             foreach(var entry in zip.Entries)
             {
@@ -112,7 +111,7 @@ public static class ModulePackage
                 using var input=entry.Open(); using var buffer=new MemoryStream(); var chunk=new byte[81920]; int read;
                 while((read=input.Read(chunk))>0)
                 {
-                    if(buffer.Length+read>MaxFile || buffer.Length+read>entry.Length) throw new InvalidDataException($"{entry.FullName}: expanded content exceeds declared size/budget");
+                    if(buffer.Length+read>ModuleContentLimits.MaxFileBytes || buffer.Length+read>entry.Length) throw new InvalidDataException($"{entry.FullName}: expanded content exceeds declared size/budget");
                     buffer.Write(chunk,0,read);
                 }
                 if(!entries.TryAdd(entry.FullName,buffer.ToArray())) throw new InvalidDataException($"{entry.FullName}: duplicate package entry");

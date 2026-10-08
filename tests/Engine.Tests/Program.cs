@@ -4,6 +4,7 @@ var tests = new Dictionary<string, Action> { ["cordi"] = CordiTests.Run, ["freec
 try
 {
     tests.Add("runtime-host",RuntimeHostTests.Run);
+    tests.Add("review-followup",ReviewFollowupTests.Run);
     tests.Add("startup",StartupTests.Run);
     tests.Add("definition-plugins",DefinitionPluginTests.Run);
     tests.Add("runtime-recording",RuntimeRecordingTests.Run);

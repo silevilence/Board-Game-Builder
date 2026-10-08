@@ -42,8 +42,14 @@ public static class DebugTests
         using IDebugSession local=new InProcessDebugSession(module,7,controllers,"p1");
         using IDebugSession remote=ExternalDebugSession.Launch("src/Player/bin/Release/net10.0-windows/Player.exe",module,7,controllers,"p1",true).GetAwaiter().GetResult();
         var a=local.SendAsync(new("frame")).Result; var b=remote.SendAsync(new("frame")).Result;
-        var bad=module with {Rules="broken lua"}; bad=bad with {Fingerprint=ModuleSnapshot.Fingerprint(bad)};
-        Check.Throws(()=>remote.SendAsync(new("reload",Module:bad)).GetAwaiter().GetResult());
+        var directory=Path.Combine(Path.GetTempPath(),"bgb-invalid-reload-"+Guid.NewGuid());
+        try
+        {
+            TestModules.CopyGame("samples/quick-cards",directory);File.WriteAllText(Path.Combine(directory,"rules.lua"),"broken lua");
+            var bad=GameRuntime.Load(directory);
+            Check.Throws(()=>remote.SendAsync(new("reload",Module:bad)).GetAwaiter().GetResult(),"__validate_rules");
+        }
+        finally {Directory.Delete(directory,true);}
         Check.That(remote.SendAsync(new("frame")).Result.Frame.StateHash==b.Frame.StateHash,"Failed reload killed Player");
         while(!a.Frame.View.Ended)
         {

@@ -47,9 +47,9 @@ public sealed partial class PlayerWindow
     }
     private async Task Browse()
     {
-        var files=await StorageProvider.OpenFilePickerAsync(new() {Title="选择模块包或 module.json",AllowMultiple=false});
+        var files=await StorageProvider.OpenFilePickerAsync(new() {Title="选择游戏包或 game.start.json",AllowMultiple=false});
         if(files.Count==1 && files[0].TryGetLocalPath() is {} file)
-        {path.Text=Path.GetFileName(file)=="module.json"?Path.GetDirectoryName(file):file;await Load();}
+        {path.Text=file;await Load();}
     }
     private void Stop()
     {

@@ -12,6 +12,7 @@ public sealed class ModuleDocument
     private readonly Stack<Dictionary<string,byte[]>> undo=[];
     private readonly Stack<Dictionary<string,byte[]>> redo=[];
     private string saved;
+    internal GameAuthorFormats AuthorFormats {get;set;}=new();
     public string? DirectoryPath { get; private set; }
     public bool Dirty => Hash(files)!=saved;
     public bool CanUndo => undo.Count>0;
@@ -45,7 +46,7 @@ public sealed class ModuleDocument
     }
     public string Text(string path) => Encoding.UTF8.GetString(files[path]);
     public JsonObject Startup=>JsonNode.Parse(Text(GameRuntime.Entry))!.AsObject();
-    public IGameAuthorFormat? AuthorFormat=>GameAuthorFormats.Resolve(this);
+    public IGameAuthorFormat? AuthorFormat=>AuthorFormats.Resolve(this);
     public bool SupportsStructuredEditing=>AuthorFormat!=null;
     public string DefinitionPath=>(AuthorFormat ?? throw new InvalidOperationException("此定义格式没有专用作者界面；请使用文件编辑与试玩。")).DefinitionPath;
     public JsonObject Configuration=>(AuthorFormat ?? throw new InvalidOperationException("此定义格式没有专用作者界面；请使用文件编辑与试玩。")).Read(this);
@@ -63,14 +64,19 @@ public sealed class ModuleDocument
             if(candidate.Keys.Any(p=>p.Equals(file.Key,StringComparison.OrdinalIgnoreCase))) throw new InvalidDataException("导入路径冲突："+file.Key);
             candidate.Add(file.Key,file.Value.ToArray());
         }
-        candidate[DefinitionPath]=Encoding.UTF8.GetBytes(configuration.ToJsonString(new() {WriteIndented=true}));
+        candidate[DefinitionPath]=Encoding.UTF8.GetBytes(AuthorFormat!.Serialize(this,configuration));
         var probe=new ModuleDocument(candidate,null);_=probe.Snapshot();
         undo.Push(files);redo.Clear();files=candidate;Changed?.Invoke();
     }
     public void EditText(string path,string text) => Edit(path,Encoding.UTF8.GetBytes(text));
     public void EditConfiguration(Action<JsonObject> edit)
     {
-        var value=Configuration; edit(value); EditText(DefinitionPath,value.ToJsonString(new() {WriteIndented=true}));
+        var value=Configuration; edit(value);ReplaceConfiguration(value);
+    }
+    public void ReplaceConfiguration(JsonObject value)
+    {
+        if(JsonNode.DeepEquals(Configuration,value)) return;
+        EditText(DefinitionPath,AuthorFormat!.Serialize(this,value));
     }
     private void Edit(string path,byte[] data)
     {

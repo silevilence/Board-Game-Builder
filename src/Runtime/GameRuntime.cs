@@ -9,8 +9,7 @@ namespace BoardGame.Runtime;
 public static class GameRuntime
 {
     public const string Entry="game.start.json";
-    public static SortedDictionary<string,string> PluginVersions=>new(RuntimeComposition.Catalog(new("catalog","1","",new()),1,
-        new Dictionary<string,string>(),500,new(1,"catalog","1",[])).ToDictionary(p=>p.Id,p=>p.Version),StringComparer.Ordinal);
+    public static SortedDictionary<string,string> PluginVersions=>new(RuntimeComposition.Catalog().ToDictionary(p=>p.Id,p=>p.Version),StringComparer.Ordinal);
     public static RuntimeStartup ReadStartup(string directory)
     {
         if(!File.Exists(Path.Combine(directory,Entry))) throw new InvalidDataException(Entry+": missing startup entry; explicitly migrate the legacy game package");
@@ -23,7 +22,7 @@ public static class GameRuntime
     }
     private static RuntimeStartup ValidateStartup(RuntimeStartup startup)
     {
-        var catalog=RuntimeComposition.Catalog(new(startup.Id,startup.Version,"",new()),1,new Dictionary<string,string>(),500,startup);
+        var catalog=RuntimeComposition.Catalog(startup:startup);
         RuntimeHost.Validate(startup,catalog,AuthorityPlugin.Required.Concat(["definition","rules","session","recording"]));
         foreach(var selection in startup.Plugins)
         {
@@ -53,6 +52,7 @@ public static class GameRuntime
             if(!names.Add(property.Name) || !fields.Contains(property.Name)) throw new InvalidDataException(path+"."+property.Name+": duplicate/unknown configuration");
     }
     public static LoadedModule Load(string source)=>Directory.Exists(source)?LoadDirectory(source):
+        Path.GetFileName(source).Equals(Entry,StringComparison.OrdinalIgnoreCase)?LoadDirectory(Path.GetDirectoryName(Path.GetFullPath(source))!):
         Path.GetExtension(source).Equals(".bgm",StringComparison.OrdinalIgnoreCase)?GamePackage.Load(source):LoadSnapshot(source);
     private static LoadedModule LoadSnapshot(string source)
     {
@@ -86,7 +86,7 @@ public static class GameRuntime
             if(selection==null ? script.Length!=0 || path.Length!=0 : path!=selection.Configuration.GetProperty("file").GetString())
                 throw new InvalidDataException(capability+": script configuration identity mismatch");
         }
-        var extensions=identity.Startup.Plugins.SingleOrDefault(p=>p.Id=="wasm")?.Configuration.GetProperty("extensions").Deserialize<List<RuntimeDependency>>(Wire.Options) ?? [];
+        var extensions=RuntimeContent.Extensions(identity.Startup);
         var payload=module.RuntimePlugins ?? [];
         if(extensions.Count!=payload.Count) throw new InvalidDataException("WASM configuration identity mismatch");
         foreach(var extension in extensions)
@@ -99,7 +99,7 @@ public static class GameRuntime
                 identity.ContentHashes.GetValueOrDefault(plugin.File)!=ModulePackage.Hash(plugin.Code))
                 throw new InvalidDataException(extension.Id+": WASM configuration/content identity mismatch");
         }
-        foreach(var selection in identity.Startup.Plugins.Where(p=>p.Id is "lua.rules" or "lua.cpu"))
+        foreach(var selection in RuntimeContent.Scripts(identity.Startup))
         {
             var path=selection.Configuration.GetProperty("file").GetString()!;
             var script=selection.Id=="lua.rules"?module.Rules:module.Cpu;
@@ -110,15 +110,14 @@ public static class GameRuntime
     public static LoadedModule LoadDirectory(string directory)
     {
         var startup=ReadStartup(directory);
-        var placeholder=new LoadedModule(startup.Id,startup.Version,"",new());
-        var catalog=RuntimeComposition.Catalog(placeholder,1,new Dictionary<string,string>(),500,startup);
+        var catalog=RuntimeComposition.Catalog(startup:startup);
         RuntimeHost.Validate(startup,catalog,AuthorityPlugin.Required.Concat(["definition","rules","session","recording"]));
         var loaders=catalog.Where(p=>p.Provides.Contains("definition") && startup.Plugins.Any(s=>s.Id==p.Id)).ToArray();
         var loaderPlan=startup with {Plugins=startup.Plugins.Where(p=>loaders.Any(l=>l.Id==p.Id)).ToList()};
         using var host=RuntimeHost.StartAsync(loaderPlan,loaders,["definition"]).GetAwaiter().GetResult();
         var loader=host.Service<IDefinitionLoader>("definition");
         var content=ContentFiles(directory,startup,loader);
-        if(content.Count>2047 || content.Sum(p=>new FileInfo(DirectoryModule.SafeFile(directory,p)).Length)>128L*1024*1024)
+        if(content.Count>ModuleContentLimits.MaxFiles-1 || content.Sum(p=>new FileInfo(DirectoryModule.SafeFile(directory,p)).Length)>ModuleContentLimits.MaxTotalBytes)
             throw new InvalidDataException("Directory content size budget exceeded");
         var definition=loader.Load(directory);
         var hashes=new SortedDictionary<string,string>(StringComparer.Ordinal);
@@ -135,11 +134,7 @@ public static class GameRuntime
     internal static IReadOnlyList<string> ContentFiles(string directory,RuntimeStartup startup,IDefinitionLoader loader)
     {
         var paths=loader.ContentFiles(directory).ToList();
-        foreach(var plugin in startup.Plugins)
-        {
-            if(plugin.Id is "lua.rules" or "lua.cpu") paths.Add(plugin.Configuration.GetProperty("file").GetString()!);
-            if(plugin.Id=="wasm") paths.AddRange(plugin.Configuration.GetProperty("extensions").Deserialize<List<RuntimeDependency>>(Wire.Options)!.Select(p=>p.File!));
-        }
+        paths.AddRange(RuntimeContent.Files(startup));
         foreach(var path in paths)
         {
             ModulePackage.ValidatePath(path);

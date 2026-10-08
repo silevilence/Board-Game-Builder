@@ -69,7 +69,7 @@ public static class SecretTests
           decide=function(c) return {allowed=true,reason='',commands={action(c.view)}} end}
         """;
         var sample=module with {Rules=source,Cpu="return {decide=function(c) return c.actions[1].command end}"};
-        sample=sample with {Fingerprint=ModuleSnapshot.Fingerprint(sample)};
+        sample=TestModules.Rebuild(sample);
         using var session=new PlaySession(sample,42,new Dictionary<string,string> {{"p1","human"},{"p2","cpu"}});
         for(var i=0;i<20 && !session.Ended && session.Fault==null;i++)
             if(session.IsCpu) Check.That(session.StepCpu());else Check.That(session.SubmitHuman(session.CurrentSeat,session.Actions()[0].Command).Accepted);

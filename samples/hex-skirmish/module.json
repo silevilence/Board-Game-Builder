@@ -64,7 +64,7 @@
           "type": "faces",
           "data": {
             "names": [
-              "p1 \u7EA2\u961F"
+              "p1 红队"
             ],
             "resources": [],
             "up": true
@@ -107,7 +107,7 @@
           "type": "faces",
           "data": {
             "names": [
-              "p2 \u7EA2\u961F"
+              "p2 红队"
             ],
             "resources": [],
             "up": true
@@ -150,7 +150,7 @@
           "type": "faces",
           "data": {
             "names": [
-              "p3 \u84DD\u961F"
+              "p3 蓝队"
             ],
             "resources": [],
             "up": true

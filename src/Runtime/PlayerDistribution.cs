@@ -1,6 +1,6 @@
 using BoardGame.Kernel;
-using BoardGame.Runtime;
-namespace BoardGame.Modules;
+using BoardGame.Modules;
+namespace BoardGame.Runtime;
 
 public sealed record ReleaseManifest(int Api,string Version,string Platform,SortedDictionary<string,string> Files,bool GuiEntry=false,bool EditorDebug=false,
     SortedDictionary<string,string>? RuntimePlugins=null,int RuntimeApi=1);
@@ -16,7 +16,7 @@ public static class PlayerDistribution
         foreach(var plugin in module.RuntimeIdentity!.Startup.Plugins)
             if(manifest.RuntimePlugins.GetValueOrDefault(plugin.Id)!=plugin.Version) throw new InvalidDataException("release.json: unavailable runtime plugin/version "+plugin.Id);
         foreach(var required in new[] {"Player.exe","Player.dll","Player.deps.json","Player.runtimeconfig.json","Runtime.dll","Modules.dll","Kernel.dll","Kernel.Abstractions.dll","coreclr.dll","hostfxr.dll","CordiSharp.dll"}
-            .Concat(module.RuntimeIdentity.Startup.Plugins.Any(p=>p.Id is "lua.rules" or "lua.cpu")?new[]{"worker/Lua.exe","worker/coreclr.dll"}:[]))
+            .Concat(RuntimeContent.Scripts(module.RuntimeIdentity.Startup).Any()?new[]{"worker/Lua.exe","worker/coreclr.dll"}:[]))
             if(!manifest.Files.ContainsKey(required)) throw new InvalidDataException("release.json: missing required runtime "+required);
         foreach(var file in manifest.Files)
         {
@@ -27,7 +27,7 @@ public static class PlayerDistribution
             if(ModulePackage.Hash(File.ReadAllBytes(source))!=file.Value) throw new InvalidDataException(file.Key+": release content hash mismatch");
         }
         ValidateDependencies("Player.deps.json","");
-        if(module.RuntimeIdentity.Startup.Plugins.Any(p=>p.Id is "lua.rules" or "lua.cpu")) ValidateDependencies("worker/Lua.deps.json","worker/");
+        if(RuntimeContent.Scripts(module.RuntimeIdentity.Startup).Any()) ValidateDependencies("worker/Lua.deps.json","worker/");
         using(var executable=File.OpenRead(Path.Combine(release,"Player.exe")))
         using(var pe=new System.Reflection.PortableExecutable.PEReader(executable))
             if(pe.PEHeaders.PEHeader?.Subsystem!=System.Reflection.PortableExecutable.Subsystem.WindowsGui) throw new InvalidDataException("Player.exe: console subsystem is forbidden in formal exports");

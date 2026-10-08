@@ -65,7 +65,7 @@ public static class IslandTests
     {
         var m=Wire.Copy(original);m.Initial.Phase="build";
         var stock=m.Initial.Entities["stock-p1"];stock.Properties["wood"]=4;
-        m=m with {Fingerprint=ModuleSnapshot.Fingerprint(m)};
+        m=TestModules.Rebuild(m);
         using var s=new PlaySession(m,9,Humans(m));
         Act(s,"trade-1-5");
         Check.That(s.View("p1").Entities.Single(e=>e.Id=="stock-p1").Properties["wood"]==1);
@@ -87,13 +87,13 @@ public static class IslandTests
             m.Initial.Entities["die-1"].Properties["value"]=2;m.Initial.Entities["die-2"].Properties["value"]=3;
             var vertex=m.Initial.Entities["vertex-1"];vertex.Properties["player"]=1;vertex.Properties["level"]=2;
             if(blocked) m.Initial.Entities["match"].Properties["robber"]=1;
-            m=m with {Fingerprint=ModuleSnapshot.Fingerprint(m)};
+            m=TestModules.Rebuild(m);
             using var s=new PlaySession(m,1,Humans(m));Act(s,"produce");
             Check.That(s.View("p1").Entities.Single(e=>e.Id=="stock-p1").Properties["wood"]==(blocked?2:4),"City production/robber block wrong");
             var before=s.AuthorityStateHash();Check.That(!s.SubmitHuman("p1",new() {Kind="city",Entity="vertex-2"}).Accepted && s.AuthorityStateHash()==before);
         }
         var cap=Wire.Copy(original);cap.Initial.Entities["match"].Properties["maxRounds"]=1;
-        cap=cap with {Fingerprint=ModuleSnapshot.Fingerprint(cap)};
+        cap=TestModules.Rebuild(cap);
         using var passive=new PlaySession(cap,2,Humans(cap));Act(passive,"start-classic");
         for(var i=0;i<100 && !passive.Ended;i++)
         {

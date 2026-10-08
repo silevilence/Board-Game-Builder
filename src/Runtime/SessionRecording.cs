@@ -41,6 +41,6 @@ internal sealed class SessionRecorder : IRecordingProvider
     {versions[module.Fingerprint]=Wire.Copy(module);switches.Add(new(authority.ExportLog().EntryCount,module.Fingerprint));}
     public SessionRecording Capture()=>SessionRecording.Create(authority.ExportLog(),switches,versions);
     public IAuthoritySession Replay(SessionRecording recording)=>new KernelAuthority(recording.Replay());
-    public static RuntimePluginDefinition Plugin(LoadedModule module)=>new("recording","1",1,["recording"],["authority"],scope=>
-        scope.Provide("recording",new SessionRecorder(scope.Service<IAuthoritySession>("authority"),module)));
+    public static RuntimePluginDefinition Plugin(Func<LoadedModule> module)=>new("recording","1",1,["recording"],["authority"],scope=>
+        scope.Provide("recording",new SessionRecorder(scope.Service<IAuthoritySession>("authority"),module())));
 }

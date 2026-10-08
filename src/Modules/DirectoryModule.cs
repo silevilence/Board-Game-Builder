@@ -3,10 +3,11 @@ using BoardGame.Kernel;
 namespace BoardGame.Modules;
 public static class DirectoryModule
 {
-    public static LoadedModule Load(string directory)=>LoadCore(directory,"module.json",null);
+    private enum DefinitionInput { Legacy, Startup }
+    public static LoadedModule Load(string directory)=>LoadCore(directory,"module.json",DefinitionInput.Legacy,null);
     // Only the selected definition plugin supplies capability-owned metadata.
-    public static LoadedModule LoadDefinition(string directory,string path,System.Text.Json.Nodes.JsonObject metadata)=>LoadCore(directory,path,metadata);
-    private static LoadedModule LoadCore(string directory,string path,System.Text.Json.Nodes.JsonObject? supplied)
+    public static LoadedModule LoadDefinition(string directory,string path,System.Text.Json.Nodes.JsonObject metadata)=>LoadCore(directory,path,DefinitionInput.Startup,metadata ?? throw new ArgumentNullException(nameof(metadata)));
+    private static LoadedModule LoadCore(string directory,string path,DefinitionInput input,System.Text.Json.Nodes.JsonObject? supplied)
     {
         var file = Path.Combine(Path.GetFullPath(directory),path);
         try
@@ -42,7 +43,7 @@ public static class DirectoryModule
             var id = Text(root, "id"); var version = Text(root, "version");
             var rulesPath = root.TryGetProperty("rules",out var ruleFile) && ruleFile.ValueKind==JsonValueKind.String?SafeFile(directory,ruleFile.GetString()!):"";
             var cpuPath = root.TryGetProperty("cpu",out var cpuFile) && cpuFile.ValueKind==JsonValueKind.String?SafeFile(directory,cpuFile.GetString()!):"";
-            if(supplied==null && (rulesPath=="" || cpuPath=="")) Fail("rules/cpu: missing legacy script entry");
+            if(input==DefinitionInput.Legacy && (rulesPath=="" || cpuPath=="")) Fail("rules/cpu: missing legacy script entry");
             var rules = rulesPath==""?"":File.ReadAllText(rulesPath); var cpu = cpuPath==""?"":File.ReadAllText(cpuPath);
             var resources = new SortedDictionary<string, string>(StringComparer.Ordinal);
             var resourceData = new SortedDictionary<string, byte[]>(StringComparer.Ordinal);
@@ -170,7 +171,7 @@ public static class DirectoryModule
         if((File.GetAttributes(root) & FileAttributes.ReparsePoint)!=0) Fail("Linked module roots are unsupported");
         if (Path.IsPathRooted(relative) || !path.StartsWith(root + Path.DirectorySeparatorChar, StringComparison.OrdinalIgnoreCase)) Fail($"{relative}: path escapes module");
         if (!File.Exists(path)) Fail($"{relative}: missing file");
-        if(new FileInfo(path).Length>32L*1024*1024) Fail($"{relative}: file size budget exceeded");
+        if(new FileInfo(path).Length>ModuleContentLimits.MaxFileBytes) Fail($"{relative}: file size budget exceeded");
         for (FileSystemInfo? current = new FileInfo(path); current != null && current.FullName != root; current = Directory.GetParent(current.FullName))
             if ((current.Attributes & FileAttributes.ReparsePoint) != 0) Fail($"{relative}: linked paths are unsupported");
         return path;
