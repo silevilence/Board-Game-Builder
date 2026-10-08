@@ -26,6 +26,7 @@ public sealed class DesktopViewport : NativeControlHost, IDisposable
     public float PanX { get; private set; }
     public float PanY { get; private set; }
     public int Frames { get; private set; }
+    public int CachedImages=>renderer?.CachedImages ?? 0;
     public static int LiveDevices { get; private set; }
     public static int LiveNativeWindows { get; private set; }
     public string? Error { get; private set; }
@@ -44,7 +45,7 @@ public sealed class DesktopViewport : NativeControlHost, IDisposable
     private float canvasWidth=920,canvasHeight=640;
     public void Canvas(TableScene scene)
     {
-        var hasSprites=scene.Items.Any(i=>i.Kind=="sprite");
+        var hasSprites=scene.Items.Any(i=>i.Kind=="sprite" || i.Resource?.Contains('#')==true);
         if(classic!=scene.ClassicCards || sprites!=hasSprites) { classic=scene.ClassicCards; sprites=hasSprites; autoFit=classic || sprites; cameraInitialized=false; }
         if((classic || sprites) && scene.Items.Count>0)
         {
@@ -53,6 +54,18 @@ public sealed class DesktopViewport : NativeControlHost, IDisposable
         }
     }
     public void Fit() {autoFit=true;}
+    public void SaveImage(string path)
+    {
+        if(device==null || renderer==null || Frames==0) throw new InvalidOperationException("Viewport has not rendered yet");
+        using var target=new RenderTarget2D(device,width,height);
+        try
+        {
+            device.SetRenderTarget(target);device.Clear(classic?new Color(0,128,43):new Color(16,33,40));
+            renderer.Begin(Zoom,PanX,PanY);Paint?.Invoke(renderer);renderer.End();
+        }
+        finally {device.SetRenderTarget(null);}
+        using var stream=File.Create(path);target.SaveAsPng(stream,width,height);
+    }
 
     public DesktopViewport()
     {

@@ -10,6 +10,7 @@ public sealed class InteractiveTable : UserControl, IDisposable
     public string? Selected=>input.Selected;
     public bool InputEnabled { get=>input.Enabled; set { if(value!=input.Enabled) viewport.ResetClickSequence(); input.Enabled=value; } }
     public int RenderedFrames=>viewport.Frames;
+    public int CachedImages=>viewport.CachedImages;
     public event Action<TableGesture>? Gesture;
     public event Action? SelectionChanged;
     public event Action<string>? Shortcut;
@@ -55,6 +56,7 @@ public sealed class InteractiveTable : UserControl, IDisposable
     }
     public void Hint(string? entity,string? target)=>input.Select(entity,target);
     public void Fit()=>viewport.Fit();
+    public void SaveImage(string path)=>viewport.SaveImage(path);
     public void ChangeZoom(float factor)=>viewport.ChangeZoom(factor);
     public void CancelInput()=>viewport.CancelInput();
     public void Show(TableScene value) { scene=value; input.Show(value); viewport.Canvas(value); controls.IsVisible=!value.ClassicCards; }

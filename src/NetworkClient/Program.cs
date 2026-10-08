@@ -8,7 +8,7 @@ try
     var path = Path.GetFullPath(args[0]);
     var directory = Path.GetDirectoryName(path)!;
     var config = Wire.Read<ClientConfiguration>(File.ReadAllText(path));
-    var module = GameRuntime.Load(Path.GetFullPath(config.Module, directory));
+    var module = GameRuntime.Load(Path.GetFullPath(config.Module, directory),config.Preset);
     var identity = OnlineIdentity.For(module);
     HttpClientHandler? handler = null;
     if (config.CertificateSha256 != null)
@@ -100,5 +100,5 @@ try
 catch (Exception error) { Console.Error.WriteLine(error.Message); return 1; }
 
 public sealed record ClientConfiguration(string Module, string Server, string RoomKey, string Credentials, string Recording,
-    string? Seat = null, bool Audience = false, bool Auto = false, string? CertificateSha256 = null);
+    string? Seat = null, bool Audience = false, bool Auto = false, string? CertificateSha256 = null,string? Preset=null);
 public sealed record SavedIdentity(string Server, OnlineIdentity Identity, SeatLease Lease, long LastRevision = -1);

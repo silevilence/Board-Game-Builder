@@ -21,13 +21,18 @@ public sealed class LocalTableSession : IDisposable
     {
         if(module.Initial.Seats.Any(s=>!controllers.ContainsKey(s.Id))) throw new ArgumentException("Every seat requires a controller.");
         humans=module.Initial.Seats.Where(s=>controllers[s.Id]=="human").Select(s=>s.Id).ToArray();
-        if(humans.Length==0) throw new ArgumentException("Local table requires a human seat.");
         this.mode=mode;session=new PlaySession(module,seed,controllers);Frame=Read();
     }
     private LocalTableFrame Read()
     {
         var cpu=session.IsCpu;var ended=session.Ended;
         _=session.Actions();
+        if(humans.Length==0)
+        {
+            var view=GameEngine.ProjectAudienceSnapshot(session.ExportAuthorityState());
+            var publicFault=session.Fault is {} failure?failure with {Detail="规则或 CPU 执行失败，请重新开局。"}:null;
+            return new(revision,null,[new(revision,view,[],cpu,publicFault)],cpu,ended,publicFault,[],view.Winners);
+        }
         var offers=humans.ToDictionary(s=>s,s=>session.Actions(s));
         if(mode==LocalTableMode.HotSeat && (cpu || active!=null && offers[active].Count==0 && !ended)) active=null;
         var waiting=mode==LocalTableMode.HotSeat && active==null && !cpu?pending ?? session.CurrentSeat:null;

@@ -1,3 +1,4 @@
+using BoardGame.Kernel;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 using Drawing = System.Drawing;
@@ -11,6 +12,7 @@ public sealed class TableRenderer : IDisposable
     private readonly Dictionary<string, Texture2D> labels = [];
     private readonly Dictionary<string,Texture2D> images=[];
     private readonly Dictionary<string,Rectangle> imageContent=[];
+    public int CachedImages=>images.Count;
     public int CachedLabels=>labels.Count;
     public int LabelTexturesCreated { get; private set; }
     public TableRenderer(GraphicsDevice device)
@@ -53,15 +55,17 @@ public sealed class TableRenderer : IDisposable
     public void End() => batch.End();
     public void Image(string id,IReadOnlyDictionary<string,byte[]> resources,Rectangle bounds,bool trimTransparent=false)
     {
-        if(!resources.TryGetValue(id,out var bytes)) { Text("缺失资源: "+id,bounds.X,bounds.Y,Color.Red); return; }
-        var key=id+":"+Convert.ToHexString(System.Security.Cryptography.SHA256.HashData(bytes));
+        var reference=ImageReference.Parse(id);
+        if(!resources.TryGetValue(reference.Resource,out var bytes)) { Text("缺失资源: "+id,bounds.X,bounds.Y,Color.Red); return; }
+        var key=reference.Resource+":"+Convert.ToHexString(System.Security.Cryptography.SHA256.HashData(bytes));
         if(!images.TryGetValue(key,out var texture))
         {
             try { using var stream=new MemoryStream(bytes); texture=Texture2D.FromStream(device,stream); images.Add(key,texture); }
             catch(Exception) { Text("资源无法解码: "+id,bounds.X,bounds.Y,Color.Red); return; }
         }
-        Rectangle? source=null;
-        if(trimTransparent)
+        reference.CheckBounds(texture.Width,texture.Height);
+        Rectangle? source=reference.IsRegion?new(reference.X,reference.Y,reference.Width,reference.Height):null;
+        if(trimTransparent && !reference.IsRegion)
         {
             if(!imageContent.TryGetValue(key,out var content))
             {

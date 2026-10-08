@@ -11,6 +11,7 @@ public static class GamePackage
     public static void Pack(string directory,string destination)
     {
         var module=GameRuntime.LoadDirectory(directory);
+        foreach(var preset in GamePresets.Choices(module).Keys) _=GameRuntime.LoadDirectory(directory,preset);
         var files=new SortedDictionary<string,byte[]>(StringComparer.Ordinal);
         foreach(var path in module.RuntimeIdentity!.ContentHashes.Keys.Append(GameRuntime.Entry))
             files.Add(path,File.ReadAllBytes(DirectoryModule.SafeFile(directory,path)));
@@ -30,7 +31,7 @@ public static class GamePackage
         }
         finally {if(File.Exists(temp)) File.Delete(temp);}
     }
-    public static LoadedModule Load(string path)
+    public static LoadedModule Load(string path,string? preset=null)
     {
         var temp=Path.Combine(Path.GetTempPath(),"bgb-runtime-package-"+Guid.NewGuid());
         try
@@ -69,7 +70,7 @@ public static class GamePackage
             if(module.Fingerprint!=manifest.Fingerprint) throw new InvalidDataException("Package runtime fingerprint mismatch");
             var expected=module.RuntimeIdentity!.ContentHashes.Keys.Append(GameRuntime.Entry).ToHashSet(StringComparer.Ordinal);
             if(!expected.SetEquals(manifest.Files.Keys)) throw new InvalidDataException("Package contains undeclared content");
-            return module;
+            return preset==null?module:GameRuntime.LoadDirectory(temp,preset);
         }
         catch(Exception error) when(error is not OutOfMemoryException) {throw new InvalidDataException(path+": "+error.Message,error);}
         finally {if(Directory.Exists(temp)) Directory.Delete(temp,true);}

@@ -18,7 +18,7 @@ public sealed record OnlineOptions(TimeSpan IdleTimeout, TimeSpan ReconnectGrace
 }
 public sealed record OnlineResume(SeatLease Lease, long NextSequence, IReadOnlyList<OnlineFrame> Frames);
 public sealed record OnlineFrame(long Revision, SeatView View, IReadOnlyList<ActionOffer> Actions,
-    bool Started, bool Closed, string? Fault, PlayerEvent? Event = null);
+    bool Started, bool Closed, string? Fault, PlayerEvent? Event = null,IReadOnlyDictionary<string,string>? Controllers=null);
 public sealed record OnlineProposal(long Sequence, long ExpectedRevision, string Actor, Command Command);
 public sealed record OnlineReceipt(long Sequence, long NextSequence, CommandResult Result, OnlineFrame Frame);
 public sealed record OnlineHostStatus(long Revision, bool Ended, bool Closed, string? Fault);
@@ -103,6 +103,11 @@ public sealed class OnlineSession : IDisposable
             Advance();
             return lease;
         }
+    }
+
+    public OnlineRoomInfo Describe()
+    {
+        lock(gate) return new(Identity,controllers.Select(p=>new OnlineSeatInfo(p.Key,p.Value,members.Values.Any(m=>m.Lease.Seat==p.Key))).ToArray(),started,closed);
     }
 
     public OnlineFrame Read(string token)
@@ -284,8 +289,8 @@ public sealed class OnlineSession : IDisposable
         var actions = controllers.Keys.ToDictionary(s => s, s => started && !closed
             ? AvailableActions(s) : []);
         foreach (var seat in controllers.Keys)
-            history[seat].Add(Wire.Copy(new OnlineFrame(revision, game.View(seat), game.Fault == null ? actions[seat] : [], started, closed, game.Fault?.Code, entry)));
-        history[SeatView.AudienceSeat].Add(Wire.Copy(new OnlineFrame(revision, GameEngine.ProjectAudienceSnapshot(game.ExportAuthorityState()), [], started, closed, game.Fault?.Code, entry)));
+            history[seat].Add(Wire.Copy(new OnlineFrame(revision, game.View(seat), game.Fault == null ? actions[seat] : [], started, closed, game.Fault?.Code, entry,new Dictionary<string,string>(controllers))));
+        history[SeatView.AudienceSeat].Add(Wire.Copy(new OnlineFrame(revision, GameEngine.ProjectAudienceSnapshot(game.ExportAuthorityState()), [], started, closed, game.Fault?.Code, entry,new Dictionary<string,string>(controllers))));
     }
     private void Advance(PlayerEvent? entry = null)
     {

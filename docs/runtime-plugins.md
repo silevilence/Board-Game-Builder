@@ -32,7 +32,7 @@
 | 插件（实现版本均为 1，API 均为 1） | 能力／配置 |
 | --- | --- |
 | kernel | authority、projection、random、rule-binding；空配置 |
-| definition.module | definition；`path` 指向实体／组件定义 |
+| definition.module | definition；`path` 指向实体／组件定义，可选 `presets` 声明开局定义预设 |
 | definition.state | definition；`path` 指向 `{format:1,state:GameState,resources:{资源名:相对路径}}` |
 | lua.rules | rules；`file` 指向 Lua 规则入口 |
 | rules.commands | rules；可选 `actions` 标准动作列表，启动前校验结构 |
@@ -44,6 +44,14 @@
 完整最小配置见 `samples/state-minimal/game.start.json`；Lua 示例见 `samples/quick-cards/game.start.json`；WASM 见 `samples/wasm-counter/game.start.json`。新增内置实现使用 `RuntimePluginDefinition` 声明 Provides/Requires，在 `RuntimeComposition.Catalog` 注册，通过 scope 获取声明服务和提供能力，资源通过 `scope.Own` 归属 effect。不得订阅事件来决定权威命令次序。目录加载器提供 `GameDefinition` 与内容依赖；获准目录保持静态，不承诺运行时任意第三方插件发现。
 
 `GameRuntime.Load` 供宿主读取新输入，`PlaySession` 是公开门面，委托 `IGameSession`；旧 `LoadedModule` 字段仅为迁移适配，进入新会话须与公共定义和启动配置一致。快照／录制交叉验证插件版本、配置、定义来源、Lua 路径／内容、资源字节及 WASM 权限／载荷哈希，不在回放中执行脚本。发行清单的 `runtimePlugins` 由实际编译目录生成，导出同时验证 `.deps.json` 执行依赖。
+
+## 定义预设与统一图片区域（M4 展示补充）
+
+`definition.module` 可配置 `{"path":"module-4.json","presets":{"4 人":"module-4.json","5 人":"module-5.json","6 人":"module-6.json"}}`。默认 path 必须属于声明的预设；通过 `GameRuntime.Load(source, preset)` 选择，目录与 `.bgm` 语义一致。选择只替换加载插件的有效 path，人数和规则仍由各定义及脚本声明。所有预设的定义、资源和额外运行文件都进入包与内容哈希；打包验证每个预设。未知预设和越界路径拒绝加载。快照已包含选定配置，不能再指定预设。改变预设改变运行身份，联机各端必须一致。
+
+面资源支持 `resource#x,y,width,height`，例如 `cards#2,2,140,190`；`resources.cards` 仍只声明一张 PNG 的文件路径。`#` 分隔资源名与像素区域，坐标非负、尺寸为正，区域必须位于 PNG 中。加载器和快照检查区域，视图共享基础资源纹理，打印按区域绘制，不把图集拆成单牌文件。旧无区域资源引用继续有效。
+
+标准 `draw` 命令新增可选 `visibility`（owner／hidden／public），缺省仍为 owner；公开摸牌及将旧弃牌以隐藏状态移入有序牌堆均可由规则组合声明。归属仍取目标容器的 owner 或执行席位。隐藏抽取不向规则返回牌 ID，后续查询遵循目标容器及牌自身可见性。
 
 ## 生命周期与组合
 

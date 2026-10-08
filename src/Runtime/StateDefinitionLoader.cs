@@ -45,7 +45,7 @@ internal sealed class StateDefinitionLoader(RuntimeStartup startup,string source
         foreach(var file in root["resources"]!.AsObject())
         {data[file.Key]=File.ReadAllBytes(DirectoryModule.SafeFile(directory,file.Value!.GetValue<string>()));hashes[file.Key]=ModulePackage.Hash(data[file.Key]);}
         foreach(var entity in state.Entities.Values)
-            if(entity.FaceResources.Any(p=>!hashes.ContainsKey(p))) throw new InvalidDataException(entity.Id+": unknown face resource");
+            foreach(var reference in entity.FaceResources) ImageReference.Parse(reference).Validate(data);
         var payload=new SortedDictionary<string,JsonElement>(StringComparer.Ordinal);
         foreach(var capability in new[]{"lua.rules","lua.cpu"})
         {

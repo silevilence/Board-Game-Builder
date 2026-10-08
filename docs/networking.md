@@ -1,6 +1,10 @@
 # 联机会话与独立服务器
 
-M4 复用 `GameRuntime.Load` 和 `PlaySession` 的 CordiSharp 运行时。`Networking` 提供身份与传输边界；`Server` 是独立、无图形窗口的权威进程，`NetworkClient` 是交互式命令行客户端，也提供全自动验证模式。现有图形 Player 与编辑器的本地功能不依赖服务器；本轮联机操作入口为命令行客户端。
+M4 复用 `GameRuntime.Load` 和 `PlaySession` 的 CordiSharp 运行时。`Networking` 提供身份与传输边界；`Server` 是独立、无图形窗口的权威进程，`NetworkClient` 是交互式命令行客户端，也提供全自动验证模式。图形 Player 在 M4 展示补充中通过“文件 → 联机 / 公共观战”接入同一服务；离线 Player 与编辑器的本地功能不依赖服务器。见 [扑克牌 UNO 运行说明](poker-uno.md)。
+
+图形客户端可读取房间人数、席位占用和控制方式，加入或恢复原身份，并查看、保存和回放获准的投影记录。`OnlinePlayerSession` 统一串行化刷新、提交及恢复；提交回执丢失后恢复取得权威 nextSequence，不盲目重发用户动作。通信协议现为 2，`OnlineFrame.Controllers` 携带实际控制方式，不修改规则状态中的原始席位声明；版本 1 客户端在加入时明确拒绝。历史协议 1 投影记录仍可由当前读取器回放。`describe` 接口需房间密钥，仅返回公共房间与席位信息，不返回凭据、手牌或权威记录。
+
+服务器及命令行客户端配置均可增加 `preset`，值为定义加载插件声明的预设名称。图形客户端选取相同预设；不同预设产生不同指纹，不能互相加入。
 
 ## 构建与启动
 

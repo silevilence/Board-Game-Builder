@@ -24,6 +24,7 @@ internal static class ExportVerification
                 }))));
                 await app.Enable("probe.export-step");
                 var exporting=workflow.Run(true);
+                if(exporting.IsCompleted && !await exporting) throw new Exception(workflow.Progress);
                 foreach(var id in new[]{"probe.export-step","author.export"})
                 {
                     try {await app.Disable(id);throw new Exception("Running export was unloaded");}

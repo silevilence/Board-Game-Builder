@@ -86,7 +86,8 @@ public static class DirectoryModule
                             entity.Faces = data.GetProperty("names").EnumerateArray().Select(v => v.GetString()!).ToList(); entity.FaceUp = data.GetProperty("up").GetBoolean();
                             entity.FaceResources=data.GetProperty("resources").EnumerateArray().Select(v=>v.GetString()!).ToList();
                             foreach (var asset in data.GetProperty("resources").EnumerateArray())
-                                if (!resources.ContainsKey(asset.GetString()!)) Fail($"$.entities[{entity.Id}].faces: unknown resource");
+                                try {ImageReference.Parse(asset.GetString()!).Validate(resourceData);}
+                                catch(InvalidDataException error) {throw new InvalidDataException($"$.entities[{entity.Id}].faces: {error.Message}",error);}
                             break;
                         case "position": entity.X = data.GetProperty("x").GetDouble(); entity.Y = data.GetProperty("y").GetDouble(); break;
                         case "properties": foreach (var property in data.EnumerateObject()) entity.Properties.Add(property.Name, property.Value.GetInt32()); break;

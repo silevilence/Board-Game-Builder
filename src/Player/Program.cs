@@ -4,6 +4,8 @@ internal static class Program
 {
     [STAThread] private static int Main(string[] args)
     {
+        if(args.Length==3 && args[0]=="--verify-showcase") return ViewportApp.Run("",[],()=>ShowcaseVerification.Create(args[1],args[2]));
+        if(args.Length==3 && args[0]=="--verify-online-gui") return ViewportApp.Run("",[],()=>ShowcaseVerification.Online(args[1],args[2]));
         if(args.Length==2 && args[0]=="--verify-local") return ViewportApp.Run("",[],()=>LocalTableVerification.Create(args[1]));
         if(args.Length==2 && args[0]=="--verify-background") return ViewportApp.Run("",[],()=>new PlayerWindow("samples/quick-cards",verifyBackground:args[1],shell:PlayerShell.Tools));
         if(args.Length==2 && args[0]=="--verify-shell") return ViewportApp.Run("",[],()=>new PlayerWindow("samples/quick-cards",verifyShell:args[1]));

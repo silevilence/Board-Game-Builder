@@ -57,10 +57,10 @@ public static class ScenePainter
             if(item.Entity!=null && item.Entity==target) color=new Color(47,114,97);
             if(item.Entity!=null && item.Entity==selected) renderer.Box(new((int)b.X-3,(int)b.Y-3,(int)b.Width+6,(int)b.Height+6),new Color(255,196,74));
             renderer.Box(new((int)b.X,(int)b.Y,(int)b.Width,(int)b.Height),color);
-            if(item.Resource!=null) renderer.Image(item.Resource,scene.Resources,item.Kind=="card"
+            if(item.Resource!=null) renderer.Image(item.Resource,scene.Resources,item.Kind is "card" or "back"
                 ?new((int)b.X,(int)b.Y,(int)b.Width,(int)b.Height)
                 :new((int)b.X+3,(int)b.Y+25,(int)b.Width-6,(int)b.Height-28),trimTransparent:item.Kind=="card");
-            if(item.Kind!="card" || item.Resource==null) renderer.Text(item.Label,(int)b.X+5,(int)b.Y+5,item.Kind=="card"?new Color(25,40,46):Color.White);
+            if(item.Kind is not ("card" or "back") || item.Resource==null) renderer.Text(item.Label,(int)b.X+5,(int)b.Y+5,item.Kind=="card"?new Color(25,40,46):Color.White);
             if(item.Detail!=null) renderer.Text(item.Detail,(int)b.X+3,(int)b.Y+25,new Color(186,211,221));
         }
     }

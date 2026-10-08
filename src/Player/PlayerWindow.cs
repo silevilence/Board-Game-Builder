@@ -19,7 +19,7 @@ public sealed partial class PlayerWindow : Window
     private LoadedModule? module;
     private PlayBoard? board;
     private LocalBoard? localBoard;
-    private readonly ComboBox mode=new() {Width=130,ItemsSource=new[] {"单人 + CPU","本地热座","同屏分视角"},SelectedIndex=0};
+    private readonly ComboBox mode=new() {Width=130,ItemsSource=new[] {"单人 + CPU","本地热座","同屏分视角","全 CPU 观战"},SelectedIndex=0};
     private readonly TextBox localHumans=new() {Width=140,PlaceholderText="真人席位，如 p1,p2"};
     private int generation;
     private uint? activeSeed;
@@ -87,7 +87,7 @@ public sealed partial class PlayerWindow : Window
             var defaultHumans=loaded.Initial.Seats.Where(s=>s.Controller=="human").Select(s=>s.Id).ToArray();
             localHumans.Text=string.Join(",",defaultHumans.Length>0?defaultHumans:[loaded.Initial.Seats[0].Id]);
             seat.SelectedItem=defaultHumans.FirstOrDefault() ?? loaded.Initial.Seats[0].Id;
-            mode.SelectedIndex=defaultHumans.Length>1?1:0;
+            mode.SelectedIndex=defaultHumans.Length==0?3:defaultHumans.Length>1?1:0;
             classic=loaded.Initial.Entities.Values.Any(e=>e.Properties.GetValueOrDefault("viewTheme")==1);
             ApplyTheme();SetShell(shell);UpdateTitle();
             message.Text=$"{loaded.Id} · {loaded.Version} | 选择真人席位，其余席位使用 CPU。"; start.IsEnabled=true;
@@ -109,7 +109,7 @@ public sealed partial class PlayerWindow : Window
         {
             if(setup.Mode>0)
             {
-                var created=await LocalBoard.Create(loaded,value,loaded.Initial.Seats.ToDictionary(s=>s.Id,s=>setup.Humans.Contains(s.Id)?"human":"cpu"),setup.Mode==1?LocalTableMode.HotSeat:LocalTableMode.SplitScreen,presentation.ShowActions);
+                var created=await LocalBoard.Create(loaded,value,loaded.Initial.Seats.ToDictionary(s=>s.Id,s=>setup.Humans.Contains(s.Id)?"human":"cpu"),setup.Mode==2?LocalTableMode.SplitScreen:LocalTableMode.HotSeat,presentation.ShowActions);
                 if(current!=generation) {created.Dispose();return;}localBoard=created;
                 play.Content=localBoard;activeSeed=value;SetShell(shell);UpdateTitle();message.Text="热座交接请移开视线；同屏各视口显示其控制席位。";await localBoard.PumpCpu();return;
             }

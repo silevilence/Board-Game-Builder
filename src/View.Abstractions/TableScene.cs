@@ -20,9 +20,15 @@ public sealed record TableScene(IReadOnlyList<TableItem> Items, IReadOnlyDiction
     public static TableScene From(SeatView projection,IReadOnlyDictionary<string,byte[]>? resources=null)
     {
         var items=new List<TableItem>(); var used=new Dictionary<string,byte[]>();
+        void Use(string? value)
+        {
+            if(value==null || resources==null) return;
+            var key=ImageReference.Parse(value).Resource;
+            if(resources.TryGetValue(key,out var bytes)) used[key]=bytes;
+        }
         foreach(var cloth in projection.Entities.Where(e=>e.Properties.GetValueOrDefault("viewTablecloth")==1 && e.Resource!=null))
         {
-            if(resources!=null && resources.TryGetValue(cloth.Resource!,out var bytes)) used[cloth.Resource!]=bytes;
+            Use(cloth.Resource);
             items.Add(new(null,"tablecloth","",new((float)cloth.X,(float)cloth.Y,Math.Clamp(cloth.Properties.GetValueOrDefault("viewWidth",1200),1,8192),Math.Clamp(cloth.Properties.GetValueOrDefault("viewHeight",800),1,8192)),cloth.Resource));
         }
         var regions=projection.Entities.Where(e=>e.IsContainer && e.Properties.GetValueOrDefault("viewHidden")!=1).OrderBy(e=>e.Owner==projection.Seat?1:0).ToArray();
@@ -33,6 +39,7 @@ public sealed record TableScene(IReadOnlyList<TableItem> Items, IReadOnlyDiction
             var point=projection.Layout?.World(region.X,region.Y);
             var x=point==null?30+index%2*400:(float)point.Value.X; var y=point==null?40+index/2*235:(float)point.Value.Y; index++;
             // Presentation properties are generic media settings; ordering comes only from the projection.
+            var horizontal=region.Properties.ContainsKey("viewFanX");
             var fan=region.Properties.ContainsKey("viewFanY");
             float Setting(string key,int fallback,int min,int max)=>Math.Clamp(region.Properties.GetValueOrDefault(key,fallback),min,max);
             var cardWidth=Setting("viewCardWidth",65,30,300); var cardHeight=Setting("viewCardHeight",105,40,400);
@@ -42,14 +49,17 @@ public sealed record TableScene(IReadOnlyList<TableItem> Items, IReadOnlyDiction
             items.Add(new(region.Id,"region",classic?region.Face ?? region.Id:$"{region.Face ?? region.Id}  ·  {region.Count}",new(x,y,regionWidth,regionHeight),PositionX:region.X,PositionY:region.Y,Layout:projection.Layout,Hotkey:region.Properties.GetValueOrDefault("viewHotkey"),Mark:region.Properties.GetValueOrDefault("viewSuit"),SlotHeight:cardHeight));
             var visibleChildren=projection.Entities.Where(e=>e.Container==region.Id).ToDictionary(e=>e.Id);
             var children=region.Contents.Where(visibleChildren.ContainsKey).Select(id=>visibleChildren[id]).ToArray();
+            if(region.Properties.GetValueOrDefault("viewTopOnly")==1) children=children.TakeLast(1).ToArray();
+            Use(region.Resource);
+            var fanX=Math.Min(Setting("viewFanX",30,0,300),Math.Max(0,(regionWidth-cardWidth-28)/Math.Max(1,region.Count-1)));
             // Anonymous backs encode only the public count, never authority identities.
-            for(var j=0;j<Math.Min(12,region.Count-children.Length);j++)
-                items.Add(new(null,"back","隐藏",new(x+14+j*20,y+42,65,105)));
+            for(var j=0;j<Math.Min(12,region.Count-visibleChildren.Count);j++)
+                items.Add(new(null,"back","隐藏",new(x+14+j*(horizontal?fanX:20),y+42,cardWidth,cardHeight),region.Resource));
             for(var j=0;j<children.Length;j++)
             {
                 var e=children[j]; var resource=e.Resource;
-                if(resource!=null && resources!=null && resources.TryGetValue(resource,out var bytes)) used[resource]=bytes;
-                var bounds=fan?new TableRect(x+(classic?0:6),y+(classic?0:30)+j*fanY,cardWidth,cardHeight):new TableRect(x+14+j%5*70,y+42+j/5*48,65,105);
+                Use(resource);
+                var bounds=horizontal?new TableRect(x+14+j*fanX,y+36,cardWidth,cardHeight):fan?new TableRect(x+(classic?0:6),y+(classic?0:30)+j*fanY,cardWidth,cardHeight):new TableRect(x+14+j%5*70,y+42+j/5*48,65,105);
                 items.Add(new(e.Id,e.Face==null?"back":"card",e.Face ?? "背面",bounds,resource,Container:region.Id));
             }
         }
@@ -66,7 +76,7 @@ public sealed record TableScene(IReadOnlyList<TableItem> Items, IReadOnlyDiction
                 var w=Math.Clamp(e.Properties.GetValueOrDefault("viewWidth",48),4,2000);
                 var h=Math.Clamp(e.Properties.GetValueOrDefault("viewHeight",48),4,2000);
                 var resource=e.Properties.GetValueOrDefault("viewNoImage")==1?null:e.Resource;
-                if(resource!=null && resources!=null && resources.TryGetValue(resource,out var sprite)) used[resource]=sprite;
+                Use(resource);
                 items.Add(new(e.Properties.GetValueOrDefault("viewPassive")==1?null:e.Id,style==2?"line":style==3?"panel":"sprite",
                     e.Properties.GetValueOrDefault("viewLabel")==1?label:"",new((float)pos.Item1-w/2f,(float)pos.Item2-h/2f,w,h),resource,e.X,e.Y,projection.Layout,
                     Color:e.Properties.GetValueOrDefault("viewColor",0xE3C887),Layer:e.Properties.GetValueOrDefault("viewLayer"),
@@ -76,7 +86,7 @@ public sealed record TableScene(IReadOnlyList<TableItem> Items, IReadOnlyDiction
             }
             var detail=e.Properties.Count>0?string.Join(" ",e.Properties.Select(p=>$"{p.Key}:{p.Value}")):null;
             if(projection.Layout==null && detail!=null) label+="  "+detail;
-            if(e.Resource!=null && resources!=null && resources.TryGetValue(e.Resource,out var bytes)) used[e.Resource]=bytes;
+            Use(e.Resource);
             var point=projection.Layout?.World(e.X,e.Y);
             var bounds=point==null?new TableRect((float)e.X+30,(float)e.Y+40+(regions.Length+1)/2*235+loose++*48,360,40):new TableRect((float)point.Value.X-36,(float)point.Value.Y-24,76,48);
             items.Add(new(e.Id,"piece",label,bounds,e.Resource,e.X,e.Y,projection.Layout,projection.Layout==null?null:detail));

@@ -21,5 +21,11 @@ public static class PrintTests
         Directory.CreateDirectory("artifacts/m3");var destination="artifacts/m3/print-"+Guid.NewGuid()+".pdf";PrintLayout.Export(plan,destination);
         Check.Throws(()=>PrintLayout.Export(plan,destination),"已存在");
         File.WriteAllText("artifacts/m3/print-path.txt",Path.GetFullPath(destination));
+        var atlas=BoardGame.Runtime.GameRuntime.Load("samples/poker-uno");
+        var atlasPlan=PrintLayout.Create(atlas,["card-01","card-02"],new());
+        Check.That(!atlasPlan.Pages[0][0].Image.SequenceEqual(atlasPlan.Pages[0][1].Image),"Atlas fronts were not cropped individually");
+        Check.That(atlasPlan.Pages[1][0].Image.SequenceEqual(atlasPlan.Pages[1][1].Image),"Shared atlas backs differ");
+        Directory.CreateDirectory("artifacts/poker-uno");
+        PrintLayout.Export(atlasPlan,"artifacts/poker-uno/print-"+Guid.NewGuid()+".pdf");
     }
 }

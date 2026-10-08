@@ -12,7 +12,7 @@ try
     var config = Wire.Read<ServerConfiguration>(File.ReadAllText(configPath));
     config.Validate();
     var directory = Path.GetDirectoryName(configPath)!;
-    var module = GameRuntime.Load(Path.GetFullPath(config.Module, directory));
+    var module = GameRuntime.Load(Path.GetFullPath(config.Module, directory),config.Preset);
     using var room = new OnlineSession(module, config.Seed, config.Controllers, config.Options);
     var output = Path.GetFullPath(config.Output, directory);
     Directory.CreateDirectory(output);
@@ -59,6 +59,7 @@ try
         var text = await reader.ReadToEndAsync(context.RequestAborted).ConfigureAwait(false);
         return Wire.Read<T>(text);
     }
+    app.MapPost("/describe", () => Results.Text(Wire.Json(room.Describe()), "application/json"));
     app.MapPost("/join", async (HttpContext context) =>
     {
         var request = await Body<JoinRequest>(context);
@@ -142,7 +143,7 @@ try
 catch (Exception error) { Console.Error.WriteLine($"server-start-or-run-failed: {error.Message}"); return 1; }
 
 public sealed record ServerConfiguration(string Module, string Listen, string RoomKey, Dictionary<string, string> Controllers,
-    uint Seed = 1, OnlineOptions? Options = null, string Output = "records", string? Certificate = null)
+    uint Seed = 1, OnlineOptions? Options = null, string Output = "records", string? Certificate = null,string? Preset=null)
 {
     public void Validate()
     {

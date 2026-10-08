@@ -9,7 +9,7 @@ namespace Engine.Tests;
 
 public static class OnlineTransportTests
 {
-    private sealed class Host : IDisposable
+    internal sealed class Host : IDisposable
     {
         public string Root { get; } = Path.GetFullPath("artifacts/m4/http-" + Guid.NewGuid().ToString("N"));
         public string Key { get; } = Guid.NewGuid().ToString("N");
@@ -18,15 +18,15 @@ public static class OnlineTransportTests
         private readonly Task<string> stdout;
         private readonly Task<string> stderr;
         private bool stopped;
-        public Host(string module, bool cpu, bool allCpu = false)
+        public Host(string module, bool cpu, bool allCpu = false,string? preset=null,IReadOnlySet<string>? humanSeats=null)
         {
             Directory.CreateDirectory(Root);
             var socket = new TcpListener(IPAddress.Loopback, 0);
             socket.Start(); var port = ((IPEndPoint)socket.LocalEndpoint).Port; socket.Stop();
             Url = new($"http://127.0.0.1:{port}/");
-            var loaded = GameRuntime.Load(module);
-            var config = new { module = Path.GetFullPath(module), listen = Url.ToString(), roomKey = Key,
-                controllers = loaded.Initial.Seats.ToDictionary(s => s.Id, s => allCpu || cpu && s.Id == "p3" ? "cpu" : "human"), output = "records" };
+            var loaded = GameRuntime.Load(module,preset);
+            var config = new { module = Path.GetFullPath(module), preset, listen = Url.ToString(), roomKey = Key,
+                controllers = loaded.Initial.Seats.ToDictionary(s => s.Id, s => humanSeats!=null?(humanSeats.Contains(s.Id)?"human":"cpu"):allCpu || cpu && s.Id == "p3" ? "cpu" : "human"), output = "records" };
             var configPath = Path.Combine(Root, "server.json");
             File.WriteAllText(configPath, Wire.Json(config));
             process = Launch("src/Server/bin/Release/net10.0/Server.exe", configPath);

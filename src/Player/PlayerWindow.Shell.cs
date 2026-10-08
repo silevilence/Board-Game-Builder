@@ -3,6 +3,7 @@ using Avalonia.Controls;
 using Avalonia.Layout;
 using Avalonia.Media;
 using Avalonia.Platform.Storage;
+using BoardGame.Runtime;
 namespace BoardGame.Player;
 
 public sealed partial class PlayerWindow
@@ -13,6 +14,7 @@ public sealed partial class PlayerWindow
         {var item=new MenuItem {Header=title};item.Click+=(_,_)=>action();return item;}
         var file=new MenuItem {Header="文件 (_F)",ItemsSource=new object[] {
             Item("加载模块…",()=>_=Browse()),
+            Item("联机 / 公共观战…",()=> {if(module!=null)new OnlineSetupWindow(module,path.Text!).Show(this);}),
             Item("显示 / 隐藏加载工具栏",()=>SetShell(shell==PlayerShell.Game?PlayerShell.Tools:PlayerShell.Game)),
             new Separator(),Item("退出",Close)}};
         gameMenu.ItemsSource=new object[] {
@@ -60,7 +62,7 @@ public sealed partial class PlayerWindow
         ?new[] {(string)seat.SelectedItem!}:(localHumans.Text ?? "").Split(',',StringSplitOptions.TrimEntries|StringSplitOptions.RemoveEmptyEntries));
     private void ApplySetup(GameSetup setup)
     {
-        seed.Text=setup.Seed.ToString();mode.SelectedIndex=setup.Mode;seat.SelectedItem=setup.Humans[0];localHumans.Text=string.Join(',',setup.Humans);
+        seed.Text=setup.Seed.ToString();mode.SelectedIndex=setup.Mode;seat.SelectedItem=setup.Humans.FirstOrDefault() ?? module!.Initial.Seats[0].Id;localHumans.Text=string.Join(',',setup.Humans);
     }
     private async Task ShowSettings()
     {
@@ -71,9 +73,15 @@ public sealed partial class PlayerWindow
         settingsOpen=true;
         try
         {
-            settingsDialog=new GameSetupWindow(loaded,draft);
+            var location=path.Text!;
+            settingsDialog=new GameSetupWindow(loaded,draft,preset=>Task.Run(()=>GameRuntime.Load(location,preset)));
             var chosen=await settingsDialog.ShowDialog<GameSetup?>(this);
-            if(chosen!=null && current==generation) {ApplySetup(chosen);await Start();}
+            if(chosen!=null && current==generation)
+            {
+                module=settingsDialog.SelectedModule;presentation=PlayerPresentation.Read(module);
+                classic=module.Initial.Entities.Values.Any(e=>e.Properties.GetValueOrDefault("viewTheme")==1);ApplyTheme();
+                seat.ItemsSource=module.Initial.Seats.Select(s=>s.Id).ToArray();ApplySetup(chosen);await Start();
+            }
         }
         finally {settingsOpen=false;settingsDialog=null;}
     }

@@ -1,0 +1,54 @@
+{
+  "format": 1,
+  "id": "poker-uno",
+  "version": "1.0.0",
+  "plugins": [
+    {
+      "id": "kernel",
+      "version": "1",
+      "api": 1,
+      "configuration": {}
+    },
+    {
+      "id": "session.local",
+      "version": "1",
+      "api": 1,
+      "configuration": {}
+    },
+    {
+      "id": "recording",
+      "version": "1",
+      "api": 1,
+      "configuration": {}
+    },
+    {
+      "id": "definition.module",
+      "version": "1",
+      "api": 1,
+      "configuration": {
+        "path": "module-4.json",
+        "presets": {
+          "4 人": "module-4.json",
+          "5 人": "module-5.json",
+          "6 人": "module-6.json"
+        }
+      }
+    },
+    {
+      "id": "lua.rules",
+      "version": "1",
+      "api": 1,
+      "configuration": {
+        "file": "rules.lua"
+      }
+    },
+    {
+      "id": "lua.cpu",
+      "version": "1",
+      "api": 1,
+      "configuration": {
+        "file": "cpu.lua"
+      }
+    }
+  ]
+}

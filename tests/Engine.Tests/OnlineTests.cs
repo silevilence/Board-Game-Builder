@@ -119,8 +119,9 @@ public static class OnlineTests
     {
         var module = TestModules.Load("samples/quick-cards");
         using var room = new OnlineSession(module, 42, module.Initial.Seats.ToDictionary(s => s.Id, _ => "human"));
-        Check.Throws(() => room.Join(new(2, module.Fingerprint)), "version-mismatch");
-        Check.Throws(() => room.Join(new(1, "changed-script-or-plugin")), "version-mismatch");
+        Check.Throws(() => room.Join(new(OnlineProtocol.Version+1, module.Fingerprint)), "version-mismatch");
+        Check.Throws(() => room.Join(new(1, module.Fingerprint)), "version-mismatch");
+        Check.Throws(() => room.Join(new(OnlineProtocol.Version, "changed-script-or-plugin")), "version-mismatch");
         var first = room.Join(OnlineIdentity.For(module));
         Check.That(!room.Read(first.Token).Started);
         var second = room.Join(OnlineIdentity.For(module));

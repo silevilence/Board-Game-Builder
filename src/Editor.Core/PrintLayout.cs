@@ -40,12 +40,15 @@ public static class PrintLayout
                     var width=(int)Math.Round(o.CardWidth/25.4*150);var height=(int)Math.Round(o.CardHeight/25.4*150);
                     using var bitmap=new Bitmap(width,height);using var graphics=Graphics.FromImage(bitmap);graphics.Clear(Color.White);
                     var face=reverse?1:0;
-                    if(entity.FaceResources.Count>face && module.ResourceData?.TryGetValue(entity.FaceResources[face],out var resource)==true)
+                    var reference=entity.FaceResources.Count>face?ImageReference.Parse(entity.FaceResources[face]):null;
+                    if(reference!=null && module.ResourceData?.TryGetValue(reference.Resource,out var resource)==true)
                     {
                         if(resource.Length>16*1024*1024) throw new InvalidDataException("卡图超过打印资源限制");
                         using var stream=new MemoryStream(resource);using var image=new Bitmap(stream);
                         if((long)image.Width*image.Height>32_000_000) throw new InvalidDataException("卡图尺寸超限");
-                        graphics.DrawImage(image,0,0,width,height);
+                        reference.CheckBounds(image.Width,image.Height);
+                        var source=reference.IsRegion?new Rectangle(reference.X,reference.Y,reference.Width,reference.Height):new Rectangle(0,0,image.Width,image.Height);
+                        graphics.DrawImage(image,new Rectangle(0,0,width,height),source,GraphicsUnit.Pixel);
                     }
                     else
                     {

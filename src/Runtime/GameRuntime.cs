@@ -28,7 +28,7 @@ public static class GameRuntime
         {
             string[] fields=selection.Id switch
             {
-                "definition.module" or "definition.state"=>["path"],"lua.rules" or "lua.cpu"=>["file"],"wasm"=>["extensions"],
+                "definition.module"=>["path","presets"],"definition.state"=>["path"],"lua.rules" or "lua.cpu"=>["file"],"wasm"=>["extensions"],
                 "rules.commands"=>["actions"],_=>[]
             };
             CheckObject(selection.Configuration,fields,selection.Id+".configuration");
@@ -42,6 +42,7 @@ public static class GameRuntime
                 ModulePackage.ValidateDependencies(extensions);
             }
         }
+        _=GamePresets.Choices(startup);
         return startup with {Plugins=startup.Plugins.OrderBy(p=>p.Id,StringComparer.Ordinal).ToList()};
     }
     internal static void CheckObject(JsonElement value,IEnumerable<string> fields,string path)
@@ -51,9 +52,10 @@ public static class GameRuntime
         foreach(var property in value.EnumerateObject())
             if(!names.Add(property.Name) || !fields.Contains(property.Name)) throw new InvalidDataException(path+"."+property.Name+": duplicate/unknown configuration");
     }
-    public static LoadedModule Load(string source)=>Directory.Exists(source)?LoadDirectory(source):
-        Path.GetFileName(source).Equals(Entry,StringComparison.OrdinalIgnoreCase)?LoadDirectory(Path.GetDirectoryName(Path.GetFullPath(source))!):
-        Path.GetExtension(source).Equals(".bgm",StringComparison.OrdinalIgnoreCase)?GamePackage.Load(source):LoadSnapshot(source);
+    public static LoadedModule Load(string source,string? preset=null)=>Directory.Exists(source)?LoadDirectory(source,preset):
+        Path.GetFileName(source).Equals(Entry,StringComparison.OrdinalIgnoreCase)?LoadDirectory(Path.GetDirectoryName(Path.GetFullPath(source))!,preset):
+        Path.GetExtension(source).Equals(".bgm",StringComparison.OrdinalIgnoreCase)?GamePackage.Load(source,preset):
+        preset==null?LoadSnapshot(source):throw new InvalidDataException("Snapshots already contain a selected definition preset");
     private static LoadedModule LoadSnapshot(string source)
     {
         var module=ModuleSnapshot.Load(source);
@@ -72,6 +74,8 @@ public static class GameRuntime
         var resourceData=module.ResourceData ?? new(StringComparer.Ordinal);
         if(!resourceHashes.Keys.SequenceEqual(resourceData.Keys) || resourceHashes.Any(p=>ModulePackage.Hash(resourceData[p.Key])!=p.Value))
             throw new InvalidDataException("Resource snapshot content hash mismatch");
+        foreach(var entity in module.Initial.Entities.Values)
+            foreach(var reference in entity.FaceResources) ImageReference.Parse(reference).Validate(resourceData);
         foreach(var path in identity.ContentHashes.Keys) ModulePackage.ValidatePath(path);
         var loader=identity.Startup.Plugins.Single(p=>p.Id is "definition.module" or "definition.state");
         if(identity.DefinitionSource!=loader.Configuration.GetProperty("path").GetString() || !identity.ContentHashes.ContainsKey(identity.DefinitionSource))
@@ -107,9 +111,9 @@ public static class GameRuntime
             if(hash!=ModulePackage.Hash(data) && hash!=ModulePackage.Hash([0xEF,0xBB,0xBF,..data])) throw new InvalidDataException(path+": script content hash mismatch (UTF-8 required)");
         }
     }
-    public static LoadedModule LoadDirectory(string directory)
+    public static LoadedModule LoadDirectory(string directory,string? preset=null)
     {
-        var startup=ReadStartup(directory);
+        var startup=GamePresets.Select(ReadStartup(directory),preset);
         var catalog=RuntimeComposition.Catalog(startup:startup);
         RuntimeHost.Validate(startup,catalog,AuthorityPlugin.Required.Concat(["definition","rules","session","recording"]));
         var loaders=catalog.Where(p=>p.Provides.Contains("definition") && startup.Plugins.Any(s=>s.Id==p.Id)).ToArray();

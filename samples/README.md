@@ -10,6 +10,7 @@
 | sealed-auction | definition.module | Lua 规则／CPU | 20 种子、秘密提交与揭示 |
 | wasm-counter | definition.module | Lua 规则／CPU、WASM | 三次计数命令终局、隔离与权限 |
 | island-settlers | definition.module | Lua 规则／CPU、WASM | 20 种子 CPU 终局、重跑、回放 |
+| poker-uno | definition.module（4／5／6 人预设） | Lua 规则／CPU、统一 PNG 图集 | 基础规则、本地多人、权威联机、观战／恢复；见 [运行说明](../docs/poker-uno.md) |
 | state-minimal | definition.state | 无脚本静态命令 | 最小格式、完成命令、包与回放 |
 
 每个示例均声明 kernel、session.local、recording。`tests/Engine.Tests` 的 `m35-gate` 验证全部示例的目录／包身份及运行行为；`m2-gate`、`freecell-modes`、`island-modes` 复查两种试玩与原验收路径。

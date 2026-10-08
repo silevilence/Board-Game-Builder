@@ -6,7 +6,7 @@ namespace BoardGame.Networking;
 
 public static class OnlineProtocol
 {
-    public const int Version = 1;
+    public const int Version = 2;
     public const int RecordingFormat = 1;
 }
 public static class OnlineOperations
@@ -25,6 +25,8 @@ public sealed record OnlineRequest(string Operation, long AfterRevision = -1, On
 public sealed record OnlineReply(OnlineFrame? Frame = null, OnlineReceipt? Receipt = null,
     IReadOnlyList<OnlineFrame>? Frames = null, OnlineRecording? Recording = null);
 public sealed record OnlineError(string Code);
+public sealed record OnlineSeatInfo(string Id,string Controller,bool Occupied);
+public sealed record OnlineRoomInfo(OnlineIdentity Identity,IReadOnlyList<OnlineSeatInfo> Seats,bool Started,bool Closed);
 
 // A transport client holds no authoritative game, scripts, random state or other seats' data.
 public sealed class OnlineClient : IDisposable
@@ -41,6 +43,7 @@ public sealed class OnlineClient : IDisposable
     }
     public Task<SeatLease> JoinAsync(JoinRequest request, CancellationToken cancellation = default) =>
         Send<SeatLease>("join", request, null, cancellation);
+    public Task<OnlineRoomInfo> DescribeAsync(CancellationToken cancellation=default)=>Send<OnlineRoomInfo>("describe",new {},null,cancellation);
     public Task<OnlineResume> ResumeAsync(ResumeRequest request, CancellationToken cancellation = default) =>
         Send<OnlineResume>("resume", request, null, cancellation);
     public Task<OnlineReply> SendAsync(string token, OnlineRequest request, CancellationToken cancellation = default) =>

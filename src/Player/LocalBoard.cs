@@ -33,7 +33,7 @@ public sealed class LocalBoard : UserControl,IDisposable
     private void Clear()
     {
         foreach(var table in tables) {table.InputEnabled=false;table.Show(new([],new Dictionary<string,byte[]>()));table.Dispose();}
-        tables.Clear();sidebars.Clear();views.Children.Clear();views.ColumnDefinitions.Clear();header.Children.Clear();
+        tables.Clear();sidebars.Clear();views.Children.Clear();views.ColumnDefinitions.Clear();views.RowDefinitions.Clear();header.Children.Clear();
     }
     private void Refresh()
     {
@@ -52,12 +52,15 @@ public sealed class LocalBoard : UserControl,IDisposable
             var take=new Button {Content="请交给 "+next+" · 我已接手，显示本席位"};
             take.Click+=async (_,_)=>await Run(async ()=> {await session.TakeSeatAsync(frame.Revision,next);});header.Children.Add(take);
         }
+        var columns=Math.Min(2,frame.Views.Count);
+        for(var i=0;i<columns;i++) views.ColumnDefinitions.Add(new ColumnDefinition());
+        for(var i=0;i<(frame.Views.Count+1)/2;i++) views.RowDefinitions.Add(new RowDefinition());
         foreach(var seat in frame.Views)
         {
-            var column=tables.Count;views.ColumnDefinitions.Add(new ColumnDefinition());
-            var panel=new DockPanel();Grid.SetColumn(panel,column);views.Children.Add(panel);
+            var index=tables.Count;
+            var panel=new DockPanel();Grid.SetColumn(panel,index%columns);Grid.SetRow(panel,index/columns);views.Children.Add(panel);
             var controls=new StackPanel {Spacing=6,Margin=new Avalonia.Thickness(8)};
-            var sidebar=new ScrollViewer {Content=controls,Width=270,IsVisible=showActions};sidebars.Add(sidebar);DockPanel.SetDock(sidebar,Dock.Right);panel.Children.Add(sidebar);
+            var sidebar=new ScrollViewer {Content=controls,Width=frame.Views.Count>1?180:270,IsVisible=showActions};sidebars.Add(sidebar);DockPanel.SetDock(sidebar,Dock.Right);panel.Children.Add(sidebar);
             var identity=new TextBlock {Text="控制席位："+seat.View.Seat,Margin=new Avalonia.Thickness(8,4)};DockPanel.SetDock(identity,Dock.Top);panel.Children.Add(identity);
             controls.Children.Add(new TextBlock {Text=$"控制席位：{seat.View.Seat} · 当前：{seat.View.CurrentSeat} · {seat.View.Phase}"});
             if(seat.View.Ended) controls.Children.Add(new TextBlock {Text="结算："+string.Join(", ",seat.View.Winners)});
@@ -78,7 +81,15 @@ public sealed class LocalBoard : UserControl,IDisposable
     {
         if(disposed || busy) return;
         busy=true;Clear();
-        try {await action();while(!disposed && session.Frame.Cpu && !session.Frame.Ended) if(!await session.StepCpuAsync()) break;}
+        try
+        {
+            await action();
+            while(!disposed && session.Frame.Cpu && !session.Frame.Ended)
+            {
+                if(!await session.StepCpuAsync()) break;
+                if(session.Frame.Views.Any(v=>v.View.Seat==SeatView.AudienceSeat)) {Refresh();await Task.Delay(100);}
+            }
+        }
         catch(Exception error) {session.Dispose();Refresh();header.Children.Add(new TextBlock {Text="对局故障："+error.Message});return;}
         finally {busy=false;}
         if(!disposed) Refresh();

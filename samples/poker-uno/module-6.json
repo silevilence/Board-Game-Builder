@@ -1,0 +1,2203 @@
+{
+  "format": 1,
+  "layout": {
+    "kind": "free",
+    "size": 70,
+    "originX": 15,
+    "originY": 20
+  },
+  "seats": [
+    {
+      "id": "p1",
+      "team": "p1",
+      "controller": "human"
+    },
+    {
+      "id": "p2",
+      "team": "p2",
+      "controller": "cpu"
+    },
+    {
+      "id": "p3",
+      "team": "p3",
+      "controller": "cpu"
+    },
+    {
+      "id": "p4",
+      "team": "p4",
+      "controller": "cpu"
+    },
+    {
+      "id": "p5",
+      "team": "p5",
+      "controller": "cpu"
+    },
+    {
+      "id": "p6",
+      "team": "p6",
+      "controller": "cpu"
+    }
+  ],
+  "phases": [
+    "setup",
+    "opening",
+    "play",
+    "drawn"
+  ],
+  "resources": {
+    "cards": "assets/cards.png",
+    "player.presentation": "player.json"
+  },
+  "runtimeFiles": [
+    "assets/License.txt",
+    "atlas-map.json",
+    "README.md"
+  ],
+  "entities": [
+    {
+      "id": "deck",
+      "components": [
+        {
+          "type": "container",
+          "data": {
+            "capacity": 52,
+            "ordered": true,
+            "contents": [
+              "card-01",
+              "card-02",
+              "card-03",
+              "card-04",
+              "card-05",
+              "card-06",
+              "card-07",
+              "card-08",
+              "card-09",
+              "card-10",
+              "card-11",
+              "card-12",
+              "card-13",
+              "card-14",
+              "card-15",
+              "card-16",
+              "card-17",
+              "card-18",
+              "card-19",
+              "card-20",
+              "card-21",
+              "card-22",
+              "card-23",
+              "card-24",
+              "card-25",
+              "card-26",
+              "card-27",
+              "card-28",
+              "card-29",
+              "card-30",
+              "card-31",
+              "card-32",
+              "card-33",
+              "card-34",
+              "card-35",
+              "card-36",
+              "card-37",
+              "card-38",
+              "card-39",
+              "card-40",
+              "card-41",
+              "card-42",
+              "card-43",
+              "card-44",
+              "card-45",
+              "card-46",
+              "card-47",
+              "card-48",
+              "card-49",
+              "card-50",
+              "card-51",
+              "card-52"
+            ]
+          }
+        },
+        {
+          "type": "faces",
+          "data": {
+            "names": [
+              "摸牌堆"
+            ],
+            "resources": [
+              "cards#2,778,140,190"
+            ],
+            "up": true
+          }
+        },
+        {
+          "type": "position",
+          "data": {
+            "x": 270,
+            "y": 200
+          }
+        },
+        {
+          "type": "properties",
+          "data": {
+            "viewWidth": 180,
+            "viewHeight": 156,
+            "viewFanX": 34,
+            "viewCardWidth": 76,
+            "viewCardHeight": 104
+          }
+        }
+      ]
+    },
+    {
+      "id": "table",
+      "components": [
+        {
+          "type": "container",
+          "data": {
+            "capacity": 52,
+            "ordered": true,
+            "contents": []
+          }
+        },
+        {
+          "type": "faces",
+          "data": {
+            "names": [
+              "当前弃牌"
+            ],
+            "resources": [
+              "cards#2,778,140,190"
+            ],
+            "up": true
+          }
+        },
+        {
+          "type": "position",
+          "data": {
+            "x": 480,
+            "y": 200
+          }
+        },
+        {
+          "type": "properties",
+          "data": {
+            "viewWidth": 180,
+            "viewHeight": 156,
+            "viewFanX": 34,
+            "viewCardWidth": 76,
+            "viewCardHeight": 104,
+            "viewTopOnly": 1
+          }
+        }
+      ]
+    },
+    {
+      "id": "spent",
+      "components": [
+        {
+          "type": "container",
+          "data": {
+            "capacity": 52,
+            "ordered": true,
+            "contents": []
+          }
+        },
+        {
+          "type": "faces",
+          "data": {
+            "names": [
+              "已用弃牌"
+            ],
+            "resources": [
+              "cards#2,778,140,190"
+            ],
+            "up": true
+          }
+        },
+        {
+          "type": "position",
+          "data": {
+            "x": 0,
+            "y": 0
+          }
+        },
+        {
+          "type": "properties",
+          "data": {
+            "viewWidth": 440,
+            "viewHeight": 156,
+            "viewFanX": 34,
+            "viewCardWidth": 76,
+            "viewCardHeight": 104,
+            "viewHidden": 1
+          }
+        }
+      ]
+    },
+    {
+      "id": "match",
+      "components": [
+        {
+          "type": "properties",
+          "data": {
+            "stalled": 0,
+            "viewHidden": 1
+          }
+        }
+      ]
+    },
+    {
+      "id": "hand-p1",
+      "components": [
+        {
+          "type": "container",
+          "data": {
+            "capacity": 52,
+            "ordered": true,
+            "contents": []
+          }
+        },
+        {
+          "type": "faces",
+          "data": {
+            "names": [
+              "席位 1 · 手牌"
+            ],
+            "resources": [
+              "cards#2,778,140,190"
+            ],
+            "up": true
+          }
+        },
+        {
+          "type": "position",
+          "data": {
+            "x": 0,
+            "y": 20
+          }
+        },
+        {
+          "type": "properties",
+          "data": {
+            "viewWidth": 440,
+            "viewHeight": 156,
+            "viewFanX": 34,
+            "viewCardWidth": 76,
+            "viewCardHeight": 104
+          }
+        },
+        {
+          "type": "owner",
+          "data": {
+            "seat": "p1"
+          }
+        }
+      ]
+    },
+    {
+      "id": "hand-p2",
+      "components": [
+        {
+          "type": "container",
+          "data": {
+            "capacity": 52,
+            "ordered": true,
+            "contents": []
+          }
+        },
+        {
+          "type": "faces",
+          "data": {
+            "names": [
+              "席位 2 · 手牌"
+            ],
+            "resources": [
+              "cards#2,778,140,190"
+            ],
+            "up": true
+          }
+        },
+        {
+          "type": "position",
+          "data": {
+            "x": 465,
+            "y": 20
+          }
+        },
+        {
+          "type": "properties",
+          "data": {
+            "viewWidth": 440,
+            "viewHeight": 156,
+            "viewFanX": 34,
+            "viewCardWidth": 76,
+            "viewCardHeight": 104
+          }
+        },
+        {
+          "type": "owner",
+          "data": {
+            "seat": "p2"
+          }
+        }
+      ]
+    },
+    {
+      "id": "hand-p3",
+      "components": [
+        {
+          "type": "container",
+          "data": {
+            "capacity": 52,
+            "ordered": true,
+            "contents": []
+          }
+        },
+        {
+          "type": "faces",
+          "data": {
+            "names": [
+              "席位 3 · 手牌"
+            ],
+            "resources": [
+              "cards#2,778,140,190"
+            ],
+            "up": true
+          }
+        },
+        {
+          "type": "position",
+          "data": {
+            "x": 930,
+            "y": 20
+          }
+        },
+        {
+          "type": "properties",
+          "data": {
+            "viewWidth": 440,
+            "viewHeight": 156,
+            "viewFanX": 34,
+            "viewCardWidth": 76,
+            "viewCardHeight": 104
+          }
+        },
+        {
+          "type": "owner",
+          "data": {
+            "seat": "p3"
+          }
+        }
+      ]
+    },
+    {
+      "id": "hand-p4",
+      "components": [
+        {
+          "type": "container",
+          "data": {
+            "capacity": 52,
+            "ordered": true,
+            "contents": []
+          }
+        },
+        {
+          "type": "faces",
+          "data": {
+            "names": [
+              "席位 4 · 手牌"
+            ],
+            "resources": [
+              "cards#2,778,140,190"
+            ],
+            "up": true
+          }
+        },
+        {
+          "type": "position",
+          "data": {
+            "x": 0,
+            "y": 400
+          }
+        },
+        {
+          "type": "properties",
+          "data": {
+            "viewWidth": 440,
+            "viewHeight": 156,
+            "viewFanX": 34,
+            "viewCardWidth": 76,
+            "viewCardHeight": 104
+          }
+        },
+        {
+          "type": "owner",
+          "data": {
+            "seat": "p4"
+          }
+        }
+      ]
+    },
+    {
+      "id": "hand-p5",
+      "components": [
+        {
+          "type": "container",
+          "data": {
+            "capacity": 52,
+            "ordered": true,
+            "contents": []
+          }
+        },
+        {
+          "type": "faces",
+          "data": {
+            "names": [
+              "席位 5 · 手牌"
+            ],
+            "resources": [
+              "cards#2,778,140,190"
+            ],
+            "up": true
+          }
+        },
+        {
+          "type": "position",
+          "data": {
+            "x": 465,
+            "y": 400
+          }
+        },
+        {
+          "type": "properties",
+          "data": {
+            "viewWidth": 440,
+            "viewHeight": 156,
+            "viewFanX": 34,
+            "viewCardWidth": 76,
+            "viewCardHeight": 104
+          }
+        },
+        {
+          "type": "owner",
+          "data": {
+            "seat": "p5"
+          }
+        }
+      ]
+    },
+    {
+      "id": "hand-p6",
+      "components": [
+        {
+          "type": "container",
+          "data": {
+            "capacity": 52,
+            "ordered": true,
+            "contents": []
+          }
+        },
+        {
+          "type": "faces",
+          "data": {
+            "names": [
+              "席位 6 · 手牌"
+            ],
+            "resources": [
+              "cards#2,778,140,190"
+            ],
+            "up": true
+          }
+        },
+        {
+          "type": "position",
+          "data": {
+            "x": 930,
+            "y": 400
+          }
+        },
+        {
+          "type": "properties",
+          "data": {
+            "viewWidth": 440,
+            "viewHeight": 156,
+            "viewFanX": 34,
+            "viewCardWidth": 76,
+            "viewCardHeight": 104
+          }
+        },
+        {
+          "type": "owner",
+          "data": {
+            "seat": "p6"
+          }
+        }
+      ]
+    },
+    {
+      "id": "card-01",
+      "components": [
+        {
+          "type": "faces",
+          "data": {
+            "names": [
+              "梅花A",
+              "牌背"
+            ],
+            "resources": [
+              "cards#2,2,140,190",
+              "cards#2,778,140,190"
+            ],
+            "up": false
+          }
+        },
+        {
+          "type": "properties",
+          "data": {
+            "suit": 1,
+            "rank": 1
+          }
+        },
+        {
+          "type": "visibility",
+          "data": {
+            "mode": "hidden"
+          }
+        }
+      ]
+    },
+    {
+      "id": "card-02",
+      "components": [
+        {
+          "type": "faces",
+          "data": {
+            "names": [
+              "梅花2",
+              "牌背"
+            ],
+            "resources": [
+              "cards#146,2,140,190",
+              "cards#2,778,140,190"
+            ],
+            "up": false
+          }
+        },
+        {
+          "type": "properties",
+          "data": {
+            "suit": 1,
+            "rank": 2
+          }
+        },
+        {
+          "type": "visibility",
+          "data": {
+            "mode": "hidden"
+          }
+        }
+      ]
+    },
+    {
+      "id": "card-03",
+      "components": [
+        {
+          "type": "faces",
+          "data": {
+            "names": [
+              "梅花3",
+              "牌背"
+            ],
+            "resources": [
+              "cards#290,2,140,190",
+              "cards#2,778,140,190"
+            ],
+            "up": false
+          }
+        },
+        {
+          "type": "properties",
+          "data": {
+            "suit": 1,
+            "rank": 3
+          }
+        },
+        {
+          "type": "visibility",
+          "data": {
+            "mode": "hidden"
+          }
+        }
+      ]
+    },
+    {
+      "id": "card-04",
+      "components": [
+        {
+          "type": "faces",
+          "data": {
+            "names": [
+              "梅花4",
+              "牌背"
+            ],
+            "resources": [
+              "cards#434,2,140,190",
+              "cards#2,778,140,190"
+            ],
+            "up": false
+          }
+        },
+        {
+          "type": "properties",
+          "data": {
+            "suit": 1,
+            "rank": 4
+          }
+        },
+        {
+          "type": "visibility",
+          "data": {
+            "mode": "hidden"
+          }
+        }
+      ]
+    },
+    {
+      "id": "card-05",
+      "components": [
+        {
+          "type": "faces",
+          "data": {
+            "names": [
+              "梅花5",
+              "牌背"
+            ],
+            "resources": [
+              "cards#578,2,140,190",
+              "cards#2,778,140,190"
+            ],
+            "up": false
+          }
+        },
+        {
+          "type": "properties",
+          "data": {
+            "suit": 1,
+            "rank": 5
+          }
+        },
+        {
+          "type": "visibility",
+          "data": {
+            "mode": "hidden"
+          }
+        }
+      ]
+    },
+    {
+      "id": "card-06",
+      "components": [
+        {
+          "type": "faces",
+          "data": {
+            "names": [
+              "梅花6",
+              "牌背"
+            ],
+            "resources": [
+              "cards#722,2,140,190",
+              "cards#2,778,140,190"
+            ],
+            "up": false
+          }
+        },
+        {
+          "type": "properties",
+          "data": {
+            "suit": 1,
+            "rank": 6
+          }
+        },
+        {
+          "type": "visibility",
+          "data": {
+            "mode": "hidden"
+          }
+        }
+      ]
+    },
+    {
+      "id": "card-07",
+      "components": [
+        {
+          "type": "faces",
+          "data": {
+            "names": [
+              "梅花7",
+              "牌背"
+            ],
+            "resources": [
+              "cards#866,2,140,190",
+              "cards#2,778,140,190"
+            ],
+            "up": false
+          }
+        },
+        {
+          "type": "properties",
+          "data": {
+            "suit": 1,
+            "rank": 7
+          }
+        },
+        {
+          "type": "visibility",
+          "data": {
+            "mode": "hidden"
+          }
+        }
+      ]
+    },
+    {
+      "id": "card-08",
+      "components": [
+        {
+          "type": "faces",
+          "data": {
+            "names": [
+              "梅花8",
+              "牌背"
+            ],
+            "resources": [
+              "cards#1010,2,140,190",
+              "cards#2,778,140,190"
+            ],
+            "up": false
+          }
+        },
+        {
+          "type": "properties",
+          "data": {
+            "suit": 1,
+            "rank": 8
+          }
+        },
+        {
+          "type": "visibility",
+          "data": {
+            "mode": "hidden"
+          }
+        }
+      ]
+    },
+    {
+      "id": "card-09",
+      "components": [
+        {
+          "type": "faces",
+          "data": {
+            "names": [
+              "梅花9",
+              "牌背"
+            ],
+            "resources": [
+              "cards#1154,2,140,190",
+              "cards#2,778,140,190"
+            ],
+            "up": false
+          }
+        },
+        {
+          "type": "properties",
+          "data": {
+            "suit": 1,
+            "rank": 9
+          }
+        },
+        {
+          "type": "visibility",
+          "data": {
+            "mode": "hidden"
+          }
+        }
+      ]
+    },
+    {
+      "id": "card-10",
+      "components": [
+        {
+          "type": "faces",
+          "data": {
+            "names": [
+              "梅花10",
+              "牌背"
+            ],
+            "resources": [
+              "cards#1298,2,140,190",
+              "cards#2,778,140,190"
+            ],
+            "up": false
+          }
+        },
+        {
+          "type": "properties",
+          "data": {
+            "suit": 1,
+            "rank": 10
+          }
+        },
+        {
+          "type": "visibility",
+          "data": {
+            "mode": "hidden"
+          }
+        }
+      ]
+    },
+    {
+      "id": "card-11",
+      "components": [
+        {
+          "type": "faces",
+          "data": {
+            "names": [
+              "梅花J",
+              "牌背"
+            ],
+            "resources": [
+              "cards#1442,2,140,190",
+              "cards#2,778,140,190"
+            ],
+            "up": false
+          }
+        },
+        {
+          "type": "properties",
+          "data": {
+            "suit": 1,
+            "rank": 11
+          }
+        },
+        {
+          "type": "visibility",
+          "data": {
+            "mode": "hidden"
+          }
+        }
+      ]
+    },
+    {
+      "id": "card-12",
+      "components": [
+        {
+          "type": "faces",
+          "data": {
+            "names": [
+              "梅花Q",
+              "牌背"
+            ],
+            "resources": [
+              "cards#1586,2,140,190",
+              "cards#2,778,140,190"
+            ],
+            "up": false
+          }
+        },
+        {
+          "type": "properties",
+          "data": {
+            "suit": 1,
+            "rank": 12
+          }
+        },
+        {
+          "type": "visibility",
+          "data": {
+            "mode": "hidden"
+          }
+        }
+      ]
+    },
+    {
+      "id": "card-13",
+      "components": [
+        {
+          "type": "faces",
+          "data": {
+            "names": [
+              "梅花K",
+              "牌背"
+            ],
+            "resources": [
+              "cards#1730,2,140,190",
+              "cards#2,778,140,190"
+            ],
+            "up": false
+          }
+        },
+        {
+          "type": "properties",
+          "data": {
+            "suit": 1,
+            "rank": 13
+          }
+        },
+        {
+          "type": "visibility",
+          "data": {
+            "mode": "hidden"
+          }
+        }
+      ]
+    },
+    {
+      "id": "card-14",
+      "components": [
+        {
+          "type": "faces",
+          "data": {
+            "names": [
+              "方块A",
+              "牌背"
+            ],
+            "resources": [
+              "cards#2,196,140,190",
+              "cards#2,778,140,190"
+            ],
+            "up": false
+          }
+        },
+        {
+          "type": "properties",
+          "data": {
+            "suit": 2,
+            "rank": 1
+          }
+        },
+        {
+          "type": "visibility",
+          "data": {
+            "mode": "hidden"
+          }
+        }
+      ]
+    },
+    {
+      "id": "card-15",
+      "components": [
+        {
+          "type": "faces",
+          "data": {
+            "names": [
+              "方块2",
+              "牌背"
+            ],
+            "resources": [
+              "cards#146,196,140,190",
+              "cards#2,778,140,190"
+            ],
+            "up": false
+          }
+        },
+        {
+          "type": "properties",
+          "data": {
+            "suit": 2,
+            "rank": 2
+          }
+        },
+        {
+          "type": "visibility",
+          "data": {
+            "mode": "hidden"
+          }
+        }
+      ]
+    },
+    {
+      "id": "card-16",
+      "components": [
+        {
+          "type": "faces",
+          "data": {
+            "names": [
+              "方块3",
+              "牌背"
+            ],
+            "resources": [
+              "cards#290,196,140,190",
+              "cards#2,778,140,190"
+            ],
+            "up": false
+          }
+        },
+        {
+          "type": "properties",
+          "data": {
+            "suit": 2,
+            "rank": 3
+          }
+        },
+        {
+          "type": "visibility",
+          "data": {
+            "mode": "hidden"
+          }
+        }
+      ]
+    },
+    {
+      "id": "card-17",
+      "components": [
+        {
+          "type": "faces",
+          "data": {
+            "names": [
+              "方块4",
+              "牌背"
+            ],
+            "resources": [
+              "cards#434,196,140,190",
+              "cards#2,778,140,190"
+            ],
+            "up": false
+          }
+        },
+        {
+          "type": "properties",
+          "data": {
+            "suit": 2,
+            "rank": 4
+          }
+        },
+        {
+          "type": "visibility",
+          "data": {
+            "mode": "hidden"
+          }
+        }
+      ]
+    },
+    {
+      "id": "card-18",
+      "components": [
+        {
+          "type": "faces",
+          "data": {
+            "names": [
+              "方块5",
+              "牌背"
+            ],
+            "resources": [
+              "cards#578,196,140,190",
+              "cards#2,778,140,190"
+            ],
+            "up": false
+          }
+        },
+        {
+          "type": "properties",
+          "data": {
+            "suit": 2,
+            "rank": 5
+          }
+        },
+        {
+          "type": "visibility",
+          "data": {
+            "mode": "hidden"
+          }
+        }
+      ]
+    },
+    {
+      "id": "card-19",
+      "components": [
+        {
+          "type": "faces",
+          "data": {
+            "names": [
+              "方块6",
+              "牌背"
+            ],
+            "resources": [
+              "cards#722,196,140,190",
+              "cards#2,778,140,190"
+            ],
+            "up": false
+          }
+        },
+        {
+          "type": "properties",
+          "data": {
+            "suit": 2,
+            "rank": 6
+          }
+        },
+        {
+          "type": "visibility",
+          "data": {
+            "mode": "hidden"
+          }
+        }
+      ]
+    },
+    {
+      "id": "card-20",
+      "components": [
+        {
+          "type": "faces",
+          "data": {
+            "names": [
+              "方块7",
+              "牌背"
+            ],
+            "resources": [
+              "cards#866,196,140,190",
+              "cards#2,778,140,190"
+            ],
+            "up": false
+          }
+        },
+        {
+          "type": "properties",
+          "data": {
+            "suit": 2,
+            "rank": 7
+          }
+        },
+        {
+          "type": "visibility",
+          "data": {
+            "mode": "hidden"
+          }
+        }
+      ]
+    },
+    {
+      "id": "card-21",
+      "components": [
+        {
+          "type": "faces",
+          "data": {
+            "names": [
+              "方块8",
+              "牌背"
+            ],
+            "resources": [
+              "cards#1010,196,140,190",
+              "cards#2,778,140,190"
+            ],
+            "up": false
+          }
+        },
+        {
+          "type": "properties",
+          "data": {
+            "suit": 2,
+            "rank": 8
+          }
+        },
+        {
+          "type": "visibility",
+          "data": {
+            "mode": "hidden"
+          }
+        }
+      ]
+    },
+    {
+      "id": "card-22",
+      "components": [
+        {
+          "type": "faces",
+          "data": {
+            "names": [
+              "方块9",
+              "牌背"
+            ],
+            "resources": [
+              "cards#1154,196,140,190",
+              "cards#2,778,140,190"
+            ],
+            "up": false
+          }
+        },
+        {
+          "type": "properties",
+          "data": {
+            "suit": 2,
+            "rank": 9
+          }
+        },
+        {
+          "type": "visibility",
+          "data": {
+            "mode": "hidden"
+          }
+        }
+      ]
+    },
+    {
+      "id": "card-23",
+      "components": [
+        {
+          "type": "faces",
+          "data": {
+            "names": [
+              "方块10",
+              "牌背"
+            ],
+            "resources": [
+              "cards#1298,196,140,190",
+              "cards#2,778,140,190"
+            ],
+            "up": false
+          }
+        },
+        {
+          "type": "properties",
+          "data": {
+            "suit": 2,
+            "rank": 10
+          }
+        },
+        {
+          "type": "visibility",
+          "data": {
+            "mode": "hidden"
+          }
+        }
+      ]
+    },
+    {
+      "id": "card-24",
+      "components": [
+        {
+          "type": "faces",
+          "data": {
+            "names": [
+              "方块J",
+              "牌背"
+            ],
+            "resources": [
+              "cards#1442,196,140,190",
+              "cards#2,778,140,190"
+            ],
+            "up": false
+          }
+        },
+        {
+          "type": "properties",
+          "data": {
+            "suit": 2,
+            "rank": 11
+          }
+        },
+        {
+          "type": "visibility",
+          "data": {
+            "mode": "hidden"
+          }
+        }
+      ]
+    },
+    {
+      "id": "card-25",
+      "components": [
+        {
+          "type": "faces",
+          "data": {
+            "names": [
+              "方块Q",
+              "牌背"
+            ],
+            "resources": [
+              "cards#1586,196,140,190",
+              "cards#2,778,140,190"
+            ],
+            "up": false
+          }
+        },
+        {
+          "type": "properties",
+          "data": {
+            "suit": 2,
+            "rank": 12
+          }
+        },
+        {
+          "type": "visibility",
+          "data": {
+            "mode": "hidden"
+          }
+        }
+      ]
+    },
+    {
+      "id": "card-26",
+      "components": [
+        {
+          "type": "faces",
+          "data": {
+            "names": [
+              "方块K",
+              "牌背"
+            ],
+            "resources": [
+              "cards#1730,196,140,190",
+              "cards#2,778,140,190"
+            ],
+            "up": false
+          }
+        },
+        {
+          "type": "properties",
+          "data": {
+            "suit": 2,
+            "rank": 13
+          }
+        },
+        {
+          "type": "visibility",
+          "data": {
+            "mode": "hidden"
+          }
+        }
+      ]
+    },
+    {
+      "id": "card-27",
+      "components": [
+        {
+          "type": "faces",
+          "data": {
+            "names": [
+              "红桃A",
+              "牌背"
+            ],
+            "resources": [
+              "cards#2,390,140,190",
+              "cards#2,778,140,190"
+            ],
+            "up": false
+          }
+        },
+        {
+          "type": "properties",
+          "data": {
+            "suit": 3,
+            "rank": 1
+          }
+        },
+        {
+          "type": "visibility",
+          "data": {
+            "mode": "hidden"
+          }
+        }
+      ]
+    },
+    {
+      "id": "card-28",
+      "components": [
+        {
+          "type": "faces",
+          "data": {
+            "names": [
+              "红桃2",
+              "牌背"
+            ],
+            "resources": [
+              "cards#146,390,140,190",
+              "cards#2,778,140,190"
+            ],
+            "up": false
+          }
+        },
+        {
+          "type": "properties",
+          "data": {
+            "suit": 3,
+            "rank": 2
+          }
+        },
+        {
+          "type": "visibility",
+          "data": {
+            "mode": "hidden"
+          }
+        }
+      ]
+    },
+    {
+      "id": "card-29",
+      "components": [
+        {
+          "type": "faces",
+          "data": {
+            "names": [
+              "红桃3",
+              "牌背"
+            ],
+            "resources": [
+              "cards#290,390,140,190",
+              "cards#2,778,140,190"
+            ],
+            "up": false
+          }
+        },
+        {
+          "type": "properties",
+          "data": {
+            "suit": 3,
+            "rank": 3
+          }
+        },
+        {
+          "type": "visibility",
+          "data": {
+            "mode": "hidden"
+          }
+        }
+      ]
+    },
+    {
+      "id": "card-30",
+      "components": [
+        {
+          "type": "faces",
+          "data": {
+            "names": [
+              "红桃4",
+              "牌背"
+            ],
+            "resources": [
+              "cards#434,390,140,190",
+              "cards#2,778,140,190"
+            ],
+            "up": false
+          }
+        },
+        {
+          "type": "properties",
+          "data": {
+            "suit": 3,
+            "rank": 4
+          }
+        },
+        {
+          "type": "visibility",
+          "data": {
+            "mode": "hidden"
+          }
+        }
+      ]
+    },
+    {
+      "id": "card-31",
+      "components": [
+        {
+          "type": "faces",
+          "data": {
+            "names": [
+              "红桃5",
+              "牌背"
+            ],
+            "resources": [
+              "cards#578,390,140,190",
+              "cards#2,778,140,190"
+            ],
+            "up": false
+          }
+        },
+        {
+          "type": "properties",
+          "data": {
+            "suit": 3,
+            "rank": 5
+          }
+        },
+        {
+          "type": "visibility",
+          "data": {
+            "mode": "hidden"
+          }
+        }
+      ]
+    },
+    {
+      "id": "card-32",
+      "components": [
+        {
+          "type": "faces",
+          "data": {
+            "names": [
+              "红桃6",
+              "牌背"
+            ],
+            "resources": [
+              "cards#722,390,140,190",
+              "cards#2,778,140,190"
+            ],
+            "up": false
+          }
+        },
+        {
+          "type": "properties",
+          "data": {
+            "suit": 3,
+            "rank": 6
+          }
+        },
+        {
+          "type": "visibility",
+          "data": {
+            "mode": "hidden"
+          }
+        }
+      ]
+    },
+    {
+      "id": "card-33",
+      "components": [
+        {
+          "type": "faces",
+          "data": {
+            "names": [
+              "红桃7",
+              "牌背"
+            ],
+            "resources": [
+              "cards#866,390,140,190",
+              "cards#2,778,140,190"
+            ],
+            "up": false
+          }
+        },
+        {
+          "type": "properties",
+          "data": {
+            "suit": 3,
+            "rank": 7
+          }
+        },
+        {
+          "type": "visibility",
+          "data": {
+            "mode": "hidden"
+          }
+        }
+      ]
+    },
+    {
+      "id": "card-34",
+      "components": [
+        {
+          "type": "faces",
+          "data": {
+            "names": [
+              "红桃8",
+              "牌背"
+            ],
+            "resources": [
+              "cards#1010,390,140,190",
+              "cards#2,778,140,190"
+            ],
+            "up": false
+          }
+        },
+        {
+          "type": "properties",
+          "data": {
+            "suit": 3,
+            "rank": 8
+          }
+        },
+        {
+          "type": "visibility",
+          "data": {
+            "mode": "hidden"
+          }
+        }
+      ]
+    },
+    {
+      "id": "card-35",
+      "components": [
+        {
+          "type": "faces",
+          "data": {
+            "names": [
+              "红桃9",
+              "牌背"
+            ],
+            "resources": [
+              "cards#1154,390,140,190",
+              "cards#2,778,140,190"
+            ],
+            "up": false
+          }
+        },
+        {
+          "type": "properties",
+          "data": {
+            "suit": 3,
+            "rank": 9
+          }
+        },
+        {
+          "type": "visibility",
+          "data": {
+            "mode": "hidden"
+          }
+        }
+      ]
+    },
+    {
+      "id": "card-36",
+      "components": [
+        {
+          "type": "faces",
+          "data": {
+            "names": [
+              "红桃10",
+              "牌背"
+            ],
+            "resources": [
+              "cards#1298,390,140,190",
+              "cards#2,778,140,190"
+            ],
+            "up": false
+          }
+        },
+        {
+          "type": "properties",
+          "data": {
+            "suit": 3,
+            "rank": 10
+          }
+        },
+        {
+          "type": "visibility",
+          "data": {
+            "mode": "hidden"
+          }
+        }
+      ]
+    },
+    {
+      "id": "card-37",
+      "components": [
+        {
+          "type": "faces",
+          "data": {
+            "names": [
+              "红桃J",
+              "牌背"
+            ],
+            "resources": [
+              "cards#1442,390,140,190",
+              "cards#2,778,140,190"
+            ],
+            "up": false
+          }
+        },
+        {
+          "type": "properties",
+          "data": {
+            "suit": 3,
+            "rank": 11
+          }
+        },
+        {
+          "type": "visibility",
+          "data": {
+            "mode": "hidden"
+          }
+        }
+      ]
+    },
+    {
+      "id": "card-38",
+      "components": [
+        {
+          "type": "faces",
+          "data": {
+            "names": [
+              "红桃Q",
+              "牌背"
+            ],
+            "resources": [
+              "cards#1586,390,140,190",
+              "cards#2,778,140,190"
+            ],
+            "up": false
+          }
+        },
+        {
+          "type": "properties",
+          "data": {
+            "suit": 3,
+            "rank": 12
+          }
+        },
+        {
+          "type": "visibility",
+          "data": {
+            "mode": "hidden"
+          }
+        }
+      ]
+    },
+    {
+      "id": "card-39",
+      "components": [
+        {
+          "type": "faces",
+          "data": {
+            "names": [
+              "红桃K",
+              "牌背"
+            ],
+            "resources": [
+              "cards#1730,390,140,190",
+              "cards#2,778,140,190"
+            ],
+            "up": false
+          }
+        },
+        {
+          "type": "properties",
+          "data": {
+            "suit": 3,
+            "rank": 13
+          }
+        },
+        {
+          "type": "visibility",
+          "data": {
+            "mode": "hidden"
+          }
+        }
+      ]
+    },
+    {
+      "id": "card-40",
+      "components": [
+        {
+          "type": "faces",
+          "data": {
+            "names": [
+              "黑桃A",
+              "牌背"
+            ],
+            "resources": [
+              "cards#2,584,140,190",
+              "cards#2,778,140,190"
+            ],
+            "up": false
+          }
+        },
+        {
+          "type": "properties",
+          "data": {
+            "suit": 4,
+            "rank": 1
+          }
+        },
+        {
+          "type": "visibility",
+          "data": {
+            "mode": "hidden"
+          }
+        }
+      ]
+    },
+    {
+      "id": "card-41",
+      "components": [
+        {
+          "type": "faces",
+          "data": {
+            "names": [
+              "黑桃2",
+              "牌背"
+            ],
+            "resources": [
+              "cards#146,584,140,190",
+              "cards#2,778,140,190"
+            ],
+            "up": false
+          }
+        },
+        {
+          "type": "properties",
+          "data": {
+            "suit": 4,
+            "rank": 2
+          }
+        },
+        {
+          "type": "visibility",
+          "data": {
+            "mode": "hidden"
+          }
+        }
+      ]
+    },
+    {
+      "id": "card-42",
+      "components": [
+        {
+          "type": "faces",
+          "data": {
+            "names": [
+              "黑桃3",
+              "牌背"
+            ],
+            "resources": [
+              "cards#290,584,140,190",
+              "cards#2,778,140,190"
+            ],
+            "up": false
+          }
+        },
+        {
+          "type": "properties",
+          "data": {
+            "suit": 4,
+            "rank": 3
+          }
+        },
+        {
+          "type": "visibility",
+          "data": {
+            "mode": "hidden"
+          }
+        }
+      ]
+    },
+    {
+      "id": "card-43",
+      "components": [
+        {
+          "type": "faces",
+          "data": {
+            "names": [
+              "黑桃4",
+              "牌背"
+            ],
+            "resources": [
+              "cards#434,584,140,190",
+              "cards#2,778,140,190"
+            ],
+            "up": false
+          }
+        },
+        {
+          "type": "properties",
+          "data": {
+            "suit": 4,
+            "rank": 4
+          }
+        },
+        {
+          "type": "visibility",
+          "data": {
+            "mode": "hidden"
+          }
+        }
+      ]
+    },
+    {
+      "id": "card-44",
+      "components": [
+        {
+          "type": "faces",
+          "data": {
+            "names": [
+              "黑桃5",
+              "牌背"
+            ],
+            "resources": [
+              "cards#578,584,140,190",
+              "cards#2,778,140,190"
+            ],
+            "up": false
+          }
+        },
+        {
+          "type": "properties",
+          "data": {
+            "suit": 4,
+            "rank": 5
+          }
+        },
+        {
+          "type": "visibility",
+          "data": {
+            "mode": "hidden"
+          }
+        }
+      ]
+    },
+    {
+      "id": "card-45",
+      "components": [
+        {
+          "type": "faces",
+          "data": {
+            "names": [
+              "黑桃6",
+              "牌背"
+            ],
+            "resources": [
+              "cards#722,584,140,190",
+              "cards#2,778,140,190"
+            ],
+            "up": false
+          }
+        },
+        {
+          "type": "properties",
+          "data": {
+            "suit": 4,
+            "rank": 6
+          }
+        },
+        {
+          "type": "visibility",
+          "data": {
+            "mode": "hidden"
+          }
+        }
+      ]
+    },
+    {
+      "id": "card-46",
+      "components": [
+        {
+          "type": "faces",
+          "data": {
+            "names": [
+              "黑桃7",
+              "牌背"
+            ],
+            "resources": [
+              "cards#866,584,140,190",
+              "cards#2,778,140,190"
+            ],
+            "up": false
+          }
+        },
+        {
+          "type": "properties",
+          "data": {
+            "suit": 4,
+            "rank": 7
+          }
+        },
+        {
+          "type": "visibility",
+          "data": {
+            "mode": "hidden"
+          }
+        }
+      ]
+    },
+    {
+      "id": "card-47",
+      "components": [
+        {
+          "type": "faces",
+          "data": {
+            "names": [
+              "黑桃8",
+              "牌背"
+            ],
+            "resources": [
+              "cards#1010,584,140,190",
+              "cards#2,778,140,190"
+            ],
+            "up": false
+          }
+        },
+        {
+          "type": "properties",
+          "data": {
+            "suit": 4,
+            "rank": 8
+          }
+        },
+        {
+          "type": "visibility",
+          "data": {
+            "mode": "hidden"
+          }
+        }
+      ]
+    },
+    {
+      "id": "card-48",
+      "components": [
+        {
+          "type": "faces",
+          "data": {
+            "names": [
+              "黑桃9",
+              "牌背"
+            ],
+            "resources": [
+              "cards#1154,584,140,190",
+              "cards#2,778,140,190"
+            ],
+            "up": false
+          }
+        },
+        {
+          "type": "properties",
+          "data": {
+            "suit": 4,
+            "rank": 9
+          }
+        },
+        {
+          "type": "visibility",
+          "data": {
+            "mode": "hidden"
+          }
+        }
+      ]
+    },
+    {
+      "id": "card-49",
+      "components": [
+        {
+          "type": "faces",
+          "data": {
+            "names": [
+              "黑桃10",
+              "牌背"
+            ],
+            "resources": [
+              "cards#1298,584,140,190",
+              "cards#2,778,140,190"
+            ],
+            "up": false
+          }
+        },
+        {
+          "type": "properties",
+          "data": {
+            "suit": 4,
+            "rank": 10
+          }
+        },
+        {
+          "type": "visibility",
+          "data": {
+            "mode": "hidden"
+          }
+        }
+      ]
+    },
+    {
+      "id": "card-50",
+      "components": [
+        {
+          "type": "faces",
+          "data": {
+            "names": [
+              "黑桃J",
+              "牌背"
+            ],
+            "resources": [
+              "cards#1442,584,140,190",
+              "cards#2,778,140,190"
+            ],
+            "up": false
+          }
+        },
+        {
+          "type": "properties",
+          "data": {
+            "suit": 4,
+            "rank": 11
+          }
+        },
+        {
+          "type": "visibility",
+          "data": {
+            "mode": "hidden"
+          }
+        }
+      ]
+    },
+    {
+      "id": "card-51",
+      "components": [
+        {
+          "type": "faces",
+          "data": {
+            "names": [
+              "黑桃Q",
+              "牌背"
+            ],
+            "resources": [
+              "cards#1586,584,140,190",
+              "cards#2,778,140,190"
+            ],
+            "up": false
+          }
+        },
+        {
+          "type": "properties",
+          "data": {
+            "suit": 4,
+            "rank": 12
+          }
+        },
+        {
+          "type": "visibility",
+          "data": {
+            "mode": "hidden"
+          }
+        }
+      ]
+    },
+    {
+      "id": "card-52",
+      "components": [
+        {
+          "type": "faces",
+          "data": {
+            "names": [
+              "黑桃K",
+              "牌背"
+            ],
+            "resources": [
+              "cards#1730,584,140,190",
+              "cards#2,778,140,190"
+            ],
+            "up": false
+          }
+        },
+        {
+          "type": "properties",
+          "data": {
+            "suit": 4,
+            "rank": 13
+          }
+        },
+        {
+          "type": "visibility",
+          "data": {
+            "mode": "hidden"
+          }
+        }
+      ]
+    }
+  ]
+}

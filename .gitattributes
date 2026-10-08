@@ -4,3 +4,4 @@
 *.lua text eol=lf
 # Preserve the vendored license exactly as supplied in the Kenney archive.
 samples/freecell/assets/License.txt -text -whitespace
+samples/poker-uno/assets/License.txt -text -whitespace

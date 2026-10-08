@@ -151,7 +151,8 @@ public sealed partial class GameEngine
                 var card = state.Entities[entity.Contents[0]];
                 if (card.IsContainer) throw new CommandRejected("invalid-container");
                 entity.Contents.RemoveAt(0); hand.Contents.Add(card.Id); card.Container = hand.Id;
-                card.Owner = hand.Owner ?? actor; card.Visibility = "owner"; card.FaceUp = false; break;
+                if(command.Visibility is not (null or "owner" or "hidden" or "public")) throw new CommandRejected("invalid-visibility");
+                card.Owner = hand.Owner ?? actor; card.Visibility = command.Visibility ?? "owner"; card.FaceUp = card.Visibility=="public"; break;
             case "transfer":
                 var target = Access(state, actor, command.Target,ruleEffect);
                 if (!target.IsContainer || target.Contents.Count >= target.Capacity || entity.Container == target.Id) throw new CommandRejected("invalid-container");

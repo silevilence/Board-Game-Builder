@@ -24,6 +24,9 @@ public sealed class PlayBoard : UserControl,IDisposable
     private SoundEffect? tone;
     public SessionFrame Frame=>session.Frame;
     internal bool ActionsVisible=>side.IsVisible;
+    internal int RenderedFrames=>table.RenderedFrames;
+    internal int CachedImages=>table.CachedImages;
+    internal void SaveImage(string path)=>table.SaveImage(path);
     public event Action<string>? HostShortcut;
     public PlayBoard(PlayerSession session,LoadedModule module,bool showActions=true)
     {

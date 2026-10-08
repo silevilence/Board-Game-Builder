@@ -22,10 +22,14 @@ internal sealed class ModuleDefinitionLoader(RuntimeStartup startup,string sourc
     }
     public IReadOnlyList<string> ContentFiles(string directory)
     {
-        var root=JsonNode.Parse(File.ReadAllText(DirectoryModule.SafeFile(directory,Source)))!.AsObject();
-        var files=new List<string>{Source};
-        if(root["resources"] is JsonObject resources) files.AddRange(resources.Select(p=>p.Value!.GetValue<string>()));
-        if(root["runtimeFiles"] is JsonArray extra) files.AddRange(extra.Select(p=>p!.GetValue<string>()));
+        var files=new List<string>();
+        foreach(var path in GamePresets.Choices(startup).Values.Append(Source).Distinct())
+        {
+            var root=JsonNode.Parse(File.ReadAllText(DirectoryModule.SafeFile(directory,path)))!.AsObject();
+            files.Add(path);
+            if(root["resources"] is JsonObject resources) files.AddRange(resources.Select(p=>p.Value!.GetValue<string>()));
+            if(root["runtimeFiles"] is JsonArray extra) files.AddRange(extra.Select(p=>p!.GetValue<string>()));
+        }
         return files;
     }
 }
