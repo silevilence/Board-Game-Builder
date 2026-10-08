@@ -21,6 +21,7 @@ public sealed record OnlineFrame(long Revision, SeatView View, IReadOnlyList<Act
     bool Started, bool Closed, string? Fault, PlayerEvent? Event = null);
 public sealed record OnlineProposal(long Sequence, long ExpectedRevision, string Actor, Command Command);
 public sealed record OnlineReceipt(long Sequence, long NextSequence, CommandResult Result, OnlineFrame Frame);
+public sealed record OnlineHostStatus(long Revision, bool Ended, bool Closed, string? Fault);
 public sealed class OnlineException(string code) : Exception(code);
 
 // Only the trusted host owns this object. Remote callers receive detached projections.
@@ -133,10 +134,11 @@ public sealed class OnlineSession : IDisposable
             }
             if (proposal.Sequence != member.NextSequence) throw new OnlineException("out-of-order");
             if (!started) throw new OnlineException("waiting-for-players");
-            var reserved = timerDue.Keys.Where(t => t.Seat == member.Lease.Seat)
-                .Any(t => game.Actions(t.Seat).Any(a => a.Id == t.ActionId && a.Command.Kind == proposal.Command.Kind));
+            var offered = game.Actions(member.Lease.Seat);
+            var commandJson = Wire.Json(proposal.Command);
+            var available = offered.Any(a => !timerDue.Keys.Any(t => t.Seat == member.Lease.Seat && t.ActionId == a.Id) && Wire.Json(a.Command) == commandJson);
             var result = proposal.ExpectedRevision != revision ? new CommandResult(0, false, "stale-revision")
-                : reserved ? new CommandResult(0, false, "authority-timer-only") : game.SubmitHuman(member.Lease.Seat, proposal.Command);
+                : !available ? new CommandResult(0, false, "operation-not-offered") : game.SubmitHuman(member.Lease.Seat, proposal.Command);
             // Script diagnostics and commands belong only in the host recording.
             if (!result.Accepted && result.Reason != "stale-revision") result = result with { Reason = "operation-rejected" };
             Advance(new(result.Sequence, member.Lease.Seat, result.Accepted, result.Reason));
@@ -204,14 +206,14 @@ public sealed class OnlineSession : IDisposable
     {
         lock (gate)
         {
-            if (closed || game.Ended) return;
             var now = time.GetUtcNow();
-            foreach (var member in members.Values)
+            foreach (var member in members.Values.ToArray())
             {
                 if (member.DisconnectedAt == null && now - member.LastSeen >= options.IdleTimeout)
                     member.DisconnectedAt = member.LastSeen + options.IdleTimeout;
                 if (member.DisconnectedAt == null || now - member.DisconnectedAt < options.ReconnectGrace || member.TakenOver) continue;
-                if (member.Lease.Seat == "") continue;
+                if (member.Lease.Seat == "") { members.Remove(member.Lease.Token); continue; }
+                if (closed || game.Ended || game.Fault != null) continue;
                 if (options.OnTimeout == DisconnectPolicy.EndSession) { closed = true; Advance(); return; }
                 if (options.OnTimeout == DisconnectPolicy.Cpu)
                 {
@@ -221,7 +223,7 @@ public sealed class OnlineSession : IDisposable
                     Advance();
                 }
             }
-            if (!started || game.Fault != null) return;
+            if (closed || game.Ended || !started || game.Fault != null) return;
             foreach (var timer in timerDue.Keys.ToArray())
             {
                 if (now < timerDue[timer]) continue;
@@ -277,5 +279,7 @@ public sealed class OnlineSession : IDisposable
     private void EnsureOpen() { if (closed) throw new OnlineException("session-closed"); }
     public void Close() { lock (gate) { if (!closed) { closed = true; Advance(); } } }
     public SessionRecording ExportAuthorityRecording() { lock (gate) return game.ExportRecording(); }
+    public IReadOnlyList<Diagnostic> ExportAuthorityDiagnostics() { lock (gate) return game.ExportDiagnostics(); }
+    public OnlineHostStatus Status { get { lock (gate) return new(revision, game.Ended, closed, game.Fault?.Code); } }
     public void Dispose() { lock (gate) { closed = true; game.Dispose(); } }
 }

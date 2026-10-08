@@ -196,4 +196,32 @@ public static class OnlineTests
                 Check.That(frame.View.Secret!.OwnValue == null && frame.View.Secret.Revealed == null);
         }
     }
+
+    public static void Review()
+    {
+        const string rules = """
+        return {
+          actions=function(c) return {
+            {id='timer',label='timer',command={kind='set',entity='card',property='value',value=1}},
+            {id='manual',label='manual',command={kind='set',entity='card',property='value',value=2}}} end,
+          decide=function(c) return {allowed=true,reason='',commands={c.command}} end
+        }
+        """;
+        var module = TestModules.LuaGame(CommandTests.Initial(), rules, "return {decide=function(c) return c.actions[1].command end}");
+        var clock = new Clock();
+        using var room = new OnlineSession(module, 1, module.Initial.Seats.ToDictionary(s => s.Id, _ => "human"),
+            new(TimeSpan.FromSeconds(5), TimeSpan.FromSeconds(5), Timers: [new("p1", "timer", TimeSpan.FromSeconds(1))], MaxObservers: 1), clock);
+        var first = room.Join(OnlineIdentity.For(module), "p1");
+        _ = room.Join(OnlineIdentity.For(module), "p2");
+        var watcher = room.Watch(OnlineIdentity.For(module));
+        Check.Throws(() => room.Watch(OnlineIdentity.For(module)), "audience-limit");
+        var frame = room.Read(first.Token);
+        Check.That(frame.Actions.Count == 1 && frame.Actions[0].Id == "manual");
+        Check.That(room.Submit(first.Token, new(1, frame.Revision, "p1", frame.Actions[0].Command)).Result.Accepted);
+        Check.That(!room.Submit(first.Token, new(2, room.Read(first.Token).Revision, "p1", frame.Actions[0].Command with { Value = 1 })).Result.Accepted);
+        clock.Advance(11); room.Maintain();
+        var replacement = room.Watch(OnlineIdentity.For(module));
+        Check.Throws(() => room.Resume(OnlineIdentity.For(module), watcher.ResumeToken, -1), "invalid-identity");
+        Check.That(room.Read(replacement.Token).View.Entities.Single(e => e.Id == "card").Properties["value"] == 1);
+    }
 }

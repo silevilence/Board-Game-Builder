@@ -11,6 +11,8 @@ try
     tests.Add("online-http",OnlineTransportTests.Run);
     tests.Add("online-processes",OnlineTransportTests.Processes);
     tests.Add("online-faults",OnlineTransportTests.Faults);
+    tests.Add("online-review",OnlineTests.Review);
+    tests.Add("online-client-review",OnlineTransportTests.Review);
     tests.Add("runtime-host",RuntimeHostTests.Run);
     tests.Add("review-followup",ReviewFollowupTests.Run);
     tests.Add("startup",StartupTests.Run);

@@ -16,7 +16,7 @@ try
     using var room = new OnlineSession(module, config.Seed, config.Controllers, config.Options);
     var output = Path.GetFullPath(config.Output, directory);
     Directory.CreateDirectory(output);
-    var builder = WebApplication.CreateSlimBuilder();
+    var builder = WebApplication.CreateBuilder();
     builder.Logging.ClearProviders(); // Never log authorization headers or request bodies.
     builder.WebHost.UseUrls(config.Listen);
     builder.WebHost.ConfigureKestrel(k =>
@@ -84,7 +84,10 @@ try
         {
             case "frame": reply = new(Frame: room.Read(token)); break;
             case "catch-up": reply = new(Frames: room.CatchUp(token, request.AfterRevision)); break;
-            case "submit": reply = new(Receipt: room.Submit(token, request.Proposal ?? throw new OnlineException("missing-proposal"))); break;
+            case "submit":
+                var receipt = room.Submit(token, request.Proposal ?? throw new OnlineException("missing-proposal"));
+                Audit(receipt.Result.Accepted ? "proposal-accepted" : receipt.Result.Reason);
+                reply = new(Receipt: receipt); break;
             case "recording": reply = new(Recording: room.ExportPlayerRecording(token)); break;
             case "disconnect": room.Disconnect(token); reply = new(); break;
             case "leave": room.Leave(token); Audit("identity-left"); reply = new(); break;
@@ -96,6 +99,13 @@ try
     Audit("server-started");
     File.WriteAllText(Path.Combine(output, "ready.json"), Wire.Json(room.Identity));
     Console.WriteLine($"READY {config.Listen} {module.Id} {room.Identity.Fingerprint}");
+    void SaveAuthority()
+    {
+        File.WriteAllText(Path.Combine(output, "authority.json"), Wire.Json(room.ExportAuthorityRecording()));
+        File.WriteAllText(Path.Combine(output, "diagnostics.json"), Wire.Json(room.ExportAuthorityDiagnostics()));
+    }
+    string? lastFault = null;
+    bool terminalSaved = false;
     try
     {
         using var timer = new PeriodicTimer(TimeSpan.FromMilliseconds(100));
@@ -104,6 +114,9 @@ try
             if (File.Exists(Path.Combine(output, "stop.request"))) break;
             room.Maintain();
             room.StepCpu();
+            var status = room.Status;
+            if (status.Fault != lastFault) { lastFault = status.Fault; Audit(status.Fault ?? "fault-cleared"); }
+            if (!terminalSaved && (status.Ended || status.Closed || status.Fault != null)) { SaveAuthority(); terminalSaved = true; }
         }
     }
     catch (OperationCanceledException) when (app.Lifetime.ApplicationStopping.IsCancellationRequested) { }
@@ -112,7 +125,7 @@ try
         room.Close();
         await Task.Delay(300);
         await app.StopAsync();
-        File.WriteAllText(Path.Combine(output, "authority.json"), Wire.Json(room.ExportAuthorityRecording()));
+        SaveAuthority();
         Audit("server-stopped");
         await app.DisposeAsync();
     }

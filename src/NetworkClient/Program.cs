@@ -36,6 +36,7 @@ try
     File.WriteAllText(leasePath, Wire.Json(new SavedIdentity(config.Server, identity, lease)));
     Console.WriteLine(lease.Seat == "" ? "已进入公共观战。" : $"已加入席位 {lease.Seat}。");
     var replica = new OnlineReplica(lease.Seat);
+    Task<string?>? input = config.Auto ? null : Task.Run(Console.ReadLine);
     while (true)
     {
         var frame = (await client.SendAsync(lease.Token, new("frame"))).Frame!;
@@ -44,6 +45,11 @@ try
         {
             Console.WriteLine($"revision={frame.Revision} turn={frame.View.Turn} phase={frame.View.Phase} current={frame.View.CurrentSeat}");
             if (!config.Auto) foreach (var entity in frame.View.Entities) Console.WriteLine($"{entity.Id}: {entity.Face} {Wire.Json(entity.Properties)}");
+            if (!config.Auto)
+            {
+                for (var i = 0; i < frame.Actions.Count; i++) Console.WriteLine($"{i + 1}. {frame.Actions[i].Label}");
+                Console.WriteLine("选择动作编号；d 暂时断线，q 主动离开。");
+            }
         }
         if (frame.Closed || frame.Fault != null) throw new OnlineException(frame.Fault ?? "session-closed");
         if (frame.View.Ended)
@@ -53,19 +59,11 @@ try
             Console.WriteLine("对局结束：" + string.Join(",", frame.View.Winners));
             return 0;
         }
-        if (!frame.Started || frame.Actions.Count == 0) { await Task.Delay(100); continue; }
         var index = 0;
         if (!config.Auto)
         {
-            for (var i = 0; i < frame.Actions.Count; i++) Console.WriteLine($"{i + 1}. {frame.Actions[i].Label}");
-            Console.WriteLine("选择动作编号；d 暂时断线，q 主动离开。");
-            // Continue polling while the human thinks, so idle timeout means a disconnected client.
-            var input = Task.Run(Console.ReadLine);
-            while (!input.IsCompleted)
-            {
-                if (await Task.WhenAny(input, Task.Delay(1000)) == input) break;
-                _ = await client.SendAsync(lease.Token, new("frame"));
-            }
+            // Poll and render state while input is pending, even outside this seat's turn.
+            if (!input!.IsCompleted) { await Task.Delay(100); continue; }
             var choice = await input;
             if (choice is "d" or "q" || choice == null)
             {
@@ -73,13 +71,14 @@ try
                 if (choice == "q") File.Delete(leasePath);
                 return 0;
             }
+            input = Task.Run(Console.ReadLine);
             if (!int.TryParse(choice, out var number) || number < 1 || number > frame.Actions.Count) continue;
             index = number - 1;
         }
+        if (!frame.Started || frame.Actions.Count == 0) { await Task.Delay(100); continue; }
         var proposal = new OnlineProposal(nextSequence, frame.Revision, lease.Seat, frame.Actions[index].Command);
         var receipt = (await client.SendAsync(lease.Token, new("submit", Proposal: proposal))).Receipt!;
         nextSequence = receipt.NextSequence;
-        replica.Apply(receipt.Frame);
         if (!receipt.Result.Accepted) Console.WriteLine("操作未提交：" + receipt.Result.Reason);
     }
 }

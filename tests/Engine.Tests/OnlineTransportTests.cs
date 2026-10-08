@@ -18,7 +18,7 @@ public static class OnlineTransportTests
         private readonly Task<string> stdout;
         private readonly Task<string> stderr;
         private bool stopped;
-        public Host(string module, bool cpu)
+        public Host(string module, bool cpu, bool allCpu = false)
         {
             Directory.CreateDirectory(Root);
             var socket = new TcpListener(IPAddress.Loopback, 0);
@@ -26,7 +26,7 @@ public static class OnlineTransportTests
             Url = new($"http://127.0.0.1:{port}/");
             var loaded = GameRuntime.Load(module);
             var config = new { module = Path.GetFullPath(module), listen = Url.ToString(), roomKey = Key,
-                controllers = loaded.Initial.Seats.ToDictionary(s => s.Id, s => cpu && s.Id == "p3" ? "cpu" : "human"), output = "records" };
+                controllers = loaded.Initial.Seats.ToDictionary(s => s.Id, s => allCpu || cpu && s.Id == "p3" ? "cpu" : "human"), output = "records" };
             var configPath = Path.Combine(Root, "server.json");
             File.WriteAllText(configPath, Wire.Json(config));
             process = Launch("src/Server/bin/Release/net10.0/Server.exe", configPath);
@@ -48,9 +48,9 @@ public static class OnlineTransportTests
         }
     }
 
-    private static Process Launch(string executable, string config)
+    private static Process Launch(string executable, string config, bool input = false)
     {
-        var start = new ProcessStartInfo(Path.GetFullPath(executable)) { UseShellExecute = false, CreateNoWindow = true, RedirectStandardOutput = true, RedirectStandardError = true };
+        var start = new ProcessStartInfo(Path.GetFullPath(executable)) { UseShellExecute = false, CreateNoWindow = true, RedirectStandardInput = input, RedirectStandardOutput = true, RedirectStandardError = true };
         start.ArgumentList.Add(config);
         return Process.Start(start) ?? throw new Exception("Could not start " + executable);
     }
@@ -189,5 +189,50 @@ public static class OnlineTransportTests
         host.Dispose();
         Check.Throws(() => client.SendAsync(player.Token, new("frame")).GetAwaiter().GetResult(), "server-unreachable");
         File.WriteAllText(Path.Combine(host.Root, "fault-result.json"), Wire.Json(new { success = true, malformed = true, stale = true, leave = true, unreachable = true, cpuFault = true }));
+    }
+
+    public static void Review()
+    {
+        foreach (var scenario in new[] { "close", "watch-quit", "lobby-quit" })
+        {
+            using var host = new Host("samples/quick-cards", false);
+            var config = Path.Combine(host.Root, "manual.json");
+            File.WriteAllText(config, Wire.Json(new { module = Path.GetFullPath("samples/quick-cards"), server = host.Url.ToString(), roomKey = host.Key,
+                credentials = "manual-identity.json", recording = "manual-recording.json", seat = "p1", audience = scenario == "watch-quit" }));
+            using var process = Launch("src/NetworkClient/bin/Release/net10.0/NetworkClient.exe", config, true);
+            var output = process.StandardOutput.ReadToEndAsync(); var error = process.StandardError.ReadToEndAsync();
+            try
+            {
+                var watch = Stopwatch.StartNew();
+                while (!File.Exists(Path.Combine(host.Root, "manual-identity.json")) && !process.HasExited && watch.Elapsed.TotalSeconds < 10) Thread.Sleep(50);
+                Check.That(File.Exists(Path.Combine(host.Root, "manual-identity.json")), "Interactive client failed to join");
+                using var client = new OnlineClient(host.Url, host.Key);
+                if (scenario == "close")
+                {
+                    var second = client.JoinAsync(new(OnlineIdentity.For(GameRuntime.Load("samples/quick-cards")), "p2")).GetAwaiter().GetResult();
+                    Thread.Sleep(300);
+                    client.SendAsync(second.Token, new("leave")).GetAwaiter().GetResult();
+                    Check.That(process.WaitForExit(5000), "Client ignored closure while waiting for input");
+                    Check.That(error.GetAwaiter().GetResult().Contains("session-closed"));
+                }
+                else
+                {
+                    process.StandardInput.WriteLine("q"); process.StandardInput.Flush();
+                    Check.That(process.WaitForExit(5000) && process.ExitCode == 0, "Client cannot quit outside an active turn");
+                }
+                File.WriteAllText(Path.Combine(host.Root, scenario + ".json"), Wire.Json(new { success = true, scenario, output = output.GetAwaiter().GetResult() }));
+            }
+            finally { if (!process.HasExited) { process.Kill(true); process.WaitForExit(); } }
+        }
+        var broken = Path.GetFullPath("artifacts/m4/broken-cpu-" + Guid.NewGuid());
+        TestModules.CopyGame("samples/quick-cards", broken);
+        var cpuFile = GameRuntime.ReadStartup(broken).Plugins.Single(p => p.Id == "lua.cpu").Configuration.GetProperty("file").GetString()!;
+        File.WriteAllText(Path.Combine(broken, cpuFile), "return {decide=function(c) error('private diagnostic marker') end}");
+        using var failing = new Host(broken, true, true);
+        var diagnostics = Path.Combine(failing.Root, "records/diagnostics.json");
+        var elapsed = Stopwatch.StartNew();
+        while (!File.Exists(diagnostics) && elapsed.Elapsed.TotalSeconds < 10) Thread.Sleep(50);
+        Check.That(File.Exists(diagnostics) && File.ReadAllText(diagnostics).Contains("private diagnostic marker"), "Server lost CPU fault details");
+        Check.That(File.ReadAllText(Path.Combine(failing.Root, "records/events.jsonl")).Contains("cpu-failure"));
     }
 }
