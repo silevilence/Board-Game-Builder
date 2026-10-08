@@ -20,6 +20,7 @@ public sealed class PlaySession : IGameSession
     public IReadOnlyList<ActionOffer> Actions(string? seat=null)=>session.Actions(seat);
     public CommandResult SubmitHuman(string seat,Command command)=>session.SubmitHuman(seat,command);
     public bool StepCpu()=>session.StepCpu();
+    public void SetController(string seat,string controller)=>session.SetController(seat,controller);
     public ReplayLog ExportAuthorityLog()=>session.ExportAuthorityLog();
     public SessionRecording ExportRecording()=>session.ExportRecording();
     public IReadOnlyList<Diagnostic> ExportDiagnostics()=>session.ExportDiagnostics();
@@ -76,6 +77,16 @@ internal sealed class LocalGameSession : IGameSession
     }
     public bool StepCpu()
     {lock(commands) return StepCpuCore();}
+    public void SetController(string seat,string controller)
+    {
+        lock(commands)
+        {
+            ObjectDisposedException.ThrowIf(disposed,this);
+            if(!controllers.ContainsKey(seat) || controller is not ("human" or "cpu")) throw new ArgumentException("Invalid seat/controller configuration.");
+            if(controller=="cpu" && cpu==null) throw new InvalidOperationException("Missing CPU capability");
+            controllers[seat]=controller;
+        }
+    }
     private bool StepCpuCore()
     {
         if(disposed || Fault!=null || Ended || !IsCpu) return false;

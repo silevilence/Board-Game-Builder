@@ -5,6 +5,7 @@ try
 {
     tests.Add("online-identity",OnlineTests.Identity);
     tests.Add("online-ordering",OnlineTests.Ordering);
+    tests.Add("online-reconnect",OnlineTests.Reconnection);
     tests.Add("runtime-host",RuntimeHostTests.Run);
     tests.Add("review-followup",ReviewFollowupTests.Run);
     tests.Add("startup",StartupTests.Run);

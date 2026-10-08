@@ -5,6 +5,63 @@ namespace Engine.Tests;
 
 public static class OnlineTests
 {
+    private sealed class Clock : TimeProvider
+    {
+        private DateTimeOffset now = DateTimeOffset.Parse("2026-10-08T00:00:00Z");
+        public override DateTimeOffset GetUtcNow() => now;
+        public void Advance(int seconds) => now += TimeSpan.FromSeconds(seconds);
+    }
+    public static void Reconnection()
+    {
+        var module = TestModules.Load("samples/quick-cards");
+        foreach (var cpuTurn in new[] { false, true })
+        {
+            var clock = new Clock();
+            using var room = new OnlineSession(module, 42, module.Initial.Seats.ToDictionary(s => s.Id, s => s.Id == "p1" ? "human" : "cpu"), time: clock);
+            var player = room.Join(OnlineIdentity.For(module));
+            var frame = room.Read(player.Token);
+            var proposal = new OnlineProposal(1, frame.Revision, player.Seat, frame.Actions[0].Command);
+            long next = 1;
+            if (cpuTurn)
+            {
+                while (room.Read(player.Token).View.CurrentSeat == player.Seat)
+                {
+                    var current = room.Read(player.Token);
+                    proposal = new(next++, current.Revision, player.Seat, current.Actions[0].Command);
+                    Check.That(room.Submit(player.Token, proposal).Result.Accepted);
+                }
+            }
+            room.Disconnect(player.Token);
+            if (cpuTurn) Check.That(room.StepCpu());
+            clock.Advance(300); room.Maintain(); // Default wait never replaces the human.
+            Check.Throws(() => room.Read(player.Token), "disconnected");
+            Check.Throws(() => room.Resume(OnlineIdentity.For(module), "forged", -1), "invalid-identity");
+            var restored = room.Resume(OnlineIdentity.For(module), player.ResumeToken, frame.Revision);
+            Check.That(restored.Lease.Token != player.Token && restored.NextSequence == next);
+            Check.Throws(() => room.Read(player.Token), "invalid-identity");
+            Check.That(Wire.Json(room.Read(restored.Lease.Token).View) == Wire.Json(room.ExportAuthorityRecording().Replay().Project(player.Seat)));
+            if (cpuTurn)
+            {
+                var before = room.ExportAuthorityRecording().Replay().ExportLog().EntryCount;
+                Check.That(room.Submit(restored.Lease.Token, proposal).Result.Accepted);
+                Check.That(room.ExportAuthorityRecording().Replay().ExportLog().EntryCount == before);
+            }
+            else Check.That(room.Submit(restored.Lease.Token, proposal).Result.Accepted);
+            room.Leave(restored.Lease.Token);
+            Check.Throws(() => room.Resume(OnlineIdentity.For(module), player.ResumeToken, -1), "invalid-identity");
+        }
+        foreach (var policy in new[] { DisconnectPolicy.Cpu, DisconnectPolicy.EndSession })
+        {
+            var clock = new Clock();
+            using var room = new OnlineSession(module, 42, module.Initial.Seats.ToDictionary(s => s.Id, s => s.Id == "p1" ? "human" : "cpu"),
+                new(TimeSpan.FromSeconds(5), TimeSpan.FromSeconds(10), policy), clock);
+            var player = room.Join(OnlineIdentity.For(module));
+            clock.Advance(16); room.Maintain();
+            Check.That(room.StepCpu() == (policy == DisconnectPolicy.Cpu));
+            var restored = room.Resume(OnlineIdentity.For(module), player.ResumeToken, -1);
+            Check.That(restored.Frames[^1].Closed == (policy == DisconnectPolicy.EndSession));
+        }
+    }
     public static void Identity()
     {
         var module = TestModules.Load("samples/quick-cards");

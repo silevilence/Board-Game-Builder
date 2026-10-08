@@ -8,7 +8,13 @@ public sealed record OnlineIdentity(int Protocol, string Fingerprint)
 {
     public static OnlineIdentity For(LoadedModule module) => new(1, module.Fingerprint);
 }
-public sealed record SeatLease(string Token, string Seat);
+public sealed record SeatLease(string Token, string Seat, string ResumeToken);
+public enum DisconnectPolicy { Wait, EndSession, Cpu }
+public sealed record OnlineOptions(TimeSpan IdleTimeout, TimeSpan ReconnectGrace, DisconnectPolicy OnTimeout = DisconnectPolicy.Wait)
+{
+    public static OnlineOptions Default => new(TimeSpan.FromSeconds(15), TimeSpan.FromMinutes(2));
+}
+public sealed record OnlineResume(SeatLease Lease, long NextSequence, IReadOnlyList<OnlineFrame> Frames);
 public sealed record OnlineFrame(long Revision, SeatView View, IReadOnlyList<ActionOffer> Actions,
     bool Started, bool Closed, string? Fault);
 public sealed record OnlineProposal(long Sequence, long ExpectedRevision, string Actor, Command Command);
@@ -23,26 +29,42 @@ public sealed class OnlineSession : IDisposable
     private readonly Dictionary<string, string> controllers;
     private sealed class MemberState(SeatLease lease)
     {
-        public SeatLease Lease { get; } = lease;
+        public SeatLease Lease { get; set; } = lease;
+        public DateTimeOffset LastSeen { get; set; }
+        public DateTimeOffset? DisconnectedAt { get; set; }
+        public bool TakenOver { get; set; }
         public long NextSequence { get; set; } = 1;
         public string? LastHash { get; set; }
         public OnlineReceipt? LastReceipt { get; set; }
     }
     private readonly Dictionary<string, MemberState> members = new(StringComparer.Ordinal);
     private readonly Dictionary<string, List<OnlineFrame>> history = new(StringComparer.Ordinal);
+    private readonly OnlineOptions options;
+    private readonly TimeProvider time;
     private bool started;
     private bool closed;
     private long revision;
     public OnlineIdentity Identity { get; }
 
-    public OnlineSession(LoadedModule module, uint seed, IReadOnlyDictionary<string, string> controllers)
+    public OnlineSession(LoadedModule module, uint seed, IReadOnlyDictionary<string, string> controllers,
+        OnlineOptions? options = null, TimeProvider? time = null)
     {
+        this.options = options ?? OnlineOptions.Default;
+        this.time = time ?? TimeProvider.System;
+        if (this.options.IdleTimeout <= TimeSpan.Zero || this.options.ReconnectGrace < TimeSpan.Zero || !Enum.IsDefined(this.options.OnTimeout))
+            throw new ArgumentException("Invalid disconnect configuration.");
         if (module.Initial.Seats.Any(s => !controllers.ContainsKey(s.Id)) ||
             controllers.Count != module.Initial.Seats.Count || controllers.Values.Any(v => v is not ("human" or "cpu")))
             throw new ArgumentException("Every seat requires a human or cpu controller.");
         Identity = OnlineIdentity.For(module);
         this.controllers = new(controllers);
         game = new PlaySession(module, seed, controllers);
+        try
+        {
+            if (this.options.OnTimeout == DisconnectPolicy.Cpu)
+                foreach (var seat in controllers.Keys) { game.SetController(seat, "cpu"); game.SetController(seat, controllers[seat]); }
+        }
+        catch { game.Dispose(); throw; }
         started = !controllers.Values.Contains("human");
         foreach (var seat in controllers.Keys) history.Add(seat, []);
         Capture();
@@ -57,8 +79,8 @@ public sealed class OnlineSession : IDisposable
             var seat = controllers.Keys.FirstOrDefault(s => controllers[s] == "human" &&
                 (requestedSeat == null || s == requestedSeat) && !members.Values.Any(m => m.Lease.Seat == s));
             if (seat == null) throw new OnlineException("seat-unavailable");
-            var lease = new SeatLease(Convert.ToHexString(RandomNumberGenerator.GetBytes(32)), seat);
-            members.Add(lease.Token, new(lease));
+            var lease = new SeatLease(NewToken(), seat, NewToken());
+            members.Add(lease.Token, new(lease) { LastSeen = this.time.GetUtcNow() });
             started = controllers.Where(p => p.Value == "human").All(p => members.Values.Any(m => m.Lease.Seat == p.Key));
             Advance();
             return lease;
@@ -119,9 +141,67 @@ public sealed class OnlineSession : IDisposable
         }
     }
 
-    private OnlineFrame Frame(string seat) => new(revision, game.View(seat),
-        started && !closed ? game.Actions(seat) : [], started, closed, game.Fault?.Code);
-    private MemberState Member(string token) => members.GetValueOrDefault(token) ?? throw new OnlineException("invalid-identity");
+    public void Disconnect(string token)
+    {
+        lock (gate) Member(token).DisconnectedAt = time.GetUtcNow();
+    }
+
+    public OnlineResume Resume(OnlineIdentity identity, string resumeToken, long afterRevision)
+    {
+        lock (gate)
+        {
+            if (identity != Identity) throw new OnlineException("version-mismatch");
+            var member = members.Values.FirstOrDefault(m => m.Lease.ResumeToken == resumeToken)
+                ?? throw new OnlineException("invalid-identity");
+            if (afterRevision < -1 || afterRevision > revision) throw new OnlineException("invalid-cursor");
+            members.Remove(member.Lease.Token);
+            member.Lease = member.Lease with { Token = NewToken() };
+            members.Add(member.Lease.Token, member);
+            member.LastSeen = time.GetUtcNow();
+            member.DisconnectedAt = null;
+            if (member.TakenOver && !closed)
+            {
+                game.SetController(member.Lease.Seat, "human");
+                controllers[member.Lease.Seat] = "human";
+                member.TakenOver = false;
+                Advance();
+            }
+            return new(member.Lease, member.NextSequence, CatchUp(member.Lease.Token, afterRevision));
+        }
+    }
+
+    // Called by the host timer, including while nobody is sending requests.
+    public void Maintain()
+    {
+        lock (gate)
+        {
+            if (closed || game.Ended) return;
+            var now = time.GetUtcNow();
+            foreach (var member in members.Values)
+            {
+                if (member.DisconnectedAt == null && now - member.LastSeen >= options.IdleTimeout)
+                    member.DisconnectedAt = member.LastSeen + options.IdleTimeout;
+                if (member.DisconnectedAt == null || now - member.DisconnectedAt < options.ReconnectGrace || member.TakenOver) continue;
+                if (options.OnTimeout == DisconnectPolicy.EndSession) { closed = true; Advance(); return; }
+                if (options.OnTimeout == DisconnectPolicy.Cpu)
+                {
+                    game.SetController(member.Lease.Seat, "cpu");
+                    controllers[member.Lease.Seat] = "cpu";
+                    member.TakenOver = true;
+                    Advance();
+                }
+            }
+        }
+    }
+
+    private static string NewToken() => Convert.ToHexString(RandomNumberGenerator.GetBytes(32));
+    private MemberState Member(string token)
+    {
+        var member = members.GetValueOrDefault(token) ?? throw new OnlineException("invalid-identity");
+        if (member.DisconnectedAt != null) throw new OnlineException("disconnected");
+        member.LastSeen = time.GetUtcNow();
+        return member;
+    }
     private void Capture()
     {
         // Query first: rule failures must appear consistently in every identity's frame.

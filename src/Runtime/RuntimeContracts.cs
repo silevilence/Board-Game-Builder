@@ -50,6 +50,7 @@ public interface IGameSession : IDisposable
     IReadOnlyList<ActionOffer> Actions(string? seat=null);
     CommandResult SubmitHuman(string seat,Command command);
     bool StepCpu();
+    void SetController(string seat, string controller);
     ReplayLog ExportAuthorityLog();
     SessionRecording ExportRecording();
     IReadOnlyList<Diagnostic> ExportDiagnostics();
