@@ -9,7 +9,13 @@ dotnet run --project tests/Engine.Tests -c Release
 dotnet run --project src/Player -- --help
 ```
 
-Kernel.Abstractions 定义数据与运行协议；Kernel 执行权威命令；Modules 负责目录／包加载与导出；Lua 适配规则和决策；Runtime 供各宿主共享。View.Abstractions 和 View.MonoGame 提供投影桌面与输入，Editor.Core 管理作者文档与插件生命周期，Avalonia Editor 提供制作、两种试玩、调试和独立导出。
+Kernel.Abstractions 定义数据与运行协议；Kernel 执行权威命令；Modules 提供定义解析与内容校验；Lua 适配规则和决策；Runtime 的独立 CordiSharp 宿主为 Player、试玩和批量验证装配加载器、内核、规则、CPU、扩展、席位及记录能力。View.Abstractions 和 View.MonoGame 提供投影桌面与输入，Editor.Core 管理作者文档，Avalonia Editor 使用独立插件上下文提供制作、两种试玩、调试和导出。
+
+游戏目录以 `game.start.json` 为入口；它唯一声明包身份与运行插件配置。`definition.module` 加载器使用配置指定的组件定义文件；`definition.state` 支持独立状态格式。[运行插件与迁移协议](docs/runtime-plugins.md) 说明能力、版本及兼容策略；[最小无脚本示例](samples/state-minimal/game.start.json) 不启用 Lua 或 WASM。
+
+M3.5 验收、整体审核及干净 Windows 检查见 [验证记录](docs/validation/m3.5-review.md)，全部示例入口见 [迁移清单](samples/README.md)。
+
+旧目录须显式转换到新目录：`dotnet run --project src/Player -- migrate <旧目录> <新目录>`。旧 `.bgm` 须从原始目录迁移后重新打包，正常加载不会自动回退旧格式。
 
 ```powershell
 dotnet run --project src/Player -- gui samples/quick-cards
@@ -19,7 +25,7 @@ pwsh -NoProfile -File scripts/publish-player.ps1 -Output artifacts/player-releas
 ./artifacts/player-release/Player.exe export artifacts/player-release samples/quick-cards artifacts/quick-cards-windows
 ```
 
-双击导出目录中的 Play.exe，配置真人席位和种子后开始；CPU 自动推进。
+双击导出目录中的 Play.exe，按模块默认席位开始；开局设置可调整真人席位、种子及本地模式，CPU 自动推进。
 详见 [视口](docs/m1-hosting.md)、[模块包](docs/m1-packages.md)、[独立发行](docs/m1-distribution.md)。
 
 运行卡牌示例与固定种子验收：

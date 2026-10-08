@@ -12,7 +12,8 @@ description: 新增、修改或修复本项目编辑器功能时使用，按现�
 - 面板经 `PanelContributions.Register(scope, id, title, factory)` 贡献 Avalonia 控件，工作区统一挂载；命令经 `EditorCommands.Register` 注册，菜单、工具栏和快捷键共用执行体与可用状态，遵守文本编辑和视口焦点边界。MonoGame 只承担场景视口绘制，周边 UI 使用 Avalonia，遵守原生视口 airspace 限制。
 - 文档、未保存草稿、选择及 Undo 归 `documents`，试玩状态归 `sessions`；面板重建只重新连接，不丢数据或隐式重开对局。表单输入（含无效文本）通过 `DocumentWorkspace.Form/EditForm` 保存，沿用应用、放弃、基线冲突及保存前协调规则。
 - 注册、订阅和资源归所属插件：使用 `scope.Own`、`scope.On` 或 `scope.Context.Effect` 清理；UI 创建与释放在 UI 线程。异步工作销毁时取消并等待结束，忽略迟到结果；加载失败及重复启停不残留面板、命令或回调。活动状态或长操作需要时用 `scope.Guard` / `app.Retain` 阻止不安全停用；面板移除不等于程序集已回收。
-- 此规范仅约束编辑器能力。引擎、规则或共享运行语义仍放在对应层；所需编辑 UI 再由内置插件提供。CordiSharp 与编辑器依赖不得进入 Kernel、共享 Runtime 或发行 Player。
+- 此规范仅约束编辑器能力。引擎、规则或共享运行语义仍放在对应层；所需编辑 UI 再由内置插件提供。Kernel 保持无外部依赖；共享 Runtime 和发行 Player 可依赖固定 CordiSharp 核心，禁止 Editor/Core 及 CordiSharp.Plugins.Avalonia 等编辑器专用依赖。编辑器与每局游戏使用独立根上下文、目录和生命周期。
+- 游戏文档通过 `IGameAuthorFormat` 读取／修改结构化定义；启动入口是 `game.start.json`。格式专用面板用 `FormatPanel` 管理子上下文，缺少作者格式接口时提示并保留通用文件编辑与试玩。草稿和会话仍由基础插件持有。
 
 ## 按需定位
 

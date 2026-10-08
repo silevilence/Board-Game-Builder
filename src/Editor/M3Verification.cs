@@ -13,10 +13,17 @@ internal static class M3Verification
         {
             try
             {
-                await host.Ready;var app=host.Application;var docs=app.Service<DocumentWorkspace>("documents");
+                await host.Ready;var app=host.Application;
+                async Task ReadyPanels()
+                {
+                    foreach(var panel in app.Service<WorkspaceShell>("workspace").Tabs.Items.OfType<TabItem>().Select(t=>t.Content).OfType<FormatPanel>()) await panel.Ready;
+                }
+                async Task Enable(string id) {await app.Enable(id);await ReadyPanels();}
+                async Task Reload(string id) {await app.Reload(id);await ReadyPanels();}
+                var docs=app.Service<DocumentWorkspace>("documents");
                 var panels=app.Service<PanelContributions>("panels");var commands=app.Service<EditorCommands>("commands");
                 docs.Set(ModuleDocument.Open("samples/wasm-counter"));
-                await app.Enable("author.extensions");await app.Disable("author.extensions");
+                await Enable("author.extensions");await app.Disable("author.extensions");
                 using(var session=new PlaySession(docs.Current!.Snapshot()))
                 {
                     for(var i=0;i<3;i++) if(!session.SubmitHuman("p1",session.Actions()[0].Command).Accepted) throw new Exception("UI disable changed WASM runtime");
@@ -29,9 +36,9 @@ internal static class M3Verification
                 {using var graphics=System.Drawing.Graphics.FromImage(bitmap);graphics.Clear(System.Drawing.Color.Orange);graphics.FillRectangle(System.Drawing.Brushes.Blue,120,160,120,160);bitmap.Save(source,System.Drawing.Imaging.ImageFormat.Png);}
                 for(var cycle=0;cycle<3;cycle++)
                 {
-                    await app.Enable("author.images");
+                    await Enable("author.images");
                     docs.EditForm("图片导入",Wire.Json(new[] {source,"cards","2","2","false"}));
-                    await app.Reload("author.images");
+                    await Reload("author.images");
                     if(panels.Count!=baseline+1) throw new Exception("Image panel duplicated");
                     await commands.Execute("images.preview");
                     docs.EditForm("图片导入",Wire.Json(new[] {source,"changed","2","2","false"}));
@@ -52,8 +59,8 @@ internal static class M3Verification
                 }
                 for(var cycle=0;cycle<3;cycle++)
                 {
-                    await app.Enable("author.tts");docs.EditForm("TTS 导入",Wire.Json(new[] {"samples/tts-subset/save.json","tts"}));
-                    await app.Reload("author.tts");await commands.Execute("tts.preview");
+                    await Enable("author.tts");docs.EditForm("TTS 导入",Wire.Json(new[] {"samples/tts-subset/save.json","tts"}));
+                    await Reload("author.tts");await commands.Execute("tts.preview");
                     docs.EditForm("TTS 导入",Wire.Json(new[] {"samples/tts-subset/save.json","changed"}));await commands.Execute("tts.apply");
                     if(docs.Current!.Snapshot().ResourceData!.Count!=0 || !docs.HasPendingForms) throw new Exception("Stale TTS preview consumed newer fields");
                     docs.EditForm("TTS 导入",Wire.Json(new[] {"samples/tts-subset/save.json","tts"}));await commands.Execute("tts.apply");
@@ -66,9 +73,9 @@ internal static class M3Verification
                 var pdfs=new List<string>();
                 for(var cycle=0;cycle<3;cycle++)
                 {
-                    var pdf=output+"."+cycle+".pdf";await app.Enable("author.print");
+                    var pdf=output+"."+cycle+".pdf";await Enable("author.print");
                     docs.EditForm("打印拼版",Wire.Json(new[] {printIds,"63","88","10","3","long-edge",pdf}));
-                    await app.Reload("author.print");await commands.Execute("print.preview");
+                    await Reload("author.print");await commands.Execute("print.preview");
                     if(cycle==0)
                     {
                         app.Service<WorkspaceShell>("workspace").Tabs.SelectedItem=app.Service<WorkspaceShell>("workspace").Tabs.Items.OfType<TabItem>().Single(t=>Equals(t.Tag,"author.print"));await Task.Delay(150);

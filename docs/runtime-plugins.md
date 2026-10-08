@@ -22,7 +22,25 @@
 | 新快照／录制 | 校验格式、内容及配置指纹 | 未知版本、缺失内容或哈希不符拒绝；脚本切换继续记录命令边界 |
 | 命令日志格式 1 | 仅匹配其快照及运行指纹 | 回放应用已记录标准命令和随机结果，不执行 Lua／WASM |
 
-旧解析器是显式兼容工具，不是正常启动的回退路径。相同包版本下改变有效配置或内容同样改变运行指纹。未知配置项应拒绝，缺省值在形成身份前规范化。
+旧解析器是显式兼容工具，不是正常启动的回退路径。相同包版本下改变有效配置或内容同样改变运行指纹。未知配置项拒绝；启动配置的对象键顺序、缩进及插件列表顺序不影响身份，定义文件和资源使用原始内容哈希。当前静态规则缺省 actions 为空，与显式空数组仍保留不同配置身份。
+
+## 内置目录与开发入口
+
+| 插件（实现版本均为 1，API 均为 1） | 能力／配置 |
+| --- | --- |
+| kernel | authority、projection、random、rule-binding；空配置 |
+| definition.module | definition；`path` 指向实体／组件定义 |
+| definition.state | definition；`path` 指向 `{format:1,state:GameState,resources:{资源名:相对路径}}` |
+| lua.rules | rules；`file` 指向 Lua 规则入口 |
+| rules.commands | rules；可选 `actions` 标准动作列表，启动前校验结构 |
+| lua.cpu | cpu；`file` 指向 CPU 脚本 |
+| wasm | effects；`extensions` 含 id/version/api/kind/file/sha256/permissions |
+| session.local | session；空配置，按实际组合依赖 CPU／扩展 |
+| recording | recording；空配置，依赖 authority |
+
+完整最小配置见 `samples/state-minimal/game.start.json`；Lua 示例见 `samples/quick-cards/game.start.json`；WASM 见 `samples/wasm-counter/game.start.json`。新增内置实现使用 `RuntimePluginDefinition` 声明 Provides/Requires，在 `RuntimeComposition.Catalog` 注册，通过 scope 获取声明服务和提供能力，资源通过 `scope.Own` 归属 effect。不得订阅事件来决定权威命令次序。目录加载器提供 `GameDefinition` 与内容依赖；获准目录保持静态，不承诺运行时任意第三方插件发现。
+
+`GameRuntime.Load` 供宿主读取新输入，`PlaySession` 是公开门面，委托 `IGameSession`；旧 `LoadedModule` 字段仅为迁移适配，进入新会话须与公共定义和启动配置一致。快照／录制交叉验证插件版本、配置、定义来源、Lua 路径／内容、资源字节及 WASM 权限／载荷哈希，不在回放中执行脚本。发行清单的 `runtimePlugins` 由实际编译目录生成，导出同时验证 `.deps.json` 执行依赖。
 
 ## 生命周期与组合
 

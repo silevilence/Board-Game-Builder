@@ -16,7 +16,7 @@ internal static class RuntimeDocumentVerification
             try
             {
                 await host.Ready;Trace("host ready");var app=host.Application;var documents=app.Service<DocumentWorkspace>("documents");
-                foreach(var id in new[]{"author.configuration","author.files","author.startup","author.scripts","author.media","author.turns"}) {Trace("enable "+id);await app.Enable(id);}
+                foreach(var id in new[]{"author.configuration","author.files","author.startup","author.scripts","author.media","author.turns","author.print"}) {Trace("enable "+id);await app.Enable(id);}
                 Control Panel(string id)=>(Control)app.Service<WorkspaceShell>("workspace").Tabs.Items.OfType<TabItem>().Single(t=>Equals(t.Tag,id)).Content!;
                 async Task WaitFor<T>()
                 {
@@ -45,6 +45,10 @@ internal static class RuntimeDocumentVerification
                     await app.Reload("author.configuration");await WaitFor<TextBlock>();
                     if(!sessions.Active || sessions.Frame.Revision!=revision) throw new Exception("Panel rebuilt the live session");
                     sessions.Stop();documents.Set(ModuleDocument.Create());await WaitFor<ConfigurationPanel>();
+                    documents.Set(ModuleDocument.Open("samples/state-minimal"));
+                    await app.Disable("author.configuration");await app.Disable("author.print");
+                    await app.Enable("author.configuration");await app.Enable("author.print");await WaitFor<TextBlock>();
+                    documents.Set(ModuleDocument.Create());await WaitFor<ConfigurationPanel>();
                 }
                 Trace("dispose");documents.Set(null);await app.DisposeAsync();
                 if(app.Root.Fiber.DisposableCount!=0) throw new Exception("Format child fibers leaked effects");

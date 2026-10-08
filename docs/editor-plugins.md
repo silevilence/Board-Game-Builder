@@ -35,7 +35,7 @@ TextBox 和原生视口有各自焦点边界，作者命令不得误触发。
 | assemblies | base.assemblies | 受控 DLL 加载及真实回收诊断，必需 |
 | exports | author.export | 导出进度、目录、步骤执行保护，可选 |
 
-可选功能：author.resources、author.configuration、author.yaml、author.prototypes、author.media、
+可选功能：author.startup、author.files、author.resources、author.configuration、author.yaml、author.prototypes、author.media、
 author.turns、author.layout、author.scripts、play.controls、author.export。
 资源树与检视器使用 documents.Select/SelectionChanged 同步选择，文档 Changed 同步内容。
 脚本和调试通过 sessions 服务，不调用主窗口私有函数。视图释放只取消自身订阅、原生输入和图形资源。
@@ -68,7 +68,9 @@ Editor.exe --verify-assembly <示例.dll> <结果.json>。
 席位/阶段、组件 YAML、媒介字段（包括尚不能解析的数值文本）通过 documents.Form/EditForm 保存纯文本，
 和配置草稿一起纳入脏状态、取消离开及撤销/重做。字段草稿须先在对应面板“应用”或“放弃”，
 保存和试玩遇到未应用字段时明确拒绝并列出名称。被删除实体留下的字段草稿可用全局“放弃所有字段草稿”移除。
-表单应用检查读取时的 module.json 基线，其他面板已修改则拒绝并保留输入，要求重新读取并合并。
+表单应用检查作者格式接口指定定义文件的基线，其他面板已修改则拒绝并保留输入，要求重新读取并合并。
+
+运行时 CordiSharp 核心与编辑器共享版本，但使用独立根和运行插件目录，不接受编辑器服务。游戏文件入口和格式见 [运行时插件](runtime-plugins.md)。`FormatPanel` 把格式专用控件放入子 fiber；文档切换后忽略不适用格式的旧通知，通用文件编辑、草稿及活动会话不归该子 fiber 所有。
 
 内置 InitializeAsync 有 15 秒初始化边界；超时先取消 scope，再等待 fiber 清理。
 迟到任务不能通过取消后的 scope 登记服务/事件/资源，Own 会立即释放迟到资源。

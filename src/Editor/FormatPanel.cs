@@ -5,38 +5,50 @@ using CordiSharp.Registry;
 namespace BoardGame.Editor;
 
 // Optional format UI is a child CordiSharp fiber. Document drafts remain in the foundation plugin.
-public sealed class FormatPanel : UserControl
+public sealed class FormatPanel : UserControl,IAsyncDisposable
 {
+    private Task pending=Task.CompletedTask;
+    private bool disposed;
+    public Task Ready=>pending;
     public FormatPanel(EditorPluginScope owner,Func<EditorPluginScope,Control> factory)
     {
         PluginHandle? child=null;bool? supported=null;
         var gate=new SemaphoreSlim(1,1);
-        owner.OnDocumentChanged(()=>_ = Refresh());
-        _=Refresh();
+        owner.Context.Effect(()=>this);
+        void Schedule() {if(!disposed && !owner.Cancellation.IsCancellationRequested) pending=Refresh();}
+        owner.OnDocumentChanged(Schedule);
+        Schedule();
         async Task Refresh()
         {
             await gate.WaitAsync();
             try
             {
-                if(owner.Cancellation.IsCancellationRequested) return;
+                if(disposed || owner.Cancellation.IsCancellationRequested) return;
                 var next=owner.Document?.SupportsStructuredEditing ?? false;
                 if(next==supported) return;supported=next;
                 Content=null;
                 if(child!=null) {await child.DisposeAsync();child=null;}
+                if(disposed || owner.Cancellation.IsCancellationRequested) return;
                 Content=new TextBlock {Text="此定义格式没有专用作者界面。可在“游戏文件”中编辑，并使用试玩与导出。",TextWrapping=Avalonia.Media.TextWrapping.Wrap};
                 if(!next) return;
                 child=owner.Context.Inject(Array.Empty<string>(),(context,_)=>Mount(context));
                 await child.Await();
             }
-            catch(Exception error) {supported=null;Content=new TextBlock {Text=error.Message,TextWrapping=Avalonia.Media.TextWrapping.Wrap};}
+            catch(Exception error) {if(!disposed && !owner.Cancellation.IsCancellationRequested) {supported=null;Content=new TextBlock {Text=error.Message,TextWrapping=Avalonia.Media.TextWrapping.Wrap};}}
             finally {gate.Release();}
         }
         async Task Mount(CordiSharp.Context context)
         {
-            var scope=owner.ForContext(context,true);
-            await Dispatcher.UIThread.InvokeAsync(()=>Content=factory(scope));
+            await Dispatcher.UIThread.InvokeAsync(()=>
+            {
+                if(disposed || owner.Cancellation.IsCancellationRequested) return;
+                var scope=owner.ForContext(context,true);
+                Content=factory(scope);
+                if(Content is IDisposable resource) scope.Own(resource);
+            });
         }
     }
+    public async ValueTask DisposeAsync() {disposed=true;await pending;}
 }
 
 public sealed class GameFilePanel : UserControl

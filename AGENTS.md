@@ -18,3 +18,10 @@
 - 工单使用五个默认分类状态；详见 [状态规范](docs/agents/triage-labels.md)。
 - 领域术语在 CONTEXT.md，架构决策在 `docs/adr/`；探索代码前按 [领域文档规范](docs/agents/domain.md) 读取，文件不存在时直接继续。
 - 涉及编辑器功能新增、修改或修复时，自动使用项目技能 [editor-cordis](.agents/skills/editor-cordis/SKILL.md)；纯引擎、共享 Runtime 或 Player 功能不触发。
+
+## 运行时与作者格式
+
+- 正常加载使用 `GameRuntime.Load`，打包使用 `GamePackage.Pack`；`DirectoryModule.Load` 和旧 `ModulePackage` 仅用于显式历史解析／迁移，不增加静默回退。
+- 游戏入口为 `game.start.json`。包身份与插件启用配置仅在此声明；定义路径由加载插件配置。参考 [运行插件协议](docs/runtime-plugins.md)。
+- Runtime 允许固定 CordiSharp 核心，与编辑器分离根上下文及插件目录；不得引用 Editor、Editor.Core 或 CordiSharp.Plugins.Avalonia。运行纤程不捕获 UI 同步上下文。
+- 作者结构化功能通过 `IGameAuthorFormat` 工作；不支持的格式保留通用文件编辑与试玩，不在基础文档固定解析 `module.json`。格式面板由子插件上下文释放，跨格式的迟到通知不得读取新文档。
