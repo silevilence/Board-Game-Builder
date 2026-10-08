@@ -170,6 +170,7 @@ public static class DirectoryModule
         if((File.GetAttributes(root) & FileAttributes.ReparsePoint)!=0) Fail("Linked module roots are unsupported");
         if (Path.IsPathRooted(relative) || !path.StartsWith(root + Path.DirectorySeparatorChar, StringComparison.OrdinalIgnoreCase)) Fail($"{relative}: path escapes module");
         if (!File.Exists(path)) Fail($"{relative}: missing file");
+        if(new FileInfo(path).Length>32L*1024*1024) Fail($"{relative}: file size budget exceeded");
         for (FileSystemInfo? current = new FileInfo(path); current != null && current.FullName != root; current = Directory.GetParent(current.FullName))
             if ((current.Attributes & FileAttributes.ReparsePoint) != 0) Fail($"{relative}: linked paths are unsupported");
         return path;

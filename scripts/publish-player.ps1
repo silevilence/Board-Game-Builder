@@ -17,8 +17,14 @@ Get-ChildItem -LiteralPath $target -Filter *.pdb -File -Recurse | ForEach-Object
 $files = [ordered]@{}
 Get-ChildItem -LiteralPath $target -File -Recurse | Sort-Object FullName | ForEach-Object {
     $relative = [IO.Path]::GetRelativePath($target,$_.FullName).Replace('\','/')
-    if ($relative -match '(^|/)(Editor|CordiSharp)|\.pdb$|\.csproj$') { throw "Unexpected editor/development content: $relative" }
+    if ($relative -match '(^|/)Editor|\.pdb$|\.csproj$' -or ($relative -match '(^|/)CordiSharp' -and $relative -ne 'CordiSharp.dll')) { throw "Unexpected editor/development content: $relative" }
     $files[$relative] = (Get-FileHash -LiteralPath $_.FullName -Algorithm SHA256).Hash
 }
-@{ api=1; version='0.2.0'; platform='win-x64'; files=$files; guiEntry=$true; editorDebug=$false } | ConvertTo-Json -Depth 5 | Set-Content -LiteralPath "$target/release.json" -Encoding utf8NoBOM
+$catalogFile=Join-Path $env:TEMP ('bgb-release-catalog-'+[guid]::NewGuid()+'.json')
+try {
+    $catalogProcess=Start-Process -FilePath "$target/Player.exe" -ArgumentList @('runtime-catalog',$catalogFile) -WindowStyle Hidden -PassThru -Wait
+    if($catalogProcess.ExitCode -ne 0) {throw 'Could not read published runtime catalog'}
+    $runtimePlugins=Get-Content -LiteralPath $catalogFile -Raw | ConvertFrom-Json -AsHashtable
+} finally {if(Test-Path -LiteralPath $catalogFile) {Remove-Item -LiteralPath $catalogFile}}
+@{ api=1; version='0.3.5'; platform='win-x64'; files=$files; guiEntry=$true; editorDebug=$false; runtimeApi=1; runtimePlugins=$runtimePlugins } | ConvertTo-Json -Depth 5 | Set-Content -LiteralPath "$target/release.json" -Encoding utf8NoBOM
 Write-Output "Precompiled Player: $target"

@@ -27,7 +27,9 @@ internal sealed class CommandRuleProvider : IRuleProvider, IGameRules
     private readonly List<ActionOffer> offers;
     public CommandRuleProvider(JsonElement configuration)
     {
-        offers=configuration.TryGetProperty("actions",out var actions)?actions.Deserialize<List<ActionOffer>>(Wire.Options) ?? []:[];
+        offers=configuration.TryGetProperty("actions",out var actions)?actions.Deserialize<List<ActionOffer>>(Wire.Options) ?? throw new InvalidDataException("rules.commands: actions must be an array"):[];
+        if(offers.Count>256 || offers.Any(a=>a==null || string.IsNullOrWhiteSpace(a.Id) || string.IsNullOrWhiteSpace(a.Label) || a.Command==null || string.IsNullOrWhiteSpace(a.Command.Kind)) || offers.Select(a=>a.Id).Distinct().Count()!=offers.Count)
+            throw new InvalidDataException("rules.commands: invalid action schema or limit exceeded");
     }
     public IGameRules Rules=>this;
     public IGameRules Prepare(GameDefinition definition)=>this;

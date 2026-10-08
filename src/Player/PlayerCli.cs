@@ -9,6 +9,7 @@ public static class PlayerCli
         Console.OutputEncoding=System.Text.Encoding.UTF8;
         try
         {
+            if(args.Length==2 && args[0]=="runtime-catalog") {File.WriteAllText(args[1],Wire.Json(GameRuntime.PluginVersions));return 0;}
             if(args.Length==3 && args[0]=="migrate") {GameMigration.Migrate(args[1],args[2]);Console.WriteLine("Game migrated: "+args[2]);return 0;}
             if(args.Length==4 && args[0]=="export") { PlayerDistribution.Export(args[1],args[2],args[3]); Console.WriteLine("Export created: "+args[3]); return 0; }
             if(args.Length==3 && args[0]=="pack") { GamePackage.Pack(args[1],args[2]); Console.WriteLine("Package created: "+args[2]); return 0; }
@@ -60,7 +61,7 @@ public static class PlayerCli
             }
             Save(session,logPath);
             if(session.Fault!=null) { Console.Error.WriteLine("Session failed: "+session.Fault.Code);return 1; }
-            Display(session.View(observer ?? module.Initial.Seats[0].Id),observer!=null);return 0;
+            Display(session.View(observer ?? module.Initial.Seats[0].Id));return 0;
         }
         catch(Exception e) when(e is not OutOfMemoryException) { Console.Error.WriteLine(e.Message);return 2; }
     }
@@ -78,14 +79,13 @@ public static class PlayerCli
         File.WriteAllText(full+".diagnostics.json",Wire.Json(new { session.Fault,diagnostics=session.ExportDiagnostics() }));
         Console.WriteLine("诊断日志: "+full);
     }
-    private static void Display(SeatView view,bool showHand=true)
+    private static void Display(SeatView view)
     {
         Console.WriteLine($"席位 {view.Seat} | 当前 {view.CurrentSeat} | 阶段 {view.Phase} | 行动 {view.Turn}");
         foreach(var e in view.Entities)
         {
-            if(e.Id.StartsWith("score-")) Console.WriteLine(e.Id+": "+e.Properties.GetValueOrDefault("score"));
-            if(showHand && e.Container=="hand-"+view.Seat) Console.WriteLine($"手牌 {e.Id}: {e.Face ?? "背面"}");
-            if(e.IsContainer) Console.WriteLine($"{e.Id}: {e.Count} 张");
+            Console.WriteLine($"{e.Id}: {e.Face ?? ""} {string.Join(", ",e.Properties.Select(p=>$"{p.Key}={p.Value}"))}");
+            if(e.IsContainer) Console.WriteLine($"{e.Id}: {e.Count} 个对象");
         }
         if(view.Ended) Console.WriteLine("对局结束。胜者: "+(view.Winners.Count==0?"平局":string.Join(", ",view.Winners)));
     }

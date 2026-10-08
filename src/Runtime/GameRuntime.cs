@@ -9,6 +9,8 @@ namespace BoardGame.Runtime;
 public static class GameRuntime
 {
     public const string Entry="game.start.json";
+    public static SortedDictionary<string,string> PluginVersions=>new(RuntimeComposition.Catalog(new("catalog","1","",new()),1,
+        new Dictionary<string,string>(),500,new(1,"catalog","1",[])).ToDictionary(p=>p.Id,p=>p.Version),StringComparer.Ordinal);
     public static RuntimeStartup ReadStartup(string directory)
     {
         if(!File.Exists(Path.Combine(directory,Entry))) throw new InvalidDataException(Entry+": missing startup entry; explicitly migrate the legacy game package");
@@ -17,7 +19,12 @@ public static class GameRuntime
         using var json=JsonDocument.Parse(text);CheckObject(json.RootElement,["format","id","version","plugins"],Entry);
         foreach(var selection in json.RootElement.GetProperty("plugins").EnumerateArray())
             CheckObject(selection,["id","version","api","configuration"],Entry+".plugins");
-        var startup=Wire.Read<RuntimeStartup>(text);
+        return ValidateStartup(Wire.Read<RuntimeStartup>(text));
+    }
+    private static RuntimeStartup ValidateStartup(RuntimeStartup startup)
+    {
+        var catalog=RuntimeComposition.Catalog(new(startup.Id,startup.Version,"",new()),1,new Dictionary<string,string>(),500,startup);
+        RuntimeHost.Validate(startup,catalog,AuthorityPlugin.Required.Concat(["definition","rules","session","recording"]));
         foreach(var selection in startup.Plugins)
         {
             string[] fields=selection.Id switch
@@ -26,6 +33,7 @@ public static class GameRuntime
                 "rules.commands"=>["actions"],_=>[]
             };
             CheckObject(selection.Configuration,fields,selection.Id+".configuration");
+            if(selection.Id=="rules.commands") _=new CommandRuleProvider(selection.Configuration);
             if(selection.Id is "definition.module" or "definition.state") ModulePackage.ValidatePath(selection.Configuration.GetProperty("path").GetString()!);
             if(selection.Id is "lua.rules" or "lua.cpu") ModulePackage.ValidatePath(selection.Configuration.GetProperty("file").GetString()!);
             if(selection.Id=="wasm")
@@ -58,8 +66,39 @@ public static class GameRuntime
         if(identity==null || identity.Format!=1 || module.Definition==null || identity.Startup.Id!=module.Id || identity.Startup.Version!=module.Version)
             throw new InvalidDataException("Invalid/legacy runtime identity");
         if(module.Fingerprint!=ModuleSnapshot.Fingerprint(module)) throw new InvalidDataException("Runtime identity fingerprint mismatch");
+        ValidateStartup(identity.Startup);
+        StateValidation.Validate(module.Initial);
+        var resourceHashes=module.ResourceHashes ?? new(StringComparer.Ordinal);
+        var resourceData=module.ResourceData ?? new(StringComparer.Ordinal);
+        if(!resourceHashes.Keys.SequenceEqual(resourceData.Keys) || resourceHashes.Any(p=>ModulePackage.Hash(resourceData[p.Key])!=p.Value))
+            throw new InvalidDataException("Resource snapshot content hash mismatch");
+        foreach(var path in identity.ContentHashes.Keys) ModulePackage.ValidatePath(path);
+        var loader=identity.Startup.Plugins.Single(p=>p.Id is "definition.module" or "definition.state");
+        if(identity.DefinitionSource!=loader.Configuration.GetProperty("path").GetString() || !identity.ContentHashes.ContainsKey(identity.DefinitionSource))
+            throw new InvalidDataException("Definition source identity mismatch");
         var expanded=RuntimeDefinition.From(module with {Definition=null});
         if(Wire.Json(expanded)!=Wire.Json(module.Definition)) throw new InvalidDataException("Definition/capability snapshot conflict");
+        foreach(var capability in new[]{"lua.rules","lua.cpu"})
+        {
+            var selection=identity.Startup.Plugins.SingleOrDefault(p=>p.Id==capability);
+            var script=capability=="lua.rules"?module.Rules:module.Cpu;
+            var path=capability=="lua.rules"?module.RulesPath:module.CpuPath;
+            if(selection==null ? script.Length!=0 || path.Length!=0 : path!=selection.Configuration.GetProperty("file").GetString())
+                throw new InvalidDataException(capability+": script configuration identity mismatch");
+        }
+        var extensions=identity.Startup.Plugins.SingleOrDefault(p=>p.Id=="wasm")?.Configuration.GetProperty("extensions").Deserialize<List<RuntimeDependency>>(Wire.Options) ?? [];
+        var payload=module.RuntimePlugins ?? [];
+        if(extensions.Count!=payload.Count) throw new InvalidDataException("WASM configuration identity mismatch");
+        foreach(var extension in extensions)
+        {
+            var plugin=payload.SingleOrDefault(p=>p.Id==extension.Id);
+            if(plugin==null || plugin.Version!=extension.Version || plugin.Api!=extension.Api || plugin.File!=extension.File ||
+                !string.Equals(plugin.Sha256,extension.Sha256,StringComparison.OrdinalIgnoreCase) ||
+                !plugin.Permissions.SequenceEqual(extension.Permissions ?? []) ||
+                ModulePackage.Hash(plugin.Code)!=extension.Sha256?.ToUpperInvariant() ||
+                identity.ContentHashes.GetValueOrDefault(plugin.File)!=ModulePackage.Hash(plugin.Code))
+                throw new InvalidDataException(extension.Id+": WASM configuration/content identity mismatch");
+        }
         foreach(var selection in identity.Startup.Plugins.Where(p=>p.Id is "lua.rules" or "lua.cpu"))
         {
             var path=selection.Configuration.GetProperty("file").GetString()!;
@@ -78,9 +117,12 @@ public static class GameRuntime
         var loaderPlan=startup with {Plugins=startup.Plugins.Where(p=>loaders.Any(l=>l.Id==p.Id)).ToList()};
         using var host=RuntimeHost.StartAsync(loaderPlan,loaders,["definition"]).GetAwaiter().GetResult();
         var loader=host.Service<IDefinitionLoader>("definition");
+        var content=ContentFiles(directory,startup,loader);
+        if(content.Count>2047 || content.Sum(p=>new FileInfo(DirectoryModule.SafeFile(directory,p)).Length)>128L*1024*1024)
+            throw new InvalidDataException("Directory content size budget exceeded");
         var definition=loader.Load(directory);
         var hashes=new SortedDictionary<string,string>(StringComparer.Ordinal);
-        foreach(var file in ContentFiles(directory,startup,loader)) hashes[file]=ModulePackage.Hash(File.ReadAllBytes(DirectoryModule.SafeFile(directory,file)));
+        foreach(var file in content) hashes[file]=ModulePackage.Hash(File.ReadAllBytes(DirectoryModule.SafeFile(directory,file)));
         // Raw startup bytes are not identity: whitespace/key order does not change effective configuration.
         var identity=new RuntimeIdentity(1,startup,loader.Source,hashes);
         var rules=definition.CapabilityData.TryGetValue("lua.rules",out var r)?r.Deserialize<LuaScript>(Wire.Options):null;
@@ -103,6 +145,8 @@ public static class GameRuntime
             ModulePackage.ValidatePath(path);
             if(path.Equals(Entry,StringComparison.OrdinalIgnoreCase) || path.Equals("package.manifest.json",StringComparison.OrdinalIgnoreCase)) throw new InvalidDataException(path+": reserved startup/package path");
         }
-        return paths.Distinct(StringComparer.Ordinal).Order(StringComparer.Ordinal).ToArray();
+        var distinct=paths.Distinct(StringComparer.Ordinal).Order(StringComparer.Ordinal).ToArray();
+        if(distinct.Distinct(StringComparer.OrdinalIgnoreCase).Count()!=distinct.Length) throw new InvalidDataException("Duplicate case-insensitive content path");
+        return distinct;
     }
 }

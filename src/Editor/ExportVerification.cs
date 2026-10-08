@@ -20,7 +20,7 @@ internal static class ExportVerification
                 app.Install(new("probe.export-step",1,[],["contributions"],scope=>scope.Service<EditorContributions>("contributions").Register(scope,"export-step","probe",(Action<ExportContext>)(c=>
                 {
                     File.WriteAllText(Path.Combine(c.Destination,"extra.txt"),"probe");temporary=c.ModuleDirectory;
-                    held=File.Open(Path.Combine(temporary,"module.json"),FileMode.Open,FileAccess.Read,FileShare.Read);
+                    held=File.Open(Path.Combine(temporary,BoardGame.Runtime.GameRuntime.Entry),FileMode.Open,FileAccess.Read,FileShare.Read);
                 }))));
                 await app.Enable("probe.export-step");
                 var exporting=workflow.Run(true);
@@ -39,7 +39,7 @@ internal static class ExportVerification
                 if(!File.Exists(Path.Combine(workflow.Destination,"extra.txt"))) throw new Exception("Export step missing");
                 await app.Disable("probe.export-step");
                 if(app.Service<EditorContributions>("contributions").Entries.Any(e=>e.Kind=="export-step")) throw new Exception("Export contribution survived disable");
-                if(Directory.GetFiles(workflow.Destination,"*",SearchOption.AllDirectories).Any(p=>Path.GetFileName(p).StartsWith("CordiSharp") || Path.GetFileName(p).StartsWith("Editor"))) throw new Exception("Editor dependency exported");
+                if(Directory.GetFiles(workflow.Destination,"*",SearchOption.AllDirectories).Any(p=>Path.GetFileName(p).StartsWith("CordiSharp.") && Path.GetFileName(p)!="CordiSharp.dll" || Path.GetFileName(p).StartsWith("Editor"))) throw new Exception("Editor dependency exported");
                 if(!await workflow.Run(false)) throw new Exception("Preflight failed: "+workflow.Progress);
                 var actual=workflow.ReleasePath;workflow.ReleasePath=Path.Combine(output,"missing-release");
                 if(await workflow.Run(false) || !workflow.Progress.Contains("失败")) throw new Exception("Missing dependency not diagnosed");workflow.ReleasePath=actual;

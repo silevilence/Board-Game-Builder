@@ -13,6 +13,15 @@ public static class ExportTests
         Check.Throws(()=>PlayerDistribution.Export(release,"samples/quick-cards",path+"-fail",_=>throw new Exception("plugin failure")),"plugin failure");
         Check.That(!Directory.Exists(path+"-fail"));
         Check.Throws(()=>PlayerDistribution.Preflight(path+"-absent","samples/quick-cards"));
+        var manifestPath=Path.Combine(path,"release.json");var original=File.ReadAllText(manifestPath);
+        foreach(var missing in new[]{"Runtime.dll","MonoGame.Framework.dll","worker/MoonSharp.Interpreter.dll"})
+        {
+            var broken=System.Text.Json.Nodes.JsonNode.Parse(original)!;broken["files"]!.AsObject().Remove(missing);
+            File.WriteAllText(manifestPath,broken.ToJsonString());Check.Throws(()=>PlayerDistribution.Preflight(path,"samples/quick-cards"),missing);
+        }
+        var catalog=System.Text.Json.Nodes.JsonNode.Parse(original)!;catalog["runtimePlugins"]!.AsObject().Remove("kernel");
+        File.WriteAllText(manifestPath,catalog.ToJsonString());Check.Throws(()=>PlayerDistribution.Preflight(path,"samples/quick-cards"),"kernel");
+        File.WriteAllText(manifestPath,original);
         foreach(var file in new[]{"Play.exe","versions.json","Editor.dll","CordiSharp.dll"})
         {
             var target=path+"-tampered-"+file;

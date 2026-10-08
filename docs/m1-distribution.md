@@ -7,7 +7,7 @@ pwsh -NoProfile -File scripts/publish-player.ps1 -Output artifacts/player-releas
 ```
 
 生成自包含 win-x64 Player 和独立自包含 Lua worker；运行时、图形库与框架 DLL 一并发布。
-`release.json` 记录 API、发行版本、目标平台和每个文件的 SHA256。
+`release.json` 记录 API、发行版本、目标平台、每个文件的 SHA256，以及由已发布 Player 输出的实际运行插件目录。导出预检逐一匹配激活插件版本。
 发行目录不能原地覆盖；失败时使用新的空目录重试，避免混合两次构建。
 
 作者只需要发行物，无需 SDK。导出命令本身是预编译 Player 的功能：
@@ -16,12 +16,12 @@ pwsh -NoProfile -File scripts/publish-player.ps1 -Output artifacts/player-releas
 ./artifacts/player-release/Player.exe export artifacts/player-release samples/quick-cards artifacts/quick-cards-windows
 ```
 
-导出先校验发行物与必需运行时，复制清单列出的文件、生成 game.bgm、Play.cmd 和玩法说明。
+导出先校验发行物与必需运行时，复制清单列出的文件、生成 game.bgm、Play.exe 和玩法说明。
 不创建 C# 工程，也不启动 SDK／编译器。导出目标必须不存在；失败清理独占的暂存目录，不覆盖已有产物。
-双击 Play.cmd 或 Player.exe 进入图形流程。模块默认读取程序目录中的 game.bgm，不依赖当前工作目录。
+双击 Play.exe 或 Player.exe 进入图形流程。模块默认读取程序目录中的 game.bgm，不依赖当前工作目录，不经命令脚本启动。
 CPU 工作进程优先运行 worker/Lua.exe，使用自己的运行时；开发构建使用相邻 Lua apphost。
 
-发行 Player 不包含 Editor 项目或插件加载器；模块包按引用收集并剥离 editor_only 声明。
+发行 Player 包含游戏运行所需 CordiSharp.dll，排除 Editor 程序集、CordiSharp 编辑器专用扩展及开发文件。包只收集所选加载器、脚本和 WASM 配置引用的内容；运行入口不接受 editor_only 插件。
 需要 Windows x64 / Direct3D 11；无声卡时音效自动静音，规则运行不受影响。
 
 ## 干净环境验证
