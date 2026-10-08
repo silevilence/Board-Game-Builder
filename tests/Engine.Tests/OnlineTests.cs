@@ -152,4 +152,48 @@ public static class OnlineTests
         room.Leave(observer.Token);
         Check.That(!room.Read(first.Token).Closed);
     }
+
+    public static void Secrets()
+    {
+        var module = TestModules.Load("samples/sealed-auction");
+        foreach (var deadline in new[] { false, true })
+        {
+            var clock = new Clock();
+            using var room = new OnlineSession(module, 7, module.Initial.Seats.ToDictionary(s => s.Id, s => s.Id == "p3" ? "cpu" : "human"),
+                new(TimeSpan.FromHours(1), TimeSpan.FromMinutes(2), Timers: [new("p1", "tick", TimeSpan.FromSeconds(1))]), clock);
+            var first = room.Join(OnlineIdentity.For(module), "p1");
+            var second = room.Join(OnlineIdentity.For(module), "p2");
+            var observer = room.Watch(OnlineIdentity.For(module));
+            long n1 = 1, n2 = 1;
+            OnlineReceipt Send(SeatLease lease, long sequence, Command command) => room.Submit(lease.Token, new(sequence, room.Read(lease.Token).Revision, lease.Seat, command));
+            Check.That(Send(first, n1++, new() { Kind = "open" }).Result.Accepted);
+            Check.That(!Send(first, n1++, new() { Kind = "tick" }).Result.Accepted);
+            Check.That(room.Read(first.Token).View.Secret!.Remaining == 12);
+            var bid = new OnlineProposal(n2++, room.Read(second.Token).Revision, second.Seat, new() { Kind = "bid", Value = 4 });
+            Check.That(room.Submit(second.Token, bid).Result.Accepted);
+            room.Disconnect(second.Token);
+            second = room.Resume(OnlineIdentity.For(module), second.ResumeToken, -1).Lease;
+            Check.That(room.Submit(second.Token, bid).Result.Accepted);
+            Check.That(room.Read(first.Token).View.Secret!.OwnValue == null && room.Read(observer.Token).View.Secret!.Revealed == null);
+            Check.That(!Send(second, n2++, new() { Kind = "bid", Value = 5 }).Result.Accepted);
+            if (deadline)
+                for (var i = 0; i < 12; i++) { clock.Advance(1); room.Maintain(); }
+            else
+            {
+                Check.That(Send(first, n1++, new() { Kind = "bid", Value = 2 }).Result.Accepted);
+                Check.That(room.StepCpu());
+            }
+            Check.That(Send(first, n1++, new() { Kind = "close" }).Result.Accepted);
+            Check.That(!Send(second, n2++, new() { Kind = "bid", Value = 3 }).Result.Accepted);
+            foreach (var p in new[] { first, second, observer })
+                Check.That(room.Read(p.Token).View.Secret!.Revealed == null);
+            Check.That(Send(first, n1++, new() { Kind = "reveal" }).Result.Accepted);
+            Check.That(room.Read(observer.Token).View.Secret!.Revealed!["p2"] == 4);
+            Check.That(Send(first, n1++, new() { Kind = "settle" }).Result.Accepted);
+            Check.That(room.Read(first.Token).View.Ended);
+            Check.That(Wire.Json(room.ExportAuthorityRecording().Replay().Project("p1")) == Wire.Json(room.Read(first.Token).View));
+            foreach (var frame in room.ExportPlayerRecording(observer.Token).Frames.Where(f => f.View.Secret?.Status is "collecting" or "closed"))
+                Check.That(frame.View.Secret!.OwnValue == null && frame.View.Secret.Revealed == null);
+        }
+    }
 }

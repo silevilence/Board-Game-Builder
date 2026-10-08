@@ -10,7 +10,9 @@ public sealed record OnlineIdentity(int Protocol, string Fingerprint)
 }
 public sealed record SeatLease(string Token, string Seat, string ResumeToken);
 public enum DisconnectPolicy { Wait, EndSession, Cpu }
-public sealed record OnlineOptions(TimeSpan IdleTimeout, TimeSpan ReconnectGrace, DisconnectPolicy OnTimeout = DisconnectPolicy.Wait)
+public sealed record AuthorityTimer(string Seat, string ActionId, TimeSpan Interval);
+public sealed record OnlineOptions(TimeSpan IdleTimeout, TimeSpan ReconnectGrace, DisconnectPolicy OnTimeout = DisconnectPolicy.Wait,
+    IReadOnlyList<AuthorityTimer>? Timers = null)
 {
     public static OnlineOptions Default => new(TimeSpan.FromSeconds(15), TimeSpan.FromMinutes(2));
 }
@@ -41,6 +43,7 @@ public sealed class OnlineSession : IDisposable
     private readonly Dictionary<string, List<OnlineFrame>> history = new(StringComparer.Ordinal);
     private readonly OnlineOptions options;
     private readonly TimeProvider time;
+    private readonly Dictionary<AuthorityTimer, DateTimeOffset> timerDue = [];
     private bool started;
     private bool closed;
     private long revision;
@@ -58,6 +61,12 @@ public sealed class OnlineSession : IDisposable
             throw new ArgumentException("Every seat requires a human or cpu controller.");
         Identity = OnlineIdentity.For(module);
         this.controllers = new(controllers);
+        foreach (var timer in this.options.Timers ?? [])
+        {
+            if (!controllers.ContainsKey(timer.Seat) || string.IsNullOrWhiteSpace(timer.ActionId) || timer.Interval < TimeSpan.FromMilliseconds(100))
+                throw new ArgumentException("Invalid authority action timer.");
+            timerDue.Add(timer, this.time.GetUtcNow() + timer.Interval);
+        }
         game = new PlaySession(module, seed, controllers);
         try
         {
@@ -121,8 +130,10 @@ public sealed class OnlineSession : IDisposable
             }
             if (proposal.Sequence != member.NextSequence) throw new OnlineException("out-of-order");
             if (!started) throw new OnlineException("waiting-for-players");
-            var result = proposal.ExpectedRevision == revision
-                ? game.SubmitHuman(member.Lease.Seat, proposal.Command) : new CommandResult(0, false, "stale-revision");
+            var reserved = timerDue.Keys.Where(t => t.Seat == member.Lease.Seat)
+                .Any(t => game.Actions(t.Seat).Any(a => a.Id == t.ActionId && a.Command.Kind == proposal.Command.Kind));
+            var result = proposal.ExpectedRevision != revision ? new CommandResult(0, false, "stale-revision")
+                : reserved ? new CommandResult(0, false, "authority-timer-only") : game.SubmitHuman(member.Lease.Seat, proposal.Command);
             // Script diagnostics and commands belong only in the host recording.
             if (!result.Accepted && result.Reason != "stale-revision") result = result with { Reason = "operation-rejected" };
             Advance(new(result.Sequence, member.Lease.Seat, result.Accepted, result.Reason));
@@ -207,6 +218,16 @@ public sealed class OnlineSession : IDisposable
                     Advance();
                 }
             }
+            if (!started || game.Fault != null) return;
+            foreach (var timer in timerDue.Keys.ToArray())
+            {
+                if (now < timerDue[timer]) continue;
+                timerDue[timer] = now + timer.Interval;
+                var action = game.Actions(timer.Seat).FirstOrDefault(a => a.Id == timer.ActionId);
+                if (action == null || controllers[timer.Seat] != "human") continue;
+                var result = game.SubmitHuman(timer.Seat, action.Command);
+                Advance(new(result.Sequence, timer.Seat, result.Accepted, result.Accepted ? "accepted" : "operation-rejected"));
+            }
         }
     }
 
@@ -221,7 +242,8 @@ public sealed class OnlineSession : IDisposable
     private void Capture(PlayerEvent? entry = null)
     {
         // Query first: rule failures must appear consistently in every identity's frame.
-        var actions = controllers.Keys.ToDictionary(s => s, s => started && !closed ? game.Actions(s) : []);
+        var actions = controllers.Keys.ToDictionary(s => s, s => started && !closed
+            ? game.Actions(s).Where(a => !timerDue.Keys.Any(t => t.Seat == s && t.ActionId == a.Id)).ToArray() : []);
         foreach (var seat in controllers.Keys)
             history[seat].Add(Wire.Copy(new OnlineFrame(revision, game.View(seat), game.Fault == null ? actions[seat] : [], started, closed, game.Fault?.Code, entry)));
         history[""].Add(Wire.Copy(new OnlineFrame(revision, GameEngine.ProjectAudienceSnapshot(game.ExportAuthorityState()), [], started, closed, game.Fault?.Code, entry)));
