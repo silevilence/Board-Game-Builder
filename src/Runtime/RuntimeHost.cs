@@ -12,7 +12,10 @@ public sealed class RuntimeHost : IDisposable, IAsyncDisposable
 {
     private readonly Context root=Context.Create();
     private readonly List<PluginHandle> handles=[];
-    private bool disposed;
+    private volatile bool disposed;
+    private readonly object shutdown=new();
+    private Task? cleanup;
+    internal bool IsDisposed=>disposed;
     private RuntimeHost() { }
     public static IReadOnlyList<RuntimePluginDefinition> Validate(RuntimeStartup startup,
         IReadOnlyList<RuntimePluginDefinition> catalog,IEnumerable<string> required)
@@ -27,6 +30,9 @@ public sealed class RuntimeHost : IDisposable, IAsyncDisposable
             var matches=catalog.Where(p=>p.Id==selection.Id).ToArray();
             if(matches.Length!=1) throw new InvalidDataException(selection.Id+": unknown or unapproved runtime implementation");
             var plugin=matches[0];
+            if(plugin.Provides==null || plugin.Requires==null || plugin.Activate==null ||
+                plugin.Requires.Any(string.IsNullOrWhiteSpace) || plugin.Requires.Distinct().Count()!=plugin.Requires.Length)
+                throw new InvalidDataException(plugin.Id+": invalid capability declaration");
             if(plugin.Api!=1 || selection.Api!=plugin.Api || selection.Version!=plugin.Version)
                 throw new InvalidDataException(selection.Id+": incompatible plugin API/version");
             if(!selected.TryAdd(plugin.Id,plugin)) throw new InvalidDataException(selection.Id+": duplicate plugin identity");
@@ -58,6 +64,7 @@ public sealed class RuntimeHost : IDisposable, IAsyncDisposable
     {
         // Freeze caller-owned metadata before starting any effects.
         startup=Wire.Copy(startup);
+        catalog=catalog.Select(p=>p with {Provides=p.Provides?.ToArray()!,Requires=p.Requires?.ToArray()!}).ToArray();
         var order=Validate(startup,catalog,required);
         var host=new RuntimeHost();
         try
@@ -82,7 +89,12 @@ public sealed class RuntimeHost : IDisposable, IAsyncDisposable
             }
             return host;
         }
-        catch {await host.DisposeAsync().ConfigureAwait(false);throw;}
+        catch(Exception activation)
+        {
+            try {await host.DisposeAsync().ConfigureAwait(false);}
+            catch(Exception cleanupError) {throw new AggregateException("Runtime activation and cleanup failed",activation,cleanupError);}
+            throw;
+        }
     }
     public T Service<T>(string key) where T:class
     {
@@ -91,9 +103,16 @@ public sealed class RuntimeHost : IDisposable, IAsyncDisposable
     }
     private static string Key(string capability)=>"runtime.capability."+capability;
     public void Dispose()=>DisposeAsync().AsTask().GetAwaiter().GetResult();
-    public async ValueTask DisposeAsync()
+    public ValueTask DisposeAsync()
     {
-        if(disposed) return;disposed=true;
+        lock(shutdown)
+        {
+            disposed=true;
+            return new(cleanup ??= DisposeCore());
+        }
+    }
+    private async Task DisposeCore()
+    {
         List<Exception> failures=[];
         foreach(var handle in handles.AsEnumerable().Reverse())
             try {await handle.DisposeAsync().ConfigureAwait(false);} catch(Exception error) {failures.Add(error);}
@@ -114,6 +133,7 @@ public sealed class RuntimePluginScope
     {this.host=host;this.context=context;this.definition=definition;Configuration=configuration;}
     public void Provide(string key,object service)
     {
+        ObjectDisposedException.ThrowIf(host.IsDisposed,this);
         if(!definition.Provides.Contains(key) || !Published.Add(key)) throw new InvalidOperationException(definition.Id+": undeclared/duplicate service "+key);
         context.Provide(key,service);
     }
@@ -123,5 +143,8 @@ public sealed class RuntimePluginScope
         return host.Service<T>(key);
     }
     public T Own<T>(T resource) where T:IDisposable
-    {context.Effect(()=>(Action)resource.Dispose);return resource;}
+    {
+        if(host.IsDisposed) {resource.Dispose();throw new ObjectDisposedException(nameof(RuntimePluginScope));}
+        context.Effect(()=>(Action)resource.Dispose);return resource;
+    }
 }

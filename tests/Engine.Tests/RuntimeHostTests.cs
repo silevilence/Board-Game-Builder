@@ -44,5 +44,13 @@ public static class RuntimeHostTests
             Check.That(alive==0,"Failed initialization leaked registration/resource");
         }
         Check.Throws(()=>RuntimeHost.StartAsync(Plan("a"),[catalog[0] with {Activate=_=>{}}],["a"]).GetAwaiter().GetResult(),"did not provide");
+        RuntimePluginScope? retained=null;
+        var owned=await RuntimeHost.StartAsync(Plan("a"),[catalog[0] with {Activate=s=>{retained=s;s.Provide("a",new object());}}],["a"]);
+        await Task.WhenAll(owned.DisposeAsync().AsTask(),owned.DisposeAsync().AsTask());
+        Check.Throws(()=>retained!.Provide("a",new object()),"disposed");
+        var released=false;
+        Check.Throws(()=>retained!.Own(new Resource(()=>released=true)),"disposed");
+        Check.That(released,"Late registration leaked resource");
+        Check.Throws(()=>RuntimeHost.Validate(Plan("a"),[catalog[0] with {Requires=[""]}],[]),"invalid capability");
     }
 }
