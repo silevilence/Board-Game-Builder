@@ -22,11 +22,11 @@ public static class GameRuntime
         {
             string[] fields=selection.Id switch
             {
-                "definition.module"=>["path"],"lua.rules" or "lua.cpu"=>["file"],"wasm"=>["extensions"],
+                "definition.module" or "definition.state"=>["path"],"lua.rules" or "lua.cpu"=>["file"],"wasm"=>["extensions"],
                 "rules.commands"=>["actions"],_=>[]
             };
             CheckObject(selection.Configuration,fields,selection.Id+".configuration");
-            if(selection.Id=="definition.module") ModulePackage.ValidatePath(selection.Configuration.GetProperty("path").GetString()!);
+            if(selection.Id is "definition.module" or "definition.state") ModulePackage.ValidatePath(selection.Configuration.GetProperty("path").GetString()!);
             if(selection.Id is "lua.rules" or "lua.cpu") ModulePackage.ValidatePath(selection.Configuration.GetProperty("file").GetString()!);
             if(selection.Id=="wasm")
             {

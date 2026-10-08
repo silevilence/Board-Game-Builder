@@ -31,6 +31,7 @@ internal static class RuntimeComposition
         var catalog=new List<RuntimePluginDefinition>
         {AuthorityPlugin.Create(module,seed),LuaRuntimePlugins.Rules(definition,seed),LuaRuntimePlugins.Cpu(definition),CommandRuleProvider.Plugin,WasmRuntimePlugin.Create(definition)};
         catalog.Add(DefinitionPlugins.Module(startup));
+        catalog.Add(StateDefinitionLoader.Plugin(startup));
         catalog.Add(SessionRecorder.Plugin(module));
         var capabilities=catalog.Where(p=>startup.Plugins.Any(s=>s.Id==p.Id)).SelectMany(p=>p.Provides).ToHashSet();
         var hasCpu=capabilities.Contains("cpu");var hasEffects=capabilities.Contains("effects");

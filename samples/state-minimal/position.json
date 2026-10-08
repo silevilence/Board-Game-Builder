@@ -1,0 +1,10 @@
+{
+  "format": 1,
+  "state": {
+    "seats": [ { "id": "p1", "team": "solo", "controller": "human" } ],
+    "phases": [ "play" ],
+    "phase": "play",
+    "entities": {}
+  },
+  "resources": {}
+}

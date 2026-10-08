@@ -1,0 +1,12 @@
+{
+  "format": 1,
+  "id": "state-minimal",
+  "version": "1.0.0",
+  "plugins": [
+    { "id": "definition.state", "version": "1", "api": 1, "configuration": { "path": "position.json" } },
+    { "id": "kernel", "version": "1", "api": 1, "configuration": {} },
+    { "id": "rules.commands", "version": "1", "api": 1, "configuration": { "actions": [ { "id": "finish", "label": "结束演示", "command": { "kind": "finish", "winners": [] } } ] } },
+    { "id": "session.local", "version": "1", "api": 1, "configuration": {} },
+    { "id": "recording", "version": "1", "api": 1, "configuration": {} }
+  ]
+}
