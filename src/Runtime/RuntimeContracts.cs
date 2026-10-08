@@ -61,5 +61,6 @@ public interface IGameSession : IDisposable
 public interface IRecordingProvider
 {
     SessionRecording Capture();
+    void RecordVersion(LoadedModule module);
     IAuthoritySession Replay(SessionRecording recording);
 }

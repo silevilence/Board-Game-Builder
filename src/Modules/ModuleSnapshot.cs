@@ -4,7 +4,25 @@ public static class ModuleSnapshot
 {
     public static string Fingerprint(LoadedModule module) => Wire.Hash(Wire.Json(new {
         id=module.Id,version=module.Version,state=module.Initial,rules=module.Rules,cpu=module.Cpu,
-        resources=module.ResourceHashes ?? new SortedDictionary<string,string>(StringComparer.Ordinal),runtime=module.RuntimeHashes })+(module.RuntimePlugins==null?"":Wire.Json(module.RuntimePlugins)));
+        resources=module.ResourceHashes ?? new SortedDictionary<string,string>(StringComparer.Ordinal),runtime=module.RuntimeHashes })+(module.RuntimePlugins==null?"":Wire.Json(module.RuntimePlugins))+
+        (module.RuntimeIdentity==null?"":Canonical(Wire.Json(module.RuntimeIdentity))));
+    private static string Canonical(string json)
+    {
+        using var document=System.Text.Json.JsonDocument.Parse(json);
+        using var buffer=new MemoryStream();
+        using(var writer=new System.Text.Json.Utf8JsonWriter(buffer)) Write(document.RootElement,writer);
+        return System.Text.Encoding.UTF8.GetString(buffer.ToArray());
+        static void Write(System.Text.Json.JsonElement value,System.Text.Json.Utf8JsonWriter writer)
+        {
+            if(value.ValueKind==System.Text.Json.JsonValueKind.Object)
+            {
+                writer.WriteStartObject();foreach(var p in value.EnumerateObject().OrderBy(p=>p.Name,StringComparer.Ordinal)) {writer.WritePropertyName(p.Name);Write(p.Value,writer);}writer.WriteEndObject();
+            }
+            else if(value.ValueKind==System.Text.Json.JsonValueKind.Array)
+            {writer.WriteStartArray();foreach(var item in value.EnumerateArray()) Write(item,writer);writer.WriteEndArray();}
+            else value.WriteTo(writer);
+        }
+    }
     public static LoadedModule Load(string path)
     {
         try

@@ -21,6 +21,7 @@ public static class GameMigration
             Select("definition.module",new {path="module.json"}),
             Select("lua.rules",new {file=root["rules"]!.GetValue<string>()}),Select("lua.cpu",new {file=root["cpu"]!.GetValue<string>()})
         };
+        plugins.Add(Select("recording",new {}));
         var wasm=ModulePackage.Dependencies(root).Where(p=>p.Kind=="wasm").ToArray();
         if(wasm.Length>0) plugins.Add(Select("wasm",new {extensions=wasm}));
         foreach(var key in new[]{"id","version","rules","cpu","plugins","api"}) root.Remove(key);

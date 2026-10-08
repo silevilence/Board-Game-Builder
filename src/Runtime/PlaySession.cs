@@ -33,8 +33,7 @@ internal sealed class LocalGameSession : IGameSession
 {
     private readonly object commands=new();
     private LoadedModule module;
-    private readonly Dictionary<string,LoadedModule> versions=new(StringComparer.Ordinal);
-    private readonly List<ScriptSwitch> switches=[];
+    private readonly IRecordingProvider recording;
     private readonly List<Diagnostic> cpuDiagnostics=[];
     private readonly IAuthoritySession engine;
     private readonly RuleBinding ruleBinding;
@@ -51,11 +50,11 @@ internal sealed class LocalGameSession : IGameSession
     public string CurrentSeat => engine.Project(module.Initial.Seats[0].Id).CurrentSeat;
     public bool IsCpu => controllers[CurrentSeat]=="cpu";
     internal LocalGameSession(LoadedModule module,uint seed,IReadOnlyDictionary<string,string> controllers,int maxSteps,
-        IAuthoritySession engine,RuleBinding ruleBinding,IRuleProvider rules,ICpuDecisionProvider? cpu,IEffectProvider? effects)
+        IAuthoritySession engine,RuleBinding ruleBinding,IRuleProvider rules,ICpuDecisionProvider? cpu,IEffectProvider? effects,IRecordingProvider recording)
     {
         if(maxSteps<1) throw new ArgumentOutOfRangeException(nameof(maxSteps));
         this.module=Wire.Copy(module);this.seed=seed;this.maxSteps=maxSteps;
-        versions.Add(module.Fingerprint,Wire.Copy(module)); switches.Add(new(0,module.Fingerprint));
+        this.recording=recording;
         this.controllers=new(controllers);this.engine=engine;this.ruleBinding=ruleBinding;this.rules=rules;this.cpu=cpu;this.effects=effects;
         ruleBinding.Replace(ComposeRules(rules.Rules));
     }
@@ -124,6 +123,16 @@ internal sealed class LocalGameSession : IGameSession
     {
         ObjectDisposedException.ThrowIf(disposed,this);
         if(Fault!=null || Ended) throw new InvalidOperationException("Session ended or faulted; restart required.");
+        if(module.RuntimeIdentity is {} identity)
+        {
+            GameRuntime.ValidateSnapshot(candidate);
+            var nextIdentity=candidate.RuntimeIdentity!;
+            if(Wire.Json(identity.Startup)!=Wire.Json(nextIdentity.Startup) || identity.DefinitionSource!=nextIdentity.DefinitionSource)
+                throw new InvalidOperationException("Runtime plugin configuration changed; restart required.");
+            var scripts=identity.Startup.Plugins.Where(p=>p.Id is "lua.rules" or "lua.cpu").Select(p=>p.Configuration.GetProperty("file").GetString()).ToHashSet();
+            if(Wire.Json(identity.ContentHashes.Where(p=>!scripts.Contains(p.Key)).ToArray())!=Wire.Json(nextIdentity.ContentHashes.Where(p=>!scripts.Contains(p.Key)).ToArray()))
+                throw new InvalidOperationException("Non-script content changed; restart required.");
+        }
         if(Wire.Json(candidate.Initial)!=Wire.Json(module.Initial) || Wire.Json(candidate.ResourceHashes)!=Wire.Json(module.ResourceHashes) || Wire.Json(candidate.RuntimeHashes)!=Wire.Json(module.RuntimeHashes) || Wire.Json(candidate.RuntimePlugins)!=Wire.Json(module.RuntimePlugins) || candidate.Id!=module.Id)
             throw new InvalidOperationException("Configuration, resources or dependencies changed; restart required.");
         if(candidate.Fingerprint!=BoardGame.Modules.ModuleSnapshot.Fingerprint(candidate)) throw new InvalidDataException("Script version fingerprint mismatch");
@@ -132,9 +141,9 @@ internal sealed class LocalGameSession : IGameSession
         var applyCpu=cpu?.Prepare(definition);
         var next=Wire.Copy(candidate);
         rules.Apply(preparedRules);applyCpu?.Invoke();ruleBinding.Replace(ComposeRules(rules.Rules));module=next;
-        versions[next.Fingerprint]=Wire.Copy(next); switches.Add(new(engine.ExportLog().EntryCount,next.Fingerprint));
+        recording.RecordVersion(next);
     }
-    public SessionRecording ExportRecording() => SessionRecording.Create(engine.ExportLog(),switches,versions);
+    public SessionRecording ExportRecording() => recording.Capture();
     private IGameRules ComposeRules(IGameRules value)=>effects==null?value:new EffectRules(value,effects);
     public void Dispose()
     {

@@ -50,14 +50,30 @@ public static class GameRuntime
     {
         var module=ModuleSnapshot.Load(source);
         if(module.RuntimeIdentity==null || module.Definition==null) throw new InvalidDataException("Legacy snapshot: explicitly migrate source and record a new session");
-        return module;
+        ValidateSnapshot(module);return module;
+    }
+    public static void ValidateSnapshot(LoadedModule module)
+    {
+        var identity=module.RuntimeIdentity;
+        if(identity==null || identity.Format!=1 || module.Definition==null || identity.Startup.Id!=module.Id || identity.Startup.Version!=module.Version)
+            throw new InvalidDataException("Invalid/legacy runtime identity");
+        if(module.Fingerprint!=ModuleSnapshot.Fingerprint(module)) throw new InvalidDataException("Runtime identity fingerprint mismatch");
+        var expanded=RuntimeDefinition.From(module with {Definition=null});
+        if(Wire.Json(expanded)!=Wire.Json(module.Definition)) throw new InvalidDataException("Definition/capability snapshot conflict");
+        foreach(var selection in identity.Startup.Plugins.Where(p=>p.Id is "lua.rules" or "lua.cpu"))
+        {
+            var path=selection.Configuration.GetProperty("file").GetString()!;
+            var script=selection.Id=="lua.rules"?module.Rules:module.Cpu;
+            var data=System.Text.Encoding.UTF8.GetBytes(script);var hash=identity.ContentHashes.GetValueOrDefault(path);
+            if(hash!=ModulePackage.Hash(data) && hash!=ModulePackage.Hash([0xEF,0xBB,0xBF,..data])) throw new InvalidDataException(path+": script content hash mismatch (UTF-8 required)");
+        }
     }
     public static LoadedModule LoadDirectory(string directory)
     {
         var startup=ReadStartup(directory);
         var placeholder=new LoadedModule(startup.Id,startup.Version,"",new());
         var catalog=RuntimeComposition.Catalog(placeholder,1,new Dictionary<string,string>(),500,startup);
-        RuntimeHost.Validate(startup,catalog,AuthorityPlugin.Required.Concat(["definition","rules","session"]));
+        RuntimeHost.Validate(startup,catalog,AuthorityPlugin.Required.Concat(["definition","rules","session","recording"]));
         var loaders=catalog.Where(p=>p.Provides.Contains("definition") && startup.Plugins.Any(s=>s.Id==p.Id)).ToArray();
         var loaderPlan=startup with {Plugins=startup.Plugins.Where(p=>loaders.Any(l=>l.Id==p.Id)).ToList()};
         using var host=RuntimeHost.StartAsync(loaderPlan,loaders,["definition"]).GetAwaiter().GetResult();
