@@ -1,8 +1,8 @@
-param([string]$Release = 'artifacts/network-release', [string]$Output = ('artifacts/m4/release-check-'+[guid]::NewGuid()))
+param([string]$Release = 'artifacts/network-release', [string]$Output = ('artifacts/m4/release-check-'+[guid]::NewGuid()), [string]$Module = 'samples/quick-cards')
 $ErrorActionPreference = 'Stop'
-$repo = Split-Path $PSScriptRoot -Parent
 $releasePath = [IO.Path]::GetFullPath($Release)
 $outputPath = [IO.Path]::GetFullPath($Output)
+$modulePath = [IO.Path]::GetFullPath($Module)
 if (Test-Path -LiteralPath $outputPath) { throw 'Choose a new evidence directory.' }
 New-Item -ItemType Directory -Path $outputPath | Out-Null
 $rsa = [Security.Cryptography.RSA]::Create(2048)
@@ -14,7 +14,7 @@ $listener = [Net.Sockets.TcpListener]::new([Net.IPAddress]::Loopback,0)
 $listener.Start(); $port = $listener.LocalEndpoint.Port; $listener.Stop()
 $key = [guid]::NewGuid().ToString('N')
 $url = "https://127.0.0.1:$port/"
-@{module="$repo/samples/quick-cards";listen=$url;roomKey=$key;controllers=@{p1='human';p2='human'};seed=42;output='records';certificate='server.pfx'} | ConvertTo-Json -Depth 6 | Set-Content "$outputPath/server.json" -Encoding utf8NoBOM
+@{module=$modulePath;listen=$url;roomKey=$key;controllers=@{p1='human';p2='human'};seed=42;output='records';certificate='server.pfx'} | ConvertTo-Json -Depth 6 | Set-Content "$outputPath/server.json" -Encoding utf8NoBOM
 $empty = New-Item -ItemType Directory "$outputPath/no-dotnet"
 $environment = @{DOTNET_ROOT=$empty.FullName;DOTNET_ROOT_X64=$empty.FullName;DOTNET_MULTILEVEL_LOOKUP='0'}
 $server = $null; $clients = @()
@@ -24,7 +24,7 @@ try {
     while (!(Test-Path "$outputPath/records/ready.json") -and !$server.HasExited -and $watch.Elapsed.TotalSeconds -lt 20) { Start-Sleep -Milliseconds 100 }
     if (!(Test-Path "$outputPath/records/ready.json")) { throw "Server startup failed; see $outputPath/server.stderr.txt" }
     foreach ($seat in @('p1','p2')) {
-        @{module="$repo/samples/quick-cards";server=$url;roomKey=$key;seat=$seat;credentials="$seat.identity.json";recording="$seat.recording.json";auto=$true;certificateSha256=$pin} | ConvertTo-Json | Set-Content "$outputPath/$seat.json" -Encoding utf8NoBOM
+        @{module=$modulePath;server=$url;roomKey=$key;seat=$seat;credentials="$seat.identity.json";recording="$seat.recording.json";auto=$true;certificateSha256=$pin} | ConvertTo-Json | Set-Content "$outputPath/$seat.json" -Encoding utf8NoBOM
         $clients += Start-Process -FilePath "$releasePath/NetworkClient/NetworkClient.exe" -ArgumentList @("`"$outputPath/$seat.json`"") -Environment $environment -WindowStyle Hidden -PassThru -RedirectStandardOutput "$outputPath/$seat.stdout.txt" -RedirectStandardError "$outputPath/$seat.stderr.txt"
     }
     foreach ($client in $clients) {

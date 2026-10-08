@@ -99,7 +99,12 @@ public static class OnlineTests
             {
                 var current = room.Read(players[0].Token).View.CurrentSeat;
                 var player = players.FirstOrDefault(p => p.Seat == current);
-                if (player == null) { Check.That(room.StepCpu()); continue; }
+                if (player == null)
+                {
+                    Check.That(room.StepCpu());
+                    Check.That(room.Read(players[0].Token).Event!.Actor == current);
+                    continue;
+                }
                 var before = room.Read(player.Token);
                 var proposal = new OnlineProposal(sequences[player.Seat], before.Revision, player.Seat, before.Actions[0].Command);
                 Check.Throws(() => room.Submit(player.Token, proposal with { Sequence = proposal.Sequence + 1 }), "out-of-order");

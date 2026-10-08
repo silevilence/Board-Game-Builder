@@ -158,8 +158,9 @@ public sealed class OnlineSession : IDisposable
         lock (gate)
         {
             if (closed || !started || !game.IsCpu || game.Ended || game.Fault != null) return false;
+            var actor = game.CurrentSeat;
             var result = game.StepCpu();
-            Advance(new(game.ExportAuthorityLog().EntryCount, "", result, result ? "accepted" : "cpu-failure"));
+            Advance(new(game.ExportAuthorityLog().EntryCount, actor, result, result ? "accepted" : "cpu-failure"));
             return result;
         }
     }
