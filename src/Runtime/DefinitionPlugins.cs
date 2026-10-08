@@ -27,7 +27,7 @@ internal sealed class ModuleDefinitionLoader(RuntimeStartup startup,string sourc
         {
             var root=JsonNode.Parse(File.ReadAllText(DirectoryModule.SafeFile(directory,path)))!.AsObject();
             files.Add(path);
-            if(root["resources"] is JsonObject resources) files.AddRange(resources.Select(p=>p.Value!.GetValue<string>()));
+            if(root["resources"] is JsonObject resources) files.AddRange(ModuleResources.Files(directory,resources.Select(p=>p.Value!.GetValue<string>())));
             if(root["runtimeFiles"] is JsonArray extra) files.AddRange(extra.Select(p=>p!.GetValue<string>()));
         }
         return files;

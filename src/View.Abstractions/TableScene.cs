@@ -20,11 +20,13 @@ public sealed record TableScene(IReadOnlyList<TableItem> Items, IReadOnlyDiction
     public static TableScene From(SeatView projection,IReadOnlyDictionary<string,byte[]>? resources=null)
     {
         var items=new List<TableItem>(); var used=new Dictionary<string,byte[]>();
+        var images=resources==null?null:new ImageCatalog(resources);
         void Use(string? value)
         {
             if(value==null || resources==null) return;
-            var key=ImageReference.Parse(value).Resource;
+            var reference=images!.Resolve(value);var key=reference.Resource;
             if(resources.TryGetValue(key,out var bytes)) used[key]=bytes;
+            if(reference.Atlas is {} atlas) used[atlas]=resources[atlas];
         }
         foreach(var cloth in projection.Entities.Where(e=>e.Properties.GetValueOrDefault("viewTablecloth")==1 && e.Resource!=null))
         {

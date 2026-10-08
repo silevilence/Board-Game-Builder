@@ -60,7 +60,16 @@ public static class TestModules
             }
             foreach(var plugin in module.RuntimePlugins ?? []) Write(plugin.File,plugin.Code);
             var resources=new SortedDictionary<string,string>();var index=0;
-            foreach(var resource in module.ResourceData ?? []) {var path=$"resources/{index++}.bin";resources.Add(resource.Key,path);Write(path,resource.Value);}
+            var atlasImages=new HashSet<string>(StringComparer.Ordinal);
+            foreach(var resource in module.ResourceData ?? [])
+            {using var atlas=ImageCatalog.ReadAtlas(resource.Value,resource.Key);if(atlas!=null)atlasImages.Add(ImageCatalog.ImageKey(resource.Key));}
+            foreach(var resource in module.ResourceData ?? [])
+            {
+                if(atlasImages.Contains(resource.Key))continue;
+                var folder=$"resources/{index++}/";var path=folder+"resource.bin";resources.Add(resource.Key,path);Write(path,resource.Value);
+                using var atlas=ImageCatalog.ReadAtlas(resource.Value,resource.Key);
+                if(atlas!=null)Write(folder+atlas.RootElement.GetProperty("meta").GetProperty("image").GetString(),module.ResourceData![ImageCatalog.ImageKey(resource.Key)]);
+            }
             File.WriteAllText(Path.Combine(directory,"position.json"),Wire.Json(new {format=1,state=module.Initial,resources}));
             File.WriteAllText(Path.Combine(directory,GameRuntime.Entry),Wire.Json(startup));
             return GameRuntime.Load(directory);

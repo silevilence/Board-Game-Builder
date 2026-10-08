@@ -34,8 +34,9 @@ public static class PokerUnoTests
             if(illegal!=null)Check.That(!session.SubmitHuman("p1",new() {Kind="play",Entity=illegal.Id}).Accepted);
             Check.That(before==session.AuthorityStateHash());
             var scene=TableScene.From(own,module.ResourceData);
-            Check.That(scene.Resources.Keys.SequenceEqual(new[] {"cards"}),"Atlas bytes were split or duplicated by face");
-            Check.That(scene.Items.Where(i=>i.Kind=="card").All(i=>ImageReference.Parse(i.Resource!).IsRegion));
+            Check.That(scene.Resources.Keys.Order().SequenceEqual(new[] {"cards","cards/image"}),"Atlas bytes were split or duplicated by face");
+            var images=new ImageCatalog(scene.Resources);
+            Check.That(scene.Items.Where(i=>i.Kind=="card").All(i=>images.Resolve(i.Resource!).IsRegion));
             Check.That(scene.Items.Any(i=>i.Kind=="back" && i.Resource!=null));
             Check.That(Wire.Json(session.ExportRecording().Replay().Project("p1"))==Wire.Json(own));
         }
@@ -93,10 +94,11 @@ public static class PokerUnoTests
     {
         var module=Load();
         var refs=module.Initial.Entities.Values.Where(e=>e.Properties.ContainsKey("rank")).SelectMany(e=>e.FaceResources).Distinct().ToArray();
-        Check.That(refs.Length==53);foreach(var r in refs)ImageReference.Parse(r).Validate(module.ResourceData!);
+        var images=new ImageCatalog(module.ResourceData!);
+        Check.That(refs.Length==53 && refs.All(r=>!r.Contains('#')));foreach(var r in refs)images.Resolve(r).Validate(module.ResourceData!);
         Check.Throws(()=>ImageReference.Parse("cards#-1,0,1,1"),"Invalid image region");
         Check.Throws(()=>ImageReference.Parse("cards#0,0,0,1"),"Empty image region");
-        Check.Throws(()=>ImageReference.Parse("cards#99999,0,1,1").Validate(module.ResourceData!),"outside resource");
+        Check.Throws(()=>ImageReference.Parse("cards/image#99999,0,1,1").Validate(module.ResourceData!),"outside resource");
         Check.Throws(()=>GameRuntime.Load("samples/poker-uno","3 人"),"Unknown definition preset");
         var folder=Path.GetFullPath("artifacts/poker-uno/package-"+Guid.NewGuid());Directory.CreateDirectory(folder);
         var package=Path.Combine(folder,"game.bgm");GamePackage.Pack("samples/poker-uno",package);

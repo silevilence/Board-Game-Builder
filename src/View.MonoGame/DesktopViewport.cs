@@ -45,7 +45,8 @@ public sealed class DesktopViewport : NativeControlHost, IDisposable
     private float canvasWidth=920,canvasHeight=640;
     public void Canvas(TableScene scene)
     {
-        var hasSprites=scene.Items.Any(i=>i.Kind=="sprite" || i.Resource?.Contains('#')==true);
+        var images=new BoardGame.Kernel.ImageCatalog(scene.Resources);
+        var hasSprites=scene.Items.Any(i=>i.Kind=="sprite" || i.Resource is {} resource && images.Resolve(resource).IsRegion);
         if(classic!=scene.ClassicCards || sprites!=hasSprites) { classic=scene.ClassicCards; sprites=hasSprites; autoFit=classic || sprites; cameraInitialized=false; }
         if((classic || sprites) && scene.Items.Count>0)
         {

@@ -74,8 +74,9 @@ public static class GameRuntime
         var resourceData=module.ResourceData ?? new(StringComparer.Ordinal);
         if(!resourceHashes.Keys.SequenceEqual(resourceData.Keys) || resourceHashes.Any(p=>ModulePackage.Hash(resourceData[p.Key])!=p.Value))
             throw new InvalidDataException("Resource snapshot content hash mismatch");
+        var images=new ImageCatalog(resourceData);
         foreach(var entity in module.Initial.Entities.Values)
-            foreach(var reference in entity.FaceResources) ImageReference.Parse(reference).Validate(resourceData);
+            foreach(var reference in entity.FaceResources) images.Resolve(reference).Validate(resourceData);
         foreach(var path in identity.ContentHashes.Keys) ModulePackage.ValidatePath(path);
         var loader=identity.Startup.Plugins.Single(p=>p.Id is "definition.module" or "definition.state");
         if(identity.DefinitionSource!=loader.Configuration.GetProperty("path").GetString() || !identity.ContentHashes.ContainsKey(identity.DefinitionSource))

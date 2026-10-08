@@ -4,6 +4,7 @@ var tests = new Dictionary<string, Action> { ["cordi"] = CordiTests.Run, ["freec
 try
 {
     tests.Add("poker-uno",PokerUnoTests.Run);
+    tests.Add("atlas",AtlasTests.Run);
     tests.Add("poker-uno-batch",PokerUnoTests.Batch);
     tests.Add("poker-uno-modes",PokerUnoTests.Modes);
     tests.Add("poker-uno-online",PokerUnoOnlineTests.Run);

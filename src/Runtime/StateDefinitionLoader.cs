@@ -41,11 +41,11 @@ internal sealed class StateDefinitionLoader(RuntimeStartup startup,string source
         }
         catch(Exception error) when(error is not OutOfMemoryException)
         {throw new InvalidDataException("definition.state: "+Source+" $.state: "+error.Message,error);}
-        var data=new SortedDictionary<string,byte[]>(StringComparer.Ordinal);var hashes=new SortedDictionary<string,string>(StringComparer.Ordinal);
-        foreach(var file in root["resources"]!.AsObject())
-        {data[file.Key]=File.ReadAllBytes(DirectoryModule.SafeFile(directory,file.Value!.GetValue<string>()));hashes[file.Key]=ModulePackage.Hash(data[file.Key]);}
+        var data=ModuleResources.Load(directory,root["resources"]!.AsObject().Select(p=>new KeyValuePair<string,string>(p.Key,p.Value!.GetValue<string>())));
+        var hashes=new SortedDictionary<string,string>(data.ToDictionary(p=>p.Key,p=>ModulePackage.Hash(p.Value)),StringComparer.Ordinal);
+        var images=new ImageCatalog(data);
         foreach(var entity in state.Entities.Values)
-            foreach(var reference in entity.FaceResources) ImageReference.Parse(reference).Validate(data);
+            foreach(var reference in entity.FaceResources) images.Resolve(reference).Validate(data);
         var payload=new SortedDictionary<string,JsonElement>(StringComparer.Ordinal);
         foreach(var capability in new[]{"lua.rules","lua.cpu"})
         {
@@ -64,7 +64,7 @@ internal sealed class StateDefinitionLoader(RuntimeStartup startup,string source
         payload["wasm"]=JsonSerializer.SerializeToElement(wasm,Wire.Options);
         return new(state,hashes,data,payload);
     }
-    public IReadOnlyList<string> ContentFiles(string directory)=>[Source,..Read(directory)["resources"]!.AsObject().Select(p=>p.Value!.GetValue<string>())];
+    public IReadOnlyList<string> ContentFiles(string directory)=>[Source,..ModuleResources.Files(directory,Read(directory)["resources"]!.AsObject().Select(p=>p.Value!.GetValue<string>()))];
     public static RuntimePluginDefinition Plugin(Func<RuntimeStartup> startup)=>new("definition.state","1",1,["definition"],[],s=>
         s.Provide("definition",new StateDefinitionLoader(startup(),s.Configuration.GetProperty("path").GetString()!)));
 }

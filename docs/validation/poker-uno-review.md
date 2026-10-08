@@ -57,3 +57,16 @@
 - [ ] 干净 Windows（没有编辑器、开发 SDK）解压发行目录，完成本地及图形联机；人工确认启动、游玩、退出全程无控制台闪现，以及目标机器 DPI／窗口尺寸下的交互。
 
 两个门槛通过前，ROADMAP 的独立交付和总体展示验收保持未完成；现有 M4 跨机门槛也保持未完成。
+
+## TexturePacker JSON Hash 变更复验（2026-10-08）
+
+后续需求将坐标串改为 `assets/cards.json` 的 JSON Hash。三份人数定义现直接引用 `card_hearts_A`、`card_back` 等名称；旧 `atlas-map.json` 已删除，PNG 通过 `meta.image` 自动进入资源快照、指纹和打包清单。上文坐标串验收属于初版历史证据；当前格式见 [运行时资源说明](../runtime-plugins.md)。
+
+- `atlas-build.log`：Release 构建通过，0 警告、0 错误。
+- `atlas-tests.log`：atlas、poker-uno、print、packages、modules、view、alternative-definition、runtime-entry、runtime-recording 共 9 组通过。覆盖目录／包／快照的帧名解析、PNG 自动收集、字段／路径／重名错误、旋转与裁剪还原，打印使用四色像素断言核对旋转方向与透明边位置。既有单图片及坐标串兼容。
+- `texturepacker-gui.json`：真实 MonoGame 视口的 53 帧仍只使用 1 张纹理；4／5／6 人、热座、分视角、全 CPU 均完成，已查看全牌面截图。
+- `texturepacker-editor.json`：内嵌／外部试玩通过，命令数各 47，释放后设备数 0。
+- `texturepacker-publish.log`：更新的预编译 Player；最终导出目录 `windows-texturepacker-final/`，包中保留一张 PNG 和 JSON Hash，不拆分单牌图片。
+- 生成脚本以固定帧名匹配牌面，不依赖 JSON 属性顺序，坐标输出整数；连续重新生成 JSON 字节相同。
+
+玩法与网络协议未改，本轮不重复 60 种子整局及跨机测试；原人工门槛状态保持不变。

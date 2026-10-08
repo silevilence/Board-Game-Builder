@@ -12,6 +12,8 @@ public sealed class TableRenderer : IDisposable
     private readonly Dictionary<string, Texture2D> labels = [];
     private readonly Dictionary<string,Texture2D> images=[];
     private readonly Dictionary<string,Rectangle> imageContent=[];
+    private IReadOnlyDictionary<string,byte[]>? catalogResources;
+    private ImageCatalog? catalog;
     public int CachedImages=>images.Count;
     public int CachedLabels=>labels.Count;
     public int LabelTexturesCreated { get; private set; }
@@ -55,7 +57,8 @@ public sealed class TableRenderer : IDisposable
     public void End() => batch.End();
     public void Image(string id,IReadOnlyDictionary<string,byte[]> resources,Rectangle bounds,bool trimTransparent=false)
     {
-        var reference=ImageReference.Parse(id);
+        if(!ReferenceEquals(catalogResources,resources)) {catalog=new ImageCatalog(resources);catalogResources=resources;}
+        var reference=catalog!.Resolve(id);
         if(!resources.TryGetValue(reference.Resource,out var bytes)) { Text("缺失资源: "+id,bounds.X,bounds.Y,Color.Red); return; }
         var key=reference.Resource+":"+Convert.ToHexString(System.Security.Cryptography.SHA256.HashData(bytes));
         if(!images.TryGetValue(key,out var texture))
@@ -78,7 +81,11 @@ public sealed class TableRenderer : IDisposable
             }
             source=content;
         }
-        batch.Draw(texture,bounds,source,Color.White);
+        var destination=reference.Destination(bounds.X,bounds.Y,bounds.Width,bounds.Height);
+        if(reference.Rotated)
+            batch.Draw(texture,new Vector2(destination.X,destination.Y+destination.Height),source,Color.White,-MathHelper.PiOver2,
+                Vector2.Zero,new Vector2(destination.Height/reference.Width,destination.Width/reference.Height),SpriteEffects.None,0);
+        else batch.Draw(texture,new Rectangle((int)destination.X,(int)destination.Y,(int)destination.Width,(int)destination.Height),source,Color.White);
     }
     public void Dispose() { foreach(var t in labels.Values.Concat(images.Values)) t.Dispose(); labels.Clear(); images.Clear(); imageContent.Clear(); pixel.Dispose(); batch.Dispose(); }
 }

@@ -4,7 +4,11 @@ import sys
 from pathlib import Path
 
 root = Path(sys.argv[1])
-images = json.loads((root / 'atlas-map.json').read_text(encoding='utf-8-sig'))
+frames = json.loads((root / 'assets/cards.json').read_text(encoding='utf-8-sig'))['frames']
+images = [f'card_{suit}_{rank}' for suit in ('clubs', 'diamonds', 'hearts', 'spades')
+          for rank in ('A', '02', '03', '04', '05', '06', '07', '08', '09', '10', 'J', 'Q', 'K')] + ['card_back']
+if any(name not in frames for name in images):
+    raise ValueError('The atlas must contain all 52 named cards and card_back')
 
 
 def write(name, value):
@@ -43,8 +47,8 @@ for count in (4, 5, 6):
     write(f'module-{count}.json', {'format': 1, 'layout': {'kind': 'free', 'size': 70, 'originX': 15, 'originY': 20},
           'seats': [{'id': f'p{i+1}', 'team': f'p{i+1}', 'controller': 'human' if i == 0 else 'cpu'} for i in range(count)],
           'phases': ['setup', 'opening', 'play', 'drawn'],
-          'resources': {'cards': 'assets/cards.png', 'player.presentation': 'player.json'},
-          'runtimeFiles': ['assets/License.txt', 'atlas-map.json', 'README.md'], 'entities': entities})
+          'resources': {'cards': 'assets/cards.json', 'player.presentation': 'player.json'},
+          'runtimeFiles': ['assets/License.txt', 'README.md'], 'entities': entities})
 
 plugins = [{'id': key, 'version': '1', 'api': 1, 'configuration': config} for key, config in (
     ('kernel', {}), ('session.local', {}), ('recording', {}),

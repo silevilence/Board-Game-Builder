@@ -27,5 +27,29 @@ public static class PrintTests
         Check.That(atlasPlan.Pages[1][0].Image.SequenceEqual(atlasPlan.Pages[1][1].Image),"Shared atlas backs differ");
         Directory.CreateDirectory("artifacts/poker-uno");
         PrintLayout.Export(atlasPlan,"artifacts/poker-uno/print-"+Guid.NewGuid()+".pdf");
+        // Packed clockwise, then restored counterclockwise into its original transparent canvas.
+        var metadata=System.Text.Json.Nodes.JsonNode.Parse(System.Text.Encoding.UTF8.GetString(atlas.ResourceData!["cards"]))!;
+        metadata["frames"]!["card_clubs_A"]=System.Text.Json.Nodes.JsonNode.Parse("""
+            {"frame":{"x":0,"y":0,"w":20,"h":10},"rotated":true,"trimmed":true,
+             "spriteSourceSize":{"x":5,"y":6,"w":10,"h":20},"sourceSize":{"w":20,"h":30}}
+            """);
+        using var packed=new System.Drawing.Bitmap(1872,970);
+        using(var paint=System.Drawing.Graphics.FromImage(packed))
+        {
+            paint.FillRectangle(System.Drawing.Brushes.Red,0,0,10,5);paint.FillRectangle(System.Drawing.Brushes.Lime,10,0,10,5);
+            paint.FillRectangle(System.Drawing.Brushes.Blue,0,5,10,5);paint.FillRectangle(System.Drawing.Brushes.Yellow,10,5,10,5);
+        }
+        using var png=new MemoryStream();packed.Save(png,System.Drawing.Imaging.ImageFormat.Png);
+        var data=new SortedDictionary<string,byte[]>(atlas.ResourceData!,StringComparer.Ordinal)
+        { ["cards"]=System.Text.Encoding.UTF8.GetBytes(metadata.ToJsonString()),["cards/image"]=png.ToArray() };
+        var transformed=PrintLayout.Create(atlas with {ResourceData=data},["card-01"],new(Duplex:"none")).Pages[0][0];
+        using var jpeg=new MemoryStream(transformed.Image);using var result=new System.Drawing.Bitmap(jpeg);
+        void Pixel(int x,int y,System.Drawing.Color expected)
+        {
+            var actual=result.GetPixel(x*result.Width/20,y*result.Height/30);
+            Check.That(Math.Abs(actual.R-expected.R)<30 && Math.Abs(actual.G-expected.G)<30 && Math.Abs(actual.B-expected.B)<30,"Atlas rotation/trim print mismatch");
+        }
+        Pixel(1,1,System.Drawing.Color.White);Pixel(7,9,System.Drawing.Color.Lime);Pixel(12,9,System.Drawing.Color.Yellow);
+        Pixel(7,22,System.Drawing.Color.Red);Pixel(12,22,System.Drawing.Color.Blue);
     }
 }

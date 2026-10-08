@@ -49,7 +49,9 @@
 
 `definition.module` 可配置 `{"path":"module-4.json","presets":{"4 人":"module-4.json","5 人":"module-5.json","6 人":"module-6.json"}}`。默认 path 必须属于声明的预设；通过 `GameRuntime.Load(source, preset)` 选择，目录与 `.bgm` 语义一致。选择只替换加载插件的有效 path，人数和规则仍由各定义及脚本声明。所有预设的定义、资源和额外运行文件都进入包与内容哈希；打包验证每个预设。未知预设和越界路径拒绝加载。快照已包含选定配置，不能再指定预设。改变预设改变运行身份，联机各端必须一致。
 
-面资源支持 `resource#x,y,width,height`，例如 `cards#2,2,140,190`；`resources.cards` 仍只声明一张 PNG 的文件路径。`#` 分隔资源名与像素区域，坐标非负、尺寸为正，区域必须位于 PNG 中。加载器和快照检查区域，视图共享基础资源纹理，打印按区域绘制，不把图集拆成单牌文件。旧无区域资源引用继续有效。
+图集使用 [TexturePacker JSON Hash](https://www.codeandweb.com/texturepacker-online/index.html)：在 `resources` 中声明 JSON（如 `"cards": "assets/cards.json"`），牌面直接引用 `frames` 中的名称（如 `"card_hearts_A"`、`"card_back"`）。图集 JSON 与 PNG 同放在 assets，`meta.image` 相对 JSON 所在目录解析，加载器自动收集图片、计算内容指纹并纳入包，无需重复声明图片或在牌面填写坐标。
+
+支持 `frame`、`rotated`（顺时针打包后还原）、`trimmed`、`spriteSourceSize`、`sourceSize` 和 `meta.size`；视图与打印按原始透明画布尺寸还原，GPU 仍共享整张图集纹理。帧名在所有已声明图集中全局唯一，且不能与普通资源键重名；重复帧、缺失图片、越界坐标、不一致的裁剪尺寸及越出模块的路径在加载时拒绝。使用单页 JSON Hash；多张图集分别声明，不自动跟随 multi-pack 链接。原普通图片引用和已存在的 `resource#x,y,width,height` 引用保持兼容，新示例只使用帧名。
 
 标准 `draw` 命令新增可选 `visibility`（owner／hidden／public），缺省仍为 owner；公开摸牌及将旧弃牌以隐藏状态移入有序牌堆均可由规则组合声明。归属仍取目标容器的 owner 或执行席位。隐藏抽取不向规则返回牌 ID，后续查询遵循目标容器及牌自身可见性。
 

@@ -45,12 +45,11 @@
     "drawn"
   ],
   "resources": {
-    "cards": "assets/cards.png",
+    "cards": "assets/cards.json",
     "player.presentation": "player.json"
   },
   "runtimeFiles": [
     "assets/License.txt",
-    "atlas-map.json",
     "README.md"
   ],
   "entities": [
@@ -125,7 +124,7 @@
               "摸牌堆"
             ],
             "resources": [
-              "cards#2,778,140,190"
+              "card_back"
             ],
             "up": true
           }
@@ -167,7 +166,7 @@
               "当前弃牌"
             ],
             "resources": [
-              "cards#2,778,140,190"
+              "card_back"
             ],
             "up": true
           }
@@ -210,7 +209,7 @@
               "已用弃牌"
             ],
             "resources": [
-              "cards#2,778,140,190"
+              "card_back"
             ],
             "up": true
           }
@@ -265,7 +264,7 @@
               "席位 1 · 手牌"
             ],
             "resources": [
-              "cards#2,778,140,190"
+              "card_back"
             ],
             "up": true
           }
@@ -313,7 +312,7 @@
               "席位 2 · 手牌"
             ],
             "resources": [
-              "cards#2,778,140,190"
+              "card_back"
             ],
             "up": true
           }
@@ -361,7 +360,7 @@
               "席位 3 · 手牌"
             ],
             "resources": [
-              "cards#2,778,140,190"
+              "card_back"
             ],
             "up": true
           }
@@ -409,7 +408,7 @@
               "席位 4 · 手牌"
             ],
             "resources": [
-              "cards#2,778,140,190"
+              "card_back"
             ],
             "up": true
           }
@@ -457,7 +456,7 @@
               "席位 5 · 手牌"
             ],
             "resources": [
-              "cards#2,778,140,190"
+              "card_back"
             ],
             "up": true
           }
@@ -505,7 +504,7 @@
               "席位 6 · 手牌"
             ],
             "resources": [
-              "cards#2,778,140,190"
+              "card_back"
             ],
             "up": true
           }
@@ -546,8 +545,8 @@
               "牌背"
             ],
             "resources": [
-              "cards#2,2,140,190",
-              "cards#2,778,140,190"
+              "card_clubs_A",
+              "card_back"
             ],
             "up": false
           }
@@ -578,8 +577,8 @@
               "牌背"
             ],
             "resources": [
-              "cards#146,2,140,190",
-              "cards#2,778,140,190"
+              "card_clubs_02",
+              "card_back"
             ],
             "up": false
           }
@@ -610,8 +609,8 @@
               "牌背"
             ],
             "resources": [
-              "cards#290,2,140,190",
-              "cards#2,778,140,190"
+              "card_clubs_03",
+              "card_back"
             ],
             "up": false
           }
@@ -642,8 +641,8 @@
               "牌背"
             ],
             "resources": [
-              "cards#434,2,140,190",
-              "cards#2,778,140,190"
+              "card_clubs_04",
+              "card_back"
             ],
             "up": false
           }
@@ -674,8 +673,8 @@
               "牌背"
             ],
             "resources": [
-              "cards#578,2,140,190",
-              "cards#2,778,140,190"
+              "card_clubs_05",
+              "card_back"
             ],
             "up": false
           }
@@ -706,8 +705,8 @@
               "牌背"
             ],
             "resources": [
-              "cards#722,2,140,190",
-              "cards#2,778,140,190"
+              "card_clubs_06",
+              "card_back"
             ],
             "up": false
           }
@@ -738,8 +737,8 @@
               "牌背"
             ],
             "resources": [
-              "cards#866,2,140,190",
-              "cards#2,778,140,190"
+              "card_clubs_07",
+              "card_back"
             ],
             "up": false
           }
@@ -770,8 +769,8 @@
               "牌背"
             ],
             "resources": [
-              "cards#1010,2,140,190",
-              "cards#2,778,140,190"
+              "card_clubs_08",
+              "card_back"
             ],
             "up": false
           }
@@ -802,8 +801,8 @@
               "牌背"
             ],
             "resources": [
-              "cards#1154,2,140,190",
-              "cards#2,778,140,190"
+              "card_clubs_09",
+              "card_back"
             ],
             "up": false
           }
@@ -834,8 +833,8 @@
               "牌背"
             ],
             "resources": [
-              "cards#1298,2,140,190",
-              "cards#2,778,140,190"
+              "card_clubs_10",
+              "card_back"
             ],
             "up": false
           }
@@ -866,8 +865,8 @@
               "牌背"
             ],
             "resources": [
-              "cards#1442,2,140,190",
-              "cards#2,778,140,190"
+              "card_clubs_J",
+              "card_back"
             ],
             "up": false
           }
@@ -898,8 +897,8 @@
               "牌背"
             ],
             "resources": [
-              "cards#1586,2,140,190",
-              "cards#2,778,140,190"
+              "card_clubs_Q",
+              "card_back"
             ],
             "up": false
           }
@@ -930,8 +929,8 @@
               "牌背"
             ],
             "resources": [
-              "cards#1730,2,140,190",
-              "cards#2,778,140,190"
+              "card_clubs_K",
+              "card_back"
             ],
             "up": false
           }
@@ -962,8 +961,8 @@
               "牌背"
             ],
             "resources": [
-              "cards#2,196,140,190",
-              "cards#2,778,140,190"
+              "card_diamonds_A",
+              "card_back"
             ],
             "up": false
           }
@@ -994,8 +993,8 @@
               "牌背"
             ],
             "resources": [
-              "cards#146,196,140,190",
-              "cards#2,778,140,190"
+              "card_diamonds_02",
+              "card_back"
             ],
             "up": false
           }
@@ -1026,8 +1025,8 @@
               "牌背"
             ],
             "resources": [
-              "cards#290,196,140,190",
-              "cards#2,778,140,190"
+              "card_diamonds_03",
+              "card_back"
             ],
             "up": false
           }
@@ -1058,8 +1057,8 @@
               "牌背"
             ],
             "resources": [
-              "cards#434,196,140,190",
-              "cards#2,778,140,190"
+              "card_diamonds_04",
+              "card_back"
             ],
             "up": false
           }
@@ -1090,8 +1089,8 @@
               "牌背"
             ],
             "resources": [
-              "cards#578,196,140,190",
-              "cards#2,778,140,190"
+              "card_diamonds_05",
+              "card_back"
             ],
             "up": false
           }
@@ -1122,8 +1121,8 @@
               "牌背"
             ],
             "resources": [
-              "cards#722,196,140,190",
-              "cards#2,778,140,190"
+              "card_diamonds_06",
+              "card_back"
             ],
             "up": false
           }
@@ -1154,8 +1153,8 @@
               "牌背"
             ],
             "resources": [
-              "cards#866,196,140,190",
-              "cards#2,778,140,190"
+              "card_diamonds_07",
+              "card_back"
             ],
             "up": false
           }
@@ -1186,8 +1185,8 @@
               "牌背"
             ],
             "resources": [
-              "cards#1010,196,140,190",
-              "cards#2,778,140,190"
+              "card_diamonds_08",
+              "card_back"
             ],
             "up": false
           }
@@ -1218,8 +1217,8 @@
               "牌背"
             ],
             "resources": [
-              "cards#1154,196,140,190",
-              "cards#2,778,140,190"
+              "card_diamonds_09",
+              "card_back"
             ],
             "up": false
           }
@@ -1250,8 +1249,8 @@
               "牌背"
             ],
             "resources": [
-              "cards#1298,196,140,190",
-              "cards#2,778,140,190"
+              "card_diamonds_10",
+              "card_back"
             ],
             "up": false
           }
@@ -1282,8 +1281,8 @@
               "牌背"
             ],
             "resources": [
-              "cards#1442,196,140,190",
-              "cards#2,778,140,190"
+              "card_diamonds_J",
+              "card_back"
             ],
             "up": false
           }
@@ -1314,8 +1313,8 @@
               "牌背"
             ],
             "resources": [
-              "cards#1586,196,140,190",
-              "cards#2,778,140,190"
+              "card_diamonds_Q",
+              "card_back"
             ],
             "up": false
           }
@@ -1346,8 +1345,8 @@
               "牌背"
             ],
             "resources": [
-              "cards#1730,196,140,190",
-              "cards#2,778,140,190"
+              "card_diamonds_K",
+              "card_back"
             ],
             "up": false
           }
@@ -1378,8 +1377,8 @@
               "牌背"
             ],
             "resources": [
-              "cards#2,390,140,190",
-              "cards#2,778,140,190"
+              "card_hearts_A",
+              "card_back"
             ],
             "up": false
           }
@@ -1410,8 +1409,8 @@
               "牌背"
             ],
             "resources": [
-              "cards#146,390,140,190",
-              "cards#2,778,140,190"
+              "card_hearts_02",
+              "card_back"
             ],
             "up": false
           }
@@ -1442,8 +1441,8 @@
               "牌背"
             ],
             "resources": [
-              "cards#290,390,140,190",
-              "cards#2,778,140,190"
+              "card_hearts_03",
+              "card_back"
             ],
             "up": false
           }
@@ -1474,8 +1473,8 @@
               "牌背"
             ],
             "resources": [
-              "cards#434,390,140,190",
-              "cards#2,778,140,190"
+              "card_hearts_04",
+              "card_back"
             ],
             "up": false
           }
@@ -1506,8 +1505,8 @@
               "牌背"
             ],
             "resources": [
-              "cards#578,390,140,190",
-              "cards#2,778,140,190"
+              "card_hearts_05",
+              "card_back"
             ],
             "up": false
           }
@@ -1538,8 +1537,8 @@
               "牌背"
             ],
             "resources": [
-              "cards#722,390,140,190",
-              "cards#2,778,140,190"
+              "card_hearts_06",
+              "card_back"
             ],
             "up": false
           }
@@ -1570,8 +1569,8 @@
               "牌背"
             ],
             "resources": [
-              "cards#866,390,140,190",
-              "cards#2,778,140,190"
+              "card_hearts_07",
+              "card_back"
             ],
             "up": false
           }
@@ -1602,8 +1601,8 @@
               "牌背"
             ],
             "resources": [
-              "cards#1010,390,140,190",
-              "cards#2,778,140,190"
+              "card_hearts_08",
+              "card_back"
             ],
             "up": false
           }
@@ -1634,8 +1633,8 @@
               "牌背"
             ],
             "resources": [
-              "cards#1154,390,140,190",
-              "cards#2,778,140,190"
+              "card_hearts_09",
+              "card_back"
             ],
             "up": false
           }
@@ -1666,8 +1665,8 @@
               "牌背"
             ],
             "resources": [
-              "cards#1298,390,140,190",
-              "cards#2,778,140,190"
+              "card_hearts_10",
+              "card_back"
             ],
             "up": false
           }
@@ -1698,8 +1697,8 @@
               "牌背"
             ],
             "resources": [
-              "cards#1442,390,140,190",
-              "cards#2,778,140,190"
+              "card_hearts_J",
+              "card_back"
             ],
             "up": false
           }
@@ -1730,8 +1729,8 @@
               "牌背"
             ],
             "resources": [
-              "cards#1586,390,140,190",
-              "cards#2,778,140,190"
+              "card_hearts_Q",
+              "card_back"
             ],
             "up": false
           }
@@ -1762,8 +1761,8 @@
               "牌背"
             ],
             "resources": [
-              "cards#1730,390,140,190",
-              "cards#2,778,140,190"
+              "card_hearts_K",
+              "card_back"
             ],
             "up": false
           }
@@ -1794,8 +1793,8 @@
               "牌背"
             ],
             "resources": [
-              "cards#2,584,140,190",
-              "cards#2,778,140,190"
+              "card_spades_A",
+              "card_back"
             ],
             "up": false
           }
@@ -1826,8 +1825,8 @@
               "牌背"
             ],
             "resources": [
-              "cards#146,584,140,190",
-              "cards#2,778,140,190"
+              "card_spades_02",
+              "card_back"
             ],
             "up": false
           }
@@ -1858,8 +1857,8 @@
               "牌背"
             ],
             "resources": [
-              "cards#290,584,140,190",
-              "cards#2,778,140,190"
+              "card_spades_03",
+              "card_back"
             ],
             "up": false
           }
@@ -1890,8 +1889,8 @@
               "牌背"
             ],
             "resources": [
-              "cards#434,584,140,190",
-              "cards#2,778,140,190"
+              "card_spades_04",
+              "card_back"
             ],
             "up": false
           }
@@ -1922,8 +1921,8 @@
               "牌背"
             ],
             "resources": [
-              "cards#578,584,140,190",
-              "cards#2,778,140,190"
+              "card_spades_05",
+              "card_back"
             ],
             "up": false
           }
@@ -1954,8 +1953,8 @@
               "牌背"
             ],
             "resources": [
-              "cards#722,584,140,190",
-              "cards#2,778,140,190"
+              "card_spades_06",
+              "card_back"
             ],
             "up": false
           }
@@ -1986,8 +1985,8 @@
               "牌背"
             ],
             "resources": [
-              "cards#866,584,140,190",
-              "cards#2,778,140,190"
+              "card_spades_07",
+              "card_back"
             ],
             "up": false
           }
@@ -2018,8 +2017,8 @@
               "牌背"
             ],
             "resources": [
-              "cards#1010,584,140,190",
-              "cards#2,778,140,190"
+              "card_spades_08",
+              "card_back"
             ],
             "up": false
           }
@@ -2050,8 +2049,8 @@
               "牌背"
             ],
             "resources": [
-              "cards#1154,584,140,190",
-              "cards#2,778,140,190"
+              "card_spades_09",
+              "card_back"
             ],
             "up": false
           }
@@ -2082,8 +2081,8 @@
               "牌背"
             ],
             "resources": [
-              "cards#1298,584,140,190",
-              "cards#2,778,140,190"
+              "card_spades_10",
+              "card_back"
             ],
             "up": false
           }
@@ -2114,8 +2113,8 @@
               "牌背"
             ],
             "resources": [
-              "cards#1442,584,140,190",
-              "cards#2,778,140,190"
+              "card_spades_J",
+              "card_back"
             ],
             "up": false
           }
@@ -2146,8 +2145,8 @@
               "牌背"
             ],
             "resources": [
-              "cards#1586,584,140,190",
-              "cards#2,778,140,190"
+              "card_spades_Q",
+              "card_back"
             ],
             "up": false
           }
@@ -2178,8 +2177,8 @@
               "牌背"
             ],
             "resources": [
-              "cards#1730,584,140,190",
-              "cards#2,778,140,190"
+              "card_spades_K",
+              "card_back"
             ],
             "up": false
           }
