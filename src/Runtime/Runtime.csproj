@@ -5,6 +5,7 @@
     <ProjectReference Include="../Lua/Lua.csproj" />
   </ItemGroup>
   <ItemGroup>
+    <PackageReference Include="CordiSharp" Version="[0.2.0]" ExcludeAssets="analyzers" />
     <PackageReference Include="Wasmtime" Version="48.0.2" />
   </ItemGroup>
 </Project>

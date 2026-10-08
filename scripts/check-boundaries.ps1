@@ -15,7 +15,8 @@ Get-ChildItem "$PSScriptRoot/../src" -Filter *.csproj -Recurse | ForEach-Object 
   if ($project.SelectNodes('//PackageReference').Count) { throw 'Kernel must remain dependency free' }
  }
  foreach ($package in $project.SelectNodes('//PackageReference')) {
-  if ($package.Include -like 'CordiSharp*' -and $_.BaseName -notin @('Editor','Editor.Core')) { throw 'CordiSharp must remain editor-only' }
+  if ($package.Include -like 'CordiSharp*' -and $_.BaseName -notin @('Editor','Editor.Core') -and
+      -not ($_.BaseName -eq 'Runtime' -and $package.Include -eq 'CordiSharp')) { throw 'Only the CordiSharp core may enter the shared runtime' }
  }
 }
 Write-Output 'Project boundaries passed.'
