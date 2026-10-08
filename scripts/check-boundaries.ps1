@@ -3,6 +3,7 @@ $allowed = @{
  'Kernel.Abstractions' = @(); 'Kernel' = @('Kernel.Abstractions'); 'Modules' = @('Kernel.Abstractions')
  'Lua' = @('Kernel.Abstractions'); 'Runtime' = @('Kernel','Modules','Lua')
  'Networking' = @('Runtime')
+ 'Server' = @('Networking'); 'NetworkClient' = @('Networking')
  'View.Abstractions' = @('Kernel.Abstractions'); 'View.MonoGame' = @('View.Abstractions')
  'Player' = @('Runtime','View.MonoGame'); 'Editor.Core' = @('Runtime'); 'Editor' = @('Editor.Core','Runtime','View.MonoGame')
 }

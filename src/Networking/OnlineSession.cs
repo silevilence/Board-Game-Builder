@@ -12,7 +12,7 @@ public sealed record SeatLease(string Token, string Seat, string ResumeToken);
 public enum DisconnectPolicy { Wait, EndSession, Cpu }
 public sealed record AuthorityTimer(string Seat, string ActionId, TimeSpan Interval);
 public sealed record OnlineOptions(TimeSpan IdleTimeout, TimeSpan ReconnectGrace, DisconnectPolicy OnTimeout = DisconnectPolicy.Wait,
-    IReadOnlyList<AuthorityTimer>? Timers = null)
+    IReadOnlyList<AuthorityTimer>? Timers = null, int MaxRevisions = 4096, int MaxObservers = 32)
 {
     public static OnlineOptions Default => new(TimeSpan.FromSeconds(15), TimeSpan.FromMinutes(2));
 }
@@ -56,6 +56,8 @@ public sealed class OnlineSession : IDisposable
         this.time = time ?? TimeProvider.System;
         if (this.options.IdleTimeout <= TimeSpan.Zero || this.options.ReconnectGrace < TimeSpan.Zero || !Enum.IsDefined(this.options.OnTimeout))
             throw new ArgumentException("Invalid disconnect configuration.");
+        if (this.options.MaxRevisions < 10 || this.options.MaxRevisions > 100000 || this.options.MaxObservers < 0 || this.options.MaxObservers > 256)
+            throw new ArgumentException("Invalid session resource limits.");
         if (module.Initial.Seats.Any(s => !controllers.ContainsKey(s.Id)) ||
             controllers.Count != module.Initial.Seats.Count || controllers.Values.Any(v => v is not ("human" or "cpu")))
             throw new ArgumentException("Every seat requires a human or cpu controller.");
@@ -108,6 +110,7 @@ public sealed class OnlineSession : IDisposable
         {
             EnsureOpen();
             if (identity != Identity) throw new OnlineException("version-mismatch");
+            if (members.Values.Count(m => m.Lease.Seat == "") >= options.MaxObservers) throw new OnlineException("audience-limit");
             var lease = new SeatLease(NewToken(), "", NewToken());
             members.Add(lease.Token, new(lease) { LastSeen = time.GetUtcNow() });
             return lease;
@@ -248,7 +251,12 @@ public sealed class OnlineSession : IDisposable
             history[seat].Add(Wire.Copy(new OnlineFrame(revision, game.View(seat), game.Fault == null ? actions[seat] : [], started, closed, game.Fault?.Code, entry)));
         history[""].Add(Wire.Copy(new OnlineFrame(revision, GameEngine.ProjectAudienceSnapshot(game.ExportAuthorityState()), [], started, closed, game.Fault?.Code, entry)));
     }
-    private void Advance(PlayerEvent? entry = null) { revision++; Capture(entry); }
+    private void Advance(PlayerEvent? entry = null)
+    {
+        revision++;
+        if (revision >= options.MaxRevisions) closed = true;
+        Capture(entry);
+    }
     public IReadOnlyList<OnlineFrame> CatchUp(string token, long afterRevision)
     {
         lock (gate)
@@ -267,6 +275,7 @@ public sealed class OnlineSession : IDisposable
         }
     }
     private void EnsureOpen() { if (closed) throw new OnlineException("session-closed"); }
+    public void Close() { lock (gate) { if (!closed) { closed = true; Advance(); } } }
     public SessionRecording ExportAuthorityRecording() { lock (gate) return game.ExportRecording(); }
     public void Dispose() { lock (gate) { closed = true; game.Dispose(); } }
 }

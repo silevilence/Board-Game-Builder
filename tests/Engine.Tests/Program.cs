@@ -8,6 +8,9 @@ try
     tests.Add("online-reconnect",OnlineTests.Reconnection);
     tests.Add("online-audience",OnlineTests.Audience);
     tests.Add("online-secrets",OnlineTests.Secrets);
+    tests.Add("online-http",OnlineTransportTests.Run);
+    tests.Add("online-processes",OnlineTransportTests.Processes);
+    tests.Add("online-faults",OnlineTransportTests.Faults);
     tests.Add("runtime-host",RuntimeHostTests.Run);
     tests.Add("review-followup",ReviewFollowupTests.Run);
     tests.Add("startup",StartupTests.Run);
