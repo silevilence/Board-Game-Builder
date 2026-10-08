@@ -4,6 +4,21 @@ using BoardGame.Kernel;
 
 namespace BoardGame.Networking;
 
+public static class OnlineProtocol
+{
+    public const int Version = 1;
+    public const int RecordingFormat = 1;
+}
+public static class OnlineOperations
+{
+    public const string Frame = "frame";
+    public const string CatchUp = "catch-up";
+    public const string Submit = "submit";
+    public const string Recording = "recording";
+    public const string Disconnect = "disconnect";
+    public const string Leave = "leave";
+}
+
 public sealed record JoinRequest(OnlineIdentity Identity, string? Seat = null, bool Audience = false);
 public sealed record ResumeRequest(OnlineIdentity Identity, string ResumeToken, long AfterRevision = -1);
 public sealed record OnlineRequest(string Operation, long AfterRevision = -1, OnlineProposal? Proposal = null);

@@ -116,7 +116,6 @@ public static class OnlineTransportTests
                     f.View.Entities.All(e => e.Container?.StartsWith("hand-") != true)));
                 File.WriteAllText(Path.Combine(host.Root, "projection-" + (player.Seat == "" ? "audience" : player.Seat) + ".json"), Wire.Json(record));
             }
-            File.WriteAllText(Path.Combine(host.Root, "result.json"), Wire.Json(new { success = true, sample, resumed, revision = final.Revision }));
             host.Dispose();
             var authority = Wire.Read<SessionRecording>(File.ReadAllText(Path.Combine(host.Root, "records/authority.json"))).Replay();
             foreach (var player in players)
@@ -124,6 +123,8 @@ public static class OnlineTransportTests
                 var record = Wire.Read<OnlineRecording>(File.ReadAllText(Path.Combine(host.Root, "projection-" + player.Seat + ".json")));
                 Check.That(Wire.Json(record.Replay().Frame!.View) == Wire.Json(authority.Project(player.Seat)));
             }
+            File.WriteAllText(Path.Combine(host.Root, "result.json"), Wire.Json(new { success = true, sample, resumed, revision = final.Revision,
+                duplicateReceiptEqual = true, identityIsolation = true, finalProjectionMatchesReplay = true }));
         }
     }
 
@@ -234,5 +235,46 @@ public static class OnlineTransportTests
         while (!File.Exists(diagnostics) && elapsed.Elapsed.TotalSeconds < 10) Thread.Sleep(50);
         Check.That(File.Exists(diagnostics) && File.ReadAllText(diagnostics).Contains("private diagnostic marker"), "Server lost CPU fault details");
         Check.That(File.ReadAllText(Path.Combine(failing.Root, "records/events.jsonl")).Contains("cpu-failure"));
+    }
+
+    public static void Cursor()
+    {
+        using var host = new Host("samples/quick-cards", false);
+        var config = Path.Combine(host.Root, "cursor.json");
+        var credentials = Path.Combine(host.Root, "cursor-identity.json");
+        File.WriteAllText(config, Wire.Json(new { module = Path.GetFullPath("samples/quick-cards"), server = host.Url.ToString(), roomKey = host.Key,
+            credentials, recording = "cursor-recording.json", seat = "p1" }));
+        using var client = new OnlineClient(host.Url, host.Key);
+        _ = client.JoinAsync(new(OnlineIdentity.For(GameRuntime.Load("samples/quick-cards")), "p2")).GetAwaiter().GetResult();
+        string? previousToken = null;
+        for (var round = 0; round < 2; round++)
+        {
+            using var process = Launch("src/NetworkClient/bin/Release/net10.0/NetworkClient.exe", config, true);
+            var output = process.StandardOutput.ReadToEndAsync(); var error = process.StandardError.ReadToEndAsync();
+            try
+            {
+                var timeout = Stopwatch.StartNew();
+                bool saved = false;
+                while (timeout.Elapsed.TotalSeconds < 10 && !process.HasExited)
+                {
+                    if (File.Exists(credentials))
+                    {
+                        using var state = System.Text.Json.JsonDocument.Parse(File.ReadAllText(credentials));
+                        var root = state.RootElement;
+                        if (root.GetProperty("lastRevision").GetInt64() >= 2 && root.GetProperty("lease").GetProperty("token").GetString() != previousToken)
+                        {
+                            previousToken = root.GetProperty("lease").GetProperty("token").GetString(); saved = true; break;
+                        }
+                    }
+                    Thread.Sleep(50);
+                }
+                Check.That(saved, "Client failed to persist the received revision and current credential");
+                process.StandardInput.WriteLine(round == 0 ? "d" : "q"); process.StandardInput.Flush();
+                Check.That(process.WaitForExit(5000) && process.ExitCode == 0, error.IsCompleted ? error.Result : "Client exit timed out");
+                Check.That(output.GetAwaiter().GetResult().Contains("revision=2"), "Empty catch-up still requires a current snapshot");
+            }
+            finally { if (!process.HasExited) { process.Kill(true); process.WaitForExit(); } }
+        }
+        Check.That(!File.Exists(credentials));
     }
 }

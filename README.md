@@ -11,6 +11,8 @@ dotnet run --project src/Player -- --help
 
 Kernel.Abstractions 定义数据与运行协议；Kernel 执行权威命令；Modules 提供定义解析与内容校验；Lua 适配规则和决策；Runtime 的独立 CordiSharp 宿主为 Player、试玩和批量验证装配加载器、内核、规则、CPU、扩展、席位及记录能力。View.Abstractions 和 View.MonoGame 提供投影桌面与输入，Editor.Core 管理作者文档，Avalonia Editor 使用独立插件上下文提供制作、两种试玩、调试和导出。
 
+Networking 在 Runtime 外提供身份绑定、投影同步与恢复；无图形界面的 Server 和命令行 NetworkClient 通过 HTTP／HTTPS 协作，沿用相同的运行时、规则及 CPU 能力。Player 和编辑器的本地运行不依赖联机层。[联机说明](docs/networking.md) 包含启动、认证、断线恢复与记录访问约定；跨机人工验收仍待环境。
+
 游戏目录以 `game.start.json` 为入口；它唯一声明包身份与运行插件配置。`definition.module` 加载器使用配置指定的组件定义文件；`definition.state` 支持独立状态格式。[运行插件与迁移协议](docs/runtime-plugins.md) 说明能力、版本及兼容策略；[最小无脚本示例](samples/state-minimal/game.start.json) 不启用 Lua 或 WASM。
 
 M3.5 验收、整体审核及干净 Windows 检查见 [验证记录](docs/validation/m3.5-review.md)，全部示例入口见 [迁移清单](samples/README.md)。

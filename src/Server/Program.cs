@@ -82,15 +82,15 @@ try
         OnlineReply reply;
         switch (request.Operation)
         {
-            case "frame": reply = new(Frame: room.Read(token)); break;
-            case "catch-up": reply = new(Frames: room.CatchUp(token, request.AfterRevision)); break;
-            case "submit":
+            case OnlineOperations.Frame: reply = new(Frame: room.Read(token)); break;
+            case OnlineOperations.CatchUp: reply = new(Frames: room.CatchUp(token, request.AfterRevision)); break;
+            case OnlineOperations.Submit:
                 var receipt = room.Submit(token, request.Proposal ?? throw new OnlineException("missing-proposal"));
                 Audit(receipt.Result.Accepted ? "proposal-accepted" : receipt.Result.Reason);
                 reply = new(Receipt: receipt); break;
-            case "recording": reply = new(Recording: room.ExportPlayerRecording(token)); break;
-            case "disconnect": room.Disconnect(token); reply = new(); break;
-            case "leave": room.Leave(token); Audit("identity-left"); reply = new(); break;
+            case OnlineOperations.Recording: reply = new(Recording: room.ExportPlayerRecording(token)); break;
+            case OnlineOperations.Disconnect: room.Disconnect(token); reply = new(); break;
+            case OnlineOperations.Leave: room.Leave(token); Audit("identity-left"); reply = new(); break;
             default: throw new OnlineException("unknown-operation");
         }
         return Results.Text(Wire.Json(reply), "application/json");
@@ -146,7 +146,7 @@ public sealed record ServerConfiguration(string Module, string Listen, string Ro
 {
     public void Validate()
     {
-        if (string.IsNullOrWhiteSpace(Module) || Controllers == null || string.IsNullOrWhiteSpace(Output) || RoomKey?.Length < 16 || RoomKey == null)
+        if (string.IsNullOrWhiteSpace(Module) || Controllers == null || string.IsNullOrWhiteSpace(Output) || string.IsNullOrWhiteSpace(RoomKey) || RoomKey.Length < 16)
             throw new ArgumentException("Module, controllers, output and a room key of at least 16 characters are required.");
         if (!Uri.TryCreate(Listen, UriKind.Absolute, out var url) || url.Scheme is not ("http" or "https") || url.AbsolutePath != "/")
             throw new ArgumentException("Listen must be an HTTP(S) root URL.");

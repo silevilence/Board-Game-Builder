@@ -13,6 +13,8 @@ try
     tests.Add("online-faults",OnlineTransportTests.Faults);
     tests.Add("online-review",OnlineTests.Review);
     tests.Add("online-client-review",OnlineTransportTests.Review);
+    tests.Add("online-followup",OnlineTests.Followup);
+    tests.Add("online-cursor",OnlineTransportTests.Cursor);
     tests.Add("runtime-host",RuntimeHostTests.Run);
     tests.Add("review-followup",ReviewFollowupTests.Run);
     tests.Add("startup",StartupTests.Run);

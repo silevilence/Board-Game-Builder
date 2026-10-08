@@ -46,6 +46,7 @@ public interface IGameSession : IDisposable
     bool Ended { get; }
     string CurrentSeat { get; }
     bool IsCpu { get; }
+    bool SupportsCpu { get; }
     SeatView View(string seat);
     IReadOnlyList<ActionOffer> Actions(string? seat=null);
     CommandResult SubmitHuman(string seat,Command command);

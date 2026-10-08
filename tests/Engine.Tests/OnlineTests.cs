@@ -5,6 +5,56 @@ namespace Engine.Tests;
 
 public static class OnlineTests
 {
+    public static void Followup()
+    {
+        var module = TestModules.Load("samples/quick-cards");
+        var clock = new Clock();
+        var options = new OnlineOptions(TimeSpan.FromHours(1), TimeSpan.FromHours(1), MaxRevisions: 10, ResumeLifetime: TimeSpan.FromSeconds(20));
+        using var room = new OnlineSession(module, 42, module.Initial.Seats.ToDictionary(s => s.Id, _ => "human"), options, clock);
+        var player = room.Join(OnlineIdentity.For(module), "p1");
+        _ = room.Join(OnlineIdentity.For(module), "p2");
+        var observer = room.Watch(OnlineIdentity.For(module));
+        var initial = room.Read(player.Token);
+        for (long sequence = 1; sequence <= 1000; sequence++)
+        {
+            var proposal = new OnlineProposal(sequence, sequence % 2 == 0 ? initial.Revision : initial.Revision - 1, "p1", new() { Kind = "invalid" });
+            var receipt = room.Submit(player.Token, proposal);
+            Check.That(!receipt.Result.Accepted && receipt.NextSequence == sequence + 1);
+            Check.That(receipt.Frame.Revision == initial.Revision && !receipt.Frame.Closed, "Rejected proposal consumed shared revision budget");
+            Check.That(Wire.Json(room.Submit(player.Token, proposal)) == Wire.Json(receipt));
+        }
+        Check.That(room.CatchUp(observer.Token, initial.Revision).Count == 0);
+        Check.That(room.ExportAuthorityRecording().Replay().ExportLog().EntryCount == 0);
+        var accepted = room.Submit(player.Token, new(1001, initial.Revision, player.Seat, initial.Actions[0].Command));
+        Check.That(accepted.Result.Accepted && accepted.Frame.Revision == initial.Revision + 1);
+        clock.Advance(19);
+        var restored = room.Resume(OnlineIdentity.For(module), player.ResumeToken, initial.Revision);
+        Check.That(restored.Frames.Count == 1 && restored.Frames[0].Revision == accepted.Frame.Revision);
+        // Lost resume response: the original recovery credential can still retry within its fixed lifetime.
+        var retry = room.Resume(OnlineIdentity.For(module), player.ResumeToken, accepted.Frame.Revision);
+        Check.That(retry.Frames.Count == 0 && retry.Lease.Token != restored.Lease.Token);
+        Check.That(Wire.Json(room.Read(retry.Lease.Token)) == Wire.Json(accepted.Frame));
+        clock.Advance(1);
+        Check.Throws(() => room.Resume(OnlineIdentity.For(module), player.ResumeToken, -1), "resume-expired");
+        Check.Throws(() => room.Resume(OnlineIdentity.For(module), observer.ResumeToken, -1), "resume-expired");
+        Check.That(room.Read(retry.Lease.Token).Revision == accepted.Frame.Revision, "Recovery expiry must not interrupt an active connection");
+
+        var faulty = TestModules.LuaGame(CommandTests.Initial(), """
+        return {actions=function(c) return {{id='move',label='move',command={kind='move',entity='card',x=1}}} end,
+          decide=function(c) error('private-rule-error') end}
+        """, "return {decide=function(c) return c.actions[1].command end}");
+        using var fault = new OnlineSession(faulty, 1, faulty.Initial.Seats.ToDictionary(s => s.Id, s => s.Id == "p1" ? "human" : "cpu"));
+        var human = fault.Join(OnlineIdentity.For(faulty), "p1");
+        var before = fault.Read(human.Token);
+        var failed = fault.Submit(human.Token, new(1, before.Revision, "p1", before.Actions[0].Command));
+        Check.That(!failed.Result.Accepted && failed.Frame.Revision == before.Revision + 1 && failed.Frame.Fault == "rule-failure");
+        Check.That(!Wire.Json(failed).Contains("private-rule-error"));
+        var noCpu = TestModules.Load("samples/state-minimal");
+        using var local = new BoardGame.Runtime.PlaySession(noCpu);
+        Check.That(!local.SupportsCpu);
+        Check.Throws(() => new OnlineSession(noCpu, 1, noCpu.Initial.Seats.ToDictionary(s => s.Id, _ => "human"),
+            OnlineOptions.Default with { OnTimeout = DisconnectPolicy.Cpu }), "Missing CPU capability");
+    }
     private sealed class Clock : TimeProvider
     {
         private DateTimeOffset now = DateTimeOffset.Parse("2026-10-08T00:00:00Z");

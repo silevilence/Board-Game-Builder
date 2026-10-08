@@ -16,6 +16,7 @@ public sealed class PlaySession : IGameSession
     public bool Ended=>session.Ended;
     public string CurrentSeat=>session.CurrentSeat;
     public bool IsCpu=>session.IsCpu;
+    public bool SupportsCpu=>session.SupportsCpu;
     public SeatView View(string seat)=>session.View(seat);
     public IReadOnlyList<ActionOffer> Actions(string? seat=null)=>session.Actions(seat);
     public CommandResult SubmitHuman(string seat,Command command)=>session.SubmitHuman(seat,command);
@@ -50,6 +51,7 @@ internal sealed class LocalGameSession : IGameSession
     public bool Ended => engine.Project(module.Initial.Seats[0].Id).Ended;
     public string CurrentSeat => engine.Project(module.Initial.Seats[0].Id).CurrentSeat;
     public bool IsCpu => controllers[CurrentSeat]=="cpu";
+    public bool SupportsCpu => cpu!=null;
     internal LocalGameSession(LoadedModule module,uint seed,IReadOnlyDictionary<string,string> controllers,int maxSteps,
         IAuthoritySession engine,RuleBinding ruleBinding,IRuleProvider rules,ICpuDecisionProvider? cpu,IEffectProvider? effects,IRecordingProvider recording)
     {

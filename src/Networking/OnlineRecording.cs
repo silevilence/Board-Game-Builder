@@ -5,7 +5,7 @@ public sealed record OnlineRecording(int Format, OnlineIdentity Identity, string
 {
     public OnlineReplica Replay()
     {
-        if (Format != 1 || Identity.Protocol != 1 || Frames.Count == 0) throw new OnlineException("invalid-recording");
+        if (Format != OnlineProtocol.RecordingFormat || Identity.Protocol != OnlineProtocol.Version || Frames.Count == 0) throw new OnlineException("invalid-recording");
         var replica = new OnlineReplica(Seat);
         for (var i = 0; i < Frames.Count; i++)
         {

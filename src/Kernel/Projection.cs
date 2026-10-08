@@ -33,6 +33,6 @@ public sealed partial class GameEngine
         var round=state.Secret;
         var secret=round==null?null:new SecretView(Wire.Copy(round.Declaration),round.Status,round.Remaining,round.Choices.Keys.ToList(),[..round.Locked],seat == null ? null : round.Choices.GetValueOrDefault(seat),
             round.Status is "revealed" or "settled"?new(round.Choices,StringComparer.Ordinal):null);
-        return new(seat ?? "",Wire.Copy(state.Seats),state.Seats[state.CurrentSeat].Id,state.Phase,state.Turn,state.Ended,[..state.Winners],entities,state.Layout,secret);
+        return new(seat ?? SeatView.AudienceSeat,Wire.Copy(state.Seats),state.Seats[state.CurrentSeat].Id,state.Phase,state.Turn,state.Ended,[..state.Winners],entities,state.Layout,secret);
     }
 }
