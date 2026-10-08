@@ -9,6 +9,7 @@
     <Project Path="src/Kernel/Kernel.csproj" />
     <Project Path="src/Lua/Lua.csproj" />
     <Project Path="src/Modules/Modules.csproj" />
+    <Project Path="src/Networking/Networking.csproj" />
     <Project Path="src/Player/Player.csproj" />
     <Project Path="src/Runtime/Runtime.csproj" />
     <Project Path="src/View.Abstractions/View.Abstractions.csproj" />
