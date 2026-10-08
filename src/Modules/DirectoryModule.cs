@@ -3,14 +3,25 @@ using BoardGame.Kernel;
 namespace BoardGame.Modules;
 public static class DirectoryModule
 {
-    public static LoadedModule Load(string directory)
+    public static LoadedModule Load(string directory)=>LoadCore(directory,"module.json",null);
+    // Only the selected definition plugin supplies capability-owned metadata.
+    public static LoadedModule LoadDefinition(string directory,string path,System.Text.Json.Nodes.JsonObject metadata)=>LoadCore(directory,path,metadata);
+    private static LoadedModule LoadCore(string directory,string path,System.Text.Json.Nodes.JsonObject? supplied)
     {
-        var file = Path.Combine(Path.GetFullPath(directory), "module.json");
+        var file = Path.Combine(Path.GetFullPath(directory),path);
         try
         {
+            file=SafeFile(directory,path);
             using var original = JsonDocument.Parse(File.ReadAllText(file));
             CheckDuplicates(original.RootElement,"$");
-            using var document = JsonDocument.Parse(AuthorConfiguration.Expand(System.Text.Json.Nodes.JsonNode.Parse(original.RootElement.GetRawText())!.AsObject()).ToJsonString());
+            var authored=System.Text.Json.Nodes.JsonNode.Parse(original.RootElement.GetRawText())!.AsObject();
+            if(supplied!=null)
+                foreach(var item in supplied)
+                {
+                    if(authored.ContainsKey(item.Key)) Fail($"$.{item.Key}: belongs to game.start.json; duplicate configuration is forbidden");
+                    authored[item.Key]=item.Value?.DeepClone();
+                }
+            using var document = JsonDocument.Parse(AuthorConfiguration.Expand(authored).ToJsonString());
             var root = document.RootElement;
             CheckDuplicates(root, "$");
             var metadata=System.Text.Json.Nodes.JsonNode.Parse(root.GetRawText())!.AsObject();
@@ -26,12 +37,13 @@ public static class DirectoryModule
                 plugins.Add(new(dependency.Id,dependency.Version,dependency.Api,dependency.File!,dependency.Sha256!,dependency.Permissions ?? [],code));
             }
             if(metadata["runtimeFiles"] is System.Text.Json.Nodes.JsonArray runtimeFiles)
-                foreach(var runtimeFile in runtimeFiles) { var path=runtimeFile!.GetValue<string>(); runtimeHashes[path]=ModulePackage.Hash(File.ReadAllBytes(SafeFile(directory,path))); }
+                foreach(var runtimeFile in runtimeFiles) { var contentPath=runtimeFile!.GetValue<string>(); runtimeHashes[contentPath]=ModulePackage.Hash(File.ReadAllBytes(SafeFile(directory,contentPath))); }
             if (root.GetProperty("format").GetInt32() != 1) Fail("$.format: unsupported version");
             var id = Text(root, "id"); var version = Text(root, "version");
-            var rulesPath = SafeFile(directory, Text(root, "rules"));
-            var cpuPath = SafeFile(directory, Text(root, "cpu"));
-            var rules = File.ReadAllText(rulesPath); var cpu = File.ReadAllText(cpuPath);
+            var rulesPath = root.TryGetProperty("rules",out var ruleFile) && ruleFile.ValueKind==JsonValueKind.String?SafeFile(directory,ruleFile.GetString()!):"";
+            var cpuPath = root.TryGetProperty("cpu",out var cpuFile) && cpuFile.ValueKind==JsonValueKind.String?SafeFile(directory,cpuFile.GetString()!):"";
+            if(supplied==null && (rulesPath=="" || cpuPath=="")) Fail("rules/cpu: missing legacy script entry");
+            var rules = rulesPath==""?"":File.ReadAllText(rulesPath); var cpu = cpuPath==""?"":File.ReadAllText(cpuPath);
             var resources = new SortedDictionary<string, string>(StringComparer.Ordinal);
             var resourceData = new SortedDictionary<string, byte[]>(StringComparer.Ordinal);
             foreach (var resource in root.GetProperty("resources").EnumerateObject())
@@ -150,8 +162,9 @@ public static class DirectoryModule
         else if (element.ValueKind == JsonValueKind.Array)
         { var i = 0; foreach (var item in element.EnumerateArray()) CheckDuplicates(item, $"{path}[{i++}]"); }
     }
-    internal static string SafeFile(string directory, string relative)
+    public static string SafeFile(string directory, string relative)
     {
+        ModulePackage.ValidatePath(relative);
         var root = Path.TrimEndingDirectorySeparator(Path.GetFullPath(directory)); var path = Path.GetFullPath(Path.Combine(root, relative));
         if (Path.IsPathRooted(relative) || !path.StartsWith(root + Path.DirectorySeparatorChar, StringComparison.OrdinalIgnoreCase)) Fail($"{relative}: path escapes module");
         if (!File.Exists(path)) Fail($"{relative}: missing file");

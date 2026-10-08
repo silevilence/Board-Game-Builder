@@ -79,7 +79,8 @@ public static class ModulePackage
     }
     public static IEnumerable<string> ReferencedFiles(JsonObject root)
     {
-        var paths=new List<string> {root["rules"]!.GetValue<string>(),root["cpu"]!.GetValue<string>()};
+        var paths=new List<string>();
+        foreach(var key in new[]{"rules","cpu"}) if(root[key]!=null) paths.Add(root[key]!.GetValue<string>());
         paths.AddRange(root["resources"]!.AsObject().Select(p=>p.Value!.GetValue<string>()));
         if(root["runtimeFiles"] is JsonArray runtime) paths.AddRange(runtime.Select(p=>p!.GetValue<string>()));
         paths.AddRange(Dependencies(root).Where(d=>d.Kind=="wasm").Select(d=>d.File!));

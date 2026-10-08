@@ -19,8 +19,17 @@ internal static class RuntimeComposition
             [AuthorityPlugin.Selection,LuaRuntimePlugins.Select(module.Rules.Length==0?"rules.commands":"lua.rules"),LuaRuntimePlugins.Select("session.local"),
                 ..(module.Cpu.Length==0?Array.Empty<RuntimePluginSelection>():[LuaRuntimePlugins.Select("lua.cpu")]),
                 ..(module.RuntimePlugins is not {Count:>0}?Array.Empty<RuntimePluginSelection>():[LuaRuntimePlugins.Select("wasm")])]);
+        var catalog=Catalog(module,seed,controllers,maxSteps,startup);
+        return RuntimeHost.StartAsync(startup,catalog,
+            AuthorityPlugin.Required.Concat(["rules","session"]).Concat(controllers.Values.Contains("cpu")?["cpu"]:[])
+                .Concat(module.RuntimePlugins is {Count:>0}?["effects"]:[])).GetAwaiter().GetResult();
+    }
+    internal static IReadOnlyList<RuntimePluginDefinition> Catalog(LoadedModule module,uint seed,IReadOnlyDictionary<string,string> controllers,int maxSteps,RuntimeStartup startup)
+    {
+        var definition=RuntimeDefinition.From(module);
         var catalog=new List<RuntimePluginDefinition>
         {AuthorityPlugin.Create(module,seed),LuaRuntimePlugins.Rules(definition,seed),LuaRuntimePlugins.Cpu(definition),CommandRuleProvider.Plugin,WasmRuntimePlugin.Create(definition)};
+        catalog.Add(DefinitionPlugins.Module(startup));
         var capabilities=catalog.Where(p=>startup.Plugins.Any(s=>s.Id==p.Id)).SelectMany(p=>p.Provides).ToHashSet();
         var hasCpu=capabilities.Contains("cpu");var hasEffects=capabilities.Contains("effects");
         catalog.Add(new("session.local","1",1,["session"],
@@ -28,8 +37,6 @@ internal static class RuntimeComposition
                 scope.Provide("session",scope.Own(new LocalGameSession(module,seed,controllers,maxSteps,
                     scope.Service<IAuthoritySession>("authority"),scope.Service<RuleBinding>("rule-binding"),scope.Service<IRuleProvider>("rules"),
                     hasCpu?scope.Service<ICpuDecisionProvider>("cpu"):null,hasEffects?scope.Service<IEffectProvider>("effects"):null)))));
-        return RuntimeHost.StartAsync(startup,catalog,
-            AuthorityPlugin.Required.Concat(["rules","session"]).Concat(controllers.Values.Contains("cpu")?["cpu"]:[])
-                .Concat(module.RuntimePlugins is {Count:>0}?["effects"]:[])).GetAwaiter().GetResult();
+        return catalog;
     }
 }
