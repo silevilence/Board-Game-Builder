@@ -3,8 +3,7 @@ using System.Globalization;
 
 namespace BoardGame.Kernel;
 
-// A resource key optionally followed by a pixel rectangle: resource#x,y,width,height.
-// The bytes remain a single resource throughout loading, recording and rendering.
+// Device-independent image description in a resource pool. Parse/Validate serve explicit legacy loading only.
 public sealed record ImageReference(string Resource,int X=0,int Y=0,int Width=0,int Height=0,
     bool Rotated=false,int OffsetX=0,int OffsetY=0,int SourceWidth=0,int SourceHeight=0,string? Atlas=null)
 {

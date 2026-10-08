@@ -16,10 +16,14 @@ public static class ImportTests
         Check.That(doc.Revision==initial);preview.Apply(doc);var module=doc.Snapshot();
         Check.That(module.Initial.Entities["tts-001"].X==100 && module.Initial.Entities["tts-001"].Y==200);
         Check.That(module.Initial.Entities["tts-002"].Contents.SequenceEqual(new[] {"tts-003","tts-004"}));
-        Check.That(module.ResourceData!.Count==5);
+        Check.That(module.Resources!.Images.Count==5);
         Check.That(doc.Bytes("imports/tts-source.json").SequenceEqual(File.ReadAllBytes("samples/tts-subset/save.json")));
         Check.Throws(()=>TtsImport.Preview(doc,"samples/tts-subset/save.json","tts"),"冲突");
         doc.Undo();Check.That(initial==doc.Revision);doc.Redo();
+        var scanned=ModuleDocument.Open("samples/island-settlers");var scanInitial=scanned.Revision;
+        TtsImport.Preview(scanned,"samples/tts-subset/save.json","tts").Apply(scanned);
+        Check.That(scanned.Snapshot().Resources!.Images.Keys.Contains("tts-003-front"));
+        scanned.Undo();Check.That(scanned.Revision==scanInitial);
         var directory=Path.Combine(Path.GetTempPath(),"bgb-tts-"+Guid.NewGuid());
         try {doc.Save(directory);Check.That(ModuleDocument.Open(directory).Snapshot().Fingerprint==module.Fingerprint);}
         finally {if(Directory.Exists(directory)) Directory.Delete(directory,true);}
@@ -35,16 +39,20 @@ public static class ImportTests
             using(var image=new Bitmap(120,160)) {using var graphics=Graphics.FromImage(image);graphics.Clear(Color.Orange);graphics.FillRectangle(Brushes.Blue,60,80,60,80);image.Save(path,ImageFormat.Png);}
             var doc=ModuleDocument.Create();var initial=doc.Revision;var initialPaths=doc.Paths;
             var preview=ImageImport.Preview(doc,path,"cards",2,2);Check.That(preview.Files.Count==4 && doc.Revision==initial);
-            preview.Apply(doc);var imported=doc.Snapshot();Check.That(imported.ResourceData!.Count==4 && imported.Initial.Entities["cards-deck"].Contents.Count==4);
+            preview.Apply(doc);var imported=doc.Snapshot();Check.That(imported.Resources!.Images.Count==4 && imported.Initial.Entities["cards-deck"].Contents.Count==4);
             Check.Throws(()=>ImageImport.Preview(doc,path,"cards",2,2),"冲突");
             doc.Undo();Check.That(doc.Revision==initial && doc.Paths.SequenceEqual(initialPaths));doc.Redo();
             var saved=Path.Combine(folder,"module");doc.Save(saved);Check.That(ModuleDocument.Open(saved).Snapshot().Fingerprint==imported.Fingerprint);
-            TestModules.Pack(saved,Path.Combine(folder,"cards.bgm"));Check.That(TestModules.Load(Path.Combine(folder,"cards.bgm")).ResourceData!.Count==4);
+            TestModules.Pack(saved,Path.Combine(folder,"cards.bgm"));Check.That(TestModules.Load(Path.Combine(folder,"cards.bgm")).Resources!.Images.Count==4);
             Check.Throws(()=>ImageImport.Preview(doc,path,"bad",3,1),"整除");
             var stale=ImageImport.Preview(doc,path,"other");doc.EditStartup(root=>root["id"]="modified");Check.Throws(()=>stale.Apply(doc),"重新预览");
             var cloth=ImageImport.Preview(doc,path,"cloth",tablecloth:true);cloth.Apply(doc);
-            var scene=BoardGame.View.TableScene.From(new GameEngine(doc.Snapshot().Initial).Project("p1"),doc.Snapshot().ResourceData);
+            var scene=BoardGame.View.TableScene.From(new GameEngine(doc.Snapshot().Initial).Project("p1"),doc.Snapshot().Resources);
             Check.That(scene.Items[0].Kind=="tablecloth" && scene.Items[0].Entity==null);
+            var scanned=ModuleDocument.Open("samples/island-settlers");var scanInitial=scanned.Revision;var before=scanned.Snapshot().Resources!.Images.Count;
+            ImageImport.Preview(scanned,path,"imported").Apply(scanned);
+            Check.That(scanned.Snapshot().Resources!.Images.Count==before+1,"Directory scan duplicated an explicit import source");
+            scanned.Undo();Check.That(scanned.Revision==scanInitial);
         }
         finally {Directory.Delete(folder,true);}
     }

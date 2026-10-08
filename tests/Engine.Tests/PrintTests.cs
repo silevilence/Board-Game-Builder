@@ -28,7 +28,7 @@ public static class PrintTests
         Directory.CreateDirectory("artifacts/poker-uno");
         PrintLayout.Export(atlasPlan,"artifacts/poker-uno/print-"+Guid.NewGuid()+".pdf");
         // Packed clockwise, then restored counterclockwise into its original transparent canvas.
-        var metadata=System.Text.Json.Nodes.JsonNode.Parse(System.Text.Encoding.UTF8.GetString(atlas.ResourceData!["cards"]))!;
+        var metadata=System.Text.Json.Nodes.JsonNode.Parse(System.Text.Encoding.UTF8.GetString(atlas.Resources!.GetFile("assets/cards.json").Span))!;
         metadata["frames"]!["card_clubs_A"]=System.Text.Json.Nodes.JsonNode.Parse("""
             {"frame":{"x":0,"y":0,"w":20,"h":10},"rotated":true,"trimmed":true,
              "spriteSourceSize":{"x":5,"y":6,"w":10,"h":20},"sourceSize":{"w":20,"h":30}}
@@ -40,9 +40,11 @@ public static class PrintTests
             paint.FillRectangle(System.Drawing.Brushes.Blue,0,5,10,5);paint.FillRectangle(System.Drawing.Brushes.Yellow,10,5,10,5);
         }
         using var png=new MemoryStream();packed.Save(png,System.Drawing.Imaging.ImageFormat.Png);
-        var data=new SortedDictionary<string,byte[]>(atlas.ResourceData!,StringComparer.Ordinal)
-        { ["cards"]=System.Text.Encoding.UTF8.GetBytes(metadata.ToJsonString()),["cards/image"]=png.ToArray() };
-        var transformed=PrintLayout.Create(atlas with {ResourceData=data},["card-01"],new(Duplex:"none")).Pages[0][0];
+        var image=atlas.Resources!.GetImage("card_clubs_A") with {X=0,Y=0,Width=20,Height=10,Rotated=true,OffsetX=5,OffsetY=6,SourceWidth=20,SourceHeight=30};
+        var files=atlas.Resources.Files.ToDictionary(p=>p.Key,p=>p.Value);files["assets/cards.png"]=png.ToArray();
+        var images=atlas.Resources.Images.ToDictionary(p=>p.Key,p=>p.Value);images["card_clubs_A"]=image;
+        var pool=new BoardGame.Kernel.ResourcePool(files,images,atlas.Resources.Binaries);
+        var transformed=PrintLayout.Create(atlas with {Resources=pool},["card-01"],new(Duplex:"none")).Pages[0][0];
         using var jpeg=new MemoryStream(transformed.Image);using var result=new System.Drawing.Bitmap(jpeg);
         void Pixel(int x,int y,System.Drawing.Color expected)
         {

@@ -31,7 +31,9 @@ public static class GameRuntime
                 "definition.module"=>["path","presets"],"definition.state"=>["path"],"lua.rules" or "lua.cpu"=>["file"],"wasm"=>["extensions"],
                 "rules.commands"=>["actions"],_=>[]
             };
+            if(ResourcePlugins.IsResource(selection.Id)) fields=["sources"];
             CheckObject(selection.Configuration,fields,selection.Id+".configuration");
+            if(ResourcePlugins.IsResource(selection.Id)) _=ResourceSource.Read(selection.Configuration,selection.Id);
             if(selection.Id=="rules.commands") _=new CommandRuleProvider(selection.Configuration);
             if(selection.Id is "definition.module" or "definition.state") ModulePackage.ValidatePath(selection.Configuration.GetProperty("path").GetString()!);
             if(selection.Id is "lua.rules" or "lua.cpu") ModulePackage.ValidatePath(selection.Configuration.GetProperty("file").GetString()!);
@@ -72,11 +74,18 @@ public static class GameRuntime
         StateValidation.Validate(module.Initial);
         var resourceHashes=module.ResourceHashes ?? new(StringComparer.Ordinal);
         var resourceData=module.ResourceData ?? new(StringComparer.Ordinal);
+        if(resourceData.Count>0)throw new InvalidDataException("Legacy resource snapshot: explicitly migrate resource declarations and regenerate the snapshot");
         if(!resourceHashes.Keys.SequenceEqual(resourceData.Keys) || resourceHashes.Any(p=>ModulePackage.Hash(resourceData[p.Key])!=p.Value))
             throw new InvalidDataException("Resource snapshot content hash mismatch");
-        var images=new ImageCatalog(resourceData);
-        foreach(var entity in module.Initial.Entities.Values)
-            foreach(var reference in entity.FaceResources) images.Resolve(reference).Validate(resourceData);
+        var pool=module.Resources ?? ResourcePool.Empty;
+        foreach(var file in pool.Files)
+            if(identity.ContentHashes.GetValueOrDefault(file.Key)!=ModulePackage.Hash(file.Value.ToArray()))throw new InvalidDataException(file.Key+": resource content identity mismatch");
+        using(var resourceHost=StartResources(identity.Startup))
+        {
+            var rebuilt=resourceHost==null?ResourcePool.Empty:resourceHost.Service<ResourceRegistry>("resources").Load(new SnapshotResourceInput(pool));
+            if(Wire.Json(rebuilt)!=Wire.Json(pool))throw new InvalidDataException("Resource pool snapshot/configuration mismatch");
+        }
+        ValidateImages(module.Initial,pool);
         foreach(var path in identity.ContentHashes.Keys) ModulePackage.ValidatePath(path);
         var loader=identity.Startup.Plugins.Single(p=>p.Id is "definition.module" or "definition.state");
         if(identity.DefinitionSource!=loader.Configuration.GetProperty("path").GetString() || !identity.ContentHashes.ContainsKey(identity.DefinitionSource))
@@ -117,14 +126,16 @@ public static class GameRuntime
         var startup=GamePresets.Select(ReadStartup(directory),preset);
         var catalog=RuntimeComposition.Catalog(startup:startup);
         RuntimeHost.Validate(startup,catalog,AuthorityPlugin.Required.Concat(["definition","rules","session","recording"]));
-        var loaders=catalog.Where(p=>p.Provides.Contains("definition") && startup.Plugins.Any(s=>s.Id==p.Id)).ToArray();
+        var loaders=catalog.Where(p=>(p.Provides.Contains("definition") || ResourcePlugins.IsResource(p.Id)) && startup.Plugins.Any(s=>s.Id==p.Id)).ToArray();
         var loaderPlan=startup with {Plugins=startup.Plugins.Where(p=>loaders.Any(l=>l.Id==p.Id)).ToList()};
         using var host=RuntimeHost.StartAsync(loaderPlan,loaders,["definition"]).GetAwaiter().GetResult();
         var loader=host.Service<IDefinitionLoader>("definition");
-        var content=ContentFiles(directory,startup,loader);
+        var pool=startup.Plugins.Any(p=>p.Id=="resources")?host.Service<ResourceRegistry>("resources").Load(new DirectoryResourceInput(directory)):ResourcePool.Empty;
+        var content=ContentFiles(directory,startup,loader,pool);
         if(content.Count>ModuleContentLimits.MaxFiles-1 || content.Sum(p=>new FileInfo(DirectoryModule.SafeFile(directory,p)).Length)>ModuleContentLimits.MaxTotalBytes)
             throw new InvalidDataException("Directory content size budget exceeded");
-        var definition=loader.Load(directory);
+        var definition=loader.Load(directory) with {Resources=pool};
+        ValidateImages(definition.Initial,pool);
         var hashes=new SortedDictionary<string,string>(StringComparer.Ordinal);
         foreach(var file in content) hashes[file]=ModulePackage.Hash(File.ReadAllBytes(DirectoryModule.SafeFile(directory,file)));
         // Raw startup bytes are not identity: whitespace/key order does not change effective configuration.
@@ -133,13 +144,14 @@ public static class GameRuntime
         var cpu=definition.CapabilityData.TryGetValue("lua.cpu",out var c)?c.Deserialize<LuaScript>(Wire.Options):null;
         var wasm=definition.CapabilityData.TryGetValue("wasm",out var w)?w.Deserialize<List<RuntimePlugin>>(Wire.Options):null;
         var result=new LoadedModule(startup.Id,startup.Version,"",definition.Initial,rules?.Source ?? "",cpu?.Source ?? "",rules?.Path ?? "",cpu?.Path ?? "",
-            definition.ResourceHashes,definition.ResourceData,null,wasm is {Count:>0}?wasm:null,identity,definition);
+            definition.ResourceHashes,definition.ResourceData,null,wasm is {Count:>0}?wasm:null,identity,definition,pool);
         return result with {Fingerprint=ModuleSnapshot.Fingerprint(result)};
     }
-    internal static IReadOnlyList<string> ContentFiles(string directory,RuntimeStartup startup,IDefinitionLoader loader)
+    internal static IReadOnlyList<string> ContentFiles(string directory,RuntimeStartup startup,IDefinitionLoader loader,ResourcePool? resources=null)
     {
         var paths=loader.ContentFiles(directory).ToList();
         paths.AddRange(RuntimeContent.Files(startup));
+        paths.AddRange(resources?.Files.Keys ?? []);
         foreach(var path in paths)
         {
             ModulePackage.ValidatePath(path);
@@ -148,5 +160,18 @@ public static class GameRuntime
         var distinct=paths.Distinct(StringComparer.Ordinal).Order(StringComparer.Ordinal).ToArray();
         if(distinct.Distinct(StringComparer.OrdinalIgnoreCase).Count()!=distinct.Length) throw new InvalidDataException("Duplicate case-insensitive content path");
         return distinct;
+    }
+    private static RuntimeHost? StartResources(RuntimeStartup startup)
+    {
+        var selected=startup.Plugins.Where(p=>ResourcePlugins.IsResource(p.Id)).ToList();
+        if(selected.Count==0)return null;
+        return RuntimeHost.StartAsync(startup with {Plugins=selected},ResourcePlugins.Catalog(()=>null).ToArray(),["resources"]).GetAwaiter().GetResult();
+    }
+    private static void ValidateImages(GameState state,ResourcePool resources)
+    {
+        foreach(var entity in state.Entities.Values)
+            foreach(var name in entity.FaceResources)
+                try {var image=resources.GetImage(name);_=resources.GetFile(image.Resource);}
+                catch(Exception e) when(e is InvalidDataException) {throw new InvalidDataException(entity.Id+".faces: "+e.Message,e);}
     }
 }

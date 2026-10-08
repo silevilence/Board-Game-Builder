@@ -5,7 +5,7 @@ public sealed class InteractiveTable : UserControl, IDisposable
 {
     private readonly DesktopViewport viewport=new();
     private readonly TableInteraction input=new();
-    private TableScene scene=new([],new Dictionary<string,byte[]>());
+    private TableScene scene=new([],BoardGame.Kernel.ResourcePool.Empty);
     private readonly StackPanel controls=new() {Orientation=Avalonia.Layout.Orientation.Horizontal,Spacing=6};
     public string? Selected=>input.Selected;
     public bool InputEnabled { get=>input.Enabled; set { if(value!=input.Enabled) viewport.ResetClickSequence(); input.Enabled=value; } }

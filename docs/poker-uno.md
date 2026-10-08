@@ -38,7 +38,7 @@ Server、Player 和游戏包使用同一版本。客户端入口为“文件 →
 
 编辑器打开 `game.start.json`。`definition.module.configuration.path` 选择默认人数，`presets` 声明三份定义。当前 path 使用结构化作者界面，其他定义可通过通用文件编辑修改。切换默认人数可撤销／重做，打包收集全部预设及资源。
 
-`assets/cards.json` 使用 TexturePacker JSON Hash，描述唯一图片 `assets/cards.png` 中的 52 张正面及一张牌背。定义仅声明 `"cards": "assets/cards.json"`，牌面直接写 `"card_hearts_A"`、`"card_back"` 等帧名。加载和打包自动包含 JSON 引用的 PNG；绘制共享纹理，打印按帧还原，不生成单牌 PNG。FreeCell 没有牌背，牌背来自同一 Kenney 包在 island-settlers 中的资源；许可在 assets/License.txt。`pwsh -File scripts/build-poker-uno.ps1` 重建图集、JSON Hash 及三份定义，需要 Windows System.Drawing 和 Python 3，无 Pillow 依赖。
+`assets/cards.json` 使用 TexturePacker JSON Hash，描述唯一图片 `assets/cards.png` 中的 52 张正面及一张牌背。启动文件通过 `resources.texturepacker` 的 `sources` 声明 `assets` 目录及 `*.json` 筛选，牌面直接写 `"card_hearts_A"`、`"card_back"` 等帧名。加载和打包自动包含 JSON 引用的 PNG；绘制共享纹理，打印按帧还原，不生成单牌 PNG。FreeCell 没有牌背，牌背来自同一 Kenney 包在 island-settlers 中的资源；许可在 assets/License.txt。`pwsh -File scripts/build-poker-uno.ps1` 重建图集、JSON Hash 及三份定义，需要 Windows System.Drawing 和 Python 3，无 Pillow 依赖。
 
 ```powershell
 dotnet build BoardGameBuilder.slnx -c Release

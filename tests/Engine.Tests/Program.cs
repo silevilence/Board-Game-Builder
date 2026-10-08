@@ -5,6 +5,7 @@ try
 {
     tests.Add("poker-uno",PokerUnoTests.Run);
     tests.Add("atlas",AtlasTests.Run);
+    tests.Add("resource-plugins",ResourcePluginTests.Run);
     tests.Add("poker-uno-batch",PokerUnoTests.Batch);
     tests.Add("poker-uno-modes",PokerUnoTests.Modes);
     tests.Add("poker-uno-online",PokerUnoOnlineTests.Run);

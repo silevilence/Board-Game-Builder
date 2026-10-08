@@ -15,7 +15,7 @@ internal static class RuntimeDefinition
             ["lua.rules"]=JsonSerializer.SerializeToElement(new LuaScript(module.Rules,module.RulesPath),Wire.Options),
             ["lua.cpu"]=JsonSerializer.SerializeToElement(new LuaScript(module.Cpu,module.CpuPath),Wire.Options),
             ["wasm"]=JsonSerializer.SerializeToElement(module.RuntimePlugins ?? [],Wire.Options)
-        });
+        },module.Resources);
     public static T Configuration<T>(GameDefinition definition,string capability)=>
         definition.CapabilityData.TryGetValue(capability,out var configuration)
             ? configuration.Deserialize<T>(Wire.Options) ?? throw new InvalidDataException(capability+": missing configuration")

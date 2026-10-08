@@ -25,7 +25,7 @@ public static class PrintLayout
         if(columns<1 || rows<1 || selected.Count is <1 or >200) throw new InvalidDataException("卡牌无法放入纸张或选择数量不在 1～200");
         if(o.CardWidth/25.4*150*(o.CardHeight/25.4*150)*selected.Count*(o.Duplex=="none"?1:2)>100_000_000) throw new InvalidDataException("打印图像总尺寸超限，请减少选择数量");
         var pages=new List<List<PrintPlacement>>();var capacity=rows*columns;
-        var images=module.ResourceData==null?null:new ImageCatalog(module.ResourceData);
+        var images=module.Resources;
         for(var offset=0;offset<selected.Count;offset+=capacity)
         {
             var front=new List<PrintPlacement>();var back=new List<PrintPlacement>();
@@ -41,11 +41,12 @@ public static class PrintLayout
                     var width=(int)Math.Round(o.CardWidth/25.4*150);var height=(int)Math.Round(o.CardHeight/25.4*150);
                     using var bitmap=new Bitmap(width,height);using var graphics=Graphics.FromImage(bitmap);graphics.Clear(Color.White);
                     var face=reverse?1:0;
-                    var reference=entity.FaceResources.Count>face?images?.Resolve(entity.FaceResources[face]):null;
-                    if(reference!=null && module.ResourceData?.TryGetValue(reference.Resource,out var resource)==true)
+                    var reference=entity.FaceResources.Count>face?images?.GetImage(entity.FaceResources[face]):null;
+                    if(reference!=null)
                     {
+                        var resource=images!.GetFile(reference.Resource);
                         if(resource.Length>16*1024*1024) throw new InvalidDataException("卡图超过打印资源限制");
-                        using var stream=new MemoryStream(resource);using var image=new Bitmap(stream);
+                        using var stream=new MemoryStream(resource.ToArray());using var image=new Bitmap(stream);
                         if((long)image.Width*image.Height>32_000_000) throw new InvalidDataException("卡图尺寸超限");
                         reference.CheckBounds(image.Width,image.Height);
                         var source=reference.IsRegion?new Rectangle(reference.X,reference.Y,reference.Width,reference.Height):new Rectangle(0,0,image.Width,image.Height);

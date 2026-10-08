@@ -56,7 +56,7 @@ public static class IslandTests
         Check.That(cpu.Fault==null && cpu.Ended,Wire.Json(cpu.Fault)+" "+Wire.Json(cpu.ExportDiagnostics().TakeLast(4)));
         Check.That(cpu.Steps<500);
         Check.That(Wire.Json(cpu.ExportRecording().Replay().Project("p1"))==Wire.Json(cpu.View("p1")));
-        var scene=TableScene.From(cpu.View("p1"),m.ResourceData);
+        var scene=TableScene.From(cpu.View("p1"),m.Resources);
         Check.That(scene.Items.Count(i=>i.Kind=="line")==72 && scene.Items.Count(i=>i.Kind=="panel")==6);
         Check.That(scene.Items.All(i=>!i.Label.Contains("{score}")));
         Console.WriteLine($"Island seed 42: {cpu.Steps} commands, winners {string.Join(',',cpu.View("p1").Winners)}");
@@ -74,7 +74,7 @@ public static class IslandTests
         Check.That(s.Actions().All(a=>a.Id=="end"),"Two-action budget bypassed");
         var own=s.View("p1").Entities.Single(e=>e.Container=="hand-p1");
         Check.That(!s.View("p2").Entities.Any(e=>e.Id==own.Id),"Development identity leaked");
-        Check.That(!TableScene.From(s.View("p2"),m.ResourceData).Resources.ContainsKey(own.Resource!));
+        Check.That(!TableScene.From(s.View("p2"),m.Resources).Resources.Images.ContainsKey(own.Resource!));
         Check.That(s.View("p1").Entities.Single(e=>e.Id=="stock-p1").Properties["ore"]==2);
         var before=s.AuthorityStateHash();Check.That(!s.SubmitHuman("p1",new() {Kind="play-card",Entity=own.Id}).Accepted && before==s.AuthorityStateHash());
         Check.That(Wire.Json(s.ExportRecording().Replay().Project("p2"))==Wire.Json(s.View("p2")));

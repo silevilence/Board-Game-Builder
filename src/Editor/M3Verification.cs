@@ -43,17 +43,17 @@ internal static class M3Verification
                     await commands.Execute("images.preview");
                     docs.EditForm("图片导入",Wire.Json(new[] {source,"changed","2","2","false"}));
                     await commands.Execute("images.apply");
-                    if(docs.Current!.Snapshot().ResourceData!.Count!=0 || !docs.HasPendingForms) throw new Exception("Stale image preview consumed newer fields");
+                    if(docs.Current!.Snapshot().Resources!.Images.Count!=0 || !docs.HasPendingForms) throw new Exception("Stale image preview consumed newer fields");
                     docs.EditForm("图片导入",Wire.Json(new[] {source,"cards","2","2","false"}));
                     await commands.Execute("images.apply");
-                    if(docs.Current!.Snapshot().ResourceData!.Count!=4) throw new Exception("Image UI import failed");
+                    if(docs.Current!.Snapshot().Resources!.Images.Count!=4) throw new Exception("Image UI import failed");
                     if(cycle==2)
                     {
                         app.Service<WorkspaceShell>("workspace").Tabs.SelectedItem=app.Service<WorkspaceShell>("workspace").Tabs.Items.OfType<TabItem>().Single(t=>Equals(t.Tag,"author.images"));
                         await Task.Delay(150);
                         using var screenshot=new RenderTargetBitmap(new(1400,900));screenshot.Render(host.Window);screenshot.Save(output+".png",PngBitmapEncoderOptions.Default);
                     }
-                    docs.Current.Undo();if(docs.Current.Snapshot().ResourceData!.Count!=0) throw new Exception("Import Undo failed");
+                    docs.Current.Undo();if(docs.Current.Snapshot().Resources!.Images.Count!=0) throw new Exception("Import Undo failed");
                     await app.Disable("author.images");
                     if(panels.Count!=baseline || commands.Items.Any(c=>c.Id.StartsWith("images."))) throw new Exception("Image registration leaked");
                 }
@@ -62,9 +62,9 @@ internal static class M3Verification
                     await Enable("author.tts");docs.EditForm("TTS 导入",Wire.Json(new[] {"samples/tts-subset/save.json","tts"}));
                     await Reload("author.tts");await commands.Execute("tts.preview");
                     docs.EditForm("TTS 导入",Wire.Json(new[] {"samples/tts-subset/save.json","changed"}));await commands.Execute("tts.apply");
-                    if(docs.Current!.Snapshot().ResourceData!.Count!=0 || !docs.HasPendingForms) throw new Exception("Stale TTS preview consumed newer fields");
+                    if(docs.Current!.Snapshot().Resources!.Images.Count!=0 || !docs.HasPendingForms) throw new Exception("Stale TTS preview consumed newer fields");
                     docs.EditForm("TTS 导入",Wire.Json(new[] {"samples/tts-subset/save.json","tts"}));await commands.Execute("tts.apply");
-                    if(docs.Current!.Snapshot().ResourceData!.Count!=5) throw new Exception("TTS UI conversion failed");
+                    if(docs.Current!.Snapshot().Resources!.Images.Count!=5) throw new Exception("TTS UI conversion failed");
                     docs.Current.Undo();await app.Disable("author.tts");
                     if(panels.Count!=baseline || commands.Items.Any(c=>c.Id.StartsWith("tts."))) throw new Exception("TTS contributions leaked");
                 }

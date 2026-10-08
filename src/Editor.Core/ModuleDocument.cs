@@ -54,7 +54,7 @@ public sealed class ModuleDocument
     public void EditStartup(Action<JsonObject> edit) {var root=Startup;edit(root);EditText(GameRuntime.Entry,root.ToJsonString(new(){WriteIndented=true}));}
     public byte[] Bytes(string path)=>files[path].ToArray();
     public string Revision=>Hash(files);
-    public void Import(string revision,JsonObject configuration,IReadOnlyDictionary<string,byte[]> additions)
+    public void Import(string revision,JsonObject configuration,IReadOnlyDictionary<string,byte[]> additions,IReadOnlyDictionary<string,string>? images=null)
     {
         if(revision!=Revision) throw new InvalidOperationException("文档已改变，请重新预览导入。");
         var candidate=new Dictionary<string,byte[]>(files,StringComparer.Ordinal);
@@ -63,6 +63,13 @@ public sealed class ModuleDocument
             ModulePackage.ValidatePath(file.Key);
             if(candidate.Keys.Any(p=>p.Equals(file.Key,StringComparison.OrdinalIgnoreCase))) throw new InvalidDataException("导入路径冲突："+file.Key);
             candidate.Add(file.Key,file.Value.ToArray());
+        }
+        if(images is {Count:>0})
+        {
+            // Existing directory sources may already discover newly imported images.
+            var discovered=new ModuleDocument(candidate,null).Snapshot().Resources!.Images;
+            var missing=images.Where(p=>!discovered.TryGetValue(p.Key,out var image) || image.Resource!=p.Value || image.IsRegion).ToDictionary(p=>p.Key,p=>p.Value);
+            if(missing.Count>0)candidate[GameRuntime.Entry]=Encoding.UTF8.GetBytes(ResourceAuthoring.AddImages(Startup,missing).ToJsonString());
         }
         candidate[DefinitionPath]=Encoding.UTF8.GetBytes(AuthorFormat!.Serialize(this,configuration));
         var probe=new ModuleDocument(candidate,null);_=probe.Snapshot();

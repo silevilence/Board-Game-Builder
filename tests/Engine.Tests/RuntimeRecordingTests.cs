@@ -34,7 +34,11 @@ public static class RuntimeRecordingTests
             var unsupported=Wire.Copy(changed);unsupported.RuntimeIdentity!.Startup.Plugins[0]=unsupported.RuntimeIdentity.Startup.Plugins[0] with {Version="999"};
             Reject(unsupported,"version");
             var resource=Wire.Copy(changed);resource.ResourceHashes!["probe"]="bad";resource.ResourceData!["probe"]=[1];
-            Reject(resource,"Resource snapshot");
+            Reject(resource,"Legacy resource snapshot");
+            var pooled=GameRuntime.Load("samples/freecell");
+            var files=pooled.Resources!.Files.ToDictionary(p=>p.Key,p=>p.Value);files[files.Keys.First()]=new byte[]{1};
+            var altered=new ResourcePool(files,pooled.Resources.Images,pooled.Resources.Binaries);
+            Reject(pooled with {Resources=altered,Definition=pooled.Definition! with {Resources=altered}},"resource content identity");
             var wrongPath=changed with {RulesPath="different.lua"};Reject(wrongPath,"snapshot conflict");
             var wasm=GameRuntime.Load("samples/wasm-counter");
             var selection=wasm.RuntimeIdentity!.Startup.Plugins.Single(p=>p.Id=="wasm");

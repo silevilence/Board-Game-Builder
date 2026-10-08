@@ -33,10 +33,10 @@ public static class PokerUnoTests
             var illegal=own.Entities.FirstOrDefault(e=>e.Container=="hand-p1" && e.Properties["suit"]!=top.Properties["suit"] && e.Properties["rank"]!=top.Properties["rank"]);
             if(illegal!=null)Check.That(!session.SubmitHuman("p1",new() {Kind="play",Entity=illegal.Id}).Accepted);
             Check.That(before==session.AuthorityStateHash());
-            var scene=TableScene.From(own,module.ResourceData);
-            Check.That(scene.Resources.Keys.Order().SequenceEqual(new[] {"cards","cards/image"}),"Atlas bytes were split or duplicated by face");
-            var images=new ImageCatalog(scene.Resources);
-            Check.That(scene.Items.Where(i=>i.Kind=="card").All(i=>images.Resolve(i.Resource!).IsRegion));
+            var scene=TableScene.From(own,module.Resources);
+            Check.That(scene.Resources.Files.Keys.SequenceEqual(new[] {"assets/cards.png"}),"Atlas bytes were split or duplicated by face");
+            var images=scene.Resources;
+            Check.That(scene.Items.Where(i=>i.Kind=="card").All(i=>images.GetImage(i.Resource!).IsRegion));
             Check.That(scene.Items.Any(i=>i.Kind=="back" && i.Resource!=null));
             Check.That(Wire.Json(session.ExportRecording().Replay().Project("p1"))==Wire.Json(own));
         }
@@ -94,11 +94,11 @@ public static class PokerUnoTests
     {
         var module=Load();
         var refs=module.Initial.Entities.Values.Where(e=>e.Properties.ContainsKey("rank")).SelectMany(e=>e.FaceResources).Distinct().ToArray();
-        var images=new ImageCatalog(module.ResourceData!);
-        Check.That(refs.Length==53 && refs.All(r=>!r.Contains('#')));foreach(var r in refs)images.Resolve(r).Validate(module.ResourceData!);
+        var images=module.Resources!;
+        Check.That(refs.Length==53 && refs.All(r=>!r.Contains('#')));foreach(var r in refs)Check.That(images.GetFile(images.GetImage(r).Resource).Length>0);
         Check.Throws(()=>ImageReference.Parse("cards#-1,0,1,1"),"Invalid image region");
         Check.Throws(()=>ImageReference.Parse("cards#0,0,0,1"),"Empty image region");
-        Check.Throws(()=>ImageReference.Parse("cards/image#99999,0,1,1").Validate(module.ResourceData!),"outside resource");
+        Check.Throws(()=>ImageReference.Parse("cards/image#99999,0,1,1").CheckBounds(1872,970),"outside resource");
         Check.Throws(()=>GameRuntime.Load("samples/poker-uno","3 人"),"Unknown definition preset");
         var folder=Path.GetFullPath("artifacts/poker-uno/package-"+Guid.NewGuid());Directory.CreateDirectory(folder);
         var package=Path.Combine(folder,"game.bgm");GamePackage.Pack("samples/poker-uno",package);

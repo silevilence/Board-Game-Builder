@@ -2,6 +2,8 @@
 
 基于卡坦岛概念的 **M3 引擎总体示例**，并非基础版的完整复刻。四个独立席位可由真人或 CPU 控制；默认 p1、p2 真人，p3、p4 CPU。资源来自用户指定的三个 Kenney 包，许可保存在 assets。
 
+资源来源在 `game.start.json` 中配置：`resources.images` 通过 `assets` 下的 `*.png` 加载图片，以文件名去掉扩展名作为资源名；`resources` 将 `player.json` 注册为 `player.presentation`。配置规则见 [运行插件协议](../../docs/runtime-plugins.md)。
+
 ## 开始
 
 在 Editor 打开本目录的 game.start.json，或运行：

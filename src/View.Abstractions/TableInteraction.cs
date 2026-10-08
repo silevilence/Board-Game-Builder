@@ -5,7 +5,7 @@ public sealed record TableGesture(string Kind,string? Entity,string? Target,doub
 // Pure pointer state shared by all hosts. No game rules and no access to authority data.
 public sealed class TableInteraction
 {
-    private TableScene scene=new([],new Dictionary<string,byte[]>());
+    private TableScene scene=new([],BoardGame.Kernel.ResourcePool.Empty);
     private string? pressed, selectionAtDown;
     private bool down, moved, enabled=true;
     private float startX,startY;

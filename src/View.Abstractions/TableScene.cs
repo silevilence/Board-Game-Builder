@@ -13,21 +13,14 @@ public sealed record TableItem(string? Entity, string Kind, string Label, TableR
         var world=Layout.World(PositionX,PositionY); var logical=Layout.Logical(world.X+dx,world.Y+dy); return Layout.Snap(logical.X,logical.Y);
     }
 }
-public sealed record TableScene(IReadOnlyList<TableItem> Items, IReadOnlyDictionary<string,byte[]> Resources,BoardLayout? Layout=null,bool ClassicCards=false)
+public sealed record TableScene(IReadOnlyList<TableItem> Items, ResourcePool Resources,BoardLayout? Layout=null,bool ClassicCards=false)
 {
     public TableItem? Hit(float x,float y) => Items.LastOrDefault(i=>i.Entity!=null && i.Bounds.Contains(x,y));
     public TableItem? Region(float x,float y) => Items.FirstOrDefault(i=>i.Kind=="region" && i.Bounds.Contains(x,y));
-    public static TableScene From(SeatView projection,IReadOnlyDictionary<string,byte[]>? resources=null)
+    public static TableScene From(SeatView projection,ResourcePool? resources=null)
     {
-        var items=new List<TableItem>(); var used=new Dictionary<string,byte[]>();
-        var images=resources==null?null:new ImageCatalog(resources);
-        void Use(string? value)
-        {
-            if(value==null || resources==null) return;
-            var reference=images!.Resolve(value);var key=reference.Resource;
-            if(resources.TryGetValue(key,out var bytes)) used[key]=bytes;
-            if(reference.Atlas is {} atlas) used[atlas]=resources[atlas];
-        }
+        var items=new List<TableItem>();var used=new HashSet<string>(StringComparer.Ordinal);
+        void Use(string? value) {if(value!=null && resources!=null) {_=resources.GetImage(value);used.Add(value);}}
         foreach(var cloth in projection.Entities.Where(e=>e.Properties.GetValueOrDefault("viewTablecloth")==1 && e.Resource!=null))
         {
             Use(cloth.Resource);
@@ -93,6 +86,6 @@ public sealed record TableScene(IReadOnlyList<TableItem> Items, IReadOnlyDiction
             var bounds=point==null?new TableRect((float)e.X+30,(float)e.Y+40+(regions.Length+1)/2*235+loose++*48,360,40):new TableRect((float)point.Value.X-36,(float)point.Value.Y-24,76,48);
             items.Add(new(e.Id,"piece",label,bounds,e.Resource,e.X,e.Y,projection.Layout,projection.Layout==null?null:detail));
         }
-        return new(items.OrderBy(i=>i.Layer).ToArray(),used,projection.Layout,classic);
+        return new(items.OrderBy(i=>i.Layer).ToArray(),resources?.Select(used) ?? ResourcePool.Empty,projection.Layout,classic);
     }
 }

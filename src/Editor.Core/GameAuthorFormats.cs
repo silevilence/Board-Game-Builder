@@ -48,7 +48,7 @@ public sealed class GameAuthorFormats
         RuntimePluginSelection Select(string id,object config)=>new(id,"1",1,JsonSerializer.SerializeToElement(config,Wire.Options));
         var startup=new RuntimeStartup(1,"untitled","1.0.0",
             [Select("definition.module",new {path="module.json"}),Select("kernel",new {}),Select("lua.rules",new {file="rules.lua"}),
-                Select("lua.cpu",new {file="cpu.lua"}),Select("session.local",new {}),Select("recording",new {})]);
+                Select("lua.cpu",new {file="cpu.lua"}),Select("session.local",new {}),Select("recording",new {}),Select("resources",new {}),Select("resources.images",new {})]);
         return new(StringComparer.Ordinal)
         {
             [GameRuntime.Entry]=Encoding.UTF8.GetBytes(Wire.Json(startup)),

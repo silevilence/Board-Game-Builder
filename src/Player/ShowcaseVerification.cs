@@ -34,7 +34,7 @@ internal static class ShowcaseVerification
                 results.Add(new {settings="all presets, last human seat, all CPU, cancel"});
                 var refs=initial.Initial.Entities.Values.SelectMany(e=>e.FaceResources).Distinct().ToArray();
                 var atlas=new InteractiveTable {InputEnabled=false};active=atlas;window.Content=atlas;
-                atlas.Show(new(refs.Select((r,i)=>new TableItem(null,"card","",new TableRect(10+i%13*86,10+i/13*126,80,110),r)).ToArray(),initial.ResourceData!));
+                atlas.Show(new(refs.Select((r,i)=>new TableItem(null,"card","",new TableRect(10+i%13*86,10+i/13*126,80,110),r)).ToArray(),initial.Resources!));
                 await Task.Delay(500);Check(atlas.RenderedFrames>0 && atlas.CachedImages==1,"Atlas did not share one GPU texture");
                 atlas.SaveImage(output+".atlas.png");atlas.Dispose();window.Content=null;active=null;
                 results.Add(new {atlas=true,faces=refs.Length,textures=1});

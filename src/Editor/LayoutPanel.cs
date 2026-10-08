@@ -26,11 +26,11 @@ public sealed class LayoutPanel : UserControl,IDisposable
         {
             try
             {
-                if(context.Document==null) { table.Show(new([],new Dictionary<string,byte[]>())); return; }
+                if(context.Document==null) { table.Show(new([],BoardGame.Kernel.ResourcePool.Empty)); return; }
                 var module=context.Document.Snapshot();
                 // Author preview shows the initial configuration, never a mutable PlaySession state.
                 var state=Wire.Copy(module.Initial); foreach(var entity in state.Entities.Values) { entity.Visibility="public"; entity.FaceUp=true; }
-                var view=new BoardGame.Kernel.GameEngine(state).Project(state.Seats[0].Id); table.Show(TableScene.From(view,module.ResourceData));
+                var view=new BoardGame.Kernel.GameEngine(state).Project(state.Seats[0].Id); table.Show(TableScene.From(view,module.Resources));
                 kind.SelectedItem=state.Layout?.Kind ?? "free"; size.Value=(decimal)(state.Layout?.Size ?? 70); message.Text="作者初始局面 · 拖动吸附；六角使用 q/r 坐标";
             }
             catch(Exception e) {message.Text=e.Message;}

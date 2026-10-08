@@ -9,8 +9,8 @@ public static class AlternativeDefinitionTests
 {
     public static void Convert(string directory)
     {
-        var module=GameRuntime.Load(directory);var old=JsonNode.Parse(File.ReadAllText(Path.Combine(directory,"module.json")))!;
-        var state=new JsonObject {["format"]=1,["state"]=JsonSerializer.SerializeToNode(module.Initial,Wire.Options),["resources"]=old["resources"]!.DeepClone()};
+        var module=GameRuntime.Load(directory);
+        var state=new JsonObject {["format"]=1,["state"]=JsonSerializer.SerializeToNode(module.Initial,Wire.Options)};
         File.WriteAllText(Path.Combine(directory,"position.json"),state.ToJsonString());
         var file=Path.Combine(directory,GameRuntime.Entry);var startup=JsonNode.Parse(File.ReadAllText(file))!;
         var loader=startup["plugins"]!.AsArray().Single(p=>p!["id"]!.GetValue<string>()=="definition.module")!;

@@ -49,6 +49,32 @@
       "configuration": {
         "file": "cpu.lua"
       }
+    },
+    {
+      "id": "resources",
+      "version": "1",
+      "api": 1,
+      "configuration": {
+        "sources": [
+          {
+            "path": "player.json",
+            "name": "player.presentation"
+          }
+        ]
+      }
+    },
+    {
+      "id": "resources.texturepacker",
+      "version": "1",
+      "api": 1,
+      "configuration": {
+        "sources": [
+          {
+            "path": "assets",
+            "pattern": "*.json"
+          }
+        ]
+      }
     }
   ]
 }

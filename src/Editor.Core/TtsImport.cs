@@ -13,7 +13,7 @@ public static class TtsImport
         if(string.IsNullOrWhiteSpace(prefix) || prefix.Length>60 || prefix.Any(c=>!char.IsAsciiLetterOrDigit(c) && c is not ('-' or '_'))) throw new InvalidDataException("导入名称无效");
         if(new FileInfo(file).Length>8*1024*1024) throw new InvalidDataException("TTS 存档超过 8 MiB");
         var input=File.ReadAllBytes(file);if(input.Length>8*1024*1024) throw new InvalidDataException("TTS 存档超过 8 MiB");
-        var save=JsonNode.Parse(input)!.AsObject();var root=document.Configuration;var entities=root["entities"]!.AsArray();var resources=root["resources"]!.AsObject();
+        var save=JsonNode.Parse(input)!.AsObject();var root=document.Configuration;var entities=root["entities"]!.AsArray();var resources=new JsonObject();
         if(root["layout"]==null) root["layout"]=new JsonObject {["kind"]="free",["size"]=100};
         var files=new Dictionary<string,byte[]> {["imports/"+prefix+"-source.json"]=input};var report=new List<string> {"来源脚本不会执行；原始存档将保留在 imports。"};
         var basePath=Path.GetDirectoryName(Path.GetFullPath(file))!;var count=0;long resourceBytes=input.Length;
@@ -26,7 +26,7 @@ public static class TtsImport
         foreach(var field in save.Where(p=>p.Key is not ("ObjectStates" or "TableURL" or "SaveName" or "VersionNumber"))) report.Add("未转换顶层字段："+field.Key);
         foreach(var path in files.Keys) if(document.Paths.Any(p=>p.Equals(path,StringComparison.OrdinalIgnoreCase))) throw new InvalidDataException("导入路径冲突："+path);
         if(files.Sum(f=>(long)f.Value.Length)>64*1024*1024) throw new InvalidDataException("转换资源超过 64 MiB");
-        return new(document.Revision,root,files,report);
+        return new(document.Revision,root,files,report,resources.ToDictionary(p=>p.Key,p=>p.Value!.GetValue<string>()));
 
         string? Convert(JsonObject item,JsonObject? inherited,int depth)
         {

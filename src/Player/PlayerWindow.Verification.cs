@@ -63,7 +63,7 @@ public sealed partial class PlayerWindow
             BoardGame.Runtime.GamePackage.Pack("samples/island-settlers",package);path.Text=package;await Load();
             Check(localBoard!=null && presentation.Title=="群岛开拓" && !top.IsVisible,"Package presentation / automatic start failed");
             Check(presentation.Help?.Contains("秘密竞拍")==true,"Package help did not load");
-            var bad=module with {ResourceData=new(StringComparer.Ordinal) {{"player.presentation",System.Text.Encoding.UTF8.GetBytes("{\"unknown\":true}")}}};
+            var bad=module with {Resources=new ResourcePool(new Dictionary<string,ReadOnlyMemory<byte>> {{"player.json",System.Text.Encoding.UTF8.GetBytes("{\"unknown\":true}")}},new Dictionary<string,ImageReference>(),new Dictionary<string,string> {{"player.presentation","player.json"}})};
             var rejected=false;try {PlayerPresentation.Read(bad);}catch(System.Text.Json.JsonException) {rejected=true;}Check(rejected,"Malformed presentation was silently accepted");
             var launch=PlayerLaunch.Parse(["--shell","tools","samples/freecell"]);Check(launch.Shell==PlayerShell.Tools && launch.Module=="samples/freecell","GUI options incorrectly parsed");
             foreach(var args in new[] {new[] {"--shell","bad"},new[] {"--shell"},new[] {"--shell","game","--shell","tools"},new[] {"--unknown","x"},new[] {"--actions","x"}})

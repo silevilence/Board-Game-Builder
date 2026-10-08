@@ -16,7 +16,8 @@ public static class ReviewFollowupTests
             var current=GameRuntime.Load(directory);
             Check.That(GameRuntime.Load(Path.Combine(directory,GameRuntime.Entry)).Fingerprint==current.Fingerprint,"Selected startup file did not resolve its directory");
             Check.Throws(()=>new PlaySession(current with {RuntimeIdentity=null}),"runtime identity");
-            Check.That(GameRuntime.PluginVersions.Count==9 && GameRuntime.PluginVersions.Values.All(v=>v=="1"));
+            Check.That(GameRuntime.PluginVersions.Count==12 && GameRuntime.PluginVersions.Values.All(v=>v=="1"));
+            Check.That(new[]{"resources","resources.images","resources.texturepacker"}.All(GameRuntime.PluginVersions.ContainsKey));
             foreach(var (json,field) in new[]{("null","$"),("[]","$"),("{\"format\":1}","$.state"),
                 ("{\"format\":1,\"state\":null,\"resources\":{}}","$.state"),
                 ("{\"format\":1,\"state\":{},\"resources\":[]}","$.resources"),

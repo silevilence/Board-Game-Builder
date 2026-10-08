@@ -47,12 +47,13 @@ for count in (4, 5, 6):
     write(f'module-{count}.json', {'format': 1, 'layout': {'kind': 'free', 'size': 70, 'originX': 15, 'originY': 20},
           'seats': [{'id': f'p{i+1}', 'team': f'p{i+1}', 'controller': 'human' if i == 0 else 'cpu'} for i in range(count)],
           'phases': ['setup', 'opening', 'play', 'drawn'],
-          'resources': {'cards': 'assets/cards.json', 'player.presentation': 'player.json'},
           'runtimeFiles': ['assets/License.txt', 'README.md'], 'entities': entities})
 
 plugins = [{'id': key, 'version': '1', 'api': 1, 'configuration': config} for key, config in (
     ('kernel', {}), ('session.local', {}), ('recording', {}),
     ('definition.module', {'path': 'module-4.json', 'presets': {f'{n} 人': f'module-{n}.json' for n in (4, 5, 6)}}),
+    ('resources', {'sources': [{'path': 'player.json', 'name': 'player.presentation'}]}),
+    ('resources.texturepacker', {'sources': [{'path': 'assets', 'pattern': '*.json'}]}),
     ('lua.rules', {'file': 'rules.lua'}), ('lua.cpu', {'file': 'cpu.lua'}))]
 write('game.start.json', {'format': 1, 'id': 'poker-uno', 'version': '1.0.0', 'plugins': plugins})
 write('player.json', {'title': '同花同点 · 扑克牌 UNO', 'showActions': True,

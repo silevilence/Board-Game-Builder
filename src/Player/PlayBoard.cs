@@ -66,7 +66,7 @@ public sealed class PlayBoard : UserControl,IDisposable
     {
         if(disposed) return;
         var frame=session.Frame; var v=frame.View;
-        table.Show(TableScene.From(v,module.ResourceData)); table.InputEnabled=hostError==null && !session.Busy && !v.Ended && frame.Fault==null && !frame.Cpu;
+        table.Show(TableScene.From(v,module.Resources)); table.InputEnabled=hostError==null && !session.Busy && !v.Ended && frame.Fault==null && !frame.Cpu;
         status.Text=hostError ?? $"席位 {v.Seat} · 当前 {v.CurrentSeat}\n阶段 {v.Phase} · 行动 {v.Turn}\n"+
             (frame.Fault!=null?$"对局故障：{frame.Fault.Code}\n{frame.Fault.Detail}":v.Ended?$"对局结束\n胜者：{string.Join(", ",v.Winners)}":session.LastMessage);
         if(classic && hostError==null && frame.Fault==null)

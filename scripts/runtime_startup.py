@@ -1,5 +1,6 @@
 """Write generated examples using the current runtime entry protocol."""
 import json
+from pathlib import Path
 
 
 def write_game(root, module):
@@ -17,5 +18,14 @@ def write_game(root, module):
     extensions = definition.pop('plugins', [])
     if extensions:
         select('wasm', {'extensions': extensions})
+    resources = definition.pop('resources', {})
+    images = [{'path': path, 'name': name} for name, path in resources.items()
+              if Path(path).suffix.lower() in ('.png', '.jpg', '.jpeg', '.gif', '.bmp')]
+    files = [{'path': path, 'name': name} for name, path in resources.items()
+             if Path(path).suffix.lower() not in ('.png', '.jpg', '.jpeg', '.gif', '.bmp')]
+    if resources:
+        select('resources', {'sources': files})
+    if images:
+        select('resources.images', {'sources': images})
     for name, data in (('module.json', definition), ('game.start.json', startup)):
         (root / name).write_text(json.dumps(data, ensure_ascii=False, indent=2)+'\n', encoding='utf-8')

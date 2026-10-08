@@ -1,1 +1,279 @@
-{"format":1,"id":"freecell","version":"1.2.0","plugins":[{"id":"kernel","version":"1","api":1,"configuration":{}},{"id":"session.local","version":"1","api":1,"configuration":{}},{"id":"definition.module","version":"1","api":1,"configuration":{"path":"module.json"}},{"id":"lua.rules","version":"1","api":1,"configuration":{"file":"rules.lua"}},{"id":"lua.cpu","version":"1","api":1,"configuration":{"file":"cpu.lua"}},{"id":"recording","version":"1","api":1,"configuration":{}}]}
+{
+  "format": 1,
+  "id": "freecell",
+  "version": "1.2.0",
+  "plugins": [
+    {
+      "id": "kernel",
+      "version": "1",
+      "api": 1,
+      "configuration": {}
+    },
+    {
+      "id": "session.local",
+      "version": "1",
+      "api": 1,
+      "configuration": {}
+    },
+    {
+      "id": "definition.module",
+      "version": "1",
+      "api": 1,
+      "configuration": {
+        "path": "module.json"
+      }
+    },
+    {
+      "id": "lua.rules",
+      "version": "1",
+      "api": 1,
+      "configuration": {
+        "file": "rules.lua"
+      }
+    },
+    {
+      "id": "lua.cpu",
+      "version": "1",
+      "api": 1,
+      "configuration": {
+        "file": "cpu.lua"
+      }
+    },
+    {
+      "id": "recording",
+      "version": "1",
+      "api": 1,
+      "configuration": {}
+    },
+    {
+      "id": "resources",
+      "version": "1",
+      "api": 1,
+      "configuration": {
+        "sources": [
+          {
+            "path": "player.json",
+            "name": "player.presentation"
+          }
+        ]
+      }
+    },
+    {
+      "id": "resources.images",
+      "version": "1",
+      "api": 1,
+      "configuration": {
+        "sources": [
+          {
+            "path": "assets/card_clubs_A.png",
+            "name": "card-01"
+          },
+          {
+            "path": "assets/card_clubs_02.png",
+            "name": "card-02"
+          },
+          {
+            "path": "assets/card_clubs_03.png",
+            "name": "card-03"
+          },
+          {
+            "path": "assets/card_clubs_04.png",
+            "name": "card-04"
+          },
+          {
+            "path": "assets/card_clubs_05.png",
+            "name": "card-05"
+          },
+          {
+            "path": "assets/card_clubs_06.png",
+            "name": "card-06"
+          },
+          {
+            "path": "assets/card_clubs_07.png",
+            "name": "card-07"
+          },
+          {
+            "path": "assets/card_clubs_08.png",
+            "name": "card-08"
+          },
+          {
+            "path": "assets/card_clubs_09.png",
+            "name": "card-09"
+          },
+          {
+            "path": "assets/card_clubs_10.png",
+            "name": "card-10"
+          },
+          {
+            "path": "assets/card_clubs_J.png",
+            "name": "card-11"
+          },
+          {
+            "path": "assets/card_clubs_Q.png",
+            "name": "card-12"
+          },
+          {
+            "path": "assets/card_clubs_K.png",
+            "name": "card-13"
+          },
+          {
+            "path": "assets/card_diamonds_A.png",
+            "name": "card-14"
+          },
+          {
+            "path": "assets/card_diamonds_02.png",
+            "name": "card-15"
+          },
+          {
+            "path": "assets/card_diamonds_03.png",
+            "name": "card-16"
+          },
+          {
+            "path": "assets/card_diamonds_04.png",
+            "name": "card-17"
+          },
+          {
+            "path": "assets/card_diamonds_05.png",
+            "name": "card-18"
+          },
+          {
+            "path": "assets/card_diamonds_06.png",
+            "name": "card-19"
+          },
+          {
+            "path": "assets/card_diamonds_07.png",
+            "name": "card-20"
+          },
+          {
+            "path": "assets/card_diamonds_08.png",
+            "name": "card-21"
+          },
+          {
+            "path": "assets/card_diamonds_09.png",
+            "name": "card-22"
+          },
+          {
+            "path": "assets/card_diamonds_10.png",
+            "name": "card-23"
+          },
+          {
+            "path": "assets/card_diamonds_J.png",
+            "name": "card-24"
+          },
+          {
+            "path": "assets/card_diamonds_Q.png",
+            "name": "card-25"
+          },
+          {
+            "path": "assets/card_diamonds_K.png",
+            "name": "card-26"
+          },
+          {
+            "path": "assets/card_hearts_A.png",
+            "name": "card-27"
+          },
+          {
+            "path": "assets/card_hearts_02.png",
+            "name": "card-28"
+          },
+          {
+            "path": "assets/card_hearts_03.png",
+            "name": "card-29"
+          },
+          {
+            "path": "assets/card_hearts_04.png",
+            "name": "card-30"
+          },
+          {
+            "path": "assets/card_hearts_05.png",
+            "name": "card-31"
+          },
+          {
+            "path": "assets/card_hearts_06.png",
+            "name": "card-32"
+          },
+          {
+            "path": "assets/card_hearts_07.png",
+            "name": "card-33"
+          },
+          {
+            "path": "assets/card_hearts_08.png",
+            "name": "card-34"
+          },
+          {
+            "path": "assets/card_hearts_09.png",
+            "name": "card-35"
+          },
+          {
+            "path": "assets/card_hearts_10.png",
+            "name": "card-36"
+          },
+          {
+            "path": "assets/card_hearts_J.png",
+            "name": "card-37"
+          },
+          {
+            "path": "assets/card_hearts_Q.png",
+            "name": "card-38"
+          },
+          {
+            "path": "assets/card_hearts_K.png",
+            "name": "card-39"
+          },
+          {
+            "path": "assets/card_spades_A.png",
+            "name": "card-40"
+          },
+          {
+            "path": "assets/card_spades_02.png",
+            "name": "card-41"
+          },
+          {
+            "path": "assets/card_spades_03.png",
+            "name": "card-42"
+          },
+          {
+            "path": "assets/card_spades_04.png",
+            "name": "card-43"
+          },
+          {
+            "path": "assets/card_spades_05.png",
+            "name": "card-44"
+          },
+          {
+            "path": "assets/card_spades_06.png",
+            "name": "card-45"
+          },
+          {
+            "path": "assets/card_spades_07.png",
+            "name": "card-46"
+          },
+          {
+            "path": "assets/card_spades_08.png",
+            "name": "card-47"
+          },
+          {
+            "path": "assets/card_spades_09.png",
+            "name": "card-48"
+          },
+          {
+            "path": "assets/card_spades_10.png",
+            "name": "card-49"
+          },
+          {
+            "path": "assets/card_spades_J.png",
+            "name": "card-50"
+          },
+          {
+            "path": "assets/card_spades_Q.png",
+            "name": "card-51"
+          },
+          {
+            "path": "assets/card_spades_K.png",
+            "name": "card-52"
+          }
+        ]
+      }
+    }
+  ]
+}

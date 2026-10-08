@@ -14,7 +14,7 @@ public static class FreeCellShortcutTests
         { Check.That(ui.SubmitAsync(ui.Frame.Revision,intent).Result.Accepted==expected); }
         Submit(new("shortcut",Action:"confirm")); Submit(new("shortcut",Action:"confirm"));
         var input=new TableInteraction(); var gestures=new List<TableGesture>(); input.Gesture+=gestures.Add;
-        var scene=TableScene.From(ui.Frame.View,module.ResourceData); input.Show(scene);
+        var scene=TableScene.From(ui.Frame.View,module.Resources); input.Show(scene);
         void Click(float x,float y) {input.Pointer("down",x,y); input.Pointer("up",x,y);}
         var top=scene.Items.Last(i=>i.Container=="column-1"); var b=top.Bounds;
         Click(b.X+5,b.Y+5); Check.That(input.Selected==top.Entity && gestures.Count==0);
@@ -26,12 +26,12 @@ public static class FreeCellShortcutTests
         var old=ui.Frame; Submit(new("double-click",top.Entity));
         Check.That(!ui.SubmitAsync(old.Revision,new("double-click",top.Entity)).Result.Accepted,"Stale duplicate double click accepted");
         Submit(new("shortcut",Action:"undo"));
-        scene=TableScene.From(ui.Frame.View,module.ResourceData); input.Show(scene); gestures.Clear();
+        scene=TableScene.From(ui.Frame.View,module.Resources); input.Show(scene); gestures.Clear();
         Click(b.X+5,b.Y+5); var cell=scene.Items.Single(i=>i.Entity=="cell-1").Bounds; Click(cell.X+5,cell.Y+5);
         Check.That(gestures.Count==1 && gestures[0].Kind=="click" && gestures[0].Entity==top.Entity && gestures[0].Target=="cell-1");
         Submit(new("click",top.Entity,"cell-1")); Submit(new("shortcut",Action:"undo"));
         // Numeric selection and the same destination use the shared click command path.
-        input.Show(TableScene.From(ui.Frame.View,module.ResourceData)); gestures.Clear(); input.RegionKey(1);
+        input.Show(TableScene.From(ui.Frame.View,module.Resources)); gestures.Clear(); input.RegionKey(1);
         Check.That(input.Selected==top.Entity); input.RegionKey(2);
         Check.That(gestures.Count==1 && gestures[0].Target=="column-2");
         // Peek is a presentation-only operation, including for buried cards.
@@ -48,7 +48,7 @@ public static class FreeCellShortcutTests
         Check.That(gestures.Count==0 && input.Selected==top.Entity);
         input.Pointer("down",b.X+5,b.Y+5); input.Pointer("move",b.X+25,b.Y+5); input.Pointer("move",b.X+5,b.Y+5); input.Pointer("up",b.X+5,b.Y+5);
         Check.That(gestures.Count==1 && gestures[0].Kind=="drag");
-        var hiddenScene=new TableScene([new("hidden","back","背面",new(0,0,100,100)),new(null,"back","隐藏",new(120,0,100,100))],new Dictionary<string,byte[]>());
+        var hiddenScene=new TableScene([new("hidden","back","背面",new(0,0,100,100)),new(null,"back","隐藏",new(120,0,100,100))],BoardGame.Kernel.ResourcePool.Empty);
         input.Show(hiddenScene); input.Pointer("right-down",5,5); Check.That(input.Peeked==null);
         input.Pointer("right-down",125,5); Check.That(input.Peeked==null);
         // Illegal shortcuts (buried card / full cell / occupied source cell) never become raw transfers.

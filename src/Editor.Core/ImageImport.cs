@@ -5,9 +5,9 @@ using System.Text.Json.Nodes;
 
 namespace BoardGame.Editor;
 
-public sealed record ImportPreview(string Revision,JsonObject Configuration,Dictionary<string,byte[]> Files,List<string> Report)
+public sealed record ImportPreview(string Revision,JsonObject Configuration,Dictionary<string,byte[]> Files,List<string> Report,Dictionary<string,string>? Images=null)
 {
-    public void Apply(ModuleDocument document)=>document.Import(Revision,Configuration,Files);
+    public void Apply(ModuleDocument document)=>document.Import(Revision,Configuration,Files,Images);
 }
 
 [SupportedOSPlatform("windows6.1")]
@@ -22,7 +22,7 @@ public static class ImageImport
         if(image.Width>8192 || image.Height>8192 || (long)image.Width*image.Height>32_000_000 || image.Width%columns!=0 || image.Height%rows!=0)
             throw new InvalidDataException("图片尺寸超限或不能整除行列。");
         var root=document.Configuration;var files=new Dictionary<string,byte[]>();var report=new List<string>();long resourceBytes=0;
-        var resources=root["resources"]!.AsObject();var entities=root["entities"]!.AsArray();var ids=new List<string>();
+        var resources=new JsonObject();var entities=root["entities"]!.AsArray();var ids=new List<string>();
         var width=image.Width/columns;var height=image.Height/rows;
         for(var r=0;r<rows;r++) for(var c=0;c<columns;c++)
         {
@@ -42,6 +42,6 @@ public static class ImageImport
             if(entities.Any(e=>e!["id"]!.GetValue<string>()==deck)) throw new InvalidDataException("牌组命名冲突："+deck);
             entities.Add(new JsonObject {["id"]=deck,["components"]=new JsonArray {new JsonObject {["type"]="container",["data"]=new JsonObject {["capacity"]=ids.Count,["ordered"]=true,["contents"]=new JsonArray(ids.Select(id=>(JsonNode?)JsonValue.Create(id)).ToArray())}}}});
         }
-        return new(document.Revision,root,files,report);
+        return new(document.Revision,root,files,report,resources.ToDictionary(p=>p.Key,p=>p.Value!.GetValue<string>()));
     }
 }

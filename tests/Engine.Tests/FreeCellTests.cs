@@ -12,7 +12,7 @@ public static class FreeCellTests
     public static void Run()
     {
         var module=TestModules.Load(Source);
-        Check.That(module.ResourceData!.Count==53 && module.ResourceData.ContainsKey("player.presentation") && module.Initial.Seats.Count==1);
+        Check.That(module.Resources!.Images.Count==52 && module.Resources.Binaries.ContainsKey("player.presentation") && module.Initial.Seats.Count==1);
         Check.That(ModuleSnapshot.Fingerprint(Wire.Copy(module))==module.Fingerprint,"Mixed-case runtime paths changed fingerprint at wire boundary");
         var output=Path.GetFullPath("artifacts/freecell-validation"); Directory.CreateDirectory(output);
         using var worker=new LuaWorkerSession();
@@ -34,8 +34,8 @@ public static class FreeCellTests
             for(var i=1;i<=8;i++) Check.That(dealt.Entities["column-"+i].Contents.Count==(i<=4?7:6));
             Check.That(dealt.Entities.Values.Where(e=>e.Properties.ContainsKey("rank")).All(e=>e.FaceUp && e.Visibility=="public"));
             Check.That(dealt.Entities.Values.SelectMany(e=>e.Contents).Distinct().Count()==52);
-            var scene=TableScene.From(engine.Project("p1"),module.ResourceData);
-            Check.That(scene.Items.Count(i=>i.Kind=="card")==52 && scene.Resources.Count==52);
+            var scene=TableScene.From(engine.Project("p1"),module.Resources);
+            Check.That(scene.Items.Count(i=>i.Kind=="card")==52 && scene.Resources.Images.Count==52);
             Check.That(!scene.Items.Any(i=>i.Entity is "deck" or "match"));
             foreach(var column in dealt.Entities.Values.Where(e=>e.Id.StartsWith("column-")))
             {
@@ -96,8 +96,8 @@ public static class FreeCellTests
         Check.That(winner.Project("p1").Ended && winner.Project("p1").Winners.SequenceEqual(new[]{"p1"}));
         Check.That(winner.ExportAuthorityState().Entities["match"].Properties["home"]==52); Reject(winner,new(){Kind="undo"});
         var package=Path.Combine(output,Guid.NewGuid()+".bgm"); TestModules.Pack(Source,package);
-        var packed=TestModules.Load(package); Check.That(packed.Fingerprint==module.Fingerprint && packed.ResourceData!.Count==53);
-        Check.That(packed.ResourceData!["player.presentation"].SequenceEqual(module.ResourceData!["player.presentation"]),"Player presentation lost during packaging");
+        var packed=TestModules.Load(package); Check.That(packed.Fingerprint==module.Fingerprint && packed.Resources!.Images.Count==52);
+        Check.That(packed.Resources!.GetBinary("player.presentation").Span.SequenceEqual(module.Resources!.GetBinary("player.presentation").Span),"Player presentation lost during packaging");
         using(var human=new PlaySession(packed,42,maxSteps:1))
         {
             Check.That(human.SubmitHuman("p1",new(){Kind="start"}).Accepted);

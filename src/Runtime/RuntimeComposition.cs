@@ -31,6 +31,7 @@ internal static class RuntimeComposition
         catalog.Add(DefinitionPlugins.Module(Startup));
         catalog.Add(StateDefinitionLoader.Plugin(Startup));
         catalog.Add(SessionRecorder.Plugin(Module));
+        catalog.AddRange(ResourcePlugins.Catalog(()=>module?.Resources));
         var capabilities=catalog.Where(p=>startup?.Plugins?.Any(s=>s.Id==p.Id)==true).SelectMany(p=>p.Provides).ToHashSet();
         var hasCpu=capabilities.Contains("cpu");var hasEffects=capabilities.Contains("effects");
         catalog.Add(new("session.local","1",1,["session"],

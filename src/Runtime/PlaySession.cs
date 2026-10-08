@@ -146,7 +146,7 @@ internal sealed class LocalGameSession : IGameSession
             if(Wire.Json(identity.ContentHashes.Where(p=>!scripts.Contains(p.Key)).ToArray())!=Wire.Json(nextIdentity.ContentHashes.Where(p=>!scripts.Contains(p.Key)).ToArray()))
                 throw new InvalidOperationException("Non-script content changed; restart required.");
         }
-        if(Wire.Json(candidate.Initial)!=Wire.Json(module.Initial) || Wire.Json(candidate.ResourceHashes)!=Wire.Json(module.ResourceHashes) || Wire.Json(candidate.RuntimeHashes)!=Wire.Json(module.RuntimeHashes) || Wire.Json(candidate.RuntimePlugins)!=Wire.Json(module.RuntimePlugins) || candidate.Id!=module.Id)
+        if(Wire.Json(candidate.Initial)!=Wire.Json(module.Initial) || Wire.Json(candidate.Resources)!=Wire.Json(module.Resources) || Wire.Json(candidate.ResourceHashes)!=Wire.Json(module.ResourceHashes) || Wire.Json(candidate.RuntimeHashes)!=Wire.Json(module.RuntimeHashes) || Wire.Json(candidate.RuntimePlugins)!=Wire.Json(module.RuntimePlugins) || candidate.Id!=module.Id)
             throw new InvalidOperationException("Configuration, resources or dependencies changed; restart required.");
         if(candidate.Fingerprint!=BoardGame.Modules.ModuleSnapshot.Fingerprint(candidate)) throw new InvalidDataException("Script version fingerprint mismatch");
         var definition=RuntimeDefinition.From(candidate);

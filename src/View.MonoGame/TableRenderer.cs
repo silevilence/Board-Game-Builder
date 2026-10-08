@@ -12,8 +12,6 @@ public sealed class TableRenderer : IDisposable
     private readonly Dictionary<string, Texture2D> labels = [];
     private readonly Dictionary<string,Texture2D> images=[];
     private readonly Dictionary<string,Rectangle> imageContent=[];
-    private IReadOnlyDictionary<string,byte[]>? catalogResources;
-    private ImageCatalog? catalog;
     public int CachedImages=>images.Count;
     public int CachedLabels=>labels.Count;
     public int LabelTexturesCreated { get; private set; }
@@ -55,15 +53,13 @@ public sealed class TableRenderer : IDisposable
         batch.Draw(texture,new Vector2(x,y),color);
     }
     public void End() => batch.End();
-    public void Image(string id,IReadOnlyDictionary<string,byte[]> resources,Rectangle bounds,bool trimTransparent=false)
+    public void Image(string id,ResourcePool resources,Rectangle bounds,bool trimTransparent=false)
     {
-        if(!ReferenceEquals(catalogResources,resources)) {catalog=new ImageCatalog(resources);catalogResources=resources;}
-        var reference=catalog!.Resolve(id);
-        if(!resources.TryGetValue(reference.Resource,out var bytes)) { Text("缺失资源: "+id,bounds.X,bounds.Y,Color.Red); return; }
-        var key=reference.Resource+":"+Convert.ToHexString(System.Security.Cryptography.SHA256.HashData(bytes));
+        var reference=resources.GetImage(id);var bytes=resources.GetFile(reference.Resource);
+        var key=Convert.ToHexString(System.Security.Cryptography.SHA256.HashData(bytes.Span));
         if(!images.TryGetValue(key,out var texture))
         {
-            try { using var stream=new MemoryStream(bytes); texture=Texture2D.FromStream(device,stream); images.Add(key,texture); }
+            try { using var stream=new MemoryStream(bytes.ToArray()); texture=Texture2D.FromStream(device,stream); images.Add(key,texture); }
             catch(Exception) { Text("资源无法解码: "+id,bounds.X,bounds.Y,Color.Red); return; }
         }
         reference.CheckBounds(texture.Width,texture.Height);

@@ -62,7 +62,7 @@ internal sealed class OnlineWindow : Window
         var frame=session.Frame;
         table.InputEnabled=renderFailure==null && session.Connected && !busy && frame is {Started:true,Closed:false,Fault:null} && !frame.View.Ended && frame.Actions.Count>0;
         if(frame==null)return;
-        if(frame.Revision!=revision) {revision=frame.Revision;table.Show(TableScene.From(frame.View,module.ResourceData));}
+        if(frame.Revision!=revision) {revision=frame.Revision;table.Show(TableScene.From(frame.View,module.Resources));}
         var v=frame.View;
         status.Text=$"身份 {v.Seat} · 当前 {v.CurrentSeat} · {v.Seats.Count} 人 · 阶段 {v.Phase} · 行动 {v.Turn}\n"+
             (!session.Connected?"连接已中断，请点击恢复连接。":frame.Closed?"服务器会话已关闭。":frame.Fault!=null?"会话故障："+frame.Fault:
@@ -107,7 +107,7 @@ internal sealed class OnlineReplayWindow : Window
         void Show()
         {
             var frame=record.Frames[(int)Math.Round(slider.Value)];
-            table.Show(TableScene.From(frame.View,module.ResourceData));
+            table.Show(TableScene.From(frame.View,module.Resources));
             label.Text=$"记录 {frame.Revision}/{record.Frames.Count-1} · {frame.View.CurrentSeat} · {frame.View.Phase}";
         }
         slider.ValueChanged+=(_,_)=>Show();

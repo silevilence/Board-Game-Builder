@@ -45,9 +45,12 @@ public static class DirectoryModule
             var cpuPath = root.TryGetProperty("cpu",out var cpuFile) && cpuFile.ValueKind==JsonValueKind.String?SafeFile(directory,cpuFile.GetString()!):"";
             if(input==DefinitionInput.Legacy && (rulesPath=="" || cpuPath=="")) Fail("rules/cpu: missing legacy script entry");
             var rules = rulesPath==""?"":File.ReadAllText(rulesPath); var cpu = cpuPath==""?"":File.ReadAllText(cpuPath);
-            var resourceData=ModuleResources.Load(directory,root.GetProperty("resources").EnumerateObject().Select(p=>new KeyValuePair<string,string>(p.Name,p.Value.GetString()!)));
+            if(input==DefinitionInput.Startup && root.TryGetProperty("resources",out var oldResources) && oldResources.EnumerateObject().Any())
+                throw new InvalidDataException("Definition resources must migrate to game.start.json resource plugins");
+            var resourceData=new SortedDictionary<string,byte[]>(StringComparer.Ordinal);
+            if(input==DefinitionInput.Legacy && root.TryGetProperty("resources",out var legacyResources))
+                foreach(var asset in legacyResources.EnumerateObject())resourceData.Add(asset.Name,File.ReadAllBytes(SafeFile(directory,asset.Value.GetString()!)));
             var resources=new SortedDictionary<string,string>(resourceData.ToDictionary(p=>p.Key,p=>ModulePackage.Hash(p.Value)),StringComparer.Ordinal);
-            var images=new ImageCatalog(resourceData);
             var state = new GameState();
             if(root.TryGetProperty("layout",out var layout)) state.Layout=Wire.Read<BoardLayout>(layout.GetRawText());
             foreach (var seat in root.GetProperty("seats").EnumerateArray())
@@ -81,7 +84,7 @@ public static class DirectoryModule
                             entity.Faces = data.GetProperty("names").EnumerateArray().Select(v => v.GetString()!).ToList(); entity.FaceUp = data.GetProperty("up").GetBoolean();
                             entity.FaceResources=data.GetProperty("resources").EnumerateArray().Select(v=>v.GetString()!).ToList();
                             foreach (var asset in data.GetProperty("resources").EnumerateArray())
-                                try {images.Resolve(asset.GetString()!).Validate(resourceData);}
+                                try {if(input==DefinitionInput.Legacy)ImageReference.Parse(asset.GetString()!).Validate(resourceData);}
                                 catch(InvalidDataException error) {throw new InvalidDataException($"$.entities[{entity.Id}].faces: {error.Message}",error);}
                             break;
                         case "position": entity.X = data.GetProperty("x").GetDouble(); entity.Y = data.GetProperty("y").GetDouble(); break;

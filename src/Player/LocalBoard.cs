@@ -32,7 +32,7 @@ public sealed class LocalBoard : UserControl,IDisposable
     }
     private void Clear()
     {
-        foreach(var table in tables) {table.InputEnabled=false;table.Show(new([],new Dictionary<string,byte[]>()));table.Dispose();}
+        foreach(var table in tables) {table.InputEnabled=false;table.Show(new([],BoardGame.Kernel.ResourcePool.Empty));table.Dispose();}
         tables.Clear();sidebars.Clear();views.Children.Clear();views.ColumnDefinitions.Clear();views.RowDefinitions.Clear();header.Children.Clear();
     }
     private void Refresh()
@@ -72,7 +72,7 @@ public sealed class LocalBoard : UserControl,IDisposable
                 controls.Children.Add(button);
             }
             var table=new InteractiveTable {InputEnabled=!seat.Cpu && !seat.View.Ended && seat.Fault==null && seat.Actions.Count>0};tables.Add(table);
-            table.Show(TableScene.From(seat.View,module.ResourceData));panel.Children.Add(table);
+            table.Show(TableScene.From(seat.View,module.Resources));panel.Children.Add(table);
             table.Gesture+=g=>_=Run(async ()=> {await session.SubmitAsync(frame.Revision,seat.View.Seat,new(g.Kind,g.Entity,g.Target,g.X,g.Y));});
             table.RenderingError+=error=> {Clear();header.Children.Add(new TextBlock {Text=error});session.Dispose();};
         }

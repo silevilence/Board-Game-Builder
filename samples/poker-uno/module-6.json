@@ -44,10 +44,6 @@
     "play",
     "drawn"
   ],
-  "resources": {
-    "cards": "assets/cards.json",
-    "player.presentation": "player.json"
-  },
   "runtimeFiles": [
     "assets/License.txt",
     "README.md"

@@ -91,10 +91,10 @@ public sealed class PlayPanel : UserControl,IDisposable
         timeline.Text=reply==null?"":controller.AuthorityLog
             ? "作者权威日志（不提供给玩家或脚本）\n"+string.Join("\n",(reply.Timeline ?? []).Select(e=>$"#{e.Submission.Sequence} {e.Submission.Actor} {Wire.Json(e.Submission.Command)} → {e.Submission.Reason}"))+"\n"+string.Join("\n",(reply.Diagnostics ?? []).Select(d=>$"#{d.Sequence} {d.Entry} {d.Message}"))
             : "玩家可读记录\n"+string.Join("\n",(reply.PlayerLog ?? []).Select(e=>$"#{e.Sequence} {e.Actor} {e.Reason}"));
-        if(controller.Frame is not {} frame || controller.Module is not {} module) {Table.Show(new([],new Dictionary<string,byte[]>()));return;}
+        if(controller.Frame is not {} frame || controller.Module is not {} module) {Table.Show(new([],BoardGame.Kernel.ResourcePool.Empty));return;}
         var view=frame.View;
         if(reply?.AuthorityState is {} authority) {var state=Wire.Copy(authority);foreach(var e in state.Entities.Values) {e.Visibility="public";e.FaceUp=true;}view=GameEngine.ProjectSnapshot(state,frame.View.Seat);}
-        var resources=frame.IsReplay && reply?.Recording is {} history?history.Versions[history.Log.ModuleFingerprint].ResourceData:module.ResourceData;
+        var resources=frame.IsReplay && reply?.Recording is {} history?history.Versions[history.Log.ModuleFingerprint].Resources:module.Resources;
         Table.Show(TableScene.From(view,resources));
         status.Text=$"试玩 · {frame.View.Seat} | 当前 {frame.View.CurrentSeat}\n{frame.View.Phase} · {frame.View.Turn} · {(frame.Paused?"已暂停":"运行中")}\n"+controller.Status+"\n"+(frame.View.Ended?"结算："+string.Join(",",frame.View.Winners):frame.Fault?.Detail ?? "");
         if(reply?.AuthorityState!=null) status.Text="⚠ 作者全信息调试 · 隐藏真值\n"+status.Text;

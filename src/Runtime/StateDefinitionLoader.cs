@@ -5,7 +5,7 @@ using BoardGame.Modules;
 
 namespace BoardGame.Runtime;
 
-// A second authored format: explicit validated state and named resource paths.
+// A second authored format: explicit validated state, independent of resource formats.
 // It shares no module.json parser and requires no changes to Player or scheduling.
 internal sealed class StateDefinitionLoader(RuntimeStartup startup,string source) : IDefinitionLoader
 {
@@ -21,10 +21,13 @@ internal sealed class StateDefinitionLoader(RuntimeStartup startup,string source
                 throw new InvalidDataException("$.format: expected supported version 1");
             if(root.Any(p=>p.Key is not ("format" or "state" or "resources"))) throw new InvalidDataException("$: unknown state definition field");
             if(root["state"] is not JsonObject) throw new InvalidDataException("$.state: required object");
-            if(root["resources"] is not JsonObject resources) throw new InvalidDataException("$.resources: required object");
-            foreach(var resource in resources)
-                if(resource.Value is not JsonValue value || !value.TryGetValue<string>(out var path) || string.IsNullOrWhiteSpace(path))
-                    throw new InvalidDataException("$.resources."+resource.Key+": required file path string");
+            if(root.ContainsKey("resources"))
+            {
+                if(root["resources"] is not JsonObject resources)throw new InvalidDataException("$.resources: expected object");
+                foreach(var resource in resources)
+                    if(resource.Value is not JsonValue value || !value.TryGetValue<string>(out _))throw new InvalidDataException("$.resources."+resource.Key+": expected path");
+                if(resources.Count>0)throw new InvalidDataException("$.resources: migrate definition resources to game.start.json resource plugins");
+            }
             return root;
         }
         catch(Exception error) when(error is not OutOfMemoryException)
@@ -41,11 +44,7 @@ internal sealed class StateDefinitionLoader(RuntimeStartup startup,string source
         }
         catch(Exception error) when(error is not OutOfMemoryException)
         {throw new InvalidDataException("definition.state: "+Source+" $.state: "+error.Message,error);}
-        var data=ModuleResources.Load(directory,root["resources"]!.AsObject().Select(p=>new KeyValuePair<string,string>(p.Key,p.Value!.GetValue<string>())));
-        var hashes=new SortedDictionary<string,string>(data.ToDictionary(p=>p.Key,p=>ModulePackage.Hash(p.Value)),StringComparer.Ordinal);
-        var images=new ImageCatalog(data);
-        foreach(var entity in state.Entities.Values)
-            foreach(var reference in entity.FaceResources) images.Resolve(reference).Validate(data);
+        var data=new SortedDictionary<string,byte[]>(StringComparer.Ordinal);var hashes=new SortedDictionary<string,string>(StringComparer.Ordinal);
         var payload=new SortedDictionary<string,JsonElement>(StringComparer.Ordinal);
         foreach(var capability in new[]{"lua.rules","lua.cpu"})
         {
@@ -64,7 +63,7 @@ internal sealed class StateDefinitionLoader(RuntimeStartup startup,string source
         payload["wasm"]=JsonSerializer.SerializeToElement(wasm,Wire.Options);
         return new(state,hashes,data,payload);
     }
-    public IReadOnlyList<string> ContentFiles(string directory)=>[Source,..ModuleResources.Files(directory,Read(directory)["resources"]!.AsObject().Select(p=>p.Value!.GetValue<string>()))];
+    public IReadOnlyList<string> ContentFiles(string directory)=>[Source];
     public static RuntimePluginDefinition Plugin(Func<RuntimeStartup> startup)=>new("definition.state","1",1,["definition"],[],s=>
         s.Provide("definition",new StateDefinitionLoader(startup(),s.Configuration.GetProperty("path").GetString()!)));
 }

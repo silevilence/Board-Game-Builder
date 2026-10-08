@@ -2,6 +2,8 @@
 
 单人、离线，使用 Kenney Playing Cards Pack 原始 PNG。资源许可见 `assets/License.txt`（CC0）。
 
+资源来源在 `game.start.json` 中配置：`resources.images` 以显式名称加载 52 张图片，保留 `card-01` 等牌面引用；`resources` 将 `player.json` 注册为 `player.presentation`。定义不再声明资源路径。目录／通配符配置见 [运行插件协议](../../docs/runtime-plugins.md)。
+
 ## 开始
 
 开发环境：`dotnet run --project src/Player -- gui samples/freecell`。

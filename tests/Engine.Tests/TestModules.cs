@@ -23,6 +23,10 @@ public static class TestModules
         Copy(source,destination);
         var definition=startup.Plugins.Single(p=>p.Id=="definition.module").Configuration.GetProperty("path").GetString()!;
         var root=JsonNode.Parse(File.ReadAllText(Path.Combine(source,definition)))!.AsObject();
+        var pool=GameRuntime.Load(source).Resources!;
+        root["resources"]=new JsonObject();
+        foreach(var image in pool.Images)root["resources"]![image.Key]=image.Value.Resource;
+        foreach(var binary in pool.Binaries)root["resources"]![binary.Key]=binary.Value;
         root["id"]=startup.Id;root["version"]=startup.Version;
         root["rules"]=startup.Plugins.Single(p=>p.Id=="lua.rules").Configuration.GetProperty("file").GetString();
         root["cpu"]=startup.Plugins.Single(p=>p.Id=="lua.cpu").Configuration.GetProperty("file").GetString();
@@ -59,18 +63,8 @@ public static class TestModules
                 if(selection!=null) Write(selection.Configuration.GetProperty("file").GetString()!,System.Text.Encoding.UTF8.GetBytes(id=="lua.rules"?module.Rules:module.Cpu));
             }
             foreach(var plugin in module.RuntimePlugins ?? []) Write(plugin.File,plugin.Code);
-            var resources=new SortedDictionary<string,string>();var index=0;
-            var atlasImages=new HashSet<string>(StringComparer.Ordinal);
-            foreach(var resource in module.ResourceData ?? [])
-            {using var atlas=ImageCatalog.ReadAtlas(resource.Value,resource.Key);if(atlas!=null)atlasImages.Add(ImageCatalog.ImageKey(resource.Key));}
-            foreach(var resource in module.ResourceData ?? [])
-            {
-                if(atlasImages.Contains(resource.Key))continue;
-                var folder=$"resources/{index++}/";var path=folder+"resource.bin";resources.Add(resource.Key,path);Write(path,resource.Value);
-                using var atlas=ImageCatalog.ReadAtlas(resource.Value,resource.Key);
-                if(atlas!=null)Write(folder+atlas.RootElement.GetProperty("meta").GetProperty("image").GetString(),module.ResourceData![ImageCatalog.ImageKey(resource.Key)]);
-            }
-            File.WriteAllText(Path.Combine(directory,"position.json"),Wire.Json(new {format=1,state=module.Initial,resources}));
+            foreach(var resource in module.Resources?.Files ?? new Dictionary<string,ReadOnlyMemory<byte>>())Write(resource.Key,resource.Value.ToArray());
+            File.WriteAllText(Path.Combine(directory,"position.json"),Wire.Json(new {format=1,state=module.Initial}));
             File.WriteAllText(Path.Combine(directory,GameRuntime.Entry),Wire.Json(startup));
             return GameRuntime.Load(directory);
         }

@@ -5,7 +5,8 @@ public static class ModuleSnapshot
     public static string Fingerprint(LoadedModule module) => Wire.Hash(Wire.Json(new {
         id=module.Id,version=module.Version,state=module.Initial,rules=module.Rules,cpu=module.Cpu,
         resources=module.ResourceHashes ?? new SortedDictionary<string,string>(StringComparer.Ordinal),runtime=module.RuntimeHashes })+(module.RuntimePlugins==null?"":Wire.Json(module.RuntimePlugins))+
-        (module.RuntimeIdentity==null?"":Canonical(Wire.Json(module.RuntimeIdentity))));
+        (module.RuntimeIdentity==null?"":Canonical(Wire.Json(module.RuntimeIdentity)))+
+        (module.Resources==null?"":Canonical(Wire.Json(module.Resources))));
     private static string Canonical(string json)
     {
         using var document=System.Text.Json.JsonDocument.Parse(json);

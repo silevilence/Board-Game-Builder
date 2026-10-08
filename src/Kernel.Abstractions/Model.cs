@@ -83,4 +83,5 @@ public sealed record LoadedModule(string Id, string Version, string Fingerprint,
     SortedDictionary<string,byte[]>? ResourceData = null, SortedDictionary<string,string>? RuntimeHashes = null,
     [property:JsonIgnore(Condition=JsonIgnoreCondition.WhenWritingNull)] List<RuntimePlugin>? RuntimePlugins=null,
     [property:JsonIgnore(Condition=JsonIgnoreCondition.WhenWritingNull)] RuntimeIdentity? RuntimeIdentity=null,
-    [property:JsonIgnore(Condition=JsonIgnoreCondition.WhenWritingNull)] GameDefinition? Definition=null);
+    [property:JsonIgnore(Condition=JsonIgnoreCondition.WhenWritingNull)] GameDefinition? Definition=null,
+    [property:JsonIgnore(Condition=JsonIgnoreCondition.WhenWritingNull)] ResourcePool? Resources=null);

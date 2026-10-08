@@ -17,7 +17,11 @@ public static class DefinitionPluginTests
                 TestModules.CopyLegacy(source,legacyDirectory);var legacy=DirectoryModule.Load(legacyDirectory);TestModules.CopyGame(source,target);
                 var loaded=GameRuntime.Load(target);
                 Check.That(Wire.Json(legacy.Initial)==Wire.Json(loaded.Initial),sample+": definition changed initial state");
-                Check.That(Wire.Json(legacy.ResourceHashes)==Wire.Json(loaded.ResourceHashes),sample+": definition changed resources");
+                foreach(var resource in legacy.ResourceData!)
+                {
+                    var pool=loaded.Resources!;var bytes=pool.Images.TryGetValue(resource.Key,out var image)?pool.GetFile(image.Resource):pool.GetBinary(resource.Key);
+                    Check.That(bytes.Span.SequenceEqual(resource.Value),sample+": definition changed resources");
+                }
                 var file=Path.Combine(target,"module.json");var root=JsonNode.Parse(File.ReadAllText(file))!;
                 foreach(var entity in root["entities"]!.AsArray())
                 {

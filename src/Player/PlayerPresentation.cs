@@ -7,9 +7,10 @@ public sealed record PlayerPresentation(string? Title=null,string? Help=null,boo
 {
     public static PlayerPresentation Read(LoadedModule module)
     {
-        if(module.ResourceData==null || !module.ResourceData.TryGetValue("player.presentation",out var bytes)) return new(module.Id);
+        if(module.Resources==null || !module.Resources.Binaries.ContainsKey("player.presentation")) return new(module.Id);
+        var bytes=module.Resources.GetBinary("player.presentation");
         if(bytes.Length>32*1024) throw new InvalidDataException("player.presentation exceeds 32 KiB");
-        var value=Wire.Read<PlayerPresentation>(Encoding.UTF8.GetString(bytes));
+        var value=Wire.Read<PlayerPresentation>(Encoding.UTF8.GetString(module.Resources.GetBinary("player.presentation").Span));
         if(value.Title?.Length>120 || value.Help?.Length>12000) throw new InvalidDataException("player.presentation text is too long");
         return value with {Title=string.IsNullOrWhiteSpace(value.Title)?module.Id:value.Title};
     }
