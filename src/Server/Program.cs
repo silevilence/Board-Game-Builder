@@ -104,6 +104,12 @@ try
         File.WriteAllText(Path.Combine(output, "authority.json"), Wire.Json(room.ExportAuthorityRecording()));
         File.WriteAllText(Path.Combine(output, "diagnostics.json"), Wire.Json(room.ExportAuthorityDiagnostics()));
     }
+    void SaveLifecycle()
+    {
+        lock (auditGate)
+            foreach (var entry in room.DrainLifecycleEvents())
+                File.AppendAllText(Path.Combine(output, "events.jsonl"), Wire.Json(entry) + "\n");
+    }
     string? lastFault = null;
     bool terminalSaved = false;
     try
@@ -114,6 +120,7 @@ try
             if (File.Exists(Path.Combine(output, "stop.request"))) break;
             room.Maintain();
             room.StepCpu();
+            SaveLifecycle();
             var status = room.Status;
             if (status.Fault != lastFault) { lastFault = status.Fault; Audit(status.Fault ?? "fault-cleared"); }
             if (!terminalSaved && (status.Ended || status.Closed || status.Fault != null)) { SaveAuthority(); terminalSaved = true; }
@@ -123,6 +130,7 @@ try
     finally
     {
         room.Close();
+        SaveLifecycle();
         await Task.Delay(300);
         await app.StopAsync();
         SaveAuthority();

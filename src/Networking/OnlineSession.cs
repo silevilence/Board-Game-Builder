@@ -22,6 +22,7 @@ public sealed record OnlineFrame(long Revision, SeatView View, IReadOnlyList<Act
 public sealed record OnlineProposal(long Sequence, long ExpectedRevision, string Actor, Command Command);
 public sealed record OnlineReceipt(long Sequence, long NextSequence, CommandResult Result, OnlineFrame Frame);
 public sealed record OnlineHostStatus(long Revision, bool Ended, bool Closed, string? Fault);
+public sealed record OnlineLifecycleEvent(DateTimeOffset Time, string Code, string Seat);
 public sealed class OnlineException(string code) : Exception(code);
 
 // Only the trusted host owns this object. Remote callers receive detached projections.
@@ -45,6 +46,7 @@ public sealed class OnlineSession : IDisposable
     private readonly OnlineOptions options;
     private readonly TimeProvider time;
     private readonly Dictionary<AuthorityTimer, DateTimeOffset> timerDue = [];
+    private readonly Queue<OnlineLifecycleEvent> lifecycle = [];
     private bool started;
     private bool closed;
     private long revision;
@@ -94,6 +96,7 @@ public sealed class OnlineSession : IDisposable
             if (seat == null) throw new OnlineException("seat-unavailable");
             var lease = new SeatLease(NewToken(), seat, NewToken());
             members.Add(lease.Token, new(lease) { LastSeen = this.time.GetUtcNow() });
+            Note("player-joined", seat);
             started = controllers.Where(p => p.Value == "human").All(p => members.Values.Any(m => m.Lease.Seat == p.Key));
             Advance();
             return lease;
@@ -114,6 +117,7 @@ public sealed class OnlineSession : IDisposable
             if (members.Values.Count(m => m.Lease.Seat == "") >= options.MaxObservers) throw new OnlineException("audience-limit");
             var lease = new SeatLease(NewToken(), "", NewToken());
             members.Add(lease.Token, new(lease) { LastSeen = time.GetUtcNow() });
+            Note("audience-joined", "");
             return lease;
         }
     }
@@ -166,6 +170,7 @@ public sealed class OnlineSession : IDisposable
         {
             var member = Member(token);
             members.Remove(token);
+            Note("identity-left", member.Lease.Seat);
             if (member.Lease.Seat == "") return;
             closed = true; // Explicit leave ends the session; never silently substitutes a CPU.
             Advance();
@@ -174,7 +179,12 @@ public sealed class OnlineSession : IDisposable
 
     public void Disconnect(string token)
     {
-        lock (gate) Member(token).DisconnectedAt = time.GetUtcNow();
+        lock (gate)
+        {
+            var member = Member(token);
+            member.DisconnectedAt = time.GetUtcNow();
+            Note("disconnected", member.Lease.Seat);
+        }
     }
 
     public OnlineResume Resume(OnlineIdentity identity, string resumeToken, long afterRevision)
@@ -190,6 +200,7 @@ public sealed class OnlineSession : IDisposable
             members.Add(member.Lease.Token, member);
             member.LastSeen = time.GetUtcNow();
             member.DisconnectedAt = null;
+            Note("identity-resumed", member.Lease.Seat);
             if (member.TakenOver && !closed)
             {
                 game.SetController(member.Lease.Seat, "human");
@@ -210,16 +221,20 @@ public sealed class OnlineSession : IDisposable
             foreach (var member in members.Values.ToArray())
             {
                 if (member.DisconnectedAt == null && now - member.LastSeen >= options.IdleTimeout)
+                {
                     member.DisconnectedAt = member.LastSeen + options.IdleTimeout;
+                    Note("connection-timeout", member.Lease.Seat);
+                }
                 if (member.DisconnectedAt == null || now - member.DisconnectedAt < options.ReconnectGrace || member.TakenOver) continue;
-                if (member.Lease.Seat == "") { members.Remove(member.Lease.Token); continue; }
+                if (member.Lease.Seat == "") { members.Remove(member.Lease.Token); Note("audience-expired", ""); continue; }
                 if (closed || game.Ended || game.Fault != null) continue;
-                if (options.OnTimeout == DisconnectPolicy.EndSession) { closed = true; Advance(); return; }
+                if (options.OnTimeout == DisconnectPolicy.EndSession) { closed = true; Note("timeout-ended-session", member.Lease.Seat); Advance(); return; }
                 if (options.OnTimeout == DisconnectPolicy.Cpu)
                 {
                     game.SetController(member.Lease.Seat, "cpu");
                     controllers[member.Lease.Seat] = "cpu";
                     member.TakenOver = true;
+                    Note("cpu-takeover", member.Lease.Seat);
                     Advance();
                 }
             }
@@ -256,7 +271,7 @@ public sealed class OnlineSession : IDisposable
     private void Advance(PlayerEvent? entry = null)
     {
         revision++;
-        if (revision >= options.MaxRevisions) closed = true;
+        if (revision >= options.MaxRevisions) { closed = true; Note("revision-limit", ""); }
         Capture(entry);
     }
     public IReadOnlyList<OnlineFrame> CatchUp(string token, long afterRevision)
@@ -277,7 +292,12 @@ public sealed class OnlineSession : IDisposable
         }
     }
     private void EnsureOpen() { if (closed) throw new OnlineException("session-closed"); }
-    public void Close() { lock (gate) { if (!closed) { closed = true; Advance(); } } }
+    public void Close() { lock (gate) { if (!closed) { closed = true; Note("host-closed-session", ""); Advance(); } } }
+    private void Note(string code, string seat) => lifecycle.Enqueue(new(time.GetUtcNow(), code, seat));
+    public IReadOnlyList<OnlineLifecycleEvent> DrainLifecycleEvents()
+    {
+        lock (gate) { var events = lifecycle.ToArray(); lifecycle.Clear(); return events; }
+    }
     public SessionRecording ExportAuthorityRecording() { lock (gate) return game.ExportRecording(); }
     public IReadOnlyList<Diagnostic> ExportAuthorityDiagnostics() { lock (gate) return game.ExportDiagnostics(); }
     public OnlineHostStatus Status { get { lock (gate) return new(revision, game.Ended, closed, game.Fault?.Code); } }

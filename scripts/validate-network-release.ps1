@@ -1,4 +1,4 @@
-param([string]$Release = 'artifacts/m4/network-release-v2', [string]$Output = ('artifacts/m4/release-check-'+[guid]::NewGuid()))
+param([string]$Release = 'artifacts/network-release', [string]$Output = ('artifacts/m4/release-check-'+[guid]::NewGuid()))
 $ErrorActionPreference = 'Stop'
 $repo = Split-Path $PSScriptRoot -Parent
 $releasePath = [IO.Path]::GetFullPath($Release)

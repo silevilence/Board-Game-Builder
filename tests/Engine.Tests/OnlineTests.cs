@@ -58,6 +58,9 @@ public static class OnlineTests
             var player = room.Join(OnlineIdentity.For(module));
             clock.Advance(16); room.Maintain();
             Check.That(room.StepCpu() == (policy == DisconnectPolicy.Cpu));
+            var events = room.DrainLifecycleEvents();
+            Check.That(events.Any(e => e.Code == "connection-timeout"));
+            Check.That(events.Any(e => e.Code == (policy == DisconnectPolicy.Cpu ? "cpu-takeover" : "timeout-ended-session")));
             var restored = room.Resume(OnlineIdentity.For(module), player.ResumeToken, -1);
             Check.That(restored.Frames[^1].Closed == (policy == DisconnectPolicy.EndSession));
         }
