@@ -37,13 +37,8 @@ try
         lease = await client.JoinAsync(new(identity, config.Seat, config.Audience));
         nextSequence = 1;
     }
-    void SaveIdentity()
-    {
-        var temporary = leasePath + ".tmp";
-        File.WriteAllText(temporary, Wire.Json(new SavedIdentity(config.Server, identity, lease, lastRevision)));
-        File.Move(temporary, leasePath, true);
-    }
-    SaveIdentity();
+    Task SaveIdentity()=>OnlineIdentityFile.SaveAsync(leasePath,new(config.Server,identity,lease,lastRevision));
+    await SaveIdentity();
     Console.WriteLine(lease.Seat == SeatView.AudienceSeat ? "已进入公共观战。" : $"已加入席位 {lease.Seat}。");
     var replica = new OnlineReplica(lease.Seat);
     foreach (var snapshot in recovered) replica.Apply(snapshot);
@@ -57,7 +52,7 @@ try
         {
             firstFrame = false;
             lastRevision = replica.Frame!.Revision;
-            SaveIdentity();
+            await SaveIdentity();
             Console.WriteLine($"revision={frame.Revision} turn={frame.View.Turn} phase={frame.View.Phase} current={frame.View.CurrentSeat}");
             if (!config.Auto) foreach (var entity in frame.View.Entities) Console.WriteLine($"{entity.Id}: {entity.Face} {Wire.Json(entity.Properties)}");
             if (!config.Auto)
@@ -83,7 +78,7 @@ try
             if (choice is "d" or "q" || choice == null)
             {
                 await client.SendAsync(lease.Token, new(choice == "q" ? OnlineOperations.Leave : OnlineOperations.Disconnect));
-                if (choice == "q") File.Delete(leasePath);
+                if (choice == "q") await OnlineIdentityFile.DeleteAsync(leasePath);
                 return 0;
             }
             input = Task.Run(Console.ReadLine);

@@ -10,6 +10,7 @@ try
     tests.Add("poker-uno-modes",PokerUnoTests.Modes);
     tests.Add("poker-uno-online",PokerUnoOnlineTests.Run);
     tests.Add("online-identity",OnlineTests.Identity);
+    tests.Add("online-identity-persistence",OnlineIdentityPersistenceTests.Run);
     tests.Add("online-ordering",OnlineTests.Ordering);
     tests.Add("online-reconnect",OnlineTests.Reconnection);
     tests.Add("online-audience",OnlineTests.Audience);

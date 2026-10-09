@@ -89,7 +89,8 @@ internal static class ShowcaseVerification
         };
         return window;
     }
-    internal sealed record NetworkProbe(string Module,string Preset,string Server,string RoomKey,string[] Seats);
+    internal sealed record NetworkProbe(string Module,string Preset,string Server,string RoomKey,string[] Seats,
+        string? CertificateSha256=null,bool RequireCpuReconnect=false,int TimeoutSeconds=180);
     public static Window Online(string config,string output)
     {
         var window=new Window {Title="Online GUI verification",Width=450,Height=160};
@@ -98,28 +99,56 @@ internal static class ShowcaseVerification
             var clients=new List<OnlineWindow>();var sessions=new List<OnlinePlayerSession>();
             try
             {
-                var probe=Wire.Read<NetworkProbe>(File.ReadAllText(config));var module=GameRuntime.Load(probe.Module,probe.Preset);
+                var probe=Wire.Read<NetworkProbe>(File.ReadAllText(config));
+                Check(probe.Seats.Length>0 && probe.TimeoutSeconds is >0 and <=600,"Invalid network probe configuration");
+                var module=GameRuntime.Load(Path.GetFullPath(probe.Module,Path.GetDirectoryName(Path.GetFullPath(config))!),probe.Preset);
                 foreach(var seat in probe.Seats.Append(SeatView.AudienceSeat))
                 {
-                    var session=new OnlinePlayerSession(module,new(probe.Server,probe.RoomKey,seat,seat==SeatView.AudienceSeat),output+"."+(seat==""?"audience":seat)+".identity.json");sessions.Add(session);
+                    var session=new OnlinePlayerSession(module,new(probe.Server,probe.RoomKey,seat,seat==SeatView.AudienceSeat,probe.CertificateSha256),output+"."+(seat==SeatView.AudienceSeat?"audience":seat)+".identity.json");sessions.Add(session);
                     await session.ConnectAsync();var client=new OnlineWindow(module,session);clients.Add(client);client.Show();
                 }
-                var resumed=false;
-                for(var i=0;i<1200;i++)
+                var resumed=false;var resumedCpu=false;var recoveries=new List<object>();
+                var watch=System.Diagnostics.Stopwatch.StartNew();
+                async Task Recover(string during)
+                {
+                    var before=sessions[0].Frame!;
+                    await clients[0].VerifyRecover();
+                    Check(sessions[0].Connected,"GUI recovery did not restore the connection");
+                    var after=sessions[0].Frame!;
+                    Check(after.View.Seat==before.View.Seat && after.Revision>=before.Revision,"Recovery lost identity or state");
+                    recoveries.Add(new {during,before=before.Revision,after=after.Revision,seat=after.View.Seat,current=before.View.CurrentSeat});
+                }
+                while(watch.Elapsed.TotalSeconds<probe.TimeoutSeconds)
                 {
                     foreach(var client in clients)await client.VerifyRefresh();
                     if(clients[0].Frame.View.Ended)break;
-                    Check(clients.All(c=>c.Frame.Fault==null && !c.Frame.Closed),"Network GUI fault");
-                    if(!resumed && clients[0].Frame.View.Phase=="play")
-                    {await sessions[0].DisconnectAsync();await sessions[0].ConnectAsync();resumed=true;}
+                    Check(sessions.All(s=>s.Connected) && clients.All(c=>c.Frame.Fault==null && !c.Frame.Closed),
+                        "Network GUI fault: "+Wire.Json(sessions.Select((s,i)=>new {s.Connected,seat=s.Frame?.View.Seat,revision=s.Frame?.Revision,s.Frame?.Closed,s.Frame?.Fault,error=clients[i].VerificationError})));
+                    Check(clients[^1].Frame.Actions.Count==0,"Spectator received player actions");
+                    if(!resumed && clients[0].Frame.Started && clients[0].Frame.Actions.Count>0)
+                    {await Recover("own-turn");resumed=true;}
+                    if(!resumedCpu && clients[0].Frame.Started && !clients[0].Frame.View.Ended &&
+                        clients[0].Frame.Controllers?.GetValueOrDefault(clients[0].Frame.View.CurrentSeat)=="cpu")
+                    {await Recover("cpu-turn");resumedCpu=true;}
                     var active=clients.FirstOrDefault(c=>c.Frame.Actions.Count>0);
                     if(active!=null) await active.Act(new("action",Action:active.Frame.Actions[0].Id),active.Frame.Revision);
                     await Task.Delay(70);
                 }
                 Check(clients[0].Frame.View.Ended && resumed,"Graphical online session did not complete/recover");
+                Check(!probe.RequireCpuReconnect || resumedCpu,"CPU-turn recovery was not exercised");
+                foreach(var client in clients)await client.VerifyRefresh();
                 Check(clients.All(c=>c.RenderedFrames>0),"A network viewport did not render");
+                foreach(var session in sessions)
+                {
+                    var recording=await session.RecordingAsync();
+                    Check(recording.Replay().Frame!.View.Ended,"Identity recording did not replay to the end");
+                    File.WriteAllText(output+"."+(recording.Seat==SeatView.AudienceSeat?"audience":recording.Seat)+".recording.json",Wire.Json(recording));
+                }
                 var record=await sessions[0].RecordingAsync();var replay=new OnlineReplayWindow(module,record);replay.Show();await Task.Delay(250);replay.Close();
-                File.WriteAllText(output,Wire.Json(new {success=true,clients=probe.Seats.Length,spectator=true,resumed,rendered=clients.Select(c=>c.RenderedFrames).ToArray(),replay=record.Replay().Frame!.View.Ended}));
+                File.WriteAllText(output,Wire.Json(new {success=true,machine=Environment.MachineName,server=probe.Server,module=module.Fingerprint,
+                    clients=probe.Seats.Length,seats=probe.Seats,spectator=true,resumed,resumedCpu,recoveries,
+                    revision=clients[0].Frame.Revision,winners=clients[0].Frame.View.Winners,
+                    rendered=clients.Select(c=>c.RenderedFrames).ToArray(),replay=record.Replay().Frame!.View.Ended}));
             }
             catch(Exception e) {File.WriteAllText(output,Wire.Json(new {success=false,error=e.ToString()}));}
             finally {foreach(var client in clients)client.Close();foreach(var session in sessions)session.Dispose();window.Close();}

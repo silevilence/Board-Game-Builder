@@ -25,7 +25,14 @@ internal sealed class OnlineWindow : Window
     private long revision=-1;
     internal OnlineFrame Frame=>session.Frame!;
     internal int RenderedFrames=>table.RenderedFrames;
+    internal string? VerificationError {get;private set;}
     internal Task VerifyRefresh()=>Run(()=>session.RefreshAsync(),true);
+    internal Task VerifyRecover()=>Run(async ()=>
+    {
+        await session.DisconnectAsync();
+        await Task.Delay(350);
+        await session.ConnectAsync();
+    });
     public OnlineWindow(LoadedModule module,OnlinePlayerSession session)
     {
         this.module=module;this.session=session;
@@ -89,7 +96,7 @@ internal sealed class OnlineWindow : Window
         }
         busy=true;var completion=new TaskCompletionSource(TaskCreationOptions.RunContinuationsAsynchronously);operation=completion;
         if(!poll) {table.InputEnabled=false;actions.IsEnabled=false;}string? error=null;
-        try {await action();}catch(Exception e) {error=e.Message;}
+        try {await action();}catch(Exception e) {error=e.Message;VerificationError??=e.ToString();}
         finally {busy=false;if(!closed) {Refresh();actions.IsEnabled=true;if(error!=null)status.Text+="\n"+error;}completion.TrySetResult();}
     }
 }

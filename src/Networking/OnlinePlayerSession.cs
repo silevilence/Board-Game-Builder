@@ -68,14 +68,14 @@ public sealed class OnlinePlayerSession : IDisposable
                 replica ??=new(lease.Seat);
                 foreach(var frame in resumed.Frames) replica.Apply(frame);
             }
-            replica ??=new(lease.Seat);Save();
+            replica ??=new(lease.Seat);await Save().ConfigureAwait(false);
             await Read().ConfigureAwait(false);Connected=true;
         }).ConfigureAwait(false);
     }
     private async Task Read()
     {
         var frame=(await client.SendAsync(lease!.Token,new(OnlineOperations.Frame),lifetime.Token).ConfigureAwait(false)).Frame!;
-        replica!.Apply(frame);Save();
+        replica!.Apply(frame);await Save().ConfigureAwait(false);
     }
     public Task RefreshAsync()=>Run(async ()=> {RequireConnection();await Read().ConfigureAwait(false);});
     public async Task<OnlineReceipt> SubmitAsync(long revision,InteractionIntent intent)
@@ -89,7 +89,7 @@ public sealed class OnlinePlayerSession : IDisposable
             {receipt=new(nextSequence,nextSequence,new(0,false,"stale-or-inactive"),frame);return;}
             var command=PlayerSession.Resolve(frame.Actions,intent);
             receipt=(await client.SendAsync(lease!.Token,new(OnlineOperations.Submit,Proposal:new(nextSequence,revision,lease.Seat,command)),lifetime.Token).ConfigureAwait(false)).Receipt!;
-            nextSequence=receipt.NextSequence;replica!.Apply(receipt.Frame);Save();
+            nextSequence=receipt.NextSequence;replica!.Apply(receipt.Frame);await Save().ConfigureAwait(false);
         }).ConfigureAwait(false);
         return receipt!;
     }
@@ -104,7 +104,7 @@ public sealed class OnlinePlayerSession : IDisposable
         RequireConnection();
         await client.SendAsync(lease!.Token,new(leave?OnlineOperations.Leave:OnlineOperations.Disconnect),lifetime.Token).ConfigureAwait(false);
         Connected=false;
-        if(leave) {File.Delete(identityPath);lease=null;replica=null;}
+        if(leave) {await OnlineIdentityFile.DeleteAsync(identityPath,lifetime.Token).ConfigureAwait(false);lease=null;replica=null;}
     });
     private void RequireConnection() {if(!Connected) throw new OnlineException("disconnected");}
     private async Task Run(Func<Task> action)
@@ -114,12 +114,6 @@ public sealed class OnlinePlayerSession : IDisposable
         catch {Connected=false;throw;}
         finally {gate.Release();}
     }
-    private void Save()
-    {
-        var folder=Path.GetDirectoryName(identityPath)!;Directory.CreateDirectory(folder);
-        var temporary=identityPath+".tmp";
-        File.WriteAllText(temporary,Wire.Json(new OnlineSavedIdentity(connection.Server,identity,lease!,Frame?.Revision ?? -1)));
-        File.Move(temporary,identityPath,true);
-    }
+    private Task Save()=>OnlineIdentityFile.SaveAsync(identityPath,new(connection.Server,identity,lease!,Frame?.Revision ?? -1),lifetime.Token);
     public void Dispose() {if(disposed)return;disposed=true;Connected=false;lifetime.Cancel();client.Dispose();}
 }
