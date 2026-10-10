@@ -16,6 +16,7 @@ try
     tests.Add("author-exports",AuthorProjectTests.Exports);
     tests.Add("author-workspace",AuthorProjectTests.Workspace);
     tests.Add("author-connections",AuthorProjectTests.Connections);
+    tests.Add("author-external",AuthorProjectTests.External);
     tests.Add("poker-uno",PokerUnoTests.Run);
     tests.Add("atlas",AtlasTests.Run);
     tests.Add("resource-plugins",ResourcePluginTests.Run);

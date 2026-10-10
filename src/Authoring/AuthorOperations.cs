@@ -5,11 +5,15 @@ namespace BoardGame.Authoring;
 
 public sealed record AuthorParameter(string Type, bool Required, string Description);
 public sealed record AuthorOperationInfo(string Id, string Plugin, string Description,
-    Dictionary<string, AuthorParameter> Parameters, JsonObject ResultSchema, string[] Conditions, string[] Effects);
+    Dictionary<string, AuthorParameter> Parameters, JsonObject ResultSchema, string[] Conditions, string[] Effects)
+{
+    public bool ReadsProject { get; init; } = true;
+}
 public sealed record AuthorOperation(AuthorOperationInfo Info, Func<AuthorCall, Task<object>> Invoke);
-public sealed record AuthorCall(ProjectView View, IProjectEditMode Mode, GameAuthorFormats Formats,
+public sealed record AuthorCall(ProjectView? Project, IProjectEditMode Mode, GameAuthorFormats Formats,
     JsonElement Arguments, string RequestId, CancellationToken Cancellation)
 {
+    public ProjectView View => Project ?? throw new InvalidOperationException("This operation did not request a project view");
     public string String(string key) => Arguments.GetProperty(key).GetString()!;
     public string? OptionalString(string key) => Arguments.TryGetProperty(key, out var value) ? value.GetString() : null;
     public int Integer(string key, int fallback) => Arguments.TryGetProperty(key, out var value) ? value.GetInt32() : fallback;
@@ -69,7 +73,7 @@ public static class FileOperations
         new() { ["files"] = new("object", true, "Relative path to UTF-8 text or null map") },
         new() { ["type"] = "object", ["description"] = "EditReceipt: requestId, state, saved, source, resultVersion, diagnostics, appliedPaths" }, [], ["project"]);
     public static AuthorOperationInfo ResultInfo => new("request.result", "author.files", "Inspect a retained write receipt without repeating the write",
-        new() { ["request"] = new("string", true, "Original request ID") }, WriteInfo.ResultSchema.DeepClone().AsObject(), [], []);
+        new() { ["request"] = new("string", true, "Original request ID") }, WriteInfo.ResultSchema.DeepClone().AsObject(), [], []) { ReadsProject = false };
     public static AuthorOperationInfo RecoverInfo => ResultInfo with { Id = "request.recover", Description = "Explicitly resume a partial write if every baseline still matches; preserve external changes", Effects = ["recovery"] };
     public static AuthorOperationInfo SaveInfo => new("workspace.save", "author.files", "Explicitly save the connected workspace to disk", new(), WriteInfo.ResultSchema.DeepClone().AsObject(), ["GUI edit mode"], ["save"]);
     public static AuthorOperationInfo ListInfo => new("files.list", "author.files", "Enumerate the selected project view",

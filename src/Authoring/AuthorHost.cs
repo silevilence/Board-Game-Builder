@@ -26,7 +26,7 @@ public sealed class AuthorHost : IAsyncDisposable
         { s.Provide("author.formats", new GameAuthorFormats(false)); s.Provide("author.operations", new AuthorOperations()); }, "Project contract and operation registry", true),
         new("edit.disk", "1", 1, ["author.mode"], [], s => s.Provide("author.mode", s.Own(new DiskEditMode(
             new(s.Profile.Project, s.Profile.Name, "disk")))), "Read current disk content and commit guarded changes"),
-        FileOperations.Plugin, FormatOperations.Module, FormatOperations.State, FormatOperations.Configuration, ResourceOperations.Plugin, ValidationOperations.Plugin, RunOperations.Plugin, ExportOperations.Plugin, GuiEditMode.Plugin
+        FileOperations.Plugin, FormatOperations.Module, FormatOperations.State, FormatOperations.Configuration, ResourceOperations.Plugin, ValidationOperations.Plugin, RunOperations.Plugin, ExportOperations.Plugin, GuiEditMode.Plugin, WorkspaceCoordination.Plugin
     ];
     public static IReadOnlyList<AuthorPlugin> Validate(AuthorProfile profile, IReadOnlyList<AuthorPlugin> catalog)
     {
@@ -100,8 +100,8 @@ public sealed class AuthorHost : IAsyncDisposable
             var previous = await requests.Find(requestId, intent, cancellation);
             if (previous != null) return previous;
         }
-        var view = await mode.Read(cancellation);
-        view.Intent = intent;
+        var view = info.ReadsProject ? await mode.Read(cancellation) : null;
+        if (view != null) view.Intent = intent;
         return await Service<AuthorOperations>("author.operations").Invoke(id,
             new(view, mode, Service<GameAuthorFormats>("author.formats"), arguments, requestId, cancellation));
     }, cancellation);

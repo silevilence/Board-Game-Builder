@@ -6,7 +6,7 @@ using System.Text.Json;
 namespace BoardGame.Authoring;
 
 public sealed record WorkspaceAdvertisement(string Instance, string Pipe, int Process, long ProcessStarted, string Workspace, long Generation, string? Project, int Api = 1);
-public sealed record WorkspaceRequest(string Method, ProjectIdentity Identity, string RequestId, ProjectChanges? Changes = null, string? Intent = null);
+public sealed record WorkspaceRequest(string Method, ProjectIdentity Identity, string RequestId, ProjectChanges? Changes = null, string? Intent = null, JsonElement? Arguments = null);
 public sealed record WorkspaceResponse(bool Success, JsonElement Result, string? Code = null, string? Message = null);
 public sealed record WorkspaceView(ProjectSource Source, Dictionary<string, byte[]> Files);
 
@@ -101,7 +101,7 @@ public sealed class WorkspaceConnectionServer : IAsyncDisposable
     }
 }
 
-public sealed class GuiEditMode : IProjectEditMode, IRecoverableEditMode, IDisposable
+public sealed class GuiEditMode : IProjectEditMode, IRecoverableEditMode, IWorkspaceCoordination, IDisposable
 {
     private readonly WorkspaceAdvertisement connection;
     private readonly ProjectIdentity identity;
@@ -112,14 +112,14 @@ public sealed class GuiEditMode : IProjectEditMode, IRecoverableEditMode, IDispo
         if (matches.Length != 1) throw new AuthorOperationException("connection.selection", matches.Length == 0 ? "No matching Editor connection; enable author.connection. Disk mode is not a fallback." : "Multiple matching Editor instances; select one with --instance");
         connection = matches[0]; identity = new(project, profile, "gui", connection.Workspace, connection.Generation);
     }
-    private async Task<T> Request<T>(string method, string request, CancellationToken cancellation, ProjectChanges? changes = null, string? intent = null)
+    private async Task<T> Request<T>(string method, string request, CancellationToken cancellation, ProjectChanges? changes = null, string? intent = null, JsonElement? arguments = null)
     {
         using var timeout = CancellationTokenSource.CreateLinkedTokenSource(cancellation, lifetime.Token); timeout.CancelAfter(TimeSpan.FromSeconds(35));
         using var client = new NamedPipeClientStream(".", connection.Pipe, PipeDirection.InOut, PipeOptions.Asynchronous | PipeOptions.CurrentUserOnly);
         try
         {
             await client.ConnectAsync(5000, timeout.Token);
-            await WorkspaceConnections.Send(client, new WorkspaceRequest(method, identity, request, changes, intent), timeout.Token);
+            await WorkspaceConnections.Send(client, new WorkspaceRequest(method, identity, request, changes, intent, arguments), timeout.Token);
             var reply = await WorkspaceConnections.Receive<WorkspaceResponse>(client, timeout.Token);
             if (!reply.Success) throw new AuthorOperationException(reply.Code!, reply.Message!);
             return reply.Result.Deserialize<T>(AuthorProfiles.Json)!;
@@ -138,6 +138,8 @@ public sealed class GuiEditMode : IProjectEditMode, IRecoverableEditMode, IDispo
     public Task<EditReceipt?> Find(string requestId, string intent, CancellationToken cancellation = default) => Request<EditReceipt?>("find", requestId, cancellation, intent: intent);
     public Task<EditReceipt> Recover(string requestId, CancellationToken cancellation = default) => Result(requestId, cancellation);
     public Task<EditReceipt> Save(string requestId, CancellationToken cancellation = default) => Request<EditReceipt>("save", requestId, cancellation);
+    public Task<ExternalStatus> ExternalStatus(CancellationToken cancellation = default) => Request<ExternalStatus>("external.status", "status", cancellation);
+    public Task<EditReceipt> ResolveExternal(string requestId, JsonElement arguments, CancellationToken cancellation = default) => Request<EditReceipt>("external.resolve", requestId, cancellation, arguments: arguments);
     public void Dispose() { lifetime.Cancel(); lifetime.Dispose(); }
     public ValueTask DisposeAsync() { Dispose(); return ValueTask.CompletedTask; }
     public static AuthorPlugin Plugin => new("edit.gui", "1", 1, ["author.mode"], [], scope =>

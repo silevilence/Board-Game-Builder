@@ -7,6 +7,36 @@ namespace Engine.Tests;
 
 public static class AuthorProjectTests
 {
+    public static void External() => ExternalAsync().GetAwaiter().GetResult();
+    private static async Task ExternalAsync()
+    {
+        var root=Path.Combine(Path.GetTempPath(),"bgb-external-"+Guid.NewGuid());
+        try
+        {
+            var document=ModuleDocument.Create();document.Save(root);
+            using var documents=new DocumentWorkspace();documents.Set(document);
+            var identity=new ProjectIdentity(root,"gui","gui",documents.WorkspaceId,documents.Generation);
+            using var mode=new WorkspaceEditMode(documents,identity);
+            var script=document.Text("rules.lua");documents.EditDraft("rules.lua",script+"\n-- draft");
+            File.WriteAllText(Path.Combine(root,"rules.lua"),script+"\n-- external");File.WriteAllText(Path.Combine(root,"new.txt"),"external addition");File.Delete(Path.Combine(root,"cpu.lua"));
+            Check.Throws(()=>mode.Read().GetAwaiter().GetResult(),"External files");
+            var status=documents.ExternalStatus(identity);Check.That(status.Changes.Length==3 && status.Dirty);
+            var reload=System.Text.Json.JsonSerializer.SerializeToElement(new {status.DiskVersion,status.WorkspaceVersion,choice="reload"},AuthorProfiles.Json);
+            Check.Throws(()=>documents.ResolveExternal(identity,"reload",reload),"discard drafts");
+            File.WriteAllText(Path.Combine(root,"new.txt"),"changed again");
+            Check.Throws(()=>documents.ResolveExternal(identity,"stale",reload),"changed while resolving");
+            status=documents.ExternalStatus(identity);
+            var merged=System.Text.Json.JsonSerializer.SerializeToElement(new {status.DiskVersion,status.WorkspaceVersion,choice="merge",files=new Dictionary<string,string?>
+                {{"rules.lua",script+"\n-- draft\n-- external"},{"new.txt","changed again"},{"cpu.lua",document.Text("cpu.lua")}}},AuthorProfiles.Json);
+            var receipt=documents.ResolveExternal(identity,"merge",merged);Check.That(receipt.Saved && !documents.Dirty);
+            Check.That((await mode.Read()).Text("rules.lua").Contains("-- external") && File.ReadAllText(Path.Combine(root,"rules.lua")).Contains("-- draft"));
+            Check.That(documents.ResolveExternal(identity,"merge",merged).ResultVersion==receipt.ResultVersion);
+            File.WriteAllText(Path.Combine(root,"new.txt"),"reload clean");status=documents.ExternalStatus(identity);
+            documents.ResolveExternal(identity,"refresh",System.Text.Json.JsonSerializer.SerializeToElement(new {status.DiskVersion,status.WorkspaceVersion,choice="reload"},AuthorProfiles.Json));
+            Check.That(document.Text("new.txt")=="reload clean");
+        }
+        finally {if(Directory.Exists(root))Directory.Delete(root,true);}
+    }
     public static void Connections() => ConnectionsAsync().GetAwaiter().GetResult();
     private static async Task ConnectionsAsync()
     {
@@ -50,7 +80,7 @@ public static class AuthorProjectTests
                     await using(var host=await AuthorHost.Start(profile))
                     {
                         var validation=(ValidationResult)await host.Invoke("project.validate",System.Text.Json.JsonSerializer.SerializeToElement(new {}),"validate");Check.That(validation.Success && validation.Source.Identity.Mode=="gui");
-                        await host.Invoke("workspace.save",System.Text.Json.JsonSerializer.SerializeToElement(new {}),"save");Check.That(File.Exists(Path.Combine(root,"connected.txt")));
+                        await host.Invoke("workspace.save",System.Text.Json.JsonSerializer.SerializeToElement(new {}),"save-"+iteration);Check.That(File.Exists(Path.Combine(root,"connected.txt")));
                     }
                     await using(var second=new WorkspaceConnectionServer(service.Handle))
                     {

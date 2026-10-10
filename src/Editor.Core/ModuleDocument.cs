@@ -15,6 +15,7 @@ public sealed class ModuleDocument : IAuthorFiles
     private readonly Stack<Dictionary<string,byte[]>> undo=[];
     private readonly Stack<Dictionary<string,byte[]>> redo=[];
     private string saved;
+    private Dictionary<string,byte[]> savedFiles;
     internal GameAuthorFormats AuthorFormats {get;set;}=new();
     public string? DirectoryPath { get; private set; }
     public bool Dirty => Hash(files)!=saved;
@@ -22,7 +23,7 @@ public sealed class ModuleDocument : IAuthorFiles
     public bool CanRedo => redo.Count>0;
     public IReadOnlyList<string> Paths => files.Keys.Order(StringComparer.Ordinal).ToArray();
     public event Action? Changed;
-    private ModuleDocument(Dictionary<string,byte[]> files,string? path) { this.files=files; DirectoryPath=path; saved=path==null?"":Hash(files); }
+    private ModuleDocument(Dictionary<string,byte[]> files,string? path) { this.files=files; DirectoryPath=path; saved=path==null?"":Hash(files);savedFiles=CopyFiles(); }
     public static ModuleDocument Create() => new(GameAuthorFormats.Template(),null);
     public static ModuleDocument Open(string path)
     {
@@ -106,9 +107,16 @@ public sealed class ModuleDocument : IAuthorFiles
         using var mode=new DiskEditMode(identity);
         var receipt=mode.Apply(baseline.Change(Guid.NewGuid().ToString("N"),edits)).GetAwaiter().GetResult();
         if(receipt.State!=EditState.Applied) throw new IOException("Module save incomplete: "+string.Join("; ",receipt.Diagnostics.Select(d=>d.Message)));
-        DirectoryPath=target;saved=Hash(files);Changed?.Invoke();
+        DirectoryPath=target;saved=Hash(files);savedFiles=CopyFiles();Changed?.Invoke();
     }
     public Dictionary<string,byte[]> CopyFiles()=>files.ToDictionary(p=>p.Key,p=>p.Value.ToArray(),StringComparer.Ordinal);
+    internal Dictionary<string,byte[]> SavedFiles()=>savedFiles.ToDictionary(p=>p.Key,p=>p.Value.ToArray(),StringComparer.Ordinal);
+    internal bool DiskChanged()=>DirectoryPath!=null && (!Directory.Exists(DirectoryPath) || Hash(ReadFiles(DirectoryPath))!=saved);
+    internal void AcceptExternal(Dictionary<string,byte[]> content)
+    {
+        files=content.ToDictionary(p=>p.Key,p=>p.Value.ToArray(),StringComparer.Ordinal);savedFiles=CopyFiles();saved=Hash(files);
+        undo.Clear();redo.Clear();Changed?.Invoke();
+    }
     internal ModuleDocumentHistory CopyHistory()=>new(CopyFiles(),undo.Reverse().ToArray(),redo.Reverse().ToArray());
     internal void RestoreHistory(ModuleDocumentHistory history)
     {

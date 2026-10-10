@@ -14,6 +14,8 @@ public sealed class AuthorWorkspaceService(DocumentWorkspace documents, Func<Fun
             case "result": return await mode.Result(request.RequestId,cancellation);
             case "find": return (await mode.Find(request.RequestId,request.Intent!,cancellation))!;
             case "save": return await mode.Save(request.RequestId,cancellation);
+            case "external.status": return await dispatch(()=>{cancellation.ThrowIfCancellationRequested();return documents.ExternalStatus(request.Identity);});
+            case "external.resolve": return await dispatch(()=>{cancellation.ThrowIfCancellationRequested();return documents.ResolveExternal(request.Identity,request.RequestId,request.Arguments!.Value);});
             default: throw new AuthorOperationException("connection.method","Unknown workspace method");
         }
     }
