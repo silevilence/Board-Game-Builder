@@ -3,6 +3,7 @@
     <Project Path="samples/Editor.SamplePlugin/Editor.SamplePlugin.csproj" />
   </Folder>
   <Folder Name="/src/">
+    <Project Path="src/Authoring/Authoring.csproj" />
     <Project Path="src/Editor.Core/Editor.Core.csproj" />
     <Project Path="src/Editor/Editor.csproj" />
     <Project Path="src/Kernel.Abstractions/Kernel.Abstractions.csproj" />

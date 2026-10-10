@@ -1,3 +1,4 @@
+using BoardGame.Authoring;
 using System.Text;
 using System.Text.Json.Nodes;
 using BoardGame.Kernel;
@@ -6,7 +7,7 @@ using BoardGame.Runtime;
 namespace BoardGame.Editor;
 
 // Author data is owned by the document. Runtime instances only receive validated copies.
-public sealed class ModuleDocument
+public sealed class ModuleDocument : IAuthorFiles
 {
     private Dictionary<string,byte[]> files;
     private readonly Stack<Dictionary<string,byte[]>> undo=[];
@@ -24,7 +25,7 @@ public sealed class ModuleDocument
     public static ModuleDocument Open(string path)
     {
         path=Path.GetFullPath(path);
-        _=GameRuntime.Load(path);
+        if(!Directory.Exists(path)) throw new DirectoryNotFoundException(path);
         return new(ReadFiles(path),path);
     }
     private static Dictionary<string,byte[]> ReadFiles(string path)

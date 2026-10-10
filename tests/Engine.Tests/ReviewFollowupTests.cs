@@ -1,3 +1,4 @@
+using BoardGame.Authoring;
 using System.Text.Json.Nodes;
 using BoardGame.Editor;
 using BoardGame.Kernel;
@@ -58,12 +59,12 @@ public static class ReviewFollowupTests
     // This fixture adapts the minimal state's seat/phase author model; production state UI remains optional.
     private sealed record StateAuthor(string DefinitionPath):IGameAuthorFormat
     {
-        public JsonObject Read(ModuleDocument document)
+        public JsonObject Read(IAuthorFiles document)
         {
             var state=JsonNode.Parse(document.Text(DefinitionPath))!["state"]!;
             return new() {["seats"]=state["seats"]!.DeepClone(),["phases"]=state["phases"]!.DeepClone()};
         }
-        public string Serialize(ModuleDocument document,JsonObject configuration)
+        public string Serialize(IAuthorFiles document,JsonObject configuration)
         {
             var root=JsonNode.Parse(document.Text(DefinitionPath))!;
             root["state"]!["seats"]=configuration["seats"]!.DeepClone();root["state"]!["phases"]=configuration["phases"]!.DeepClone();

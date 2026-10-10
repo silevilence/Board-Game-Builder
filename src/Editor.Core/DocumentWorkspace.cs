@@ -1,3 +1,4 @@
+using BoardGame.Authoring;
 using BoardGame.Modules;
 namespace BoardGame.Editor;
 

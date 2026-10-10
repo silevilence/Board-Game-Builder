@@ -4,13 +4,13 @@ using System.Text.Json.Nodes;
 using BoardGame.Kernel;
 using BoardGame.Runtime;
 
-namespace BoardGame.Editor;
+namespace BoardGame.Authoring;
 
 public interface IGameAuthorFormat
 {
     string DefinitionPath {get;}
-    JsonObject Read(ModuleDocument document);
-    string Serialize(ModuleDocument document,JsonObject configuration);
+    JsonObject Read(IAuthorFiles document);
+    string Serialize(IAuthorFiles document,JsonObject configuration);
 }
 
 public sealed record GameAuthorFormatProvider(string LoaderId,string Version,int Api,Func<RuntimePluginSelection,IGameAuthorFormat> Create);
@@ -29,20 +29,33 @@ public sealed class GameAuthorFormats
         var key=(provider.LoaderId,provider.Version,provider.Api);
         if(!providers.TryAdd(key,provider)) throw new InvalidOperationException("Duplicate author format provider: "+provider.LoaderId);
         Changed?.Invoke();
-        return new Cleanup(()=> {if(providers.Remove(key)) Changed?.Invoke();});
+        return new Registration(()=> {if(providers.Remove(key)) Changed?.Invoke();});
     }
     private sealed record ModuleJson(string DefinitionPath) : IGameAuthorFormat
     {
-        public JsonObject Read(ModuleDocument document)=>JsonNode.Parse(document.Text(DefinitionPath))!.AsObject();
-        public string Serialize(ModuleDocument document,JsonObject configuration)=>configuration.ToJsonString(new(){WriteIndented=true});
+        public JsonObject Read(IAuthorFiles document)=>JsonNode.Parse(document.Text(DefinitionPath))!.AsObject();
+        public string Serialize(IAuthorFiles document,JsonObject configuration)=>configuration.ToJsonString(new(){WriteIndented=true});
     }
-    public IGameAuthorFormat? Resolve(ModuleDocument document)
+    public static GameAuthorFormatProvider StateProvider => new("definition.state","1",1,
+        selection=>new StateJson(selection.Configuration.GetProperty("path").GetString()!));
+    private sealed record StateJson(string DefinitionPath) : IGameAuthorFormat
     {
-        var startup=document.Startup.Deserialize<RuntimeStartup>(Wire.Options)!;
+        public JsonObject Read(IAuthorFiles document)=>JsonNode.Parse(document.Text(DefinitionPath))!["state"]!.DeepClone().AsObject();
+        public string Serialize(IAuthorFiles document,JsonObject configuration)
+        {
+            var root=JsonNode.Parse(document.Text(DefinitionPath))!.AsObject();
+            root["state"]=configuration.DeepClone();
+            return root.ToJsonString(new(){WriteIndented=true});
+        }
+    }
+    public IGameAuthorFormat? Resolve(IAuthorFiles document)
+    {
+        var startup=JsonNode.Parse(document.Text(GameRuntime.Entry))!.Deserialize<RuntimeStartup>(Wire.Options)!;
         var matches=startup.Plugins.Where(p=>providers.ContainsKey((p.Id,p.Version,p.Api))).ToArray();
         if(matches.Length>1) throw new InvalidOperationException("Multiple author format providers match this document");
         return matches.Length==0?null:providers[(matches[0].Id,matches[0].Version,matches[0].Api)].Create(matches[0]);
     }
+    private sealed class Registration(Action release) : IDisposable { private Action? cleanup=release; public void Dispose()=>Interlocked.Exchange(ref cleanup,null)?.Invoke(); }
     public static Dictionary<string,byte[]> Template()
     {
         RuntimePluginSelection Select(string id,object config)=>new(id,"1",1,JsonSerializer.SerializeToElement(config,Wire.Options));
