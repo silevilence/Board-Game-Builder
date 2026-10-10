@@ -7,6 +7,35 @@ namespace Engine.Tests;
 
 public static class AuthorProjectTests
 {
+    public static void SkillInstallation()
+    {
+        var root=Path.Combine(Path.GetTempPath(),"bgb 技能 ' $ ` 安装-"+Guid.NewGuid());Directory.CreateDirectory(root);
+        var template=File.ReadAllText("author-skill/bgb-author/SKILL.md.template");
+        try
+        {
+            var product=Path.Combine(root,"product");Directory.CreateDirectory(product);var cli=Path.Combine(product,"bgb.exe");File.WriteAllText(cli,"fixture");File.WriteAllText(Path.Combine(product,"entry.md"),"docs");
+            foreach(var method in new[]{"copy","junction"})
+            {
+                var parent=Path.Combine(root,method);
+                var installed=SkillInstaller.Install(parent,cli,product,template,method);Check.That(installed.Healthy);
+                Check.That(File.ReadAllText(Path.Combine(installed.Target,"SKILL.md")).Contains("product"));
+                var upgraded=SkillInstaller.Install(parent,cli,product,template,method);Check.That(upgraded.Healthy && upgraded.Installation!.Id!=installed.Installation!.Id);
+                var moved=product+" moved";Directory.Move(product,moved);
+                Check.That(!SkillInstaller.Status(parent).Healthy);
+                var repaired=SkillInstaller.Install(parent,Path.Combine(moved,"bgb.exe"),moved,template,method,true);Check.That(repaired.Healthy);
+                Check.That(File.ReadAllText(Path.Combine(repaired.Target,"SKILL.md")).Contains("product moved"));
+                Check.That(!SkillInstaller.Uninstall(parent).Installed && !Directory.Exists(repaired.Installation!.Generated));
+                Directory.Move(moved,product);
+            }
+            var conflict=Path.Combine(root,"conflict");Directory.CreateDirectory(Path.Combine(conflict,"bgb-author"));File.WriteAllText(Path.Combine(conflict,"bgb-author","SKILL.md"),"user skill");
+            Check.Throws(()=>SkillInstaller.Install(conflict,cli,product,template),"not owned");
+            Check.That(File.ReadAllText(Path.Combine(conflict,"bgb-author","SKILL.md"))=="user skill");
+            var edited=Path.Combine(root,"edited");var original=SkillInstaller.Install(edited,cli,product,template);
+            File.AppendAllText(Path.Combine(original.Target,"SKILL.md"),"user change");Check.Throws(()=>SkillInstaller.Uninstall(edited),"user changes");
+            File.WriteAllText(Path.Combine(original.Target,"SKILL.md"),AuthorSkillTemplate.Render(template,cli,product));SkillInstaller.Uninstall(edited);
+        }
+        finally {Directory.Delete(root,true);}
+    }
     public static void SkillTemplate()
     {
         var root=Path.Combine(Path.GetTempPath(),"bgb 作者 ' $ ` [skill]-"+Guid.NewGuid());Directory.CreateDirectory(root);

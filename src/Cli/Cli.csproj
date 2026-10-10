@@ -3,4 +3,7 @@
   <ItemGroup><ProjectReference Include="../Authoring/Authoring.csproj" /></ItemGroup>
   <ItemGroup><Content Include="../../docs/author/*.md" Link="docs/author/%(Filename)%(Extension)" CopyToOutputDirectory="PreserveNewest" CopyToPublishDirectory="PreserveNewest" /></ItemGroup>
   <ItemGroup><Content Include="../../author-skill/bgb-author/SKILL.md.template" Link="templates/bgb-author/SKILL.md.template" CopyToOutputDirectory="PreserveNewest" CopyToPublishDirectory="PreserveNewest" /></ItemGroup>
+  <Target Name="UseSeparateLuaWorkerDistribution" BeforeTargets="_HandleFileConflictsForPublish">
+    <ItemGroup><ResolvedFileToPublish Remove="@(ResolvedFileToPublish)" Condition="'%(ResolvedFileToPublish.RelativePath)' == 'Lua.exe' Or '%(ResolvedFileToPublish.RelativePath)' == 'Lua.deps.json' Or '%(ResolvedFileToPublish.RelativePath)' == 'Lua.runtimeconfig.json'" /></ItemGroup>
+  </Target>
 </Project>

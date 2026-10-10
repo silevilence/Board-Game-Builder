@@ -20,6 +20,7 @@ public static class AuthorSkillTemplate
         if(rendered.Contains("{{") || rendered.Contains("}}"))throw new InvalidDataException("skill.template: unresolved placeholders");
         if(!rendered.StartsWith("---\n",StringComparison.Ordinal) && !rendered.StartsWith("---\r\n",StringComparison.Ordinal))throw new InvalidDataException("skill.template: YAML frontmatter required");
         if(!Regex.IsMatch(rendered,@"(?m)^name: bgb-author\r?$"))throw new InvalidDataException("skill.template: expected bgb-author identity");
+        if(!Regex.IsMatch(rendered,@"(?m)^description: .+\r?$"))throw new InvalidDataException("skill.template: description required");
         return rendered;
     }
 }

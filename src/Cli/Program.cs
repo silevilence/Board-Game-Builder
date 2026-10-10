@@ -10,10 +10,24 @@ try
 {
     if (args.Length == 0 || args[0] is "help" or "--help")
     {
-        Write(new { commands = new[] { "docs [topic]", "workspaces", "profile", "plugins", "operations", "describe <operation>", "call <operation> --args <JSON>" },
+        Write(new { commands = new[] { "skill install|repair|status|uninstall --target <agent-skills-directory> [--method copy|junction]", "docs [topic]", "workspaces", "profile", "plugins", "operations", "describe <operation>", "call <operation> --args <JSON>" },
             options = new[] { "--project <directory>", "--profile <name>", "--request <stable-id>", "--args-file <JSON-file>" },
             exits = new { success = 0, failure = 1, arguments = 2, conflict = 3, unknownOrPartial = 4, cancelled = 130 } });
         return 0;
+    }
+    if(args[0]=="skill")
+    {
+        if(args.Length<4 || args[2]!="--target")throw new ArgumentException("skill <install|repair|status|uninstall> --target <directory> [--method copy|junction]");
+        var method=args.Length==6 && args[4]=="--method"?args[5]:args.Length==4?null:throw new ArgumentException("Invalid skill options");
+        var cli=Path.Combine(AppContext.BaseDirectory,"bgb.exe");var docs=Path.Combine(AppContext.BaseDirectory,"docs","author");
+        var skillResult=args[1] switch
+        {
+            "install" or "repair"=>SkillInstaller.Install(args[3],cli,docs,File.ReadAllText(Path.Combine(AppContext.BaseDirectory,"templates","bgb-author","SKILL.md.template")),method ?? SkillInstaller.Status(args[3]).Installation?.Method ?? "copy",args[1]=="repair"),
+            "status"=>SkillInstaller.Status(args[3]),
+            "uninstall"=>SkillInstaller.Uninstall(args[3]),
+            _=>throw new ArgumentException("Unknown skill command")
+        };
+        Write(skillResult);return args[1]=="uninstall"?!skillResult.Installed?0:1:skillResult.Healthy?0:1;
     }
     if(args[0]=="docs")
     {
