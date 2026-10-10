@@ -21,7 +21,7 @@ public sealed record ProjectChanges(string RequestId, ProjectSource Source, File
 {
     public string? Intent { get; init; }
 }
-public sealed record AuthorDiagnostic(string Code, string Message, string? Path = null);
+public sealed record AuthorDiagnostic(string Code, string Message, string? Path = null, long? Line = null, long? Column = null);
 public enum EditState { Applied, Conflict, PartialFailure, Unknown, Rejected }
 public sealed record EditReceipt(string RequestId, EditState State, bool Saved, ProjectSource Source,
     string? ResultVersion, AuthorDiagnostic[] Diagnostics, string[] AppliedPaths);

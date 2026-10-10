@@ -7,6 +7,26 @@ namespace Engine.Tests;
 
 public static class AuthorProjectTests
 {
+    public static void Validation() => ValidationAsync().GetAwaiter().GetResult();
+    private static async Task ValidationAsync()
+    {
+        var root=Path.Combine(Path.GetTempPath(),"bgb-validation-"+Guid.NewGuid());
+        try
+        {
+            await using var host=await AuthorHost.Start(AuthorProfiles.Resolve(root,null));
+            var args=System.Text.Json.JsonSerializer.SerializeToElement(new {});
+            async Task<ValidationResult> Validate()=>(ValidationResult)await host.Invoke("project.validate",args,Guid.NewGuid().ToString());
+            var absent=await Validate();Check.That(!absent.Success && absent.Diagnostics.Single().Path==GameRuntime.Entry);
+            await host.Invoke("project.create.module",args,"create");
+            var valid=await Validate();Check.That(valid.Success && valid.Checks.Contains("runtime") && valid.CurrentAtCompletion);
+            var script=File.ReadAllText(Path.Combine(root,"rules.lua"));
+            File.WriteAllText(Path.Combine(root,"rules.lua"),"invalid lua !");var broken=await Validate();Check.That(!broken.Success && broken.Source.Version!=valid.Source.Version);
+            File.WriteAllText(Path.Combine(root,"rules.lua"),script);Check.That((await Validate()).Success);
+            File.WriteAllText(Path.Combine(root,"module.json"),"{broken");var definition=await Validate();Check.That(!definition.Success && definition.Diagnostics.Single().Line==1);
+            Check.That(!Directory.EnumerateDirectories(root).Any(p=>Path.GetFileName(p).StartsWith("bgb-project-")));
+        }
+        finally {if(Directory.Exists(root))Directory.Delete(root,true);}
+    }
     public static void Resources() => ResourcesAsync().GetAwaiter().GetResult();
     private static async Task ResourcesAsync()
     {

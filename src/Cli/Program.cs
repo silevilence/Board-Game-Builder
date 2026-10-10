@@ -47,7 +47,7 @@ try
         "call" => await host.Invoke(operation!, JsonSerializer.Deserialize<JsonElement>(json), request, cancellation.Token),
         _ => throw new ArgumentException("Unknown command: " + args[0])
     };
-    var code = result is EditReceipt receipt ? receipt.State switch { EditState.Applied => 0, EditState.Conflict => 3, EditState.Unknown or EditState.PartialFailure => 4, _ => 1 } : 0;
+    var code = result is IAuthorOutcome outcome ? outcome.ExitCode : result is EditReceipt receipt ? receipt.State switch { EditState.Applied => 0, EditState.Conflict => 3, EditState.Unknown or EditState.PartialFailure => 4, _ => 1 } : 0;
     Write(new { ok = code == 0, requestId = request, result });
     return code;
 }
