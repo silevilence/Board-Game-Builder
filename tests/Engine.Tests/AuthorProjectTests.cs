@@ -7,6 +7,33 @@ namespace Engine.Tests;
 
 public static class AuthorProjectTests
 {
+    public static void Disk() => DiskAsync().GetAwaiter().GetResult();
+    private static async Task DiskAsync()
+    {
+        var root=Path.Combine(Path.GetTempPath(),"bgb-disk-"+Guid.NewGuid());Directory.CreateDirectory(root);
+        var identity=new ProjectIdentity(root,"builtin","disk");
+        try
+        {
+            File.WriteAllText(Path.Combine(root,"script.lua"),"first");
+            using var mode=new DiskEditMode(identity);
+            var first=await mode.Read();Check.That(first.Text("script.lua")=="first");
+            File.WriteAllText(Path.Combine(root,"script.lua"),"second");
+            Check.That((await mode.Read()).Text("script.lua")=="second");
+            var stale=first.Change("stale",new Dictionary<string,byte[]?> {{"created.txt",[1]}});
+            Check.That((await mode.Apply(stale)).State==EditState.Conflict && !File.Exists(Path.Combine(root,"created.txt")));
+            var enumeration=await mode.Read();enumeration.Enumerate("assets/");
+            Directory.CreateDirectory(Path.Combine(root,"assets"));File.WriteAllText(Path.Combine(root,"assets/new.txt"),"external");
+            Check.That((await mode.Apply(enumeration.Change("enumeration",new Dictionary<string,byte[]?> {{"created.txt",[1]}}))).State==EditState.Conflict);
+            var absent=await mode.Read();var add=absent.Change("absent",new Dictionary<string,byte[]?> {{"created.txt",[1]}});
+            File.WriteAllText(Path.Combine(root,"created.txt"),"external");Check.That((await mode.Apply(add)).State==EditState.Conflict);
+            var fresh=await mode.Read();var edits=fresh.Change("success",new Dictionary<string,byte[]?> {{"script.lua",Encoding.UTF8.GetBytes("third")},{"assets/new.txt",null}});
+            Directory.CreateDirectory(Path.Combine(root,".git"));File.WriteAllText(Path.Combine(root,".git/config"),"keep");
+            var receipt=await mode.Apply(edits);Check.That(receipt.State==EditState.Applied && receipt.Saved);
+            Check.That(File.ReadAllText(Path.Combine(root,".git/config"))=="keep" && File.ReadAllText(Path.Combine(root,"created.txt"))=="external");
+            Check.That(!File.Exists(Path.Combine(root,"assets/new.txt")));
+        }
+        finally {Directory.Delete(root,true);}
+    }
     public static void Operations() => OperationsAsync().GetAwaiter().GetResult();
     private static async Task OperationsAsync()
     {

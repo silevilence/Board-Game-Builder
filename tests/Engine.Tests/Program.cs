@@ -6,6 +6,7 @@ try
     tests.Add("author-contract",AuthorProjectTests.Contract);
     tests.Add("author-profiles",AuthorProjectTests.Profiles);
     tests.Add("author-operations",AuthorProjectTests.Operations);
+    tests.Add("author-disk",AuthorProjectTests.Disk);
     tests.Add("poker-uno",PokerUnoTests.Run);
     tests.Add("atlas",AtlasTests.Run);
     tests.Add("resource-plugins",ResourcePluginTests.Run);
