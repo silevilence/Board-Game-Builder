@@ -7,6 +7,39 @@ namespace Engine.Tests;
 
 public static class AuthorProjectTests
 {
+    public static void Runs() => RunsAsync().GetAwaiter().GetResult();
+    private static async Task RunsAsync()
+    {
+        System.Text.Json.JsonElement Args(object value)=>System.Text.Json.JsonSerializer.SerializeToElement(value);
+        foreach(var sample in new[]{"quick-cards","hex-skirmish"})
+        {
+            await using var host=await AuthorHost.Start(AuthorProfiles.Resolve(Path.GetFullPath("samples/"+sample),null));
+            var result=(RunResult)await host.Invoke("run.cpu",Args(new {seed=11,count=2}),"cpu");
+            Check.That(result.Success && result.Runs.All(r=>r.RepeatMatches && r.ReplayMatches));
+            var limited=(RunResult)await host.Invoke("run.cpu",Args(new {seed=11,limit=1}),"limit");Check.That(!limited.Success);
+        }
+        var root=Path.Combine(Path.GetTempPath(),"bgb-debug-"+Guid.NewGuid());var session=root+".session.json";
+        try
+        {
+            await using var host=await AuthorHost.Start(AuthorProfiles.Resolve(root,null));
+            await host.Invoke("project.create.module",Args(new {}),"create");
+            await host.Invoke("debug.start",Args(new {target=session,seed=12}),"start");
+            var original=BoardGame.Kernel.Wire.Read<DebugDocument>(File.ReadAllText(session));
+            File.WriteAllText(Path.Combine(root,"rules.lua"),"broken external content");
+            await host.Invoke("debug.inspect",Args(new {session}),"inspect");
+            Check.Throws(()=>host.Invoke("debug.step",Args(new {session,step=0,action="illegal"}),"illegal").GetAwaiter().GetResult(),"not offered");
+            await host.Invoke("debug.step",Args(new {session,step=0,action="finish"}),"finish");
+            await host.Invoke("debug.step",Args(new {session,step=0,action="finish"}),"finish");
+            var completed=BoardGame.Kernel.Wire.Read<DebugDocument>(File.ReadAllText(session));Check.That(completed.Steps.Length==1 && completed.Source==original.Source);
+            await host.Invoke("debug.record",Args(new {session,target=session+".recording"}),"record");
+            Check.That(BoardGame.Kernel.Wire.Read<SessionRecording>(File.ReadAllText(session+".recording")).Replay().ExportAuthorityState().Ended);
+        }
+        finally
+        {
+            if(Directory.Exists(root))Directory.Delete(root,true);
+            foreach(var file in new[]{session,session+".lock",session+".recording"})if(File.Exists(file))File.Delete(file);
+        }
+    }
     public static void Validation() => ValidationAsync().GetAwaiter().GetResult();
     private static async Task ValidationAsync()
     {

@@ -26,7 +26,7 @@ public sealed class AuthorHost : IAsyncDisposable
         { s.Provide("author.formats", new GameAuthorFormats(false)); s.Provide("author.operations", new AuthorOperations()); }, "Project contract and operation registry", true),
         new("edit.disk", "1", 1, ["author.mode"], [], s => s.Provide("author.mode", s.Own(new DiskEditMode(
             new(s.Profile.Project, s.Profile.Name, "disk")))), "Read current disk content and commit guarded changes"),
-        FileOperations.Plugin, FormatOperations.Module, FormatOperations.State, FormatOperations.Configuration, ResourceOperations.Plugin, ValidationOperations.Plugin
+        FileOperations.Plugin, FormatOperations.Module, FormatOperations.State, FormatOperations.Configuration, ResourceOperations.Plugin, ValidationOperations.Plugin, RunOperations.Plugin
     ];
     public static IReadOnlyList<AuthorPlugin> Validate(AuthorProfile profile, IReadOnlyList<AuthorPlugin> catalog)
     {

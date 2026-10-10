@@ -12,6 +12,7 @@ try
     tests.Add("author-templates",AuthorProjectTests.Templates);
     tests.Add("author-resources",AuthorProjectTests.Resources);
     tests.Add("author-validation",AuthorProjectTests.Validation);
+    tests.Add("author-runs",AuthorProjectTests.Runs);
     tests.Add("poker-uno",PokerUnoTests.Run);
     tests.Add("atlas",AtlasTests.Run);
     tests.Add("resource-plugins",ResourcePluginTests.Run);
