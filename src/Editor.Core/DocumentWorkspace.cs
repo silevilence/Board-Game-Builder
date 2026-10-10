@@ -6,7 +6,7 @@ public enum UnsavedChoice { Cancel, Save, Discard }
 public sealed record DocumentDraftTarget(string Path,bool Yaml=false);
 
 // Data survives panel reconstruction; controls never own author state.
-public sealed class DocumentWorkspace : IDisposable
+public sealed partial class DocumentWorkspace : IDisposable
 {
     private readonly Dictionary<DocumentDraftTarget,DocumentDraft> drafts=new();
     private readonly Dictionary<string,DocumentDraft> forms=new(StringComparer.Ordinal);
@@ -28,6 +28,7 @@ public sealed class DocumentWorkspace : IDisposable
     }
     public void Set(ModuleDocument? document)
     {
+        Generation++;authorUndo.Clear();authorRedo.Clear();
         if(Current!=null) Current.Changed-=Notify;
         Current=document;drafts.Clear();forms.Clear();ViewState.Clear();Selection=null;Location=document?.DirectoryPath ?? "";
         if(Current!=null) {Current.AuthorFormats=AuthorFormats;Current.Changed+=Notify;}
@@ -75,19 +76,26 @@ public sealed class DocumentWorkspace : IDisposable
         foreach(var edit in edits) {Current.EditText(edit.Draft.Path,edit.Text);edit.Draft.Accept(edit.Text);}
         Notify();
     }
-    public void Save() {ApplyDrafts();Current?.Save(string.IsNullOrWhiteSpace(Location)?null:Location);}
+    public void Save()
+    {
+        var edit=Current!=null && authorUndo.Count>0 && authorUndo.Peek().AfterVersion==AuthorVersion()?authorUndo.Peek():null;
+        ApplyDrafts();Current?.Save(string.IsNullOrWhiteSpace(Location)?null:Location);
+        if(edit!=null) {authorUndo.Pop();authorUndo.Push(edit with {After=AuthorStateCopy(),AfterVersion=AuthorVersion()});}
+    }
     public void Undo()
     {
+        if(UndoAuthor()) return;
         var pending=AllDrafts.LastOrDefault(d=>d.Dirty);
         if(pending!=null) {pending.Undo();Changed?.Invoke();} else Current?.Undo();
     }
     public void Redo()
     {
+        if(RedoAuthor()) return;
         var pending=AllDrafts.LastOrDefault(d=>d.CanRedo);
         if(pending!=null) {pending.Redo();Changed?.Invoke();} else Current?.Redo();
     }
-    public bool CanUndo=>Current?.CanUndo==true || AllDrafts.Any(d=>d.Dirty);
-    public bool CanRedo=>Current?.CanRedo==true || AllDrafts.Any(d=>d.CanRedo);
+    public bool CanUndo=>authorUndo.Count>0 || Current?.CanUndo==true || AllDrafts.Any(d=>d.Dirty);
+    public bool CanRedo=>authorRedo.Count>0 || Current?.CanRedo==true || AllDrafts.Any(d=>d.CanRedo);
     public async Task<bool> CanLeave(Func<Task<UnsavedChoice>> choose)
     {
         if(!Dirty) return true;
@@ -106,6 +114,14 @@ public sealed class DocumentWorkspace : IDisposable
 
 public sealed class DocumentDraft(string path,string baseline,string text,bool yaml)
 {
+    internal bool Yaml=>yaml;
+    internal DocumentDraft Copy()
+    {
+        var copy=new DocumentDraft(Path,Baseline,Text,yaml){accepted=accepted};
+        foreach(var entry in undo.Reverse())copy.undo.Push(entry);
+        foreach(var entry in redo.Reverse())copy.redo.Push(entry);
+        return copy;
+    }
     private readonly Stack<string> undo=[];
     private readonly Stack<string> redo=[];
     private string accepted=text;

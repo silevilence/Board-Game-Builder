@@ -21,6 +21,9 @@ public static class BuiltinPlugins
             scope.Own(new CommandSurface(window,scope.Service<WorkspaceShell>("workspace"),commands));
         },true));
         app.Install(new("base.documents",1,["documents"],["workspace","commands"],scope=>DocumentPlugin.Activate(app,window,scope),true));
+        app.Install(new("author.workspace",1,["author.workspace"],["documents"],scope=>
+            scope.Provide("author.workspace",new AuthorWorkspaceService(scope.Service<DocumentWorkspace>("documents"),
+                async action=>await Avalonia.Threading.Dispatcher.UIThread.InvokeAsync(action)))));
         app.Install(new("base.sessions",1,["sessions"],["documents"],scope=>
         {
             var sessions=new SessionController(scope.Service<DocumentWorkspace>("documents"));scope.Own(sessions);scope.Provide("sessions",sessions);

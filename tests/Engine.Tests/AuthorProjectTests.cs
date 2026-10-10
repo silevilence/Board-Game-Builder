@@ -7,6 +7,34 @@ namespace Engine.Tests;
 
 public static class AuthorProjectTests
 {
+    public static void Workspace() => WorkspaceAsync().GetAwaiter().GetResult();
+    private static async Task WorkspaceAsync()
+    {
+        var root=Path.Combine(Path.GetTempPath(),"bgb-workspace-"+Guid.NewGuid());
+        try
+        {
+            var document=ModuleDocument.Create();document.Save(root);
+            using var workspace=new DocumentWorkspace();workspace.Set(document);
+            var identity=new ProjectIdentity(root,"connected","gui",workspace.WorkspaceId,workspace.Generation);
+            using var mode=new WorkspaceEditMode(workspace,identity);
+            var script=document.Text("rules.lua");workspace.EditDraft("rules.lua",script+"\n-- user draft");
+            var view=await mode.Read();Check.That(view.Text("rules.lua").Contains("user draft"));
+            var changes=view.Change("gui",new Dictionary<string,byte[]?> {{"rules.lua",Encoding.UTF8.GetBytes(script+"\n-- user draft\n-- agent")},{"note.txt",Encoding.UTF8.GetBytes("new")}});
+            var result=await mode.Apply(changes);Check.That(!result.Saved && result.State==EditState.Applied);
+            Check.That(File.ReadAllText(Path.Combine(root,"rules.lua"))==script && !File.Exists(Path.Combine(root,"note.txt")));
+            Check.That(workspace.Draft("rules.lua").Dirty && document.Text("rules.lua")==script);
+            workspace.Undo();Check.That((await mode.Read()).Text("rules.lua")==script+"\n-- user draft" && !document.Paths.Contains("note.txt"));
+            workspace.Redo();Check.That((await mode.Read()).Text("rules.lua").Contains("agent") && document.Paths.Contains("note.txt"));
+            await mode.Save("save");Check.That(File.ReadAllText(Path.Combine(root,"rules.lua")).Contains("agent"));
+            workspace.Undo();Check.That(!document.Paths.Contains("note.txt") && workspace.Draft("rules.lua").Text.Contains("user draft") && !workspace.Draft("rules.lua").Text.Contains("agent"));
+            workspace.Redo();Check.That(document.Paths.Contains("note.txt"));
+            workspace.Form("fields",()=>"initial");workspace.EditForm("fields","invalid");
+            Check.Throws(()=>mode.Read().GetAwaiter().GetResult(),"pending form");workspace.DiscardForms();
+            workspace.EditDraft("module.json","{");Check.Throws(()=>mode.Read().GetAwaiter().GetResult(),"JSON");workspace.DiscardDraft("module.json");
+            workspace.Set(ModuleDocument.Create());Check.Throws(()=>mode.Apply(changes).GetAwaiter().GetResult(),"generation");
+        }
+        finally {if(Directory.Exists(root))Directory.Delete(root,true);}
+    }
     public static void Exports() => ExportsAsync().GetAwaiter().GetResult();
     private static async Task ExportsAsync()
     {

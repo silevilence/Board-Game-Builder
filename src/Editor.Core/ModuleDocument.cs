@@ -6,6 +6,8 @@ using BoardGame.Modules;
 using BoardGame.Runtime;
 namespace BoardGame.Editor;
 
+internal sealed record ModuleDocumentHistory(Dictionary<string,byte[]> Files,Dictionary<string,byte[]>[] Undo,Dictionary<string,byte[]>[] Redo);
+
 // Author data is owned by the document. Runtime instances only receive validated copies.
 public sealed class ModuleDocument : IAuthorFiles
 {
@@ -28,23 +30,7 @@ public sealed class ModuleDocument : IAuthorFiles
         if(!Directory.Exists(path)) throw new DirectoryNotFoundException(path);
         return new(ReadFiles(path),path);
     }
-    private static Dictionary<string,byte[]> ReadFiles(string path)
-    {
-        if((File.GetAttributes(path) & FileAttributes.ReparsePoint)!=0) throw new InvalidDataException("Linked author directories are unsupported");
-        var files=new Dictionary<string,byte[]>(StringComparer.Ordinal);
-        Read(path,"");
-        return files;
-        void Read(string folder,string prefix)
-        {
-            foreach(var item in new DirectoryInfo(folder).EnumerateFileSystemInfos())
-            {
-                if((item.Attributes & FileAttributes.ReparsePoint)!=0) throw new InvalidDataException("Linked author files are unsupported: "+item.Name);
-                var relative=prefix+item.Name;
-                if(item is DirectoryInfo) Read(item.FullName,relative+"/");
-                else files.Add(relative,File.ReadAllBytes(item.FullName));
-            }
-        }
-    }
+    private static Dictionary<string,byte[]> ReadFiles(string path)=>ProjectPaths.Read(path);
     public string Text(string path) => Encoding.UTF8.GetString(files[path]);
     public JsonObject Startup=>JsonNode.Parse(Text(GameRuntime.Entry))!.AsObject();
     public IGameAuthorFormat? AuthorFormat=>AuthorFormats.Resolve(this);
@@ -111,19 +97,25 @@ public sealed class ModuleDocument : IAuthorFiles
             if(same && (!Directory.Exists(target) || Hash(ReadFiles(target))!=saved)) throw new IOException("Module files changed outside the editor. Save As to a new directory, or reopen and merge your changes.");
         }
         CheckConflict();
-        // A sibling staging directory keeps validation and I/O failures away from the current document.
-        var staging=target+".saving-"+Guid.NewGuid(); var backup=target+".backup-"+Guid.NewGuid();
-        try
-        {
-            Write(staging);
-            CheckConflict();
-            if(Directory.Exists(target)) Directory.Move(target,backup);
-            try { Directory.Move(staging,target); }
-            catch { if(Directory.Exists(backup)) Directory.Move(backup,target); throw; }
-            DirectoryPath=target; saved=Hash(files); Changed?.Invoke();
-        }
-        finally { if(Directory.Exists(staging)) Directory.Delete(staging,true); if(Directory.Exists(backup) && Directory.Exists(target)) Directory.Delete(backup,true); }
+        var identity=new ProjectIdentity(target,"editor-save","disk");
+        var baseline=new ProjectView(identity,same?ReadFiles(target):new Dictionary<string,byte[]>());
+        if(same && Hash(baseline.CopyFiles())!=saved) throw new IOException("Module files changed outside the editor while saving.");
+        _=baseline.Paths;
+        var edits=baseline.Paths.Union(files.Keys).Where(p=>!files.TryGetValue(p,out var value) || !baseline.Exists(p) || !baseline.Bytes(p).SequenceEqual(value))
+            .ToDictionary(p=>p,p=>files.TryGetValue(p,out var value)?value:null);
+        using var mode=new DiskEditMode(identity);
+        var receipt=mode.Apply(baseline.Change(Guid.NewGuid().ToString("N"),edits)).GetAwaiter().GetResult();
+        if(receipt.State!=EditState.Applied) throw new IOException("Module save incomplete: "+string.Join("; ",receipt.Diagnostics.Select(d=>d.Message)));
+        DirectoryPath=target;saved=Hash(files);Changed?.Invoke();
     }
+    public Dictionary<string,byte[]> CopyFiles()=>files.ToDictionary(p=>p.Key,p=>p.Value.ToArray(),StringComparer.Ordinal);
+    internal ModuleDocumentHistory CopyHistory()=>new(CopyFiles(),undo.Reverse().ToArray(),redo.Reverse().ToArray());
+    internal void RestoreHistory(ModuleDocumentHistory history)
+    {
+        undo.Clear();redo.Clear();foreach(var state in history.Undo)undo.Push(state);foreach(var state in history.Redo)redo.Push(state);
+        RestoreFiles(history.Files);
+    }
+    internal void RestoreFiles(Dictionary<string,byte[]> content) {files=content.ToDictionary(p=>p.Key,p=>p.Value.ToArray(),StringComparer.Ordinal);Changed?.Invoke();}
     private void Write(string target)
     {
         Directory.CreateDirectory(target);
