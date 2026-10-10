@@ -24,6 +24,15 @@ public static class BuiltinPlugins
         app.Install(new("author.workspace",1,["author.workspace"],["documents"],scope=>
             scope.Provide("author.workspace",new AuthorWorkspaceService(scope.Service<DocumentWorkspace>("documents"),
                 async action=>await Avalonia.Threading.Dispatcher.UIThread.InvokeAsync(action)))));
+        app.Install(new("author.connection",1,[],["author.workspace","documents"],scope=>
+        {
+            var service=scope.Service<AuthorWorkspaceService>("author.workspace");
+            var documents=scope.Service<DocumentWorkspace>("documents");
+            var server=new BoardGame.Authoring.WorkspaceConnectionServer(service.Handle);
+            scope.Context.Effect(()=>server);
+            void Publish()=>server.Publish(documents.WorkspaceId,documents.Generation,documents.Current?.DirectoryPath);
+            documents.Replaced+=Publish;scope.Own(new Cleanup(()=>documents.Replaced-=Publish));Publish();
+        }));
         app.Install(new("base.sessions",1,["sessions"],["documents"],scope=>
         {
             var sessions=new SessionController(scope.Service<DocumentWorkspace>("documents"));scope.Own(sessions);scope.Provide("sessions",sessions);

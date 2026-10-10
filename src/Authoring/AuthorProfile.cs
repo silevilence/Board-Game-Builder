@@ -3,7 +3,7 @@ using System.Text.Json;
 namespace BoardGame.Authoring;
 
 public sealed record AuthorPluginSelection(string Id, string Version = "1", int Api = 1);
-public sealed record AuthorProfile(int Format, AuthorPluginSelection[] Plugins);
+public sealed record AuthorProfile(int Format, AuthorPluginSelection[] Plugins, string? Workspace = null);
 public sealed record EffectiveProfile(string Name, string Source, string Project, AuthorProfile Profile);
 
 public static class AuthorProfiles

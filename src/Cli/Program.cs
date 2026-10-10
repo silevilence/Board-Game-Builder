@@ -15,7 +15,8 @@ try
             exits = new { success = 0, failure = 1, arguments = 2, conflict = 3, unknownOrPartial = 4, cancelled = 130 } });
         return 0;
     }
-    string? project = null, profile = null, operation = null;
+    if(args[0]=="workspaces") { Write(WorkspaceConnections.Discover());return 0; }
+    string? project = null, profile = null, operation = null, instance = null;
     var json = "{}"; var request = Guid.NewGuid().ToString("N");
     var offset = 1;
     if (args[0] is "call" or "describe")
@@ -30,6 +31,7 @@ try
         {
             case "--project": project = args[++i]; break;
             case "--profile": profile = args[++i]; break;
+            case "--instance": instance = args[++i]; break;
             case "--args": json = args[++i]; break;
             case "--args-file": json = File.ReadAllText(args[++i]); break;
             case "--request": request = args[++i]; break;
@@ -37,6 +39,7 @@ try
         }
     }
     var effective = AuthorProfiles.Resolve(AuthorProfiles.Locate(project, Environment.CurrentDirectory), profile);
+    if(instance!=null) effective=effective with {Profile=effective.Profile with {Workspace=instance}};
     await using var host = await AuthorHost.Start(effective, AuthorPluginPackages.Discover(Path.Combine(AppContext.BaseDirectory, "plugins", "author")));
     object result = args[0] switch
     {

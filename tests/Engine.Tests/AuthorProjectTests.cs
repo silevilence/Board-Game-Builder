@@ -7,6 +7,69 @@ namespace Engine.Tests;
 
 public static class AuthorProjectTests
 {
+    public static void Connections() => ConnectionsAsync().GetAwaiter().GetResult();
+    private static async Task ConnectionsAsync()
+    {
+        var root=Path.Combine(Path.GetTempPath(),"bgb-connection-"+Guid.NewGuid());
+        try
+        {
+            var document=ModuleDocument.Create();document.Save(root);
+            using var documents=new DocumentWorkspace();documents.Set(document);
+            var service=new AuthorWorkspaceService(documents,action=>Task.FromResult(action()));
+            for(var iteration=0;iteration<2;iteration++)
+            {
+                var dropped=new TaskCompletionSource(TaskCreationOptions.RunContinuationsAsynchronously);
+                var server=new WorkspaceConnectionServer(async (request, token)=>
+                {
+                    var value=await service.Handle(request,token);
+                    if(request.RequestId=="drop-"+iteration)dropped.TrySetResult();
+                    return value;
+                });server.Publish(documents.WorkspaceId,documents.Generation,root);
+                try
+                {
+                    using var mode=new GuiEditMode(root,"gui",server.Instance);
+                    Check.That((await mode.Read()).Source.Identity.Workspace==documents.WorkspaceId);
+                    var view=await mode.Read();var changes=view.Change("connected-"+iteration,new Dictionary<string,byte[]?> {{"connected.txt",Encoding.UTF8.GetBytes(iteration.ToString())}});
+                    var receipt=await mode.Apply(changes);Check.That(!receipt.Saved && !File.Exists(Path.Combine(root,"connected.txt")));
+                    Check.That((await mode.Apply(changes)).ResultVersion==receipt.ResultVersion);
+                    Check.That((await mode.Result(changes.RequestId)).State==EditState.Applied);
+                    documents.Undo();Check.That(!document.Paths.Contains("connected.txt"));documents.Redo();
+                    var beforeDrop=await mode.Read();var drop=beforeDrop.Change("drop-"+iteration,new Dictionary<string,byte[]?> {{"lost.txt",Encoding.UTF8.GetBytes("once")}});
+                    var advertisement=WorkspaceConnections.Discover().Single(c=>c.Instance==server.Instance);
+                    using(var raw=new System.IO.Pipes.NamedPipeClientStream(".",advertisement.Pipe,System.IO.Pipes.PipeDirection.InOut,System.IO.Pipes.PipeOptions.Asynchronous))
+                    {
+                        await raw.ConnectAsync(5000);
+                        var payload=System.Text.Json.JsonSerializer.SerializeToUtf8Bytes(new WorkspaceRequest("apply",drop.Source.Identity,drop.RequestId,drop),AuthorProfiles.Json);
+                        await raw.WriteAsync(BitConverter.GetBytes(payload.Length));await raw.WriteAsync(payload);await raw.FlushAsync();
+                        // Dispose without reading the server's response.
+                    }
+                    await dropped.Task.WaitAsync(TimeSpan.FromSeconds(10));
+                    Check.That((await mode.Result(drop.RequestId)).State==EditState.Applied);
+                    Check.That((await mode.Apply(drop)).State==EditState.Applied);
+                    var profile=AuthorProfiles.Resolve(root,null) with {Name="gui",Profile=new(1,[new("edit.gui"),new("author.files"),new("author.module"),new("author.validation")],server.Instance)};
+                    await using(var host=await AuthorHost.Start(profile))
+                    {
+                        var validation=(ValidationResult)await host.Invoke("project.validate",System.Text.Json.JsonSerializer.SerializeToElement(new {}),"validate");Check.That(validation.Success && validation.Source.Identity.Mode=="gui");
+                        await host.Invoke("workspace.save",System.Text.Json.JsonSerializer.SerializeToElement(new {}),"save");Check.That(File.Exists(Path.Combine(root,"connected.txt")));
+                    }
+                    await using(var second=new WorkspaceConnectionServer(service.Handle))
+                    {
+                        second.Publish(documents.WorkspaceId,documents.Generation,root);
+                        Check.Throws(()=>new GuiEditMode(root,"gui",null),"Multiple matching");
+                    }
+                    documents.Set(ModuleDocument.Open(root));server.Publish(documents.WorkspaceId,documents.Generation,root);
+                    Check.Throws(()=>mode.Read().GetAwaiter().GetResult(),"generation");
+                    document=documents.Current!;
+                    // Reset the next cycle through a normal author operation, without touching disk implicitly.
+                    File.Delete(Path.Combine(root,"connected.txt"));documents.Set(ModuleDocument.Open(root));document=documents.Current!;
+                }
+                finally {await server.DisposeAsync();}
+                Check.That(!WorkspaceConnections.Discover().Any(c=>c.Instance==server.Instance));
+            }
+            Check.Throws(()=>new GuiEditMode(root,"gui",null),"No matching");
+        }
+        finally {if(Directory.Exists(root))Directory.Delete(root,true);}
+    }
     public static void Workspace() => WorkspaceAsync().GetAwaiter().GetResult();
     private static async Task WorkspaceAsync()
     {
