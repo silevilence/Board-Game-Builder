@@ -69,6 +69,12 @@ def verify(root, tag):
 def archive(repo, root, tag, output):
     body = check(repo, tag)
     manifest = verify(root, tag)
+    # PowerShell hashtable iteration order varies between processes. Canonicalize generated
+    # metadata so an interrupted upload can be resumed from a rebuild of the same commit.
+    for relative in ['toolkit.json', 'player/release.json']:
+        path = root / relative
+        content = json.loads(path.read_text(encoding='utf-8-sig'))
+        path.write_text(json.dumps(content, sort_keys=True, indent=2) + '\n', encoding='utf-8', newline='\n')
     output.mkdir(parents=True, exist_ok=True)
     name = f'Board-Game-Builder-V{version(tag)}-win-x64.zip'
     target = output / name
@@ -87,7 +93,7 @@ def archive(repo, root, tag, output):
                     shutil.copyfileobj(source, destination)
     staging.rename(target)
     (output / (name + '.sha256')).write_text(f'{sha(target)}  {name}\n', encoding='utf-8')
-    (output / 'toolkit.json').write_text(json.dumps(manifest, indent=2) + '\n', encoding='utf-8')
+    (output / 'toolkit.json').write_text(json.dumps(manifest, sort_keys=True, indent=2) + '\n', encoding='utf-8', newline='\n')
     (output / 'release-notes.md').write_text(body, encoding='utf-8')
 
 

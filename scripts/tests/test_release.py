@@ -38,6 +38,25 @@ class MetadataTests(unittest.TestCase):
                 release.check(root, 'V1.0.0')
 
 
+class ArchiveTests(unittest.TestCase):
+    def test_rebuild_ignores_metadata_order_and_file_timestamps(self):
+        with tempfile.TemporaryDirectory() as directory:
+            root = Path(directory) / 'root'
+            (root / 'player').mkdir(parents=True)
+            manifest = {'version': '0.1.0', 'commit': 'abc', 'entries': {'editor': 'editor', 'cli': 'cli'}}
+            (root / 'toolkit.json').write_text(json.dumps(manifest))
+            (root / 'player/release.json').write_text('{"version":"0.1.0","api":1}')
+            first, second = Path(directory) / 'first', Path(directory) / 'second'
+            with patch.object(release, 'check', return_value='notes'), patch.object(release, 'verify', return_value=manifest):
+                release.archive(root, root, 'V0.1.0', first)
+                (root / 'toolkit.json').write_text(json.dumps(dict(reversed(list(manifest.items())))))
+                (root / 'player/release.json').write_text('{"api":1,"version":"0.1.0"}')
+                release.archive(root, root, 'V0.1.0', second)
+            name = 'Board-Game-Builder-V0.1.0-win-x64.zip'
+            self.assertEqual(release.sha(first / name), release.sha(second / name))
+            self.assertEqual((first / 'toolkit.json').read_bytes(), (second / 'toolkit.json').read_bytes())
+
+
 class PublicationTests(unittest.TestCase):
     def setUp(self):
         self.temp = tempfile.TemporaryDirectory()
