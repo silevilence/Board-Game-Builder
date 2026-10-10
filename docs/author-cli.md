@@ -32,6 +32,14 @@ JSON 结果只写标准输出，日志写标准错误。退出码：0 成功、1
 
 核心插件由宿主补齐，profile 必须选择恰好一个编辑模式。作者扩展实现 `IAuthorPluginPackage`，DLL 安装到 CLI 旁的 `plugins/author`；示例见 `samples/Author.SamplePlugin`。扩展声明稳定操作说明并通过 `AuthorScope.Register` 注册，注册随 CordiSharp 释放。操作执行期间宿主保留插件，退出等待执行结束。安装的作者 DLL 是受信任的本机代码，游戏目录不会被扫描为插件目录。
 
+## 扩展贡献
+
+`AuthorPlugin` 声明 ID、版本、API、依赖／提供能力及启动函数。`Operations` 提供发现阶段的稳定说明，启动时用 `AuthorScope.Register(new AuthorOperation(info, handler))` 绑定执行；`Documents` 可贡献离线主题，重复 ID 或主题拒绝，不要求修改 CLI 的命令分支。独立示例项目 [Author.SamplePlugin](../samples/Author.SamplePlugin) 实现项目文件计数操作。
+
+处理函数通过 `AuthorCall.View` 读取文件、枚举及来源，结构化编辑用 `AuthorCall.Formats` 选择作者支持。修改形成 `View.Change(requestId, changes)` 再交给 `Mode.Apply`；声明 `Effects:["project"]` 使宿主按请求标识和操作输入核对既有回执。只查询回执的操作可设 `ReadsProject:false`，因此临时无效工程不会妨碍核对。不得直接修改源目录或自行加载 GUI 文档。
+
+长操作使用 `AuthorCall.Cancellation` 并释放会话／临时快照；结构化结果写回宿主，日志不能污染 stdout。插件服务和资源随 scope 清理，跨线程编辑由编辑模式调度。新增模式实现 `IProjectEditMode`，保留来源、依赖基线、冲突、回执和保存语义；可选恢复能力实现 `IRecoverableEditMode`。项目视图与运行可加载性分离，运行／打包仍使用正式 Runtime 和 GamePackage 入口。
+
 ## 项目视图与提交
 
 操作读取固定的项目来源和内容版本；每次磁盘调用重新捕获文件。`files.write` 接受 `files` 映射，值为 UTF-8 文本或表示删除的 null。可直接用其他编辑器编写文件，不要求所有编辑经过 CLI。

@@ -25,3 +25,5 @@
 - 游戏入口为 `game.start.json`。包身份与插件启用配置仅在此声明；定义路径由加载插件配置。参考 [运行插件协议](docs/runtime-plugins.md)。
 - Runtime 允许固定 CordiSharp 核心，与编辑器分离根上下文及插件目录；不得引用 Editor、Editor.Core 或 CordiSharp.Plugins.Avalonia。运行纤程不捕获 UI 同步上下文。
 - 作者结构化功能通过 `IGameAuthorFormat` 工作；不支持的格式保留通用文件编辑与试玩，不在基础文档固定解析 `module.json`。格式面板由子插件上下文释放，跨格式的迟到通知不得读取新文档。
+- 独立作者契约与领域操作位于 Authoring，不引用 Editor/Core 或 Avalonia；Cli 通过作者插件发现操作。领域操作读取 `ProjectView`，通过 `IProjectEditMode` 提交并核对来源／版本，不能绕过编辑模式直接修改源工程。
+- 作者 `author.profile.json` 与运行入口分离。GUI 模式绑定工作区和文档代次，使用 DocumentWorkspace 的草稿及 Undo；校验、运行、导出不隐式保存，连接失败不回退磁盘模式。详见 [作者工具协议](docs/author-cli.md) 和 [ADR-0002](docs/adr/0002-author-project-modes.md)。

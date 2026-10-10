@@ -4,6 +4,14 @@
 运行 `src/Editor/bin/Release/net10.0-windows/Editor.exe`，或用目录路径作为启动参数。
 作者使用预编译编辑器；制作游戏和导出过程不会生成 C# 工程或调用 SDK。
 
+## CLI 协作
+
+在插件面板启用 `author.workspace` 与 `author.connection`，再让 CLI 选择 `edit.gui` profile。`bgb.exe workspaces` 查询实例；多个编辑器打开同一工程时用 `--instance` 明确选择。完整 profile 示例见 [作者配置](author/profile.md)。关闭连接插件会撤销监听，CLI 不会回退到写磁盘。
+
+连接后的读取包含可序列化文件草稿，修改进入同一工作区且支持 Undo/Redo，回执 `saved:false`。校验、运行和导出使用工作区快照，不自动保存；调用 `workspace.save` 或编辑器保存才写磁盘。存在未应用字段或无效草稿时先协调输入。
+
+外部工具改变磁盘后，在“外部编辑与连接”页检查差异，再选择无草稿重载、显式放弃一边、或提交最终文件内容。合并 JSON 将相对路径映射到最终文本或 null；必须处理全部外部变更和未保存文件草稿，有字段草稿还需提供最终定义文件。合并框包括未完成输入都随文档保留；提交时磁盘或工作区再次变化会拒绝过期结果。
+
 ## 文档和制作
 
 - 新建空模块，填写一个尚不存在的模块目录并保存；打开目录时从 `game.start.json` 选择定义加载器。旧目录先使用 Player 的 `migrate` 命令迁移到新目录。

@@ -2,6 +2,8 @@
 
 本地单人桌游运行时与 Windows 图形 Player。开发环境为 .NET 10 SDK；导出物自带运行时。
 
+作者可以使用 Editor、独立 CLI 或直接编辑游戏文件。Windows CLI 发行包不要求安装 SDK，包含插件、本地作者文档、技能模板和可供导出的 Player。开发运行：`dotnet run --project src/Cli -- help`；发行构建：`pwsh -NoProfile -File scripts/publish-author.ps1 -Output artifacts/author-release`。安装与工作区协作见 [CLI 作者工具](docs/author-cli.md)，离线创作入口见 [作者指南](docs/author/entry.md)。
+
 ```powershell
 dotnet build BoardGameBuilder.slnx -c Release
 pwsh -NoProfile -File scripts/check-boundaries.ps1
@@ -9,7 +11,7 @@ dotnet run --project tests/Engine.Tests -c Release
 dotnet run --project src/Player -- --help
 ```
 
-Kernel.Abstractions 定义数据与运行协议；Kernel 执行权威命令；Modules 提供定义解析与内容校验；Lua 适配规则和决策；Runtime 的独立 CordiSharp 宿主为 Player、试玩和批量验证装配加载器、内核、规则、CPU、扩展、席位及记录能力。View.Abstractions 和 View.MonoGame 提供投影桌面与输入，Editor.Core 管理作者文档，Avalonia Editor 使用独立插件上下文提供制作、两种试玩、调试和导出。
+Kernel.Abstractions 定义数据与运行协议；Kernel 执行权威命令；Modules 提供定义解析与内容校验；Lua 适配规则和决策；Runtime 的独立 CordiSharp 宿主为 Player、试玩和批量验证装配加载器、内核、规则、CPU、扩展、席位及记录能力。Authoring 提供项目视图、作者格式、编辑模式和领域操作，Cli 是其无界面入口。View.Abstractions 和 View.MonoGame 提供投影桌面与输入，Editor.Core 管理作者文档及 GUI 编辑模式，Avalonia Editor 使用独立插件上下文提供制作、两种试玩、调试和导出。
 
 Networking 在 Runtime 外提供身份绑定、投影同步与恢复；无图形界面的 Server 和命令行 NetworkClient 通过 HTTP／HTTPS 协作，沿用相同的运行时、规则及 CPU 能力。Player 和编辑器的本地运行不依赖联机层。[联机说明](docs/networking.md) 包含启动、认证、断线恢复与记录访问约定；跨机人工验收仍待环境。
 
