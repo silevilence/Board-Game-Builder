@@ -1,4 +1,5 @@
 using System.Text.Json.Nodes;
+using BoardGame.Authoring;
 
 namespace BoardGame.Editor;
 
@@ -7,18 +8,7 @@ internal static class ResourceAuthoring
 {
     public static JsonObject AddImages(JsonObject startup,IReadOnlyDictionary<string,string> images)
     {
-        var plugins=startup["plugins"]!.AsArray();
-        JsonObject Ensure(string id)
-        {
-            var plugin=plugins.FirstOrDefault(p=>p!["id"]!.GetValue<string>()==id)?.AsObject();
-            if(plugin==null)
-            {
-                plugin=new JsonObject {["id"]=id,["version"]="1",["api"]=1,["configuration"]=new JsonObject {["sources"]=new JsonArray()}};
-                plugins.Add(plugin);
-            }
-            return plugin["configuration"]!.AsObject();
-        }
-        _=Ensure("resources");var config=Ensure("resources.images");
+        _=ResourceOperations.Ensure(startup,"resources");var config=ResourceOperations.Ensure(startup,"resources.images");
         if(config["sources"]==null)config["sources"]=new JsonArray();
         foreach(var image in images)config["sources"]!.AsArray().Add(new JsonObject {["path"]=image.Value,["name"]=image.Key});
         return startup;

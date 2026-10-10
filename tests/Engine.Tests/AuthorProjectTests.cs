@@ -7,6 +7,34 @@ namespace Engine.Tests;
 
 public static class AuthorProjectTests
 {
+    public static void Resources() => ResourcesAsync().GetAwaiter().GetResult();
+    private static async Task ResourcesAsync()
+    {
+        var root=Path.Combine(Path.GetTempPath(),"bgb-author-resources-"+Guid.NewGuid());
+        try
+        {
+            await using var host=await AuthorHost.Start(AuthorProfiles.Resolve(root,null));
+            System.Text.Json.JsonElement Args(object value)=>System.Text.Json.JsonSerializer.SerializeToElement(value);
+            await host.Invoke("project.create.module",Args(new {}),"create");
+            var image=Args(new {source=Path.GetFullPath("samples/freecell/assets/card_clubs_A.png"),target="assets/portrait.png",name="portrait"});
+            Check.That(((EditReceipt)await host.Invoke("resources.import.image",image,"image")).State==EditState.Applied);
+            Check.That(GameRuntime.Load(root).Resources!.Images.ContainsKey("portrait"));
+            await host.Invoke("resources.import.image",image,"image");
+            Check.Throws(()=>host.Invoke("resources.import.image",Args(new {source=Path.GetFullPath("samples/freecell/assets/card_clubs_A.png"),target="assets/other.png",name="portrait"}),"collision").GetAwaiter().GetResult(),"conflicting resource");
+            Check.That(!File.Exists(Path.Combine(root,"assets/other.png")));
+            var atlas=Args(new {source=Path.GetFullPath("samples/poker-uno/assets/cards.json"),target="assets/atlas/cards.json",name="atlas/"});
+            Check.That(((EditReceipt)await host.Invoke("resources.import.atlas",atlas,"atlas")).State==EditState.Applied);
+            var pool=GameRuntime.Load(root).Resources!;Check.That(pool.Images.Count==54 && pool.Images.ContainsKey("atlas/card_hearts_A"));
+            Check.That(((EditReceipt)await host.Invoke("resources.move",Args(new {from="assets/portrait.png",to="images/portrait.png"}),"move")).State==EditState.Applied);
+            Check.That(GameRuntime.Load(root).Resources!.Images["portrait"].Resource=="images/portrait.png");
+            Check.That(((EditReceipt)await host.Invoke("resources.move",Args(new {from="assets/atlas/cards.json",to="images/atlas.json"}),"move-atlas")).State==EditState.Applied);
+            Check.That(GameRuntime.Load(root).Resources!.Images.Count==54);
+            var missing=Path.Combine(root,"missing-atlas.json");File.WriteAllText(missing,"{\"frames\":{},\"meta\":{\"image\":\"missing.png\"}}");
+            Check.Throws(()=>host.Invoke("resources.import.atlas",Args(new {source=missing,target="bad/atlas.json"}),"bad").GetAwaiter().GetResult(),"missing.png");
+            Check.That(!File.Exists(Path.Combine(root,"bad/atlas.json")));
+        }
+        finally {if(Directory.Exists(root))Directory.Delete(root,true);}
+    }
     public static void Templates() => TemplatesAsync().GetAwaiter().GetResult();
     private static async Task TemplatesAsync()
     {
