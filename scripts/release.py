@@ -128,16 +128,15 @@ def publish(repo, tag, output):
             raise ValueError('Archive manifest differs from sidecar')
     if existing:
         release = existing[0]
-        if release['body'].strip() != body.strip() or release['target_commitish'] != commit:
+        if release['body'].replace('\r\n', '\n').strip() != body.strip() or release['target_commitish'] != commit:
             raise ValueError('Existing release notes/commit conflict')
         tag = release['tag_name']
     else:
-        note_file = output / 'release-notes.md'
-        note_file.write_text(body, encoding='utf-8')
-        gh('release', 'create', tag, '--repo', repository, '--draft', '--verify-tag', '--target', commit,
-           '--title', 'V' + version(tag), '--notes-file', str(note_file))
-        pages = json.loads(gh('api', '--paginate', '--slurp', f'repos/{repository}/releases?per_page=100'))
-        release = next(r for page in pages for r in page if r['tag_name'] == tag)
+        # Use the creation response, not an eventually consistent list immediately after creation.
+        request = output / 'draft-request.json'
+        request.write_text(json.dumps({'tag_name': tag, 'target_commitish': commit,
+                                      'name': 'V' + version(tag), 'body': body, 'draft': True}), encoding='utf-8')
+        release = json.loads(gh('api', '--method', 'POST', f'repos/{repository}/releases', '--input', str(request)))
     expected = {f.name: f for f in files}
     if any(a['name'] not in expected for a in release['assets']):
         raise ValueError('Unexpected existing release attachment')

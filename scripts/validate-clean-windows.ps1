@@ -56,7 +56,7 @@ try {
     }
     Call 'player.export' 'C:\Games\module Project' @{target='C:/Standalone Game'}
     Gui 'C:\Standalone Game\Play.exe' @('batch','"C:\Standalone Game\game.bgm"','--count','3','--seed','42','--out','C:\Evidence\acceptance\batch') ''
-    Gui 'C:\Standalone Game\Play.exe' @('gui','"C:\Standalone Game\game.bgm"','--smoke','C:\Evidence\acceptance\player-gui.json') ''
+    Gui 'C:\Standalone Game\Play.exe' @('gui','"C:\Standalone Game\game.bgm"','--smoke','C:\Evidence\acceptance\player-gui.json') "$Evidence/player-gui.json"
     Copy-Item -LiteralPath 'C:\Standalone Game' -Destination "$Evidence/standalone" -Recurse
     @{success=$true;version=$manifest.version;commit=$manifest.commit;zip=$zip.Name;sha256=$hash} | ConvertTo-Json | Set-Content "$Evidence/result.json"
 } catch {

@@ -63,6 +63,10 @@ class PublicationTests(unittest.TestCase):
     def gh(self, *args):
         self.calls.append(args)
         if args[0] == 'api':
+            if '--method' in args:
+                payload = json.loads(Path(args[-1]).read_text())
+                self.remote = {**payload, 'assets': []}
+                return json.dumps(self.remote)
             if 'matching-refs' in args[-1]:
                 return json.dumps(self.refs)
             if args[-1].endswith('releases?per_page=100'):
@@ -95,7 +99,7 @@ class PublicationTests(unittest.TestCase):
         self.publish()
         self.assertFalse(self.remote['draft'])
         self.publish()
-        self.assertEqual(sum(c[:2] == ('release', 'create') for c in self.calls), 1)
+        self.assertEqual(sum('--method' in c for c in self.calls), 1)
         self.assertEqual(sum(c[:2] == ('release', 'upload') for c in self.calls), 3)
 
     def test_interrupted_upload_resumes_draft(self):
@@ -111,7 +115,13 @@ class PublicationTests(unittest.TestCase):
         self.publish()
         self.remote['tag_name'] = 'v0.1.0'
         self.publish()
-        self.assertEqual(sum(c[:2] == ('release', 'create') for c in self.calls), 1)
+        self.assertEqual(sum('--method' in c for c in self.calls), 1)
+
+    def test_existing_windows_newlines_match(self):
+        self.publish()
+        self.remote['body'] = self.remote['body'].replace('\n', '\r\n')
+        self.publish()
+        self.assertFalse(self.remote['draft'])
 
     def test_conflicting_alias_rejected_before_mutation(self):
         self.refs.append({'ref': 'refs/tags/v0.1.0', 'object': {'type': 'commit', 'sha': 'other'}})
