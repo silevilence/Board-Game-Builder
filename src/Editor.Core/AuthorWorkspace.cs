@@ -105,7 +105,7 @@ public sealed partial class DocumentWorkspace
 }
 
 public sealed class WorkspaceEditMode(DocumentWorkspace documents, ProjectIdentity identity,
-    Func<Func<object>, Task<object>>? dispatch = null) : IProjectEditMode, IRecoverableEditMode, IDisposable
+    Func<Func<object>, Task<object>>? dispatch = null) : IProjectEditMode, IRequestLookup, IWorkspaceSave, IDisposable
 {
     private bool disposed;
     private async Task<T> OnThread<T>(Func<T> action, CancellationToken cancellation)
@@ -133,7 +133,6 @@ public sealed class WorkspaceEditMode(DocumentWorkspace documents, ProjectIdenti
         if (previous.Intent != intent || previous.Receipt.Source.Identity != identity) throw new AuthorOperationException("request.mismatch", "Request belongs to different content or document generation");
         return previous.Receipt;
     }, cancellation);
-    public Task<EditReceipt> Recover(string requestId, CancellationToken cancellation = default) => Result(requestId, cancellation);
     public Task<EditReceipt> Save(string requestId, CancellationToken cancellation = default) => OnThread(() =>
     {
         documents.CheckIdentity(identity);

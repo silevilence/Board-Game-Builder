@@ -74,7 +74,7 @@ public static class FileOperations
         new() { ["type"] = "object", ["description"] = "EditReceipt: requestId, state, saved, source, resultVersion, diagnostics, appliedPaths" }, [], ["project"]);
     public static AuthorOperationInfo ResultInfo => new("request.result", "author.files", "Inspect a retained write receipt without repeating the write",
         new() { ["request"] = new("string", true, "Original request ID") }, WriteInfo.ResultSchema.DeepClone().AsObject(), [], []) { ReadsProject = false };
-    public static AuthorOperationInfo RecoverInfo => ResultInfo with { Id = "request.recover", Description = "Explicitly resume a partial write if every baseline still matches; preserve external changes", Effects = ["recovery"] };
+    public static AuthorOperationInfo RecoverInfo => ResultInfo with { Id = "request.recover", Description = "Explicitly resume a partial write if every baseline still matches; preserve external changes", Conditions = ["Edit mode supports recovery; GUI mode only supports request.result"], Effects = ["recovery"] };
     public static AuthorOperationInfo SaveInfo => new("workspace.save", "author.files", "Explicitly save the connected workspace to disk", new(), WriteInfo.ResultSchema.DeepClone().AsObject(), ["GUI edit mode"], ["save"]);
     public static AuthorOperationInfo ListInfo => new("files.list", "author.files", "Enumerate the selected project view",
         new() { ["prefix"] = new("string", false, "Relative path prefix") },
@@ -100,7 +100,7 @@ public static class FileOperations
         scope.Register(new(RecoverInfo, async call => call.Mode is IRecoverableEditMode requests
             ? await requests.Recover(call.String("request"), call.Cancellation)
             : throw new AuthorOperationException("recovery.unavailable", "The selected mode does not expose recovery")));
-        scope.Register(new(SaveInfo, async call => call.Mode is GuiEditMode gui ? await gui.Save(call.RequestId, call.Cancellation)
+        scope.Register(new(SaveInfo, async call => call.Mode is IWorkspaceSave workspace ? await workspace.Save(call.RequestId, call.Cancellation)
             : throw new AuthorOperationException("mode.unsupported", "Explicit workspace saving requires GUI mode")));
     }, "Generic project file access") { Operations = [ListInfo, ReadInfo, WriteInfo, ResultInfo, RecoverInfo, SaveInfo] };
 }

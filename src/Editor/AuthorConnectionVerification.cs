@@ -26,6 +26,8 @@ internal static class AuthorConnectionVerification
                 File.WriteAllText(Path.Combine(project,AuthorProfiles.ConfigurationFile),JsonSerializer.Serialize(new {defaultProfile="connected",profiles=new {connected=new AuthorProfile(1,selections)}},AuthorProfiles.Json));
                 documents.Set(ModuleDocument.Open(project));
                 await app.Enable("author.workspace");await app.Enable("author.connection");await app.Enable("author.files");
+                var commands=app.Service<EditorCommands>("commands");
+                Check(commands.Items.Count(c=>c.Id.StartsWith("workspace.external."))==5,"Workspace commands registered once");
                 async Task<JsonElement> Call(string operation,object parameters,bool success=true)
                 {
                     var instance=WorkspaceConnections.Discover().Single(c=>c.Process==Environment.ProcessId && c.Project==project).Instance;
@@ -52,8 +54,17 @@ internal static class AuthorConnectionVerification
                 var status=(await Call("workspace.external.status",new {})).GetProperty("result");
                 await Call("workspace.external.resolve",new {choice="reload",diskVersion=status.GetProperty("diskVersion").GetString(),workspaceVersion=status.GetProperty("workspaceVersion").GetString()});
                 Check(documents.Current.Text("rules.lua").Contains("external"),"Explicit reload coordinates disk");
+                File.AppendAllText(Path.Combine(project,"rules.lua"),"\n-- command reload");
+                await commands.Execute("workspace.external.inspect");
+                Check(commands.CanExecute("workspace.external.reload"),"Command availability shares workspace state");
+                await commands.Execute("workspace.external.reload");
+                Check(documents.Current.Text("rules.lua").Contains("command reload"),"Registered command executes reconciliation");
                 documents.EditForm(DocumentWorkspace.ExternalMergeForm,"{unfinished merge");
-                await app.Disable("author.workspace");await app.Enable("author.workspace");
+                Check(!commands.CanExecute("workspace.external.reload"),"Dirty workspace disables clean reload command");
+                await app.Disable("author.workspace");
+                Check(!commands.Items.Any(c=>c.Id.StartsWith("workspace.external.")),"Workspace commands removed with plugin");
+                await app.Enable("author.workspace");
+                Check(commands.Items.Count(c=>c.Id.StartsWith("workspace.external."))==5,"Workspace commands restored without duplicates");
                 Check(documents.Form(DocumentWorkspace.ExternalMergeForm,()=>"{}").Text=="{unfinished merge" && documents.Dirty,"Merge draft survives panel reconstruction");
                 documents.DiscardForm(DocumentWorkspace.ExternalMergeForm);
                 for(var i=0;i<3;i++)

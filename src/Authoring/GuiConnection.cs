@@ -67,7 +67,7 @@ public sealed class WorkspaceConnectionServer : IAsyncDisposable
         stop.Token.ThrowIfCancellationRequested();
         using var process = Process.GetCurrentProcess();
         var item = new WorkspaceAdvertisement(instance, pipe, process.Id, process.StartTime.ToUniversalTime().Ticks, workspace, generation, project);
-        RunOperations.Write(advertisement, JsonSerializer.Serialize(item, AuthorProfiles.Json), true);
+        AtomicTextFile.Write(advertisement, JsonSerializer.Serialize(item, AuthorProfiles.Json), true);
     }
     private async Task Listen()
     {
@@ -77,20 +77,43 @@ public sealed class WorkspaceConnectionServer : IAsyncDisposable
             {
                 using var stream = new NamedPipeServerStream(pipe, PipeDirection.InOut, 1, PipeTransmissionMode.Byte, PipeOptions.Asynchronous | PipeOptions.CurrentUserOnly);
                 await stream.WaitForConnectionAsync(stop.Token).ConfigureAwait(false);
-                using var timeout = CancellationTokenSource.CreateLinkedTokenSource(stop.Token); timeout.CancelAfter(TimeSpan.FromSeconds(30));
-                var request = await WorkspaceConnections.Receive<WorkspaceRequest>(stream, timeout.Token).ConfigureAwait(false);
-                WorkspaceResponse response;
+                WorkspaceRequest request;
+                using (var receive = CancellationTokenSource.CreateLinkedTokenSource(stop.Token))
+                {
+                    receive.CancelAfter(TimeSpan.FromSeconds(30));
+                    request = await WorkspaceConnections.Receive<WorkspaceRequest>(stream, receive.Token).ConfigureAwait(false);
+                }
+                using var execution = CancellationTokenSource.CreateLinkedTokenSource(stop.Token);
+                var disconnected = ObserveDisconnect(stream, execution);
                 try
                 {
-                    var result = await handle(request, timeout.Token).ConfigureAwait(false);
-                    response = new(true, JsonSerializer.SerializeToElement(result, AuthorProfiles.Json));
+                    WorkspaceResponse response;
+                    try
+                    {
+                        var result = await handle(request, execution.Token).ConfigureAwait(false);
+                        response = new(true, JsonSerializer.SerializeToElement(result, AuthorProfiles.Json));
+                    }
+                    catch (Exception error) when (error is not OutOfMemoryException)
+                    { response = new(false, JsonSerializer.SerializeToElement<object?>(null), (error as AuthorOperationException)?.Code ?? "workspace.failure", error.Message); }
+                    using var send = CancellationTokenSource.CreateLinkedTokenSource(execution.Token);
+                    send.CancelAfter(TimeSpan.FromSeconds(30));
+                    await WorkspaceConnections.Send(stream, response, send.Token).ConfigureAwait(false);
                 }
-                catch (Exception error) when (error is not OutOfMemoryException)
-                { response = new(false, JsonSerializer.SerializeToElement<object?>(null), (error as AuthorOperationException)?.Code ?? "workspace.failure", error.Message); }
-                await WorkspaceConnections.Send(stream, response, timeout.Token).ConfigureAwait(false);
+                finally { execution.Cancel(); await disconnected.ConfigureAwait(false); }
             }
             catch (Exception error) when (error is IOException or OperationCanceledException or JsonException or InvalidDataException) { }
         }
+    }
+    private static async Task ObserveDisconnect(Stream stream, CancellationTokenSource execution)
+    {
+        try
+        {
+            // One request per connection: EOF or additional bytes end its execution lease.
+            await stream.ReadAsync(new byte[1], execution.Token).ConfigureAwait(false);
+            execution.Cancel();
+        }
+        catch (IOException) { execution.Cancel(); }
+        catch (OperationCanceledException) { }
     }
     public async ValueTask DisposeAsync()
     {
@@ -101,7 +124,7 @@ public sealed class WorkspaceConnectionServer : IAsyncDisposable
     }
 }
 
-public sealed class GuiEditMode : IProjectEditMode, IRecoverableEditMode, IWorkspaceCoordination, IDisposable
+public sealed class GuiEditMode : IProjectEditMode, IRequestLookup, IWorkspaceSave, IWorkspaceCoordination, IDisposable
 {
     private readonly WorkspaceAdvertisement connection;
     private readonly ProjectIdentity identity;
@@ -114,13 +137,17 @@ public sealed class GuiEditMode : IProjectEditMode, IRecoverableEditMode, IWorks
     }
     private async Task<T> Request<T>(string method, string request, CancellationToken cancellation, ProjectChanges? changes = null, string? intent = null, JsonElement? arguments = null)
     {
-        using var timeout = CancellationTokenSource.CreateLinkedTokenSource(cancellation, lifetime.Token); timeout.CancelAfter(TimeSpan.FromSeconds(35));
+        using var execution = CancellationTokenSource.CreateLinkedTokenSource(cancellation, lifetime.Token);
         using var client = new NamedPipeClientStream(".", connection.Pipe, PipeDirection.InOut, PipeOptions.Asynchronous | PipeOptions.CurrentUserOnly);
         try
         {
-            await client.ConnectAsync(5000, timeout.Token);
-            await WorkspaceConnections.Send(client, new WorkspaceRequest(method, identity, request, changes, intent, arguments), timeout.Token);
-            var reply = await WorkspaceConnections.Receive<WorkspaceResponse>(client, timeout.Token);
+            await client.ConnectAsync(5000, execution.Token);
+            using (var send = CancellationTokenSource.CreateLinkedTokenSource(execution.Token))
+            {
+                send.CancelAfter(TimeSpan.FromSeconds(30));
+                await WorkspaceConnections.Send(client, new WorkspaceRequest(method, identity, request, changes, intent, arguments), send.Token);
+            }
+            var reply = await WorkspaceConnections.Receive<WorkspaceResponse>(client, execution.Token);
             if (!reply.Success) throw new AuthorOperationException(reply.Code!, reply.Message!);
             return reply.Result.Deserialize<T>(AuthorProfiles.Json)!;
         }
@@ -136,7 +163,6 @@ public sealed class GuiEditMode : IProjectEditMode, IRecoverableEditMode, IWorks
     public Task<EditReceipt> Apply(ProjectChanges changes, CancellationToken cancellation = default) => Request<EditReceipt>("apply", changes.RequestId, cancellation, changes);
     public Task<EditReceipt> Result(string requestId, CancellationToken cancellation = default) => Request<EditReceipt>("result", requestId, cancellation);
     public Task<EditReceipt?> Find(string requestId, string intent, CancellationToken cancellation = default) => Request<EditReceipt?>("find", requestId, cancellation, intent: intent);
-    public Task<EditReceipt> Recover(string requestId, CancellationToken cancellation = default) => Result(requestId, cancellation);
     public Task<EditReceipt> Save(string requestId, CancellationToken cancellation = default) => Request<EditReceipt>("save", requestId, cancellation);
     public Task<ExternalStatus> ExternalStatus(CancellationToken cancellation = default) => Request<ExternalStatus>("external.status", "status", cancellation);
     public Task<EditReceipt> ResolveExternal(string requestId, JsonElement arguments, CancellationToken cancellation = default) => Request<EditReceipt>("external.resolve", requestId, cancellation, arguments: arguments);

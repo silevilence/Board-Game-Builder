@@ -8,13 +8,20 @@ Console.CancelKeyPress += (_, e) => { e.Cancel = true; cancellation.Cancel(); };
 void Write(object value) => output.WriteLine(JsonSerializer.Serialize(value, AuthorProfiles.Json));
 try
 {
+    var aliases = new Dictionary<string,string>(StringComparer.Ordinal)
+    {
+        ["validate"]="project.validate", ["pack"]="project.pack", ["export-player"]="player.export",
+        ["run-cpu"]="run.cpu", ["create-module"]="project.create.module", ["create-state"]="project.create.state"
+    };
     if (args.Length == 0 || args[0] is "help" or "--help")
     {
         Write(new { commands = new[] { "skill install|repair|status|uninstall --target <agent-skills-directory> [--method copy|junction]", "docs [topic]", "workspaces", "profile", "plugins", "operations", "describe <operation>", "call <operation> --args <JSON>" },
-            options = new[] { "--project <directory>", "--profile <name>", "--request <stable-id>", "--args-file <JSON-file>" },
+            aliases,
+            options = new[] { "--project <directory>", "--profile <name>", "--instance <ID>", "--request <stable-id>", "--args <JSON>", "--args-file <JSON-file>" },
             exits = new { success = 0, failure = 1, arguments = 2, conflict = 3, unknownOrPartial = 4, cancelled = 130 } });
         return 0;
     }
+    if(aliases.TryGetValue(args[0],out var alias)) args=["call",alias,..args.Skip(1)];
     if(args[0]=="skill")
     {
         if(args.Length<4 || args[2]!="--target")throw new ArgumentException("skill <install|repair|status|uninstall> --target <directory> [--method copy|junction]");

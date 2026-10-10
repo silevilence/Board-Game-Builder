@@ -22,7 +22,7 @@ public sealed record ProjectChanges(string RequestId, ProjectSource Source, File
     public string? Intent { get; init; }
 }
 public sealed record AuthorDiagnostic(string Code, string Message, string? Path = null, long? Line = null, long? Column = null);
-public enum EditState { Applied, Conflict, PartialFailure, Unknown, Rejected }
+public enum EditState { Applied, Conflict, PartialFailure, Unknown }
 public sealed record EditReceipt(string RequestId, EditState State, bool Saved, ProjectSource Source,
     string? ResultVersion, AuthorDiagnostic[] Diagnostics, string[] AppliedPaths);
 
@@ -32,10 +32,17 @@ public interface IProjectEditMode : IAsyncDisposable
     Task<EditReceipt> Apply(ProjectChanges changes, CancellationToken cancellation = default);
     Task<EditReceipt> Result(string requestId, CancellationToken cancellation = default);
 }
-public interface IRecoverableEditMode
+public interface IRequestLookup
 {
     Task<EditReceipt?> Find(string requestId, string intent, CancellationToken cancellation = default);
+}
+public interface IRecoverableEditMode : IRequestLookup
+{
     Task<EditReceipt> Recover(string requestId, CancellationToken cancellation = default);
+}
+public interface IWorkspaceSave
+{
+    Task<EditReceipt> Save(string requestId, CancellationToken cancellation = default);
 }
 
 // A view owns immutable bytes. Dependencies record what the operation actually observed.

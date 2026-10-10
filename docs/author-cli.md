@@ -22,6 +22,9 @@ CLI 不加载 Avalonia，也不要求 Editor 运行。`--project` 可指定不�
 
 `profile` 查询有效配置，`plugins` 查询已安装插件，`operations` 查询操作及启用状态，
 `describe <ID>` 查询参数、结果和副作用，`call <ID> --args-file <JSON 文件>` 调用同一操作。
+`docs` 列出离线主题，`docs <主题>` 读取完整文档；`workspaces` 列出本用户可连接的 Editor 实例。多实例使用 `--instance <ID>` 明确选择。`--args <JSON>` 和 `--args-file <路径>` 均提供操作参数。
+
+常用别名为 `create-module` → `project.create.module`、`create-state` → `project.create.state`、`validate` → `project.validate`、`run-cpu` → `run.cpu`、`pack` → `project.pack`、`export-player` → `player.export`。例如 `bgb.exe validate --project <目录>` 等价于 `bgb.exe call project.validate --project <目录>`；别名复用参数、profile、取消、请求标识及退出码处理，不绕过插件启用状态。`help` 输出当前别名映射。
 JSON 结果只写标准输出，日志写标准错误。退出码：0 成功、1 失败、2 参数错误、3 冲突、4 部分失败或未知结果、130 取消。
 
 作者配置 `author.profile.json` 与游戏启动配置分离。显式 `--profile` 优先于项目默认，其次是内置默认；不合并配置，不回退不存在的显式配置。
@@ -36,9 +39,13 @@ JSON 结果只写标准输出，日志写标准错误。退出码：0 成功、1
 
 `AuthorPlugin` 声明 ID、版本、API、依赖／提供能力及启动函数。`Operations` 提供发现阶段的稳定说明，启动时用 `AuthorScope.Register(new AuthorOperation(info, handler))` 绑定执行；`Documents` 可贡献离线主题，重复 ID 或主题拒绝，不要求修改 CLI 的命令分支。独立示例项目 [Author.SamplePlugin](../samples/Author.SamplePlugin) 实现项目文件计数操作。
 
+宿主核对操作声明与实际注册 ID：遗漏注册或未声明的注册都会使插件启动失败并清理已注册资源。安装 DLL 无法加载、依赖类型无法解析或包构造失败时，CLI 返回 `plugin.load`、DLL 绝对路径和底层原因；不会静默跳过坏包并提供不完整目录。`author-cli` 集成测试实际构建示例 DLL，将其安装到隔离 CLI 目录，再通过独立进程发现、启用和调用；示例插件无需随正式产品默认启用。
+
 处理函数通过 `AuthorCall.View` 读取文件、枚举及来源，结构化编辑用 `AuthorCall.Formats` 选择作者支持。修改形成 `View.Change(requestId, changes)` 再交给 `Mode.Apply`；声明 `Effects:["project"]` 使宿主按请求标识和操作输入核对既有回执。只查询回执的操作可设 `ReadsProject:false`，因此临时无效工程不会妨碍核对。不得直接修改源目录或自行加载 GUI 文档。
 
-长操作使用 `AuthorCall.Cancellation` 并释放会话／临时快照；结构化结果写回宿主，日志不能污染 stdout。插件服务和资源随 scope 清理，跨线程编辑由编辑模式调度。新增模式实现 `IProjectEditMode`，保留来源、依赖基线、冲突、回执和保存语义；可选恢复能力实现 `IRecoverableEditMode`。项目视图与运行可加载性分离，运行／打包仍使用正式 Runtime 和 GamePackage 入口。
+长操作使用 `AuthorCall.Cancellation` 并释放会话／临时快照；结构化结果写回宿主，日志不能污染 stdout。插件服务和资源随 scope 清理，跨线程编辑由编辑模式调度。新增模式实现 `IProjectEditMode`，保留来源、依赖基线、冲突、回执和保存语义；请求输入核对实现 `IRequestLookup`，真正续写能力实现 `IRecoverableEditMode`，显式工作区保存实现 `IWorkspaceSave`。GUI 模式支持查询回执，不提供磁盘续写；`request.recover` 在 GUI 模式返回 `recovery.unavailable`，应使用 `request.result`。项目视图与运行可加载性分离，运行／打包仍使用正式 Runtime 和 GamePackage 入口。
+
+GUI 通道只执行工作区读取、提交、查询及协调；校验、CPU 运行和导出在 CLI 进程消费快照。通道连接等待上限 5 秒，请求接收及响应发送各限 30 秒以清理停止传输的连接；工作区执行和客户端等待完成没有固定总时限，用户取消、客户端断开或插件释放会取消请求。同步写入如果已经开始，断开仍可能发生在提交之后，必须按请求标识核对，不能假定取消代表未执行。
 
 ## 项目视图与提交
 

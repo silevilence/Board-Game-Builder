@@ -147,6 +147,7 @@ public static class AuthorProjectTests
                         await raw.ConnectAsync(5000);
                         var payload=System.Text.Json.JsonSerializer.SerializeToUtf8Bytes(new WorkspaceRequest("apply",drop.Source.Identity,drop.RequestId,drop),AuthorProfiles.Json);
                         await raw.WriteAsync(BitConverter.GetBytes(payload.Length));await raw.WriteAsync(payload);await raw.FlushAsync();
+                        await dropped.Task.WaitAsync(TimeSpan.FromSeconds(10));
                         // Dispose without reading the server's response.
                     }
                     await dropped.Task.WaitAsync(TimeSpan.FromSeconds(10));
@@ -155,6 +156,7 @@ public static class AuthorProjectTests
                     var profile=AuthorProfiles.Resolve(root,null) with {Name="gui",Profile=new(1,[new("edit.gui"),new("author.files"),new("author.module"),new("author.validation")],server.Instance)};
                     await using(var host=await AuthorHost.Start(profile))
                     {
+                        Check.Throws(()=>host.Invoke("request.recover",System.Text.Json.JsonSerializer.SerializeToElement(new {request=changes.RequestId}),"recover").GetAwaiter().GetResult(),"does not expose recovery");
                         var validation=(ValidationResult)await host.Invoke("project.validate",System.Text.Json.JsonSerializer.SerializeToElement(new {}),"validate");Check.That(validation.Success && validation.Source.Identity.Mode=="gui");
                         await host.Invoke("workspace.save",System.Text.Json.JsonSerializer.SerializeToElement(new {}),"save-"+iteration);Check.That(File.Exists(Path.Combine(root,"connected.txt")));
                     }
@@ -204,7 +206,11 @@ public static class AuthorProjectTests
             Check.That(workspace.Draft("rules.lua").Dirty && document.Text("rules.lua")==script);
             workspace.Undo();Check.That((await mode.Read()).Text("rules.lua")==script+"\n-- user draft" && !document.Paths.Contains("note.txt"));
             workspace.Redo();Check.That((await mode.Read()).Text("rules.lua").Contains("agent") && document.Paths.Contains("note.txt"));
-            await mode.Save("save");Check.That(File.ReadAllText(Path.Combine(root,"rules.lua")).Contains("agent"));
+            var directPlugin=new AuthorPlugin("test.workspace","1",1,["author.mode"],[],s=>s.Provide("author.mode",mode),"Direct workspace mode");
+            var directProfile=AuthorProfiles.Resolve(root,null) with {Name="connected",Profile=new(1,[new("test.workspace"),new("author.files")])};
+            await using(var host=await AuthorHost.Start(directProfile,AuthorHost.Builtins.Append(directPlugin).ToArray()))
+                await host.Invoke("workspace.save",System.Text.Json.JsonSerializer.SerializeToElement(new {}),"save");
+            Check.That(File.ReadAllText(Path.Combine(root,"rules.lua")).Contains("agent"));
             workspace.Undo();Check.That(!document.Paths.Contains("note.txt") && workspace.Draft("rules.lua").Text.Contains("user draft") && !workspace.Draft("rules.lua").Text.Contains("agent"));
             workspace.Redo();Check.That(document.Paths.Contains("note.txt"));
             workspace.Form("fields",()=>"initial");workspace.EditForm("fields","invalid");
@@ -455,6 +461,9 @@ public static class AuthorProjectTests
             s.Register(new(info,async call=>{entered.SetResult();await release.Task.WaitAsync(call.Cancellation);return new {done=true};}));
         },"Test") {Operations=[info]};
         var catalog=AuthorHost.Builtins.Append(plugin).ToArray();
+        var incomplete=plugin with {Activate=s=>s.Own(new AuthorCleanup(()=>cleaned=true))};
+        Check.Throws(()=>AuthorHost.Start(effective with {Profile=new(1,[..effective.Profile.Plugins,new("test.plugin")])},AuthorHost.Builtins.Append(incomplete).ToArray()).GetAwaiter().GetResult(),"did not register test.wait");
+        Check.That(cleaned);cleaned=false;
         Check.Throws(()=>AuthorHost.Validate(effective.Profile,catalog.Append(plugin with {Id="duplicate"}).ToArray()),"operation.duplicate");
         var host=await AuthorHost.Start(effective with {Profile=new(1,[..effective.Profile.Plugins,new("test.plugin")])},catalog);
         var args=System.Text.Json.JsonSerializer.Deserialize<System.Text.Json.JsonElement>("{}");

@@ -4,6 +4,8 @@
 
 `bgb.exe help` 显示命令。`docs` 列出主题，`docs lua` 查询脚本接口；`plugins` 和 `operations` 显示能力与启用状态，`describe <操作ID>` 显示当前版本参数和结果。可直接用文本编辑器或 Agent 创建、修改工程文件。
 
+常用别名：`create-module`、`create-state`、`validate`、`run-cpu`、`pack`、`export-player`；它们分别调用创建模板、项目校验、CPU 运行、打包和 Player 导出操作，参数及退出码与 `call` 相同，完整映射见 `help`。
+
 PowerShell 示例（将 CLI 目录设为当前目录；输出目录选择新的路径）：
 
 ```powershell

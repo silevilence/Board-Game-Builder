@@ -7,6 +7,8 @@ try
     tests.Add("author-contract",AuthorProjectTests.Contract);
     tests.Add("author-profiles",AuthorProjectTests.Profiles);
     tests.Add("author-operations",AuthorProjectTests.Operations);
+    tests.Add("author-cli",AuthorCliTests.Run);
+    tests.Add("author-connection-lifetime",AuthorCliTests.ConnectionLifetime);
     tests.Add("author-disk",AuthorProjectTests.Disk);
     tests.Add("author-recovery",AuthorProjectTests.Recovery);
     tests.Add("author-templates",AuthorProjectTests.Templates);

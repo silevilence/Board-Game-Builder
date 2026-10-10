@@ -74,7 +74,7 @@ public static class SkillInstaller
             }
             if (Directory.Exists(target) || IsLink(target)) { Directory.Move(target, backup); backedUp = true; }
             Directory.Move(staging, target); published = true;
-            RunOperations.Write(Ledger(parent), metadata, true);
+            AtomicTextFile.Write(Ledger(parent), metadata, true);
             committed = true;
             if (backedUp) RemoveOwned(backup, previous!);
             if (previous != null) RemoveGenerated(previous);
@@ -86,7 +86,7 @@ public static class SkillInstaller
             if (published) RemoveOwned(target, installation);
             published = false;
             if (backedUp && (Directory.Exists(backup) || IsLink(backup))) Directory.Move(backup, target);
-            if (previous != null) RunOperations.Write(Ledger(parent), JsonSerializer.Serialize(previous, AuthorProfiles.Json), true);
+            if (previous != null) AtomicTextFile.Write(Ledger(parent), JsonSerializer.Serialize(previous, AuthorProfiles.Json), true);
             else if (File.Exists(Ledger(parent))) File.Delete(Ledger(parent));
             throw;
         }

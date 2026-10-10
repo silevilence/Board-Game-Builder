@@ -1,4 +1,3 @@
-using System.Text;
 using System.Text.Json;
 using BoardGame.Kernel;
 using BoardGame.Runtime;
@@ -71,7 +70,7 @@ public static class RunOperations
         var module = GameRuntime.Load(snapshot.Directory);
         var document = new DebugDocument(Guid.NewGuid().ToString("N"), call.View.Source, module, (uint)seed, []);
         var target = Path.GetFullPath(call.String("target"));
-        Write(target, Wire.Json(document), false);
+        AtomicTextFile.Write(target, Wire.Json(document), false);
         return Task.FromResult<object>(new { document.Id, document.Source, target, step = 0 });
     }
     private static DebugDocument Read(AuthorCall call) => Wire.Read<DebugDocument>(File.ReadAllText(Path.GetFullPath(call.String("session"))));
@@ -116,7 +115,7 @@ public static class RunOperations
         var result = game.SubmitHuman(seat, action.Command);
         if (!result.Accepted) throw new AuthorOperationException("debug.rejected", result.Reason);
         document = document with { Steps = [..document.Steps, new(call.RequestId, seat, action.Id, action.Command)] };
-        Write(target, Wire.Json(document), true);
+        AtomicTextFile.Write(target, Wire.Json(document), true);
         return Task.FromResult<object>(new { document.Id, document.Source, step = game.Steps, result, game.Ended, game.Fault });
     }
     private static Task<object> Record(AuthorCall call)
@@ -124,18 +123,7 @@ public static class RunOperations
         var document = Read(call); using var game = Rebuild(document, call.Cancellation);
         var recording = game.ExportRecording(); var replay = recording.Replay();
         if (Wire.Json(replay.ExportAuthorityState()) != Wire.Json(game.ExportAuthorityState())) throw new AuthorOperationException("replay.mismatch", "Authoritative replay differs");
-        var target = Path.GetFullPath(call.String("target")); Write(target, Wire.Json(recording), false);
+        var target = Path.GetFullPath(call.String("target")); AtomicTextFile.Write(target, Wire.Json(recording), false);
         return Task.FromResult<object>(new { document.Id, document.Source, target, replayMatches = true, stateHash = game.AuthorityStateHash() });
-    }
-    public static void Write(string target, string text, bool replace)
-    {
-        Directory.CreateDirectory(Path.GetDirectoryName(target)!);
-        var staging = target + "." + Guid.NewGuid() + ".tmp";
-        try
-        {
-            using (var stream = new FileStream(staging, FileMode.CreateNew, FileAccess.Write, FileShare.None)) { stream.Write(Encoding.UTF8.GetBytes(text)); stream.Flush(true); }
-            File.Move(staging, target, replace);
-        }
-        finally { if (File.Exists(staging)) File.Delete(staging); }
     }
 }

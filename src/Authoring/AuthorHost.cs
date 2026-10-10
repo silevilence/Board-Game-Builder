@@ -73,6 +73,8 @@ public sealed class AuthorHost : IAsyncDisposable
                 {
                     var scope = new AuthorScope(host, context, plugin);
                     plugin.Activate(scope);
+                    foreach (var operation in plugin.Operations)
+                        if (!scope.Registered.Contains(operation.Id)) throw new InvalidDataException("plugin.operation: " + plugin.Id + " did not register " + operation.Id);
                     foreach (var key in plugin.Provides)
                     {
                         if (!scope.Published.Contains(key)) throw new InvalidDataException("plugin.service: " + plugin.Id + " did not provide " + key);
@@ -96,7 +98,7 @@ public sealed class AuthorHost : IAsyncDisposable
             ?? throw new AuthorOperationException("operation.unavailable", "Enable the operation's plugin in the selected profile: " + id);
         AuthorOperations.Validate(info, arguments);
         var intent = ProjectView.Hash(System.Text.Json.JsonSerializer.SerializeToUtf8Bytes(new { id, arguments, Profile.Project, Profile.Name }));
-        if (info.Effects.Contains("project") && mode is IRecoverableEditMode requests)
+        if (info.Effects.Contains("project") && mode is IRequestLookup requests)
         {
             var previous = await requests.Find(requestId, intent, cancellation);
             if (previous != null) return previous;
@@ -135,6 +137,7 @@ public sealed class AuthorScope
     private readonly Context context;
     private readonly AuthorPlugin plugin;
     internal HashSet<string> Published { get; } = [];
+    internal HashSet<string> Registered { get; } = [];
     public EffectiveProfile Profile => host.Profile;
     internal AuthorScope(AuthorHost host, Context context, AuthorPlugin plugin) { this.host = host; this.context = context; this.plugin = plugin; }
     public void Provide(string key, object value)
@@ -152,5 +155,6 @@ public sealed class AuthorScope
     {
         if (operation.Info.Plugin != plugin.Id || !plugin.Operations.Any(o => o.Id == operation.Info.Id)) throw new InvalidDataException("Undeclared operation: " + operation.Info.Id);
         Own(Service<AuthorOperations>("author.operations").Register(operation));
+        Registered.Add(operation.Info.Id);
     }
 }
