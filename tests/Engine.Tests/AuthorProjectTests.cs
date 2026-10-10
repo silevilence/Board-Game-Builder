@@ -7,6 +7,32 @@ namespace Engine.Tests;
 
 public static class AuthorProjectTests
 {
+    public static void Operations() => OperationsAsync().GetAwaiter().GetResult();
+    private static async Task OperationsAsync()
+    {
+        var effective=AuthorProfiles.Resolve(Path.GetFullPath("samples/state-minimal"),null);
+        var info=new AuthorOperationInfo("test.wait","test.plugin","Lease fixture",new(),new(){["type"]="object"},[],[]);
+        var entered=new TaskCompletionSource();var release=new TaskCompletionSource();var cleaned=false;
+        var plugin=new AuthorPlugin("test.plugin","1",1,[],["author.operations"],s=>
+        {
+            s.Own(new AuthorCleanup(()=>cleaned=true));
+            s.Register(new(info,async call=>{entered.SetResult();await release.Task.WaitAsync(call.Cancellation);return new {done=true};}));
+        },"Test") {Operations=[info]};
+        var catalog=AuthorHost.Builtins.Append(plugin).ToArray();
+        Check.Throws(()=>AuthorHost.Validate(effective.Profile,catalog.Append(plugin with {Id="duplicate"}).ToArray()),"operation.duplicate");
+        var host=await AuthorHost.Start(effective with {Profile=new(1,[..effective.Profile.Plugins,new("test.plugin")])},catalog);
+        var args=System.Text.Json.JsonSerializer.Deserialize<System.Text.Json.JsonElement>("{}");
+        Check.Throws(()=>host.Invoke("files.read",args,"read").GetAwaiter().GetResult(),"path");
+        Check.Throws(()=>host.Invoke("missing",args,"read").GetAwaiter().GetResult(),"Enable");
+        var operation=host.Invoke("test.wait",args,"lease");await entered.Task;
+        var disposal=host.DisposeAsync().AsTask();Check.That(!disposal.IsCompleted && !cleaned);
+        release.SetResult();await operation;await disposal;Check.That(cleaned);
+        await using var disabled=await AuthorHost.Start(effective,catalog);
+        Check.That(disabled.Installed.Any(p=>p.Id=="test.plugin") && !disabled.Enabled.Any(p=>p.Id=="test.plugin"));
+        Check.Throws(()=>disabled.Invoke("test.wait",args,"disabled").GetAwaiter().GetResult(),"Enable");
+        using var cancellation=new CancellationTokenSource();cancellation.Cancel();
+        Check.Throws(()=>disabled.Invoke("files.list",args,"cancel",cancellation.Token).GetAwaiter().GetResult(),"canceled");
+    }
     public static void Profiles()
     {
         var root=Path.Combine(Path.GetTempPath(),"bgb-profiles-"+Guid.NewGuid());Directory.CreateDirectory(root);

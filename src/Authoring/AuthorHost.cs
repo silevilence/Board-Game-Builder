@@ -4,7 +4,10 @@ using CordiSharp.Registry;
 namespace BoardGame.Authoring;
 
 public sealed record AuthorPlugin(string Id, string Version, int Api, string[] Provides, string[] Requires,
-    Action<AuthorScope> Activate, string Description, bool Required = false);
+    Action<AuthorScope> Activate, string Description, bool Required = false)
+{
+    public AuthorOperationInfo[] Operations { get; init; } = [];
+}
 
 public sealed class AuthorHost : IAsyncDisposable
 {
@@ -19,14 +22,17 @@ public sealed class AuthorHost : IAsyncDisposable
     { Profile = profile; Installed = installed; Enabled = enabled; }
     public static IReadOnlyList<AuthorPlugin> Builtins =>
     [
-        new("author.core", "1", 1, ["author.formats"], [], s => s.Provide("author.formats", new GameAuthorFormats()), "Project contract and author formats", true),
+        new("author.core", "1", 1, ["author.formats", "author.operations"], [], s =>
+        { s.Provide("author.formats", new GameAuthorFormats()); s.Provide("author.operations", new AuthorOperations()); }, "Project contract and operation registry", true),
         new("edit.disk", "1", 1, ["author.mode"], [], s => s.Provide("author.mode", s.Own(new DiskEditMode(
-            new(s.Profile.Project, s.Profile.Name, "disk")))), "Read current disk content and commit guarded changes")
+            new(s.Profile.Project, s.Profile.Name, "disk")))), "Read current disk content and commit guarded changes"),
+        FileOperations.Plugin
     ];
     public static IReadOnlyList<AuthorPlugin> Validate(AuthorProfile profile, IReadOnlyList<AuthorPlugin> catalog)
     {
         if (profile.Format != 1 || profile.Plugins == null) throw new InvalidDataException("profile.invalid: expected format 1 and plugins");
         if (catalog.GroupBy(p => p.Id).Any(g => g.Count() != 1)) throw new InvalidDataException("plugin.duplicate: installed ID");
+        if (catalog.SelectMany(p => p.Operations).GroupBy(o => o.Id).Any(g => g.Count() != 1)) throw new InvalidDataException("operation.duplicate: installed ID");
         var selected = new Dictionary<string, AuthorPlugin>(StringComparer.Ordinal);
         foreach (var entry in profile.Plugins)
         {
@@ -82,6 +88,12 @@ public sealed class AuthorHost : IAsyncDisposable
         catch { await host.DisposeAsync(); throw; }
     });
     public T Service<T>(string key) where T : class => root.Get<T>(key) ?? throw new InvalidOperationException("plugin.unavailable: " + key);
+    public Task<object> Invoke(string id, System.Text.Json.JsonElement arguments, string requestId, CancellationToken cancellation = default) => Execute(async () =>
+    {
+        var mode = Service<IProjectEditMode>("author.mode");
+        return await Service<AuthorOperations>("author.operations").Invoke(id,
+            new(await mode.Read(cancellation), mode, Service<GameAuthorFormats>("author.formats"), arguments, requestId, cancellation));
+    }, cancellation);
     public async Task<T> Execute<T>(Func<Task<T>> action, CancellationToken cancellation = default)
     {
         await lifetime.WaitAsync(cancellation);
@@ -124,4 +136,9 @@ public sealed class AuthorScope
         return host.Service<T>(key);
     }
     public T Own<T>(T value) where T : IDisposable { context.Effect(() => (Action)value.Dispose); return value; }
+    public void Register(AuthorOperation operation)
+    {
+        if (operation.Info.Plugin != plugin.Id || !plugin.Operations.Any(o => o.Id == operation.Info.Id)) throw new InvalidDataException("Undeclared operation: " + operation.Info.Id);
+        Own(Service<AuthorOperations>("author.operations").Register(operation));
+    }
 }
