@@ -54,5 +54,6 @@ Agent 从本地 docs、plugins、operations、describe 发现接口，创建“�
 ## 最终构建与回归限制
 
 - 最终 Release 全解决方案构建 0 警告、0 错误，依赖边界检查通过。`final-build.log`、`final-author-tests.log`：全部 16 个作者分组在 .NET 10.0.12 下通过，包括独立 Player 导出后实际运行。真实 Editor 最终 14 项通过。
+- 审核修复后的最终 ZIP 为 `artifacts/cli-author/author-final.zip`，产品版本 `1.0.0+59d3ae6a6fe52be0cb95b52ba1ace91848732b85`，SHA-256 记录在 `author-final.sha256.json`。再次复制至无 SDK Windows 来宾，验证离线文档、Junction 安装、省略 method 的修复仍保留 Junction、卸载、state 创建和 CPU 重跑回放；诊断日志非空，全部成功（`final-guest.json`）。
 - 默认长回归完成前 80 组，随后 Debug 的既有 `wasm-isolation` 越界探针原生退出（0xC0000409）。单独 Debug 重跑也复现；host trace 确认实际加载 .NET 10.0.12，不能将本次归因于旧运行时。相关 WASM 实现／夹具及公共编译配置与本组基线相同。
 - 使用明确的 .NET 10.0.12 运行 Release 测试程序集，`wasm-isolation`、`image-import`、`tts-import`、`print` 四组全部通过（`tail-regression.log`）。因此 84 个默认分组均有通过结果，但不声称默认 Debug 全量命令一次完成，也不声称已修复该原生崩溃。发行验证采用自包含 Release 产品，本组未修改 WASM 隔离策略。
