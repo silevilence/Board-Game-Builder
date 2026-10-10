@@ -3,3 +3,4 @@
 .scratch/
 artifacts/
 *.user
+__pycache__/

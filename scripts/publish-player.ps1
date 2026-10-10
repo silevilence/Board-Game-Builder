@@ -1,6 +1,7 @@
 param([string]$Output = 'artifacts/player-release')
 $ErrorActionPreference = 'Stop'
 $repo = Split-Path $PSScriptRoot -Parent
+$productVersion = ([xml](Get-Content -LiteralPath "$repo/Directory.Build.props" -Raw)).Project.PropertyGroup.Version
 $target = [IO.Path]::GetFullPath($Output)
 if (Test-Path -LiteralPath $target) { throw 'Release output already exists. Choose a new directory.' }
 # This is the engine-maintainer build. Export never calls dotnet or a compiler.
@@ -26,5 +27,5 @@ try {
     if($catalogProcess.ExitCode -ne 0) {throw 'Could not read published runtime catalog'}
     $runtimePlugins=Get-Content -LiteralPath $catalogFile -Raw | ConvertFrom-Json -AsHashtable
 } finally {if(Test-Path -LiteralPath $catalogFile) {Remove-Item -LiteralPath $catalogFile}}
-@{ api=1; version='0.3.5'; platform='win-x64'; files=$files; guiEntry=$true; editorDebug=$false; runtimeApi=1; runtimePlugins=$runtimePlugins } | ConvertTo-Json -Depth 5 | Set-Content -LiteralPath "$target/release.json" -Encoding utf8NoBOM
+@{ api=1; version=$productVersion; platform='win-x64'; files=$files; guiEntry=$true; editorDebug=$false; runtimeApi=1; runtimePlugins=$runtimePlugins } | ConvertTo-Json -Depth 5 | Set-Content -LiteralPath "$target/release.json" -Encoding utf8NoBOM
 Write-Output "Precompiled Player: $target"
