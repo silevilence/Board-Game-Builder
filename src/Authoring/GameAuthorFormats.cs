@@ -20,10 +20,11 @@ public sealed class GameAuthorFormats
 {
     private readonly Dictionary<(string Id,string Version,int Api),GameAuthorFormatProvider> providers=new();
     public event Action? Changed;
-    public GameAuthorFormats()
+    public GameAuthorFormats(bool includeDefault=true)
     {
-        Register(new("definition.module","1",1,selection=>new ModuleJson(selection.Configuration.GetProperty("path").GetString()!)));
+        if(includeDefault) Register(ModuleProvider);
     }
+    public static GameAuthorFormatProvider ModuleProvider=>new("definition.module","1",1,selection=>new ModuleJson(selection.Configuration.GetProperty("path").GetString()!));
     public IDisposable Register(GameAuthorFormatProvider provider)
     {
         var key=(provider.LoaderId,provider.Version,provider.Api);

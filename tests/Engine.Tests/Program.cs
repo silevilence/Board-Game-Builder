@@ -9,6 +9,7 @@ try
     tests.Add("author-operations",AuthorProjectTests.Operations);
     tests.Add("author-disk",AuthorProjectTests.Disk);
     tests.Add("author-recovery",AuthorProjectTests.Recovery);
+    tests.Add("author-templates",AuthorProjectTests.Templates);
     tests.Add("poker-uno",PokerUnoTests.Run);
     tests.Add("atlas",AtlasTests.Run);
     tests.Add("resource-plugins",ResourcePluginTests.Run);

@@ -7,6 +7,32 @@ namespace Engine.Tests;
 
 public static class AuthorProjectTests
 {
+    public static void Templates() => TemplatesAsync().GetAwaiter().GetResult();
+    private static async Task TemplatesAsync()
+    {
+        foreach(var format in new[]{"module","state"})
+        {
+            var root=Path.Combine(Path.GetTempPath(),"bgb-template-"+Guid.NewGuid());
+            try
+            {
+                await using var host=await AuthorHost.Start(AuthorProfiles.Resolve(root,null));
+                var args=System.Text.Json.JsonSerializer.Deserialize<System.Text.Json.JsonElement>("{\"id\":\"test-author\",\"definition\":\"definitions/custom.json\"}");
+                var created=(EditReceipt)await host.Invoke("project.create."+format,args,"create");
+                Check.That(created.State==EditState.Applied);
+                var module=GameRuntime.Load(root);Check.That(module.Id=="test-author");
+                using(var game=new PlaySession(module)) Check.That(game.SubmitHuman("p1",game.Actions().Single().Command).Accepted && game.Ended);
+                Check.That(((EditReceipt)await host.Invoke("project.create."+format,args,"create")).ResultVersion==created.ResultVersion);
+                Check.Throws(()=>host.Invoke("project.create."+format,args,"another").GetAwaiter().GetResult(),"already exists");
+                var configuration=await host.Invoke("configuration.read",System.Text.Json.JsonSerializer.Deserialize<System.Text.Json.JsonElement>("{}"),"read");
+                Check.That(System.Text.Json.JsonSerializer.Serialize(configuration).Contains("definitions/custom.json"));
+                var selected=AuthorProfiles.Resolve(root,null) with {Profile=new(1,[new("edit.disk"),new("author.files"),new("author.configuration")])};
+                await using var missing=await AuthorHost.Start(selected);
+                Check.Throws(()=>missing.Invoke("configuration.read",System.Text.Json.JsonSerializer.Deserialize<System.Text.Json.JsonElement>("{}"),"missing").GetAwaiter().GetResult(),"matching author");
+                Check.That((await missing.Invoke("files.list",System.Text.Json.JsonSerializer.Deserialize<System.Text.Json.JsonElement>("{}"),"generic"))!=null);
+            }
+            finally {if(Directory.Exists(root))Directory.Delete(root,true);}
+        }
+    }
     public static void Crash(string root)
     {
         using var mode=new DiskEditMode(new(root,"builtin","disk")){BeforeWrite=i=>{if(i==1)Environment.Exit(71);}};

@@ -23,10 +23,10 @@ public sealed class AuthorHost : IAsyncDisposable
     public static IReadOnlyList<AuthorPlugin> Builtins =>
     [
         new("author.core", "1", 1, ["author.formats", "author.operations"], [], s =>
-        { s.Provide("author.formats", new GameAuthorFormats()); s.Provide("author.operations", new AuthorOperations()); }, "Project contract and operation registry", true),
+        { s.Provide("author.formats", new GameAuthorFormats(false)); s.Provide("author.operations", new AuthorOperations()); }, "Project contract and operation registry", true),
         new("edit.disk", "1", 1, ["author.mode"], [], s => s.Provide("author.mode", s.Own(new DiskEditMode(
             new(s.Profile.Project, s.Profile.Name, "disk")))), "Read current disk content and commit guarded changes"),
-        FileOperations.Plugin
+        FileOperations.Plugin, FormatOperations.Module, FormatOperations.State, FormatOperations.Configuration
     ];
     public static IReadOnlyList<AuthorPlugin> Validate(AuthorProfile profile, IReadOnlyList<AuthorPlugin> catalog)
     {
