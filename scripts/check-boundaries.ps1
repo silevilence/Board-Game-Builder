@@ -5,7 +5,8 @@ $allowed = @{
  'Networking' = @('Runtime')
  'Server' = @('Networking'); 'NetworkClient' = @('Networking')
  'View.Abstractions' = @('Kernel.Abstractions'); 'View.MonoGame' = @('View.Abstractions')
- 'Player' = @('Runtime','View.MonoGame','Networking'); 'Editor.Core' = @('Runtime'); 'Editor' = @('Editor.Core','Runtime','View.MonoGame')
+ 'Authoring' = @('Runtime'); 'Cli' = @('Authoring')
+ 'Player' = @('Runtime','View.MonoGame','Networking'); 'Editor.Core' = @('Runtime','Authoring'); 'Editor' = @('Editor.Core','Runtime','View.MonoGame')
 }
 Get-ChildItem "$PSScriptRoot/../src" -Filter *.csproj -Recurse | ForEach-Object {
  [xml]$project = Get-Content $_.FullName

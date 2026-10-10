@@ -14,3 +14,13 @@
 ## 实施边界
 
 发布模板是 `author-skill/bgb-author/SKILL.md.template`，仅包含作者入口。生成的 SKILL 使用实际安装路径，不携带本仓库 AGENTS、ROADMAP 或 editor-cordis。多文件磁盘写入明确区分部分失败与未知，不承诺与任意外部编辑器的全局原子性。GUI 连接中断不会静默切换到磁盘。
+
+## 磁盘作者回归
+
+`tests/Engine.Tests` 新增 author-contract、author-profiles、author-operations、author-disk、author-recovery、author-templates、author-resources、author-validation、author-runs、author-exports、author-docs、author-skill-template、author-skill-install 分组，均实际通过。证据 `full-tests.log`、`review-tests-release.log` 和来宾结果。
+
+- 两个定义加载器都从空目录创建，支持自定义定义路径、直接改文件、资源导入、校验、正式包及运行。卡牌与六角固定 seed 11/12 重跑和回放一致，步数限制作为失败返回。
+- profile 选择、可选插件缺失、插件失败反向清理、操作调用期间保留生命周期、参数及取消、目录枚举冲突、新增目标冲突、目标与依赖文件变化均覆盖。
+- 多文件故障包含第二文件写入抛错、真正子进程退出后核对和恢复、部分写入后外部再次修改拒绝覆盖、同请求不重复和不同输入拒绝。私有日志不进入正式包。
+- 调试会话保留原始输入，源脚本改变后旧会话仍按原输入推进；非法动作和过期步数拒绝，录制可重放。整体审核补充重复请求步数核对、CPU 诊断日志及动作查询错误的同次响应诊断。
+- Release 解决方案构建 0 警告／0 错误，`scripts/check-boundaries.ps1` 通过，已加入 Authoring/Cli 依赖白名单。长回归占用 Debug 程序集时一次并行重建失败，改为 Release 输出后验证通过；该构建冲突不计作测试通过。

@@ -237,7 +237,7 @@ public static class AuthorProjectTests
         {
             await using var host=await AuthorHost.Start(AuthorProfiles.Resolve(Path.GetFullPath("samples/"+sample),null));
             var result=(RunResult)await host.Invoke("run.cpu",Args(new {seed=11,count=2}),"cpu");
-            Check.That(result.Success && result.Runs.All(r=>r.RepeatMatches && r.ReplayMatches));
+            Check.That(result.Success && result.Runs.All(r=>r.RepeatMatches && r.ReplayMatches && r.Diagnostics.Count>0));
             var limited=(RunResult)await host.Invoke("run.cpu",Args(new {seed=11,limit=1}),"limit");Check.That(!limited.Success);
         }
         var root=Path.Combine(Path.GetTempPath(),"bgb-debug-"+Guid.NewGuid());var session=root+".session.json";
@@ -252,14 +252,19 @@ public static class AuthorProjectTests
             Check.Throws(()=>host.Invoke("debug.step",Args(new {session,step=0,action="illegal"}),"illegal").GetAwaiter().GetResult(),"not offered");
             await host.Invoke("debug.step",Args(new {session,step=0,action="finish"}),"finish");
             await host.Invoke("debug.step",Args(new {session,step=0,action="finish"}),"finish");
+            Check.Throws(()=>host.Invoke("debug.step",Args(new {session,step=999,action="finish"}),"finish").GetAwaiter().GetResult(),"another action");
             var completed=BoardGame.Kernel.Wire.Read<DebugDocument>(File.ReadAllText(session));Check.That(completed.Steps.Length==1 && completed.Source==original.Source);
             await host.Invoke("debug.record",Args(new {session,target=session+".recording"}),"record");
             Check.That(BoardGame.Kernel.Wire.Read<SessionRecording>(File.ReadAllText(session+".recording")).Replay().ExportAuthorityState().Ended);
+            File.WriteAllText(Path.Combine(root,"rules.lua"),"function actions(state,seat) error('author inspection failure') end");
+            await host.Invoke("debug.start",Args(new {target=session+".bad",seed=12}),"bad-start");
+            var failed=System.Text.Json.JsonSerializer.SerializeToElement(await host.Invoke("debug.inspect",Args(new {session=session+".bad"}),"bad-inspect"),AuthorProfiles.Json);
+            Check.That(failed.GetProperty("fault").ValueKind!=System.Text.Json.JsonValueKind.Null && failed.GetProperty("diagnostics").GetArrayLength()>0);
         }
         finally
         {
             if(Directory.Exists(root))Directory.Delete(root,true);
-            foreach(var file in new[]{session,session+".lock",session+".recording"})if(File.Exists(file))File.Delete(file);
+            foreach(var file in new[]{session,session+".lock",session+".recording",session+".bad"})if(File.Exists(file))File.Delete(file);
         }
     }
     public static void Validation() => ValidationAsync().GetAwaiter().GetResult();

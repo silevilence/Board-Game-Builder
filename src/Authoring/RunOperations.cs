@@ -5,7 +5,7 @@ using BoardGame.Runtime;
 
 namespace BoardGame.Authoring;
 
-public sealed record RunSummary(uint Seed, int Steps, bool Ended, string Reason, string StateHash, bool RepeatMatches, bool ReplayMatches, SessionFault? Fault);
+public sealed record RunSummary(uint Seed, int Steps, bool Ended, string Reason, string StateHash, bool RepeatMatches, bool ReplayMatches, SessionFault? Fault, IReadOnlyList<Diagnostic> Diagnostics);
 public sealed record RunResult(ProjectSource Source, RunSummary[] Runs) : IAuthorOutcome
 {
     public bool Success => Runs.All(r => r.Ended && r.Reason == "ended" && r.RepeatMatches && r.ReplayMatches);
@@ -50,7 +50,7 @@ public static class RunOperations
             var reason = first.Fault?.Code ?? (first.Ended ? "ended" : "stopped");
             runs.Add(new(currentSeed, first.Steps, first.Ended, reason, first.AuthorityStateHash(),
                 first.AuthorityStateHash() == second.AuthorityStateHash() && first.Fault == second.Fault && first.Steps == second.Steps,
-                Wire.Json(replay.ExportAuthorityState()) == Wire.Json(first.ExportAuthorityState()), first.Fault));
+                Wire.Json(replay.ExportAuthorityState()) == Wire.Json(first.ExportAuthorityState()), first.Fault, first.ExportDiagnostics()));
         }
         return Task.FromResult<object>(new RunResult(call.View.Source, runs.ToArray()));
         PlaySession Run(uint currentSeed)
@@ -93,8 +93,9 @@ public static class RunOperations
     {
         var document = Read(call); using var game = Rebuild(document, call.Cancellation);
         var seat = call.OptionalString("seat") ?? game.CurrentSeat;
+        var actions = game.Actions(seat);var view = game.View(seat);
         return Task.FromResult<object>(new { document.Id, document.Source, latestProject = call.View.Source,
-            step = game.Steps, game.Ended, game.Fault, actions = game.Actions(seat), view = game.View(seat),
+            step = game.Steps, game.Ended, game.Fault, diagnostics = game.ExportDiagnostics(), actions, view,
             authority = call.Arguments.TryGetProperty("authority", out var full) && full.GetBoolean() ? game.ExportAuthorityState() : null });
     }
     private static Task<object> Step(AuthorCall call)
@@ -105,7 +106,7 @@ public static class RunOperations
         var repeated = document.Steps.SingleOrDefault(s => s.RequestId == call.RequestId);
         if (repeated != null)
         {
-            if (repeated.Action != call.String("action") || call.OptionalString("seat") is { } actor && actor != repeated.Seat)
+            if (Array.IndexOf(document.Steps, repeated) != call.Integer("step", -1) || repeated.Action != call.String("action") || call.OptionalString("seat") is { } actor && actor != repeated.Seat)
                 throw new AuthorOperationException("request.mismatch", "Debug request already identifies another action");
             return Task.FromResult<object>(new { document.Id, document.Source, step = game.Steps, repeated = true });
         }
