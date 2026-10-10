@@ -5,7 +5,7 @@ namespace BoardGame.Editor;
 
 public sealed class ExportWorkflow(DocumentWorkspace documents,EditorContributions contributions)
 {
-    public string ReleasePath { get; set; }=EditorPaths.InWorkspace("artifacts/player-release-m25");
+    public string ReleasePath { get; set; }=EditorPaths.ReleasePlayer;
     public string Destination { get; set; }=EditorPaths.InWorkspace("artifacts/export-m25");
     public string Progress { get; private set; }="";
     public bool Running { get; private set; }

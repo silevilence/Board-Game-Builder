@@ -22,7 +22,7 @@ public sealed class SessionController : IDisposable
     public string Seed { get; set; }="42";
     public uint? ActiveSeed { get; private set; }
     public bool External { get; set; }
-    public string Executable { get; set; }=EditorPaths.InWorkspace("src/Player/bin/Release/net10.0-windows/Player.exe");
+    public string Executable { get; set; }=EditorPaths.DebugPlayer;
     public Dictionary<string,bool> CpuSeats { get; }=[];
     public string? Observer { get; set; }
     public bool Reveal { get; set; }
