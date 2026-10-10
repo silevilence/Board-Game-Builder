@@ -23,4 +23,23 @@
 - ZIP 名称 `Board-Game-Builder-V0.1.0-win-x64.zip`，462143000 字节，SHA-256 `4cde7c2cf61c90cf862270c1f9c03794cf88969cef0e9076d8b891018ed978ea`。
 - 首轮发布曾在创建草稿后立即查询列表失败，未公开且没有附件。改为直接消费创建 API 回执，补充换行核对与稳定清单序列化，再完成正式发布。已发布 tag 不再移动。
 - 同一 tag 的第二次 Action 也成功；重新构建后核对所有既有附件，未重复创建 Release 或覆盖附件，实际验证重跑幂等。
-- Action 日志、Release 元数据保存在 `artifacts/release-success.log`、`artifacts/release-rerun-success.log` 和 `artifacts/release-published.json`。下载产物的干净环境结果待实际完成后追加。
+- Action 日志、Release 元数据保存在 `artifacts/release-success.log`、`artifacts/release-rerun-success.log` 和 `artifacts/release-published.json`。公开正文与已有 V0.1.0 changelog 条目逐字核对一致。
+
+## 下载包的干净 Windows 验收
+
+使用从正式 GitHub Release 实际下载并核对 SHA-256 的 ZIP；不是本机重新构建的替代包。新建 Windows Sandbox，Windows `10.0.26100.0`，无 dotnet 命令、无 x64／x86 .NET 安装目录，断网且不映射引擎源码。产品先解压到 `C:\发行 验证\Initial Toolkit`，再移动到 `C:\发行 验证\Moved Toolkit`。
+
+- 两个位置的真实 Editor `--verify-toolkit` 均全部 11 项成功：图片导入命令与 Undo、创建、编辑、保存重开、包内依赖定位、内嵌和外部对局、正式导出。
+- 离线本地文档可查询；Copy SKILL 安装、移动后修复、状态与卸载成功，Junction 安装、状态与卸载成功。
+- 关闭 GUI 后，发行 CLI 完成 `module` 和 `state` 两种工程创建、验证、seed 17 起三局 CPU 重跑／回放与打包；默认正式 Player 导出不要求填写开发路径。
+- CLI 导出的独立 Player 完成 seed 42–44 三局批处理，以及两个有实际 action 输入的图形对局，均成功。
+- 总报告 `artifacts/release-sandbox-verified/acceptance/result.json` 为 `success: true`，记录同一版本、提交与 ZIP SHA-256；环境、移动前后 Editor、CLI 日志、批处理与图形报告同目录保存。
+- 可复现脚本 `scripts/validate-clean-windows.ps1` 兼容系统自带 PowerShell 5.1。首次测试脚本的 `Cli` 函数与该版本内置别名冲突，修正辅助函数名后在全新 Sandbox 重验通过；此修正未改动下载的产品二进制。
+
+## 独立游戏与整体复核
+
+将上述 Editor 导出的、包含导入图片的游戏目录单独交给另一全新 Windows Sandbox；只映射游戏输入及报告目录，复制到来宾 `C:\Game` 后运行。环境报告再次确认无 dotnet、无 x64／x86 Runtime；游戏目录没有 CLI 或 Editor。`scripts/validate-standalone-windows.ps1` 验证 seed 71–73 三局批处理及两局带实际 action 输入的图形对局通过，终态保留 `sample-001` 图片资源。
+
+另以无参数 `Play.exe` 正常启动入口实际查看桌面，在 Player 窗口点击「结束」，确认显示「对局结束」，再经「文件 → 退出」关闭，进程退出 0；启动、对局及退出观察到的是图形窗口，没有控制台窗口。结果在 `artifacts/release-player-sandbox/environment.json`、`result.json`、`gui.json` 和 `batch/`，界面操作截图保留在本次会话。
+
+整体复核：产品路径适配留在现有 Editor 服务，未添加游戏专用分支；版本与 API 分开管理；发布只读取 tag 提交的日志和构建输入，草稿附件完整且回读通过后公开，公开版本不覆盖。正式发布、同 tag 重跑、下载包作者闭环及独立游戏验证全部通过。本组无剩余阻塞，ROADMAP 在原位置勾选，未挪动任务。
