@@ -2,4 +2,5 @@
   <PropertyGroup><OutputType>Exe</OutputType><AssemblyName>bgb</AssemblyName></PropertyGroup>
   <ItemGroup><ProjectReference Include="../Authoring/Authoring.csproj" /></ItemGroup>
   <ItemGroup><Content Include="../../docs/author/*.md" Link="docs/author/%(Filename)%(Extension)" CopyToOutputDirectory="PreserveNewest" CopyToPublishDirectory="PreserveNewest" /></ItemGroup>
+  <ItemGroup><Content Include="../../author-skill/bgb-author/SKILL.md.template" Link="templates/bgb-author/SKILL.md.template" CopyToOutputDirectory="PreserveNewest" CopyToPublishDirectory="PreserveNewest" /></ItemGroup>
 </Project>

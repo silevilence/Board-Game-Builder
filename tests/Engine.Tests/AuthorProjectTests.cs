@@ -7,6 +7,22 @@ namespace Engine.Tests;
 
 public static class AuthorProjectTests
 {
+    public static void SkillTemplate()
+    {
+        var root=Path.Combine(Path.GetTempPath(),"bgb 作者 ' $ ` [skill]-"+Guid.NewGuid());Directory.CreateDirectory(root);
+        try
+        {
+            var cli=Path.Combine(root,"bgb.exe");File.WriteAllText(cli,"fixture");File.WriteAllText(Path.Combine(root,"entry.md"),"docs");
+            var template=File.ReadAllText("author-skill/bgb-author/SKILL.md.template");
+            var rendered=AuthorSkillTemplate.Render(template,cli,root);
+            Check.That(!rendered.Contains("{{") && rendered.Contains("作者 '' $ ` [skill]") && rendered.Contains("docs"));
+            Check.Throws(()=>AuthorSkillTemplate.Render(template+"{{UNKNOWN}}",cli,root),"unsupported");
+            Check.Throws(()=>AuthorSkillTemplate.Render(template,cli,"absent"),"missing");
+            Check.Throws(()=>AuthorSkillTemplate.Render(template.Replace("{{CLI_PS}}","missing"),cli,root),"required placeholders");
+            Check.That(File.ReadAllText("author-skill/bgb-author/SKILL.md.template")==template);
+        }
+        finally {Directory.Delete(root,true);}
+    }
     public static void Documentation()
     {
         var documents=AuthorDocuments.Installed(AuthorHost.Builtins);

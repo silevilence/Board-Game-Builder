@@ -1,0 +1,21 @@
+---
+name: bgb-author
+description: 用 Board Game Builder 创建、修改、调试和导出桌游工程。适用于游戏作者和规则／CPU 脚本开发。
+---
+
+使用已安装的 Board Game Builder CLI；可直接编写工程、Lua 脚本及其他文件，CLI 提供所需领域操作。
+
+PowerShell 帮助与本地文档入口：
+
+```powershell
+& {{CLI_PS}} help
+& {{CLI_PS}} docs
+```
+
+{{DOCS_LINK}} 随 CLI 版本发行。`docs <主题>` 按需查询入口、定义格式、资源、Lua 规则／CPU、调试及导出；`plugins`、`operations`、`describe <操作ID>` 发现已安装能力、启用状态和参数。查询插件文档不要求先启用它。
+
+游戏从 `game.start.json` 启动；`author.profile.json` 选择作者插件和编辑模式，不是游戏运行配置。用 `--project <目录>` 指定工程（允许尚未完整），`--profile <名称>` 显式选择作者配置。可通过 `project.create.module` 或 `project.create.state` 取得最小可运行工程。
+
+默认磁盘模式每次调用读取当前文件，提交即落盘。GUI profile 连接指定 Editor 工作区，读取包括可序列化草稿，提交可撤销但不保存；`workspace.save` 明确保存。多实例用 `workspaces` 发现、`--instance` 选择。外部变更由 `workspace.external.status/resolve` 协调，模式失败不会互相回退。
+
+操作用 `call <ID> --args-file <JSON文件>` 或 `--args <JSON>` 调用。写请求的 `--request` 用于结果核对；回执含来源版本和是否保存。`request.result` 查询回执，未知结果不代表未执行。运行验证与导出使用所选模式的固定版本，产物目标与工程保存分别报告。
