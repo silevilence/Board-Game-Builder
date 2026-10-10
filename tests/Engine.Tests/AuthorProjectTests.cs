@@ -7,6 +7,37 @@ namespace Engine.Tests;
 
 public static class AuthorProjectTests
 {
+    public static void Profiles()
+    {
+        var root=Path.Combine(Path.GetTempPath(),"bgb-profiles-"+Guid.NewGuid());Directory.CreateDirectory(root);
+        try
+        {
+            Check.That(AuthorProfiles.Resolve(root,null).Source=="builtin");
+            Check.Throws(()=>AuthorProfiles.Resolve(root,"missing"),"profile.missing");
+            File.WriteAllText(Path.Combine(root,AuthorProfiles.ConfigurationFile),"""
+                {"defaultProfile":"local","profiles":{"local":{"format":1,"plugins":[{"id":"edit.disk","version":"1","api":1}]},"none":{"format":1,"plugins":[]}}}
+                """);
+            Check.That(AuthorProfiles.Resolve(root,null).Source=="project-default");
+            var selected=AuthorProfiles.Resolve(root,"local");Check.That(selected.Source=="explicit");
+            Check.Throws(()=>AuthorHost.Validate(AuthorProfiles.Resolve(root,"none").Profile,AuthorHost.Builtins),"profile.mode");
+            foreach(var profile in new[]{new AuthorProfile(1,[new("missing")]),new(1,[new("edit.disk","2")]),new(1,[new("edit.disk"),new("edit.disk")])})
+                Check.Throws(()=>AuthorHost.Validate(profile,AuthorHost.Builtins),"plugin.");
+            var count=0;
+            var bad=new AuthorPlugin("broken","1",1,[],["author.formats"],s=>{s.Own(new Cleanup(()=>count--));count++;throw new IOException("injected");},"Failure fixture");
+            var broken=selected with {Profile=new(1,[new("edit.disk"),new("broken")])};
+            Check.Throws(()=>AuthorHost.Start(broken,AuthorHost.Builtins.Append(bad).ToArray()).GetAwaiter().GetResult(),"plugin.initialize");
+            Check.That(count==0,"Failed plugin leaked its effect");
+            for(var i=0;i<3;i++)
+            {
+                var host=AuthorHost.Start(selected).GetAwaiter().GetResult();
+                Check.That(host.Enabled.Count==2 && host.Service<IProjectEditMode>("author.mode").Read().Result.Source.Identity.Profile=="local");
+                host.DisposeAsync().AsTask().GetAwaiter().GetResult();
+            }
+            File.WriteAllText(Path.Combine(root,"game.start.json"),"invalid");Directory.CreateDirectory(Path.Combine(root,"child"));
+            Check.That(AuthorProfiles.Locate(null,Path.Combine(root,"child"))==root);
+        }
+        finally {Directory.Delete(root,true);}
+    }
     public static void Contract()
     {
         var identity=new ProjectIdentity(Path.GetFullPath("."),"default","disk");
