@@ -65,6 +65,12 @@ public sealed class AuthorCleanup(Action action) : IDisposable
 
 public static class FileOperations
 {
+    public static AuthorOperationInfo WriteInfo => new("files.write", "author.files", "Apply UTF-8 file changes; null deletes a file. Prefer direct file editing when suitable.",
+        new() { ["files"] = new("object", true, "Relative path to UTF-8 text or null map") },
+        new() { ["type"] = "object", ["description"] = "EditReceipt: requestId, state, saved, source, resultVersion, diagnostics, appliedPaths" }, [], ["project"]);
+    public static AuthorOperationInfo ResultInfo => new("request.result", "author.files", "Inspect a retained write receipt without repeating the write",
+        new() { ["request"] = new("string", true, "Original request ID") }, WriteInfo.ResultSchema.DeepClone().AsObject(), [], []);
+    public static AuthorOperationInfo RecoverInfo => ResultInfo with { Id = "request.recover", Description = "Explicitly resume a partial write if every baseline still matches; preserve external changes", Effects = ["recovery"] };
     public static AuthorOperationInfo ListInfo => new("files.list", "author.files", "Enumerate the selected project view",
         new() { ["prefix"] = new("string", false, "Relative path prefix") },
         JsonNode.Parse("""{"type":"object","required":["source","paths"]}""")!.AsObject(), [], []);
@@ -75,5 +81,19 @@ public static class FileOperations
     {
         scope.Register(new(ListInfo, call => Task.FromResult<object>(new { call.View.Source, paths = call.View.Enumerate(call.OptionalString("prefix") ?? "") })));
         scope.Register(new(ReadInfo, call => Task.FromResult<object>(new { call.View.Source, text = call.View.Text(call.String("path")) })));
-    }, "Generic project file access") { Operations = [ListInfo, ReadInfo] };
+        scope.Register(new(WriteInfo, async call =>
+        {
+            var files = new Dictionary<string, byte[]?>(StringComparer.OrdinalIgnoreCase);
+            foreach (var file in call.Arguments.GetProperty("files").EnumerateObject())
+            {
+                if (file.Value.ValueKind is not (JsonValueKind.String or JsonValueKind.Null)) throw new AuthorOperationException("arguments.invalid", "Expected text or null", file.Name);
+                if (!files.TryAdd(file.Name, file.Value.ValueKind == JsonValueKind.Null ? null : System.Text.Encoding.UTF8.GetBytes(file.Value.GetString()!))) throw new AuthorOperationException("arguments.invalid", "Duplicate path", file.Name);
+            }
+            return await call.Mode.Apply(call.View.Change(call.RequestId, files), call.Cancellation);
+        }));
+        scope.Register(new(ResultInfo, async call => await call.Mode.Result(call.String("request"), call.Cancellation)));
+        scope.Register(new(RecoverInfo, async call => call.Mode is IRecoverableEditMode requests
+            ? await requests.Recover(call.String("request"), call.Cancellation)
+            : throw new AuthorOperationException("recovery.unavailable", "The selected mode does not expose recovery")));
+    }, "Generic project file access") { Operations = [ListInfo, ReadInfo, WriteInfo, ResultInfo, RecoverInfo] };
 }

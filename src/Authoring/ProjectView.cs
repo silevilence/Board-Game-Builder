@@ -17,7 +17,10 @@ public sealed record FileBaseline(string Path, string? Hash);
 public sealed record EnumerationBaseline(string Prefix, string[] Paths);
 public sealed record FileChange(string Path, byte[]? Content, string? Baseline);
 public sealed record ProjectChanges(string RequestId, ProjectSource Source, FileChange[] Files,
-    FileBaseline[] Reads, EnumerationBaseline[] Enumerations);
+    FileBaseline[] Reads, EnumerationBaseline[] Enumerations)
+{
+    public string? Intent { get; init; }
+}
 public sealed record AuthorDiagnostic(string Code, string Message, string? Path = null);
 public enum EditState { Applied, Conflict, PartialFailure, Unknown, Rejected }
 public sealed record EditReceipt(string RequestId, EditState State, bool Saved, ProjectSource Source,
@@ -29,6 +32,11 @@ public interface IProjectEditMode : IAsyncDisposable
     Task<EditReceipt> Apply(ProjectChanges changes, CancellationToken cancellation = default);
     Task<EditReceipt> Result(string requestId, CancellationToken cancellation = default);
 }
+public interface IRecoverableEditMode
+{
+    Task<EditReceipt?> Find(string requestId, string intent, CancellationToken cancellation = default);
+    Task<EditReceipt> Recover(string requestId, CancellationToken cancellation = default);
+}
 
 // A view owns immutable bytes. Dependencies record what the operation actually observed.
 public sealed class ProjectView : IAuthorFiles
@@ -37,6 +45,7 @@ public sealed class ProjectView : IAuthorFiles
     private readonly Dictionary<string, FileBaseline> reads = new(StringComparer.OrdinalIgnoreCase);
     private readonly Dictionary<string, EnumerationBaseline> enumerations = new(StringComparer.OrdinalIgnoreCase);
     public ProjectSource Source { get; }
+    public string? Intent { get; set; }
 
     public ProjectView(ProjectIdentity identity, IReadOnlyDictionary<string, byte[]> content)
     {
@@ -74,7 +83,7 @@ public sealed class ProjectView : IAuthorFiles
             if (!targets.Add(p.Key)) throw new InvalidDataException("Duplicate change path: " + p.Key);
             return new FileChange(p.Key, p.Value?.ToArray(), reads[p.Key].Hash);
         }).ToArray();
-        return new(requestId, Source, edits, reads.Values.ToArray(), enumerations.Values.ToArray());
+        return new(requestId, Source, edits, reads.Values.ToArray(), enumerations.Values.ToArray()) { Intent = Intent };
     }
     public AuthorDiagnostic[] Conflicts(ProjectChanges changes)
     {

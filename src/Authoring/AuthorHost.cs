@@ -91,8 +91,19 @@ public sealed class AuthorHost : IAsyncDisposable
     public Task<object> Invoke(string id, System.Text.Json.JsonElement arguments, string requestId, CancellationToken cancellation = default) => Execute(async () =>
     {
         var mode = Service<IProjectEditMode>("author.mode");
+        var info = Enabled.SelectMany(p => p.Operations).SingleOrDefault(o => o.Id == id)
+            ?? throw new AuthorOperationException("operation.unavailable", "Enable the operation's plugin in the selected profile: " + id);
+        AuthorOperations.Validate(info, arguments);
+        var intent = ProjectView.Hash(System.Text.Json.JsonSerializer.SerializeToUtf8Bytes(new { id, arguments, Profile.Project, Profile.Name }));
+        if (info.Effects.Contains("project") && mode is IRecoverableEditMode requests)
+        {
+            var previous = await requests.Find(requestId, intent, cancellation);
+            if (previous != null) return previous;
+        }
+        var view = await mode.Read(cancellation);
+        view.Intent = intent;
         return await Service<AuthorOperations>("author.operations").Invoke(id,
-            new(await mode.Read(cancellation), mode, Service<GameAuthorFormats>("author.formats"), arguments, requestId, cancellation));
+            new(view, mode, Service<GameAuthorFormats>("author.formats"), arguments, requestId, cancellation));
     }, cancellation);
     public async Task<T> Execute<T>(Func<Task<T>> action, CancellationToken cancellation = default)
     {

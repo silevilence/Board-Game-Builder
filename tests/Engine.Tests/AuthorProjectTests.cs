@@ -7,6 +7,54 @@ namespace Engine.Tests;
 
 public static class AuthorProjectTests
 {
+    public static void Crash(string root)
+    {
+        using var mode=new DiskEditMode(new(root,"builtin","disk")){BeforeWrite=i=>{if(i==1)Environment.Exit(71);}};
+        var view=mode.Read().Result;
+        mode.Apply(view.Change("process-crash",new Dictionary<string,byte[]?> {{"process-one",[1]},{"process-two",[2]}})).GetAwaiter().GetResult();
+    }
+    public static void Recovery() => RecoveryAsync().GetAwaiter().GetResult();
+    private static async Task RecoveryAsync()
+    {
+        var root=Path.Combine(Path.GetTempPath(),"bgb-recovery-"+Guid.NewGuid());Directory.CreateDirectory(root);
+        var identity=new ProjectIdentity(root,"builtin","disk");
+        try
+        {
+            using var failing=new DiskEditMode(identity){BeforeWrite=i=>{if(i==1)throw new IOException("injected write failure");}};
+            var source=await failing.Read();var changes=source.Change("partial",new Dictionary<string,byte[]?> {{"first.txt",[1]},{"second.txt",[2]}});
+            Check.That((await failing.Apply(changes)).State==EditState.PartialFailure && File.Exists(Path.Combine(root,"first.txt")));
+            using var mode=new DiskEditMode(identity);
+            Check.That((await mode.Result("partial")).AppliedPaths.SequenceEqual(new[]{"first.txt"}));
+            File.WriteAllBytes(Path.Combine(root,"first.txt"),[9]);
+            Check.That((await mode.Recover("partial")).State==EditState.PartialFailure && File.ReadAllBytes(Path.Combine(root,"first.txt"))[0]==9);
+            File.WriteAllBytes(Path.Combine(root,"first.txt"),[1]);
+            Check.That((await mode.Recover("partial")).State==EditState.Applied);
+            Check.That((await mode.Apply(changes)).State==EditState.Applied);
+            Check.Throws(()=>mode.Apply(changes with {Files=[new("other",[3],null)]}).GetAwaiter().GetResult(),"different content");
+            Check.That((await mode.Result("expired")).State==EditState.Unknown);
+            // An unexpected interruption leaves durable intent but no terminal receipt.
+            using var interrupted=new DiskEditMode(identity){BeforeWrite=i=>{if(i==1)throw new InvalidOperationException("simulated interruption");}};
+            var next=(await mode.Read()).Change("interrupted",new Dictionary<string,byte[]?> {{"third",[3]},{"fourth",[4]}});
+            Check.Throws(()=>interrupted.Apply(next).GetAwaiter().GetResult(),"simulated interruption");
+            Check.That((await mode.Result("interrupted")).State==EditState.PartialFailure);
+            Check.That((await mode.Recover("interrupted")).State==EditState.Applied);
+            var start=new System.Diagnostics.ProcessStartInfo(Environment.ProcessPath!) {UseShellExecute=false,CreateNoWindow=true};
+            if(Path.GetFileNameWithoutExtension(Environment.ProcessPath!).Equals("dotnet",StringComparison.OrdinalIgnoreCase)) start.ArgumentList.Add(typeof(AuthorProjectTests).Assembly.Location);
+            start.ArgumentList.Add("--author-crash");start.ArgumentList.Add(root);
+            using(var child=System.Diagnostics.Process.Start(start)!) {await child.WaitForExitAsync();Check.That(child.ExitCode==71);}
+            Check.That((await mode.Result("process-crash")).AppliedPaths.SequenceEqual(new[]{"process-one"}));
+            Check.That((await mode.Recover("process-crash")).State==EditState.Applied);
+            var host=await AuthorHost.Start(AuthorProfiles.Resolve(root,null));
+            var args=System.Text.Json.JsonSerializer.Deserialize<System.Text.Json.JsonElement>("{\"files\":{\"idempotent\":\"one\"}}");
+            var first=(EditReceipt)await host.Invoke("files.write",args,"stable");
+            var again=(EditReceipt)await host.Invoke("files.write",args,"stable");
+            Check.That(first.ResultVersion==again.ResultVersion);
+            var changed=System.Text.Json.JsonSerializer.Deserialize<System.Text.Json.JsonElement>("{\"files\":{\"idempotent\":\"two\"}}");
+            Check.Throws(()=>host.Invoke("files.write",changed,"stable").GetAwaiter().GetResult(),"different operation");
+            await host.DisposeAsync();
+        }
+        finally {Directory.Delete(root,true);}
+    }
     public static void Disk() => DiskAsync().GetAwaiter().GetResult();
     private static async Task DiskAsync()
     {
@@ -28,7 +76,7 @@ public static class AuthorProjectTests
             File.WriteAllText(Path.Combine(root,"created.txt"),"external");Check.That((await mode.Apply(add)).State==EditState.Conflict);
             var fresh=await mode.Read();var edits=fresh.Change("success",new Dictionary<string,byte[]?> {{"script.lua",Encoding.UTF8.GetBytes("third")},{"assets/new.txt",null}});
             Directory.CreateDirectory(Path.Combine(root,".git"));File.WriteAllText(Path.Combine(root,".git/config"),"keep");
-            var receipt=await mode.Apply(edits);Check.That(receipt.State==EditState.Applied && receipt.Saved);
+            var receipt=await mode.Apply(edits);Check.That(receipt.State==EditState.Applied && receipt.Saved, System.Text.Json.JsonSerializer.Serialize(receipt));
             Check.That(File.ReadAllText(Path.Combine(root,".git/config"))=="keep" && File.ReadAllText(Path.Combine(root,"created.txt"))=="external");
             Check.That(!File.Exists(Path.Combine(root,"assets/new.txt")));
         }
