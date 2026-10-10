@@ -10,10 +10,16 @@ try
 {
     if (args.Length == 0 || args[0] is "help" or "--help")
     {
-        Write(new { commands = new[] { "profile", "plugins", "operations", "describe <operation>", "call <operation> --args <JSON>" },
+        Write(new { commands = new[] { "docs [topic]", "workspaces", "profile", "plugins", "operations", "describe <operation>", "call <operation> --args <JSON>" },
             options = new[] { "--project <directory>", "--profile <name>", "--request <stable-id>", "--args-file <JSON-file>" },
             exits = new { success = 0, failure = 1, arguments = 2, conflict = 3, unknownOrPartial = 4, cancelled = 130 } });
         return 0;
+    }
+    if(args[0]=="docs")
+    {
+        var documents=AuthorDocuments.Installed(AuthorPluginPackages.Discover(Path.Combine(AppContext.BaseDirectory,"plugins","author")));
+        object value=args.Length==1?documents.Select(d=>new {d.Topic,d.Plugin,d.Title}):documents.SingleOrDefault(d=>d.Topic==args[1]) ?? throw new ArgumentException("Unknown documentation topic");
+        Write(new {version=AuthorDocuments.Version,result=value});return 0;
     }
     if(args[0]=="workspaces") { Write(WorkspaceConnections.Discover());return 0; }
     string? project = null, profile = null, operation = null, instance = null;

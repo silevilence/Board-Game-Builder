@@ -1,4 +1,5 @@
 <Project Sdk="Microsoft.NET.Sdk">
   <PropertyGroup><OutputType>Exe</OutputType><AssemblyName>bgb</AssemblyName></PropertyGroup>
   <ItemGroup><ProjectReference Include="../Authoring/Authoring.csproj" /></ItemGroup>
+  <ItemGroup><Content Include="../../docs/author/*.md" Link="docs/author/%(Filename)%(Extension)" CopyToOutputDirectory="PreserveNewest" CopyToPublishDirectory="PreserveNewest" /></ItemGroup>
 </Project>

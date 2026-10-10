@@ -7,6 +7,7 @@ public sealed record AuthorPlugin(string Id, string Version, int Api, string[] P
     Action<AuthorScope> Activate, string Description, bool Required = false)
 {
     public AuthorOperationInfo[] Operations { get; init; } = [];
+    public AuthorDocument[] Documents { get; init; } = [];
 }
 
 public sealed class AuthorHost : IAsyncDisposable

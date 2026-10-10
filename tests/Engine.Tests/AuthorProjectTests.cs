@@ -7,6 +7,30 @@ namespace Engine.Tests;
 
 public static class AuthorProjectTests
 {
+    public static void Documentation()
+    {
+        var documents=AuthorDocuments.Installed(AuthorHost.Builtins);
+        Check.That(documents.Count==8 && documents.All(d=>d.Markdown.Length>100));
+        var root=Path.Combine(Path.GetTempPath(),"bgb-docs-"+Guid.NewGuid());
+        try
+        {
+            Directory.CreateDirectory(root);
+            foreach(var file in GameAuthorFormats.Template())File.WriteAllBytes(Path.Combine(root,file.Key),file.Value);
+            var code=System.Text.RegularExpressions.Regex.Match(documents.Single(d=>d.Topic=="lua").Markdown,"```lua\\s*(.*?)```",System.Text.RegularExpressions.RegexOptions.Singleline).Groups[1].Value;
+            File.WriteAllText(Path.Combine(root,"rules.lua"),code);
+            using var game=new PlaySession(GameRuntime.Load(root),1,new Dictionary<string,string>{{"p1","cpu"}});
+            Check.That(game.StepCpu() && game.Ended && game.Fault==null);
+            foreach(var topic in new[]{"definition-module","definition-state"})
+            {
+                var json=System.Text.RegularExpressions.Regex.Match(documents.Single(d=>d.Topic==topic).Markdown,"```json\\s*(.*?)```",System.Text.RegularExpressions.RegexOptions.Singleline).Groups[1].Value;
+                var startup=System.Text.Json.Nodes.JsonNode.Parse(File.ReadAllText(Path.Combine(root,GameRuntime.Entry)))!;
+                var loader=startup["plugins"]!.AsArray().Single(p=>p!["id"]!.GetValue<string>().StartsWith("definition."))!;
+                loader["id"]=topic.Replace('-','.');File.WriteAllText(Path.Combine(root,GameRuntime.Entry),startup.ToJsonString());
+                File.WriteAllText(Path.Combine(root,"module.json"),json);_=GameRuntime.Load(root);
+            }
+        }
+        finally {Directory.Delete(root,true);}
+    }
     public static void External() => ExternalAsync().GetAwaiter().GetResult();
     private static async Task ExternalAsync()
     {
