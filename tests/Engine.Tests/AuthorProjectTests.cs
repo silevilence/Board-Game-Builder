@@ -7,6 +7,38 @@ namespace Engine.Tests;
 
 public static class AuthorProjectTests
 {
+    public static void Exports() => ExportsAsync().GetAwaiter().GetResult();
+    private static async Task ExportsAsync()
+    {
+        var root=Path.Combine(Path.GetTempPath(),"bgb-author-export-"+Guid.NewGuid());
+        var output=root+"-outputs";Directory.CreateDirectory(output);
+        try
+        {
+            System.Text.Json.JsonElement Args(object value)=>System.Text.Json.JsonSerializer.SerializeToElement(value);
+            foreach(var format in new[]{"module","state"})
+            {
+                var project=Path.Combine(root,format);
+                await using var host=await AuthorHost.Start(AuthorProfiles.Resolve(project,null));
+                await host.Invoke("project.create."+format,Args(new {}),"create");
+                await host.Invoke("resources.import.image",Args(new {source=Path.GetFullPath("samples/freecell/assets/card_clubs_A.png"),target="assets/card.png",name="card"}),"image");
+                var artifact=(AuthorArtifact)await host.Invoke("project.pack",Args(new {target=Path.Combine(output,format+".bgm")}),"pack");
+                Check.That(GameRuntime.Load(artifact.Target).Fingerprint==artifact.Fingerprint);
+                using(var zip=System.IO.Compression.ZipFile.OpenRead(artifact.Target))Check.That(!zip.Entries.Any(e=>e.FullName.Contains(".bgb-author") || e.FullName==AuthorProfiles.ConfigurationFile));
+                Check.Throws(()=>host.Invoke("player.export",Args(new {target=Path.Combine(output,"bad"),player="absent-release"}),"bad").GetAwaiter().GetResult());
+                Check.That(!Directory.Exists(Path.Combine(output,"bad")));
+                if(format=="module" && Environment.GetEnvironmentVariable("BGB_TEST_RELEASE") is { } release)
+                {
+                    var game=Path.Combine(output,"standalone");
+                    await host.Invoke("player.export",Args(new {target=game,player=Path.GetFullPath(release)}),"export");
+                    Check.That(File.Exists(Path.Combine(game,"Play.exe")) && !File.Exists(Path.Combine(game,"Authoring.dll")));
+                    var start=new System.Diagnostics.ProcessStartInfo(Path.Combine(game,"Play.exe")){UseShellExecute=false,CreateNoWindow=true,WorkingDirectory=game};
+                    foreach(var value in new[]{"batch",Path.Combine(game,"game.bgm"),"--count","1","--out",Path.Combine(output,"batch")})start.ArgumentList.Add(value);
+                    using var process=System.Diagnostics.Process.Start(start)!;await process.WaitForExitAsync();Check.That(process.ExitCode==0);
+                }
+            }
+        }
+        finally {if(Directory.Exists(root))Directory.Delete(root,true);Directory.Delete(output,true);}
+    }
     public static void Runs() => RunsAsync().GetAwaiter().GetResult();
     private static async Task RunsAsync()
     {
