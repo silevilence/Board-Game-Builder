@@ -1,0 +1,55 @@
+name: Release Windows toolkit
+on:
+  push:
+    tags: ['V*', 'v*']
+permissions:
+  contents: write
+# All releases share one lock; casing aliases and reruns cannot publish concurrently.
+concurrency:
+  group: official-windows-release
+  cancel-in-progress: false
+jobs:
+  release:
+    runs-on: windows-2025
+    timeout-minutes: 45
+    env:
+      GH_TOKEN: ${{ github.token }}
+      GH_REPO: ${{ github.repository }}
+      RELEASE_TAG: ${{ github.ref_name }}
+      PYTHONUTF8: '1'
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          ref: ${{ github.sha }}
+          fetch-depth: 0
+      - uses: actions/setup-dotnet@v4
+        with:
+          global-json-file: global.json
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.13'
+      - name: Validate version and release failure paths
+        shell: pwsh
+        run: |
+          python scripts/release.py check --tag $env:RELEASE_TAG
+          if ($LASTEXITCODE -ne 0) { exit $LASTEXITCODE }
+          python -m unittest discover -s scripts/tests -v
+          if ($LASTEXITCODE -ne 0) { exit $LASTEXITCODE }
+          ./scripts/check-boundaries.ps1
+      - name: Build and validate self-contained toolkit
+        shell: pwsh
+        run: ./scripts/publish-toolkit.ps1 -Tag $env:RELEASE_TAG
+      - name: Publish verified attachments through a draft
+        shell: pwsh
+        run: python scripts/release.py publish --tag $env:RELEASE_TAG
+      - name: Retain validation and failure diagnostics
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: release-diagnostics
+          path: |
+            artifacts/*.validation/**/*.json
+            artifacts/*.validation/**/*.log
+            artifacts/release/*.md
+            artifacts/release/*.json
+            artifacts/release/*.sha256

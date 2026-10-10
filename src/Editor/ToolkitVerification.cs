@@ -20,6 +20,14 @@ internal static class ToolkitVerification
                 var documents=host.Application.Service<DocumentWorkspace>("documents");
                 documents.Set(ModuleDocument.Create());
                 documents.Location=Path.Combine(output,"project");
+                var image=Path.Combine(output,"source.png");
+                using(var bitmap=new System.Drawing.Bitmap(8,8))bitmap.Save(image,System.Drawing.Imaging.ImageFormat.Png);
+                foreach(var panel in host.Application.Service<WorkspaceShell>("workspace").Tabs.Items.OfType<TabItem>().Select(t=>t.Content).OfType<FormatPanel>())await panel.Ready;
+                documents.EditForm("图片导入",Wire.Json(new[]{image,"sample","1","1","false"}));
+                var commands=host.Application.Service<EditorCommands>("commands");
+                await commands.Execute("images.preview");await commands.Execute("images.apply");
+                Check(documents.Current!.Paths.Contains("assets/sample-001.png"),"Image import through editor commands");
+                documents.Undo();Check(!documents.Current.Paths.Contains("assets/sample-001.png"),"Import Undo");documents.Redo();
                 documents.Save();
                 var script=documents.Current!.Text("rules.lua");
                 documents.EditDraft("rules.lua",script+"\n-- installed editor draft\n");
