@@ -103,6 +103,13 @@ public static class AuthorProjectTests
             File.WriteAllText(Path.Combine(root,"new.txt"),"reload clean");status=documents.ExternalStatus(identity);
             documents.ResolveExternal(identity,"refresh",System.Text.Json.JsonSerializer.SerializeToElement(new {status.DiskVersion,status.WorkspaceVersion,choice="reload"},AuthorProfiles.Json));
             Check.That(document.Text("new.txt")=="reload clean");
+            var definition=document.Text("module.json");
+            documents.EditDraft("module.json","{broken");
+            documents.Form("fields",()=>"initial");documents.EditForm("fields","unfinished fields");
+            File.WriteAllText(Path.Combine(root,"module.json"),definition+"\n");
+            status=documents.ExternalStatus(identity);
+            documents.ResolveExternal(identity,"invalid-draft-merge",System.Text.Json.JsonSerializer.SerializeToElement(new {status.DiskVersion,status.WorkspaceVersion,choice="merge",files=new Dictionary<string,string?> {{"module.json",definition}}},AuthorProfiles.Json));
+            Check.That(!documents.Dirty && document.Text("module.json")==definition);
         }
         finally {if(Directory.Exists(root))Directory.Delete(root,true);}
     }
@@ -177,12 +184,22 @@ public static class AuthorProjectTests
         {
             var document=ModuleDocument.Create();document.Save(root);
             using var workspace=new DocumentWorkspace();workspace.Set(document);
+            workspace.Changed+=()=>workspace.Draft("rules.lua"); // A mounted file panel refreshes synchronously.
             var identity=new ProjectIdentity(root,"connected","gui",workspace.WorkspaceId,workspace.Generation);
             using var mode=new WorkspaceEditMode(workspace,identity);
             var script=document.Text("rules.lua");workspace.EditDraft("rules.lua",script+"\n-- user draft");
             var view=await mode.Read();Check.That(view.Text("rules.lua").Contains("user draft"));
             var changes=view.Change("gui",new Dictionary<string,byte[]?> {{"rules.lua",Encoding.UTF8.GetBytes(script+"\n-- user draft\n-- agent")},{"note.txt",Encoding.UTF8.GetBytes("new")}});
             var result=await mode.Apply(changes);Check.That(!result.Saved && result.State==EditState.Applied);
+            var diskRoot=root+"-parity";
+            try
+            {
+                foreach(var file in view.CopyFiles()) {var path=Path.Combine(diskRoot,file.Key);Directory.CreateDirectory(Path.GetDirectoryName(path)!);File.WriteAllBytes(path,file.Value);}
+                using var diskMode=new DiskEditMode(new(diskRoot,"disk","disk"));var diskView=await diskMode.Read();
+                await diskMode.Apply(diskView.Change("parity",changes.Files.ToDictionary(f=>f.Path,f=>f.Content)));
+                Check.That((await diskMode.Read()).Source.Version==(await mode.Read()).Source.Version);
+            }
+            finally {if(Directory.Exists(diskRoot))Directory.Delete(diskRoot,true);}
             Check.That(File.ReadAllText(Path.Combine(root,"rules.lua"))==script && !File.Exists(Path.Combine(root,"note.txt")));
             Check.That(workspace.Draft("rules.lua").Dirty && document.Text("rules.lua")==script);
             workspace.Undo();Check.That((await mode.Read()).Text("rules.lua")==script+"\n-- user draft" && !document.Paths.Contains("note.txt"));
@@ -194,6 +211,16 @@ public static class AuthorProjectTests
             Check.Throws(()=>mode.Read().GetAwaiter().GetResult(),"pending form");workspace.DiscardForms();
             workspace.EditDraft("module.json","{");Check.Throws(()=>mode.Read().GetAwaiter().GetResult(),"JSON");workspace.DiscardDraft("module.json");
             workspace.Set(ModuleDocument.Create());Check.Throws(()=>mode.Apply(changes).GetAwaiter().GetResult(),"generation");
+            var queuedIdentity=new ProjectIdentity(workspace.Current!.DirectoryPath ?? root,"queued","gui",workspace.WorkspaceId,workspace.Generation);
+            // A queued UI dispatch must recheck cancellation and generation when it actually executes.
+            Func<object>? queued=null;var completion=new TaskCompletionSource<object>();
+            using var queuedMode=new WorkspaceEditMode(workspace,queuedIdentity,action=>{queued=action;return completion.Task;});
+            using var cancellation=new CancellationTokenSource();var pendingRead=queuedMode.Read(cancellation.Token);cancellation.Cancel();
+            try {completion.SetResult(queued!());}catch(Exception error){completion.SetException(error);}
+            Check.Throws(()=>pendingRead.GetAwaiter().GetResult(),"canceled");
+            completion=new TaskCompletionSource<object>();pendingRead=queuedMode.Read();workspace.Set(ModuleDocument.Create());
+            try {completion.SetResult(queued!());}catch(Exception error){completion.SetException(error);}
+            Check.Throws(()=>pendingRead.GetAwaiter().GetResult(),"generation");
         }
         finally {if(Directory.Exists(root))Directory.Delete(root,true);}
     }

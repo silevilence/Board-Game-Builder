@@ -15,7 +15,7 @@ public static class WorkspaceCoordination
         new(), new() { ["type"] = "object", ["description"] = "identity, diskVersion, workspaceVersion, dirty, changes (base64 content), pendingForms" }, ["GUI mode"], []) { ReadsProject = false };
     private static AuthorOperationInfo ResolveInfo => new("workspace.external.resolve", "author.workspace", "Explicitly coordinate external changes. reload requires a clean workspace; disk discards all workspace drafts; workspace keeps the workspace; merge supplies every changed path. Successful resolution writes the merged state to disk.",
         new() { ["diskVersion"] = new("string", true, "Disk version from status"), ["workspaceVersion"] = new("string", true, "Workspace version from status"),
-            ["choice"] = new("string", true, "reload, disk, workspace or merge"), ["files"] = new("object", false, "For merge: every externally changed path mapped to final UTF-8 text or null") },
+            ["choice"] = new("string", true, "reload, disk, workspace or merge"), ["files"] = new("object", false, "For merge: every externally changed path and pending file draft, plus definition for pending fields, mapped to final UTF-8 text or null") },
         FileOperations.WriteInfo.ResultSchema.DeepClone().AsObject(), ["GUI mode", "Both versions still match"], ["reconciliation"]) { ReadsProject = false };
     public static AuthorPlugin Plugin => new("author.workspace", "1", 1, [], ["author.operations"], s =>
     {

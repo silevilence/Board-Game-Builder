@@ -19,13 +19,13 @@ public sealed partial class DocumentWorkspace
     {
         files = Current!.Revision,
         drafts = drafts.OrderBy(p => p.Key.Path).ThenBy(p => p.Key.Yaml).Select(p => new { p.Key, p.Value.Text, p.Value.Baseline }),
-        forms = forms.OrderBy(p => p.Key).Select(p => new { p.Key, p.Value.Text, p.Value.Baseline })
+        forms = forms.Where(p => p.Key != ExternalMergeForm).OrderBy(p => p.Key).Select(p => new { p.Key, p.Value.Text, p.Value.Baseline })
     }));
     private void RestoreAuthor(AuthorState state)
     {
         drafts.Clear();
-        Current!.RestoreHistory(state.Document);
         foreach (var entry in state.Drafts) drafts.Add(entry.Key, entry.Value.Copy());
+        Current!.RestoreHistory(state.Document);
         Notify();
     }
     private bool UndoAuthor()

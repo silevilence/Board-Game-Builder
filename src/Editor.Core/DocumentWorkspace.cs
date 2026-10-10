@@ -28,7 +28,7 @@ public sealed partial class DocumentWorkspace : IDisposable
     }
     public void Set(ModuleDocument? document)
     {
-        Generation++;authorUndo.Clear();authorRedo.Clear();
+        Generation++;authorUndo.Clear();authorRedo.Clear();ExternalMergeBaseline=null;
         if(Current!=null) Current.Changed-=Notify;
         Current=document;drafts.Clear();forms.Clear();ViewState.Clear();Selection=null;Location=document?.DirectoryPath ?? "";
         if(Current!=null) {Current.AuthorFormats=AuthorFormats;Current.Changed+=Notify;}
@@ -47,9 +47,9 @@ public sealed partial class DocumentWorkspace : IDisposable
     public void EditDraft(DocumentDraftTarget target,string text) {Draft(target).Edit(text);Changed?.Invoke();}
     public void DiscardDraft(string path)=>DiscardDraft(new DocumentDraftTarget(path));
     public void DiscardDraft(DocumentDraftTarget target) {drafts.Remove(target);Changed?.Invoke();}
-    public DocumentDraft Form(string name,Func<string> initial)
+    public DocumentDraft Form(string name,Func<string> initial,string? baseline=null)
     {
-        var baseline=Current is {} current?current.Text(current.DefinitionPath):throw new InvalidOperationException("请打开模块");
+        baseline??=Current is {} current?current.Text(current.DefinitionPath):throw new InvalidOperationException("请打开模块");
         if(forms.TryGetValue(name,out var draft) && (draft.Dirty || draft.Baseline==baseline)) return draft;
         return forms[name]=new(name,baseline,initial(),false);
     }

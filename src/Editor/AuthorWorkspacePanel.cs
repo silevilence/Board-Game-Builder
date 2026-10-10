@@ -12,17 +12,17 @@ public sealed class AuthorWorkspacePanel : StackPanel
         var documents=scope.Service<DocumentWorkspace>("documents");
         var status=new TextBox {IsReadOnly=true,AcceptsReturn=true,Height=220};
         var merge=new TextBox {AcceptsReturn=true,Height=140,PlaceholderText="合并结果：相对路径到 UTF-8 文本或 null 的 JSON 对象"};
-        ExternalStatus? observed=null;
         ProjectIdentity Identity()=>new(documents.Current?.DirectoryPath ?? throw new InvalidOperationException("先将工程保存到目录"),"editor","gui",documents.WorkspaceId,documents.Generation);
+        void Show(ExternalStatus observed) => status.Text=$"工作区：{observed.Identity.Workspace}\n文档代次：{observed.Identity.Generation}\n未保存：{observed.Dirty}\n"+
+            (observed.Changes.Length==0?"没有外部文件变更":string.Join("\n",observed.Changes.Select(c=>$"{c.Kind}: {c.Path}")));
         void Refresh()
         {
             try
             {
-                observed=documents.ExternalStatus(Identity());
-                status.Text=$"工作区：{observed.Identity.Workspace}\n文档代次：{observed.Identity.Generation}\n未保存：{observed.Dirty}\n"+
-                    (observed.Changes.Length==0?"没有外部文件变更":string.Join("\n",observed.Changes.Select(c=>$"{c.Kind}: {c.Path}")));
+                documents.ExternalMergeBaseline=documents.ExternalStatus(Identity());
+                Show(documents.ExternalMergeBaseline);
             }
-            catch(Exception error) {observed=null;status.Text=error.Message;}
+            catch(Exception error) {documents.ExternalMergeBaseline=null;status.Text=error.Message;}
         }
         void Button(string title,Action action)
         {
@@ -31,15 +31,29 @@ public sealed class AuthorWorkspacePanel : StackPanel
         Button("检查外部文件修改",Refresh);
         void Resolve(string choice)
         {
-            var baseline=observed ?? throw new InvalidOperationException("先检查外部文件修改");
+            var baseline=documents.ExternalMergeBaseline ?? throw new InvalidOperationException("先检查外部文件修改");
             var files=choice=="merge"?JsonSerializer.Deserialize<JsonElement>(merge.Text ?? "{}"):JsonSerializer.SerializeToElement(new {});
             documents.ResolveExternal(Identity(),Guid.NewGuid().ToString("N"),JsonSerializer.SerializeToElement(new {baseline.DiskVersion,baseline.WorkspaceVersion,choice,files},AuthorProfiles.Json));
+            RestoreInput();
             Refresh();
         }
         Button("重载磁盘（仅无草稿时）",()=>Resolve("reload"));
         Button("使用磁盘并放弃工作区草稿",()=>Resolve("disk"));
         Button("保留工作区并写入磁盘",()=>Resolve("workspace"));
         Children.Add(status);Children.Add(merge);Button("应用合并结果并保存",()=>Resolve("merge"));
-        Refresh();
+        var restoring=false;
+        void RestoreInput()
+        {
+            restoring=true;
+            try {merge.Text=documents.Current==null?"":documents.Form(DocumentWorkspace.ExternalMergeForm,()=>"{}",baseline:"").Text;}
+            catch(Exception error) {status.Text=error.Message;}
+            finally {restoring=false;}
+        }
+        merge.TextChanged+=(_,_)=> {if(!restoring && documents.Current!=null) documents.EditForm(DocumentWorkspace.ExternalMergeForm,merge.Text ?? "");};
+        void Replaced() {RestoreInput();Refresh();}
+        documents.Replaced+=Replaced;scope.Own(new AuthorCleanup(()=>documents.Replaced-=Replaced));
+        scope.OnDocumentChanged(RestoreInput);
+        RestoreInput();
+        if(documents.ExternalMergeBaseline is {} baseline) Show(baseline);else Refresh();
     }
 }
