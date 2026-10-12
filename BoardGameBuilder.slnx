@@ -11,6 +11,9 @@
     <Project Path="src/Kernel.Abstractions/Kernel.Abstractions.csproj" />
     <Project Path="src/Kernel/Kernel.csproj" />
     <Project Path="src/Lua/Lua.csproj" />
+    <Project Path="src/Launcher.Core/Launcher.Core.csproj" />
+    <Project Path="src/Launcher.Cli/Launcher.Cli.csproj" />
+    <Project Path="src/Launcher/Launcher.csproj" />
     <Project Path="src/Modules/Modules.csproj" />
     <Project Path="src/Networking/Networking.csproj" />
     <Project Path="src/NetworkClient/NetworkClient.csproj" />
@@ -25,5 +28,6 @@
     <Project Path="tests/Editor.AsyncProbe/Editor.AsyncProbe.csproj" />
     <Project Path="tests/Editor.Compatibility/Editor.Compatibility.csproj" />
     <Project Path="tests/Engine.Tests/Engine.Tests.csproj" />
+    <Project Path="tests/Launcher.Tests/Launcher.Tests.csproj" />
   </Folder>
 </Solution>

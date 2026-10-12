@@ -102,3 +102,12 @@ V0.2.0 原始独立 ZIP 在断网、无源码／SDK／系统 Runtime 的 Windows
 V0.2.1 原始精简 ZIP 在另一断网沙盒完成缺核心、x86、旧补丁、缺桌面框架四类拒绝，以及兼容核心成功检查；安装官方已校验 Core／Desktop 10.0.12 后，SDK 列表为空。移动前后 Editor 各 11 项、CLI 作者操作、缺导出依赖时拒绝、完整组件恢复与离线复用、正式导出和 Player 全部通过。记录为 `artifacts/release-acceptance/V0.2.1-slim-sandbox/runtime-checks.json` 和 `acceptance/result.json`；ZIP SHA-256 为 `306eb3cf70c20baedfdf17130f4a7650f7f3e9cf496e77772af4e6e886561103`。
 
 第 4 项通过；后续启动器共享安装及最终双版本闭环仍按各自任务验收。
+
+## 独立启动器与本地登记（2026-10-12）
+
+新增独立版本 0.1.0 的 Launcher.Core、Avalonia Launcher 与 `bgb-launcher` CLI，只引用独立启动器契约，不依赖任何引擎安装。自包含输出由 `scripts/publish-launcher.ps1` 生成；用户设置单独持久化，登记前校验完整清单、入口与内容，拒绝冲突、未知格式和不安全路径，明确标记目录缺失与损坏。
+
+- `tests/Launcher.Tests` 通过清单拒绝、V/v 规范化、两版登记／默认／重启、重复登记、冲突、损坏／缺失和旧格式登记检查；实际发布的完整／精简清单均解析成功。构建无警告，项目依赖边界检查通过。
+- `artifacts/launcher-registry-sandbox/result.json`：断网、没有引擎或系统 .NET 的新沙盒中，CLI 与 GUI 均可启动；程序目录移动到新的中文及空格路径后继续启动，设置保持不变，前后截图已检查。
+- 原始 V0.2.0、V0.2.1 独立包在 `artifacts/release-acceptance/registry-products/` 解压后同时登记。新 CLI 进程读取设置、选择 `v0.2.1` 为默认并重新校验，两个版本均为 available；记录为 `registry-status.json`。GUI 的 `registry-gui.json` 与截图显示两个独立版本及准确默认值。
+- 最新自包含构建位于 `artifacts/launcher-registry-final/`；`docs/launcher.md` 说明独立设置、版本运行缓存、存储位置和手动更新。当前登记不宣称已实现共享安装，后续任务继续补充。

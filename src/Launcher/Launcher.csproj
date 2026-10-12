@@ -1,0 +1,4 @@
+<Project Sdk="Microsoft.NET.Sdk">
+  <PropertyGroup><Version>0.1.0</Version><OutputType>WinExe</OutputType><ApplicationManifest>../app.manifest</ApplicationManifest></PropertyGroup>
+  <ItemGroup><ProjectReference Include="../Launcher.Core/Launcher.Core.csproj" /><PackageReference Include="Avalonia.Desktop" Version="12.1.1" /><PackageReference Include="Avalonia.Themes.Fluent" Version="12.1.1" /></ItemGroup>
+</Project>
