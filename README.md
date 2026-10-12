@@ -2,7 +2,9 @@
 
 本地单人桌游运行时与 Windows 图形 Player。开发环境为 .NET 10 SDK；导出物自带运行时。
 
-Windows x64 完整工具包从 [GitHub Releases](https://github.com/silevilence/Board-Game-Builder/releases) 下载，包含 Editor、CLI、调试与正式 Player 以及配套依赖，无需另装 .NET。下载校验、目录移动及维护者 tag 自动发布见 [发行说明](docs/releases.md)。
+Windows x64 工具包从 [GitHub Releases](https://github.com/silevilence/Board-Game-Builder/releases) 下载，包含 Editor、CLI、调试与正式 Player。独立包自带运行依赖；精简包使用兼容系统 Runtime，两者都不要求 SDK。下载校验、目录移动及维护者 tag 自动发布见 [发行说明](docs/releases.md)。
+
+独立 [多版本启动器](docs/launcher.md) 支持历史 Release、共享安装、离线导入、工程版本绑定和固定版本 CLI／作者 SKILL。启动器不依赖预装引擎或系统 .NET；可运行 `scripts/publish-launcher.ps1 -Output <新目录>` 构建 Windows x64 自包含发行目录。两版真实发行和干净 Windows 的验证记录见 [启动器验收](docs/validation/launcher.md)。
 
 作者可以使用 Editor、独立 CLI 或直接编辑游戏文件。Windows CLI 发行包不要求安装 SDK，包含插件、本地作者文档、技能模板和可供导出的 Player。开发运行：`dotnet run --project src/Cli -- help`；发行构建：`pwsh -NoProfile -File scripts/publish-author.ps1 -Output artifacts/author-release`。安装与工作区协作见 [CLI 作者工具](docs/author-cli.md)，离线创作入口见 [作者指南](docs/author/entry.md)。
 

@@ -1,6 +1,10 @@
 using System.Text.Json;
 using BoardGame.Launcher;
 
+// Redirected launcher diagnostics have one explicit encoding, independent of the Windows console code page.
+if(Console.IsOutputRedirected) Console.SetOut(new StreamWriter(Console.OpenStandardOutput(),new System.Text.UTF8Encoding(false)){AutoFlush=true});
+if(Console.IsErrorRedirected) Console.SetError(new StreamWriter(Console.OpenStandardError(),new System.Text.UTF8Encoding(false)){AutoFlush=true});
+
 try
 {
     var arguments=args.ToList(); string? home=null;

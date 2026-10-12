@@ -129,6 +129,7 @@ public sealed class InstallationMaintenance(InstallationRegistry registry)
     private static void RequireOnlyOwnedFiles(ContentStore store,string directory,ProductManifest manifest)
     {
         var owned=(manifest.Legacy?LegacyOwnership.Read(store,manifest).Files:manifest.Files.Select(f=>f.Path).Append("toolkit.json")).ToHashSet(StringComparer.OrdinalIgnoreCase);
+        ExportCacheOwnership.Add(directory,manifest,owned);
         owned.Add(".state/layout.lock");var parents=new HashSet<string>(StringComparer.OrdinalIgnoreCase);
         foreach(var file in owned) for(var parent=Path.GetDirectoryName(file)?.Replace('\\','/');!string.IsNullOrEmpty(parent);parent=Path.GetDirectoryName(parent)?.Replace('\\','/')) parents.Add(parent);
         Visit(directory);
