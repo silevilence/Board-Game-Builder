@@ -51,8 +51,10 @@ public sealed class InstallationRegistry
         if(string.IsNullOrWhiteSpace(directory)) throw new ArgumentException("请提供工具包目录。");
         directory=Path.GetFullPath(directory);
         if((Path.TrimEndingDirectorySeparator(Home)+Path.DirectorySeparatorChar).StartsWith(Path.TrimEndingDirectorySeparator(directory)+Path.DirectorySeparatorChar,StringComparison.OrdinalIgnoreCase)) throw new InvalidOperationException("启动器设置不能位于产品目录内。");
+        using var gate=Lock();
         var manifest=ProductManifest.Read(ProductManifest.SafePath(directory,"toolkit.json")); manifest.VerifyDirectory(directory);
-        using var gate=Lock(); var settings=Read();
+        ManifestCache.Write(Home,manifest);
+        var settings=Read();
         var existing=settings.Installations.FirstOrDefault(i=>i.Version==manifest.Version);
         if(existing!=null)
         {
@@ -61,7 +63,7 @@ public sealed class InstallationRegistry
         }
         if(settings.Installations.Any(i=>Overlaps(i.Directory,directory))) throw new InvalidOperationException("版本目录不能互相包含。");
         var item=new InstalledVersion(manifest.Version,directory,manifest.Mode,manifest.Digest,managed);
-        Write(settings with { Installations=[..settings.Installations,item], DefaultVersion=settings.DefaultVersion??item.Version }); return item;
+        Write(settings with { Installations=[..settings.Installations,item], DefaultVersion=settings.Installations.Length==0?item.Version:settings.DefaultVersion }); return item;
     }
     public void SetDefault(string version)
     {

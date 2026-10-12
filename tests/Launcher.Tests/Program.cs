@@ -27,6 +27,7 @@ try
     await CatalogChecks.Run(Path.Combine(root,"catalog"),bytes);
     await ContentChecks.Run(Path.Combine(root,"shared"),bytes);
     await InstallationChecks.Run(Path.Combine(root,"installations"),bytes);
+    await MaintenanceChecks.Run(Path.Combine(root,"maintenance"),bytes);
     var home=Path.Combine(root,"settings"); var registry=new InstallationRegistry(home);
     Check(registry.Read().Installations.Length==0,"empty startup"); registry.Register(first); registry.Register(second); registry.SetDefault("v0.2.1");
     var restarted=new InstallationRegistry(home); Check(restarted.Read().DefaultVersion=="0.2.1"&&restarted.Inspect().All(i=>i.State=="available"),"persisted installations/default");

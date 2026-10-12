@@ -23,12 +23,13 @@ public static class RuntimePolicy
         var status=registry.Inspect(item); if(status.State!="available") throw new InvalidOperationException(status.Diagnostic);
         return Resolve(ProductManifest.Read(Path.Combine(item.Directory,"toolkit.json")),item.Directory);
     }
-    public static RuntimeResolution Resolve(ProductManifest manifest,string? directory=null)
+    public static RuntimeResolution Resolve(ProductManifest manifest,string? directory=null,string? entry=null)
     {
         if(manifest.Legacy) return new(manifest.Version,"legacy",[new("原包入口",[new("原包内置 Runtime","旧清单未声明","旧清单未声明",directory,"固定原包")])]);
         var result=new List<ProgramRuntime>();
         foreach(var program in manifest.Json.GetProperty("programs").EnumerateArray())
         {
+            if(entry!=null && Text(program,"entry")!=".payload/"+ProductManifest.RequiredEntries[entry]) continue;
             var frameworks=new List<FrameworkResolution>();
             if(manifest.Mode=="slim")
             {

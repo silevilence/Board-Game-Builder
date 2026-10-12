@@ -14,7 +14,7 @@ public sealed class InstallationService(InstallationRegistry registry,HttpClient
     {
         var manifest=RuntimePolicy.Select(version,mode).ReadManifest();
         if(manifest.Legacy) throw new InvalidOperationException("V0.1.0 请使用完整 ZIP 和配套校验信息导入。");
-        return await Execute(manifest,null,progress,cancellation);
+        return await Execute(manifest,null,null,progress,cancellation);
     }
     public async Task<InstallationResult> Import(string archive,string checksum,IProgress<TransferProgress>? progress=null,CancellationToken cancellation=default)
     {
@@ -32,17 +32,19 @@ public sealed class InstallationService(InstallationRegistry registry,HttpClient
         using var data=new MemoryStream(); await CopyBounded(entry.Open(),data,entry.Length,cancellation);
         var manifest=ProductManifest.Parse(data.ToArray());
         if(!manifest.Legacy && !entries.Keys.Order(StringComparer.Ordinal).SequenceEqual(manifest.Files.Select(f=>f.Storage).Append("toolkit.json").Distinct().Order(StringComparer.Ordinal))) throw new InvalidDataException("ZIP 与清单的完整文件集合不符。");
-        return await Execute(manifest,entries,progress,cancellation);
+        return await Execute(manifest,entries,hash,progress,cancellation);
     }
-    private async Task<InstallationResult> Execute(ProductManifest manifest,Dictionary<string,ZipArchiveEntry>? archive,IProgress<TransferProgress>? progress,CancellationToken cancellation)
+    private async Task<InstallationResult> Execute(ProductManifest manifest,Dictionary<string,ZipArchiveEntry>? archive,string? archiveHash,IProgress<TransferProgress>? progress,CancellationToken cancellation)
     {
         var store=new ContentStore(registry.Read().StorageRoot);
-        using var operation=await store.Begin(cancellation); RecoverLocked(store);
+        using var operation=await store.Begin(cancellation);InstallationRepair.RecoverLocked(registry,store); InstallationMaintenance.RecoverLocked(registry,store);RecoverLocked(registry,store);
+        ManifestCache.Write(registry.Home,manifest);
         var existing=registry.Read().Installations.SingleOrDefault(i=>i.Version==manifest.Version);
         if(existing!=null)
         {
             if(existing.ManifestHash!=manifest.Digest || existing.Mode!=manifest.Mode) throw new InvalidOperationException("此版本已以不同内容或运行时模式安装，请先明确卸载原安装。");
             if(registry.Inspect(existing).State!="available") throw new InvalidOperationException("原安装损坏，请使用修复功能。");
+            if(manifest.Legacy && archive!=null) await LegacyOwnership.VerifyExisting(store,manifest,existing.Directory,archive,archiveHash!,cancellation);
             _=RuntimePolicy.Resolve(manifest,existing.Directory); return new(existing,0,manifest.Files.Select(f=>f.Sha256).Distinct().Count(),[]);
         }
         var destination=ProductManifest.SafePath(store.Root,"versions/"+manifest.Version);
@@ -84,6 +86,7 @@ public sealed class InstallationService(InstallationRegistry registry,HttpClient
             }
             progress?.Report(new("verify",null,operation.DownloadedBytes,operation.DownloadedBytes));
             manifest.VerifyDirectory(stage); _=RuntimePolicy.Resolve(manifest,stage);
+            if(manifest.Legacy) LegacyOwnership.Record(store,manifest,archiveHash!,archive!.Keys);
             cancellation.ThrowIfCancellationRequested();
             File.WriteAllBytes(Path.Combine(stage,"toolkit.json"),manifest.Bytes);
             Directory.CreateDirectory(Path.GetDirectoryName(destination)!); Directory.Move(stage,destination); moved=true;
@@ -95,7 +98,13 @@ public sealed class InstallationService(InstallationRegistry registry,HttpClient
         {
             if(!committed)
             {
-                try {if(moved) StoreFiles.DeleteTree(store.Root,"versions/"+manifest.Version); StoreFiles.DeleteTree(store.Root,transaction);}
+                try
+                {
+                    using var registryGate=registry.Lock();
+                    if(moved && registry.Read().Installations.Any(i=>i.Directory.Equals(destination,StringComparison.OrdinalIgnoreCase))) operation.Commit();
+                    else if(moved) StoreFiles.DeleteTree(store.Root,"versions/"+manifest.Version);
+                    StoreFiles.DeleteTree(store.Root,transaction);
+                }
                 catch {operation.Commit();throw new IOException("安装失败且清理尚未完成；事务记录已保留，下次安装会恢复，请勿手动改动共享文件。");}
             }
             throw;
@@ -103,10 +112,11 @@ public sealed class InstallationService(InstallationRegistry registry,HttpClient
     }
     public async Task Recover(CancellationToken cancellation=default)
     {
-        var store=new ContentStore(registry.Read().StorageRoot); using var operation=await store.Begin(cancellation); RecoverLocked(store); operation.Commit();
+        var store=new ContentStore(registry.Read().StorageRoot); using var operation=await store.Begin(cancellation);InstallationRepair.RecoverLocked(registry,store);InstallationMaintenance.RecoverLocked(registry,store); RecoverLocked(registry,store); operation.Commit();
     }
-    private void RecoverLocked(ContentStore store)
+    internal static void RecoverLocked(InstallationRegistry registry,ContentStore store)
     {
+        using var registryGate=registry.Lock();
         var root=ProductManifest.SafePath(store.Root,"transactions"); if(!Directory.Exists(root)) return;
         foreach(var folder in Directory.EnumerateDirectories(root))
         {

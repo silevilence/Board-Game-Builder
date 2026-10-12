@@ -7,6 +7,7 @@ public sealed record StorageMeasurements(int Versions,int PhysicalObjects,long P
 
 public static class StorageDiagnostics
 {
+    internal static bool SameFile(string first,string second)=>Read(first).Identity==Read(second).Identity;
     /// <summary>Measure NTFS identities and allocation, rather than summing apparent hard-link sizes.</summary>
     public static StorageMeasurements Measure(ContentStore store)
     {

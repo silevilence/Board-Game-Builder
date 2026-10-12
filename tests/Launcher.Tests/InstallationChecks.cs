@@ -63,7 +63,7 @@ internal static class InstallationChecks
         }
         Console.WriteLine("Actual online/import product equivalence passed.");
     }
-    private static string Make(string root,string version,byte[] fixture)
+    internal static string Make(string root,string version,byte[] fixture,bool native=false)
     {
         var node=JsonNode.Parse(fixture)!;node["version"]=version; var files=node["files"]!.AsArray();
         files.Add(new JsonObject{["path"]=".payload/coreclr.dll",["storage"]=".payload/coreclr.dll",["libraries"]=new JsonArray("runtimepack.Microsoft.NETCore.App.Runtime.win-x64/10.0.12")});
@@ -71,6 +71,7 @@ internal static class InstallationChecks
         foreach(var file in files)
         {
             var path=file!["path"]!.GetValue<string>(); var bytes=Encoding.UTF8.GetBytes(path.EndsWith("coreclr.dll",StringComparison.Ordinal)?"private runtime fixture":version+":"+path);
+            if(native && path=="bgb.exe") bytes=File.ReadAllBytes(Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.System),"cmd.exe"));
             file["sha256"]=ProductManifest.Hash(bytes);file["size"]=bytes.Length;contents[path]=bytes;
         }
         var objects=files.Select(f=>f!["sha256"]!.GetValue<string>()).Order(StringComparer.Ordinal).ToArray();
@@ -78,6 +79,9 @@ internal static class InstallationChecks
         var id="product-"+identity;
         foreach(var file in files) file!["component"]=id;
         var component=node["components"]![0]!;component["id"]=id;component["objects"]=JsonSerializer.SerializeToNode(objects);component["source"]=new JsonObject{["repository"]=ReleaseCatalog.Repository,["tag"]="components-"+identity,["asset"]=id+".zip"};
+        var componentRoot=Path.Combine(root,"components");Directory.CreateDirectory(componentRoot);var componentPath=Path.Combine(componentRoot,id+".zip");
+        using(var zip=ZipFile.Open(componentPath,ZipArchiveMode.Create)) foreach(var bytes in contents.Values.DistinctBy(ProductManifest.Hash)) {using var output=zip.CreateEntry("objects/"+ProductManifest.Hash(bytes)).Open();output.Write(bytes);}
+        component["size"]=new FileInfo(componentPath).Length;component["sha256"]=ProductManifest.HashFile(componentPath);
         var pathZip=Path.Combine(root,$"Board-Game-Builder-V{version}-standalone-win-x64.zip");
         using(var zip=ZipFile.Open(pathZip,ZipArchiveMode.Create))
         {

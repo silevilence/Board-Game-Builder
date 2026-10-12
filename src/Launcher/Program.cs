@@ -114,6 +114,15 @@ internal sealed class LauncherWindow:Window
         catch(Exception e) {notice.Text="安装未完成："+e.Message;}
         finally {installationLifetime=null;cancelInstall.IsEnabled=false;}
     }
+    private async Task Maintain(Func<CancellationToken,Task<string>> action)
+    {
+        if(installationLifetime!=null) {notice.Text="已有安装或维护操作正在进行。";return;}
+        using var lifetime=new CancellationTokenSource();installationLifetime=lifetime;cancelInstall.IsEnabled=true;cancelInstall.Content="取消维护";
+        try {notice.Text="正在检查运行占用和共享引用…";var message=await Task.Run(()=>action(lifetime.Token));await Reload();await LoadCatalog(false);notice.Text=message;}
+        catch(OperationCanceledException) {notice.Text="维护已取消。";}
+        catch(Exception e) {notice.Text="维护未完成："+e.Message;}
+        finally {installationLifetime=null;cancelInstall.IsEnabled=false;cancelInstall.Content="取消安装";}
+    }
     private async Task LoadCatalog(bool online)
     {
         refreshCatalog.IsEnabled=false;
@@ -163,12 +172,20 @@ internal sealed class LauncherWindow:Window
                 if(item.Diagnostic!=null) row.Children.Add(new TextBlock { Text=item.Diagnostic,TextWrapping=TextWrapping.Wrap,Foreground=Brushes.Orange });
                 var choose=new Button { Content="设为默认版本",IsEnabled=item.State=="available" };
                 choose.Click+=async (_,_)=> { try { choose.IsEnabled=false; await Task.Run(()=>registry.SetDefault(item.Installation.Version)); await Reload(); } catch(Exception e) { notice.Text=e.Message; } finally { choose.IsEnabled=true; } };
-                row.Children.Add(choose); installations.Children.Add(new Border { Padding=new Thickness(20),Background=new SolidColorBrush(Color.Parse("#202832")),CornerRadius=new CornerRadius(10),Child=row });
+                var actions=new StackPanel {Orientation=Orientation.Horizontal,Spacing=8};actions.Children.Add(choose);row.Children.Add(actions);
+                installations.Children.Add(new Border { Padding=new Thickness(20),Background=new SolidColorBrush(Color.Parse("#202832")),CornerRadius=new CornerRadius(10),Child=row });
                 var runtime=new Button {Content="查看实际运行时"};
                 runtime.Click+=async (_,_)=> {try {runtime.IsEnabled=false; var resolution=await Task.Run(()=>RuntimePolicy.Inspect(registry,item.Installation.Version)); notice.Text="V"+resolution.Version+" · "+resolution.Mode+"\n"+string.Join("\n",resolution.Programs.SelectMany(p=>p.Frameworks).Distinct().Select(f=>f.Framework+" "+f.ActualVersion+" · "+f.Policy+" · "+f.Location));} catch(Exception e) {notice.Text=e.Message;} finally {runtime.IsEnabled=true;} };
-                row.Children.Add(runtime);
+                actions.Children.Add(runtime);
+                var launch=new Button {Content="启动 Editor",IsEnabled=item.State=="available"};
+                launch.Click+=async (_,_)=> {try {launch.IsEnabled=false;using var process=await Task.Run(()=>new ToolExecution(registry).Start(item.Installation.Version,"editor",[]));notice.Text="已启动 V"+item.Installation.Version+"，进程 "+process.Id;} catch(Exception e) {notice.Text=e.Message;} finally {launch.IsEnabled=true;} };actions.Children.Add(launch);
+                var repair=new Button {Content="修复",IsEnabled=item.Installation.Managed&&item.Installation.Mode!="legacy"};
+                repair.Click+=async (_,_)=>await Maintain(async cancellation=> {var result=await new InstallationRepair(registry,http).Repair(item.Installation.Version,cancellation:cancellation);return "已修复 "+string.Join("、",result.Versions.Select(v=>"V"+v))+"，替换 "+result.ReplacedObjects+" 个共享对象。";});actions.Children.Add(repair);
+                var remove=new Button {Content=item.Installation.Managed?"卸载":"移除登记"};
+                remove.Click+=async (_,_)=>await Maintain(async cancellation=> {var result=await new InstallationMaintenance(registry).Uninstall(item.Installation.Version,cancellation);return "V"+result.Version+(result.DirectoryRemoved?" 已卸载。":" 已取消登记，原目录保留。")+(result.ChooseDefault?"请重新选择默认版本。":"");});actions.Children.Add(remove);
             }
             notice.Text=status.Count==0?"还没有登记的引擎。可先解压官方工具包，再填写目录进行登记。":"已校验 "+status.Count+" 个版本。设置保存在 "+registry.Home;
+            if(status.Count>0&&settings.DefaultVersion==null) notice.Text+="。请重新选择默认版本。";
         }
         catch(Exception e) { notice.Text="无法读取安装登记："+e.Message; }
         finally { refresh.IsEnabled=true; }
