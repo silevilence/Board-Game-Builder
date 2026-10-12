@@ -1,0 +1,38 @@
+name: Verify launcher shared content
+on:
+  workflow_dispatch:
+permissions:
+  contents: read
+jobs:
+  verify:
+    runs-on: windows-2025
+    timeout-minutes: 25
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-dotnet@v4
+        with:
+          dotnet-version: '10.0.x'
+      - name: Test storage boundaries and obtain original manifests
+        shell: pwsh
+        run: |
+          dotnet run --project tests/Launcher.Tests -c Release
+          if ($LASTEXITCODE -ne 0) { exit $LASTEXITCODE }
+          foreach ($tag in @('V0.2.0','V0.2.1')) {
+            New-Item -ItemType Directory -Force "artifacts/manifests/$tag" | Out-Null
+            Invoke-WebRequest "https://github.com/silevilence/Board-Game-Builder/releases/download/$tag/toolkit-standalone.json" -OutFile "artifacts/manifests/$tag/toolkit-standalone.json"
+          }
+      - name: Fetch actual components anonymously and measure shared files
+        shell: pwsh
+        run: |
+          dotnet run --project tests/Launcher.Tests -c Release --no-build -- --store-online artifacts/manifests artifacts/shared
+          if ($LASTEXITCODE -ne 0) { exit $LASTEXITCODE }
+          dotnet run --project tests/Launcher.Tests -c Release --no-build -- --measure artifacts/shared > artifacts/shared/physical.json
+          if ($LASTEXITCODE -ne 0) { exit $LASTEXITCODE }
+      - name: Save actual request and allocation evidence
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: launcher-shared-content-evidence
+          path: |
+            artifacts/shared/*.json
+            artifacts/manifests/*/*.json

@@ -3,6 +3,9 @@ using System.Text.Json;
 using System.Text.Json.Nodes;
 using BoardGame.Launcher;
 
+if(args is ["--store",var downloads,var storage]) {await ContentChecks.Real(downloads,storage);return 0;}
+if(args is ["--store-online",var onlineDownloads,var onlineStorage]) {await ContentChecks.Real(onlineDownloads,onlineStorage,true);return 0;}
+if(args is ["--measure",var storeRoot]) {Console.WriteLine(JsonSerializer.Serialize(StorageDiagnostics.Measure(new ContentStore(storeRoot)),new JsonSerializerOptions{WriteIndented=true}));return 0;}
 var root=Path.Combine(Path.GetTempPath(),"bgb-launcher-tests-"+Guid.NewGuid().ToString("N")); Directory.CreateDirectory(root);
 try
 {
@@ -19,6 +22,7 @@ try
     { var node=JsonNode.Parse(bytes)!; change(node); Reject(()=>ProductManifest.Parse(Encoding.UTF8.GetBytes(node.ToJsonString()))); }
     Reject(()=>ProductManifest.Parse(Encoding.UTF8.GetBytes("{\"api\":1,\"api\":2}")));
     await CatalogChecks.Run(Path.Combine(root,"catalog"),bytes);
+    await ContentChecks.Run(Path.Combine(root,"shared"),bytes);
     var home=Path.Combine(root,"settings"); var registry=new InstallationRegistry(home);
     Check(registry.Read().Installations.Length==0,"empty startup"); registry.Register(first); registry.Register(second); registry.SetDefault("v0.2.1");
     var restarted=new InstallationRegistry(home); Check(restarted.Read().DefaultVersion=="0.2.1"&&restarted.Inspect().All(i=>i.State=="available"),"persisted installations/default");
@@ -34,7 +38,7 @@ try
     Console.WriteLine("Launcher manifest/registry checks passed."); return 0;
 }
 catch(Exception e) { Console.Error.WriteLine(e); return 1; }
-finally { if(Path.GetFullPath(root).StartsWith(Path.GetFullPath(Path.GetTempPath()),StringComparison.OrdinalIgnoreCase)) Directory.Delete(root,true); }
+finally { if(Path.GetFullPath(root).StartsWith(Path.GetFullPath(Path.GetTempPath()),StringComparison.OrdinalIgnoreCase)) {foreach(var file in Directory.EnumerateFiles(root,"*",SearchOption.AllDirectories)) File.SetAttributes(file,FileAttributes.Normal); Directory.Delete(root,true);} }
 
 static void Check(bool value,string name) { if(!value) throw new Exception("Failed: "+name); }
 static void Reject(Action action) { try { action(); } catch(Exception e) when(e is InvalidDataException or InvalidOperationException or ArgumentException) { return; } throw new Exception("Expected rejection"); }
