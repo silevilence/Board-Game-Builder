@@ -1,4 +1,9 @@
 <Project Sdk="Microsoft.NET.Sdk">
   <PropertyGroup><Version>0.1.0</Version></PropertyGroup>
   <ItemGroup><Compile Include="../Toolkit.Entry/SystemRuntime.cs" Link="SystemRuntime.cs" /></ItemGroup>
+  <ItemGroup>
+    <Compile Include="../Authoring/AuthorSkillTemplate.cs" Link="Skills/AuthorSkillTemplate.cs" />
+    <Compile Include="../Authoring/SkillInstaller.cs" Link="Skills/SkillInstaller.cs" />
+    <Compile Include="../Authoring/AtomicTextFile.cs" Link="Skills/AtomicTextFile.cs" />
+  </ItemGroup>
 </Project>

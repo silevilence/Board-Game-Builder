@@ -176,3 +176,16 @@ V0.2.1 原始精简 ZIP 在另一断网沙盒完成缺核心、x86、旧补丁�
 - 将测试工程入口 format 改为 999，旧版实际 `project.validate` 返回失败并保留原输入，记录 `incompatible.stdout`；启动器不迁移输入。独立导出隔离运行在最终验收继续复核。
 
 Launcher GUI 与 CLI 构建通过；此项没有修改 Editor 插件、引擎或游戏运行格式。
+
+## 统一 CLI 与固定版本 SKILL（2026-10-12）
+
+第 12 项通过。路由复用工程选择，将一次调用的 CLI、文档、作者操作及运行时固定在选中完整清单；GUI 模式核对当前用户工作区公告、进程启动时间与实际版本目录，匹配后传递明确实例。旧单版本 CLI 保持可用。SKILL 模板和安装维护抽离运行时依赖后由 Launcher 编译同一份源代码，没有引入引擎或 Editor 项目引用。
+
+- `artifacts/launcher-routing-tests.log`：绑定路由、冲突工程拒绝、完整 JSON 参数、无 GUI 时拒绝磁盘回退、两版技能共存／独立修复／卸载，以及取消子进程树返回 130 通过。
+- `artifacts/launcher-skills-engine-tests.log`：原作者模板和复制／Junction 安装维护回归通过。
+- `artifacts/launcher-routing-real/result.json`：原始 V0.2.0 state 工程与实际 Editor 连接，固定旧版后改默认为新版，CLI 文档仍返回 0.2.0 的提交身份；GUI 校验回执确认为 gui 模式和该工作区。V0.2.1 CLI 连接旧版实例被明确拒绝，见 `mismatch.stderr`。
+- 同目录安装两版技能，逐项执行生成元数据中的固定命令，分别返回对应真实版本；删除旧版技能文本后 repair 恢复，卸载旧技能后新版仍 healthy，最后正常卸载两者。记录保存了安装身份、固定命令和独立文档路径。
+
+完整干净 Windows 的作者、导出和隔离玩家验收由最终任务记录。
+
+补充：`artifacts/launcher-stdio-tests.log` 验证嵌套进程的实际标准输入、独立输出／错误流及退出码 37，取消返回 130；手动更新启动器路径后修复固定路由的技能也通过。

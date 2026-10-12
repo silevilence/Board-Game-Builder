@@ -30,8 +30,8 @@ public sealed class ProjectVersions(InstallationRegistry registry)
     {
         var path=ProductManifest.SafePath(project,FileName);if(!File.Exists(path)) return null;
         if(new FileInfo(path).Length>4096) throw new InvalidDataException("工程引擎绑定文件过大。");
-        var bytes=File.ReadAllBytes(path);using var document=JsonDocument.Parse(bytes);ProductManifest.Unique(document.RootElement);
-        var binding=JsonSerializer.Deserialize<EngineBinding>(bytes,InstallationRegistry.Json);
+        var json=File.ReadAllText(path);using var document=JsonDocument.Parse(json);ProductManifest.Unique(document.RootElement);
+        var binding=JsonSerializer.Deserialize<EngineBinding>(json,InstallationRegistry.Json);
         if(binding==null||binding.Api!=1||string.IsNullOrWhiteSpace(binding.Version)) throw new InvalidDataException("不支持的工程引擎绑定格式。");
         return binding with {Version=ProductManifest.NormalizeVersion(binding.Version)};
     }

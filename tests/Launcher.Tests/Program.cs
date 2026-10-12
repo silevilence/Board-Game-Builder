@@ -3,6 +3,7 @@ using System.Text.Json;
 using System.Text.Json.Nodes;
 using BoardGame.Launcher;
 
+if(args is ["--stdio-relay",var relayHome]) return await new ToolExecution(new InstallationRegistry(relayHome)).Run("0.2.0","cli",["/d","/v:on","/c","set /p value=&echo !value!&echo fixture-error 1>&2&exit /b 37"]);
 if(args is ["--store",var downloads,var storage]) {await ContentChecks.Real(downloads,storage);return 0;}
 if(args is ["--store-online",var onlineDownloads,var onlineStorage]) {await ContentChecks.Real(onlineDownloads,onlineStorage,true);return 0;}
 if(args is ["--measure",var storeRoot]) {Console.WriteLine(JsonSerializer.Serialize(StorageDiagnostics.Measure(new ContentStore(storeRoot)),new JsonSerializerOptions{WriteIndented=true}));return 0;}
@@ -33,6 +34,7 @@ try
     var restarted=new InstallationRegistry(home); Check(restarted.Read().DefaultVersion=="0.2.1"&&restarted.Inspect().All(i=>i.State=="available"),"persisted installations/default");
     Check(restarted.Register(first).Version=="0.2.0"&&restarted.Read().Installations.Length==2,"idempotent registration");
     ProjectVersionChecks.Run(Path.Combine(root,"projects"),restarted);
+    RoutingChecks.Run(Path.Combine(root,"routing"),restarted);
     var conflict=Fixture(Path.Combine(root,"conflict"),"0.2.0"); Reject(()=>restarted.Register(conflict));
     File.WriteAllText(Path.Combine(first,"bgb.exe"),"damaged"); Check(restarted.Inspect().Single(i=>i.Installation.Version=="0.2.0").State=="corrupt","corrupt state"); Reject(()=>restarted.SetDefault("0.2.0"));
     Check(new ProjectVersions(restarted).Resolve("0.2.0").State=="corrupt","selected corruption cannot fall back");

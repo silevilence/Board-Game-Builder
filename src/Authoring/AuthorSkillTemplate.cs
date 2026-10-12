@@ -4,7 +4,7 @@ namespace BoardGame.Authoring;
 
 public static class AuthorSkillTemplate
 {
-    public static string Render(string template, string cli, string docs)
+    public static string Render(string template, string cli, string docs,IReadOnlyList<string>? arguments=null,string name="bgb-author")
     {
         if (string.IsNullOrWhiteSpace(cli) || string.IsNullOrWhiteSpace(docs)) throw new InvalidDataException("skill.variables: CLI and documentation paths are required");
         cli=Path.GetFullPath(cli);docs=Path.GetFullPath(docs);
@@ -12,7 +12,7 @@ public static class AuthorSkillTemplate
         if (cli.Any(char.IsControl) || docs.Any(char.IsControl)) throw new InvalidDataException("skill.paths: control characters are unsupported");
         var variables = new Dictionary<string,string>
         {
-            ["CLI_PS"]="'"+cli.Replace("'","''")+"'",
+            ["CLI_PS"]=string.Join(" ",new[]{cli}.Concat(arguments??[]).Select(value=>"'"+value.Replace("'","''")+"'")),
             ["DOCS_LINK"]="[本地作者文档](<"+Path.Combine(docs,"entry.md").Replace('\\','/').Replace("%","%25").Replace("#","%23")+">)"
         };
         if (!variables.Keys.All(key=>template.Contains("{{"+key+"}}",StringComparison.Ordinal))) throw new InvalidDataException("skill.template: missing required placeholders");
@@ -21,6 +21,8 @@ public static class AuthorSkillTemplate
         if(!rendered.StartsWith("---\n",StringComparison.Ordinal) && !rendered.StartsWith("---\r\n",StringComparison.Ordinal))throw new InvalidDataException("skill.template: YAML frontmatter required");
         if(!Regex.IsMatch(rendered,@"(?m)^name: bgb-author\r?$"))throw new InvalidDataException("skill.template: expected bgb-author identity");
         if(!Regex.IsMatch(rendered,@"(?m)^description: .+\r?$"))throw new InvalidDataException("skill.template: description required");
+        if(!Regex.IsMatch(name,@"\Abgb-author(?:-v[0-9]+-[0-9]+-[0-9]+)?\z") || (arguments??[]).Any(a=>a.Any(char.IsControl))) throw new InvalidDataException("skill.variables: invalid command arguments or identity");
+        rendered=Regex.Replace(rendered,@"(?m)^name: bgb-author(?=\r?$)","name: "+name);
         return rendered;
     }
 }

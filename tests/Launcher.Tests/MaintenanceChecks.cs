@@ -11,7 +11,19 @@ internal static class MaintenanceChecks
         var first=InstallationChecks.Make(root,"0.2.0",fixture,true);var second=InstallationChecks.Make(root,"0.2.1",fixture,true);
         await installer.Import(first,first+".sha256");await installer.Import(second,second+".sha256");
         var execution=new ToolExecution(registry);var maintenance=new InstallationMaintenance(registry);var repair=new InstallationRepair(registry,client);
+        var relay=new ProcessStartInfo(Environment.ProcessPath!){UseShellExecute=false,CreateNoWindow=true,RedirectStandardInput=true,RedirectStandardOutput=true,RedirectStandardError=true};
+        if(string.Equals(Path.GetFileNameWithoutExtension(Environment.ProcessPath),"dotnet",StringComparison.OrdinalIgnoreCase)) relay.ArgumentList.Add(typeof(MaintenanceChecks).Assembly.Location);
+        relay.ArgumentList.Add("--stdio-relay");relay.ArgumentList.Add(registry.Home);
+        using(var child=Process.Start(relay)!)
+        {
+            var output=child.StandardOutput.ReadToEndAsync();var error=child.StandardError.ReadToEndAsync();
+            await child.StandardInput.WriteLineAsync("fixture input with spaces");child.StandardInput.Close();
+            await child.WaitForExitAsync().WaitAsync(TimeSpan.FromSeconds(20));
+            Assert(child.ExitCode==37&&(await output).Contains("fixture input with spaces")&&(await error).Contains("fixture-error"),"nested redirected stdin/stdout/stderr and exit code");
+        }
         Assert(await execution.Run("0.2.0","cli",["/d","/c","exit 37"])==37,"child exit code");
+        using(var cancel=new CancellationTokenSource(TimeSpan.FromMilliseconds(500)))
+            Assert(await execution.Run("0.2.0","cli",["/d","/c","ping -n 120 127.0.0.1 > nul"],cancel.Token)==130,"cancelled child tree returns 130");
         var a=registry.Read().Installations.Single(i=>i.Version=="0.2.0");var b=registry.Read().Installations.Single(i=>i.Version=="0.2.1");
         using(var running=execution.Start("0.2.1","cli",["/d","/c","ping -n 120 127.0.0.1 > nul"]))
         {

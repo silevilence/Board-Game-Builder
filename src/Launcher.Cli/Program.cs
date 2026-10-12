@@ -18,7 +18,24 @@ try
         var projectResult=ProjectCommand(registry,arguments.ToArray());
         Console.WriteLine(JsonSerializer.Serialize(projectResult,new JsonSerializerOptions(JsonSerializerDefaults.Web){WriteIndented=true}));return 0;
     }
-    if(arguments.ToArray() is ["run",var runVersion,"--",..var forwarded]) return await execution.Run(runVersion=="default"?null:runVersion,"cli",forwarded,cancellation.Token);
+    if(arguments.FirstOrDefault()=="skill")
+    {
+        var skillResult=SkillCommand(registry,arguments.ToArray());
+        Console.WriteLine(JsonSerializer.Serialize(skillResult,new JsonSerializerOptions(JsonSerializerDefaults.Web){WriteIndented=true}));
+        return arguments.ElementAtOrDefault(1)=="uninstall"?!skillResult.Installed?0:1:skillResult.Healthy?0:1;
+    }
+    if(arguments.FirstOrDefault()=="cli")
+    {
+        var split=arguments.IndexOf("--");if(split<0) throw new ArgumentException("cli [--version <版本>] [--project <目录>] -- <CLI 参数>");
+        string? version=null,project=null;var seen=new HashSet<string>();
+        for(var i=1;i<split;i+=2)
+        {
+            if(i+1>=split||!seen.Add(arguments[i])) throw new ArgumentException("路由选项重复或缺少值。");
+            switch(arguments[i]) {case "--version":version=arguments[i+1];break;case "--project":project=arguments[i+1];break;default:throw new ArgumentException("未知路由选项："+arguments[i]);}
+        }
+        return await Route(registry,execution,version,project,arguments.Skip(split+1).ToArray(),cancellation.Token);
+    }
+    if(arguments.ToArray() is ["run",var runVersion,"--",..var forwarded]) return await Route(registry,execution,runVersion=="default"?null:runVersion,null,forwarded,cancellation.Token);
     object result=arguments.ToArray() switch
     {
         ["status"]=>registry.Inspect(),
@@ -42,7 +59,7 @@ try
         ["collect"]=>new {collectedObjects=await maintenance.Collect(cancellation.Token)},
         ["repair",var version]=>await new InstallationRepair(registry,http).Repair(version,cancellation:cancellation.Token),
         ["repair",var version,"--components",var directory]=>await RepairLocal(registry,version,directory,cancellation.Token),
-        [] or ["help"]=>new { version=typeof(InstallationRegistry).Assembly.GetName().Version?.ToString(3), commands=new[]{"status","settings","register <directory>","default <version>","storage <directory>","catalog [refresh]","runtime <version>","runtime-plan <version> <private|system>","plan <version> <private|system>","install <version> <private|system>","import <zip> <sha256-file>","recover","storage-report","launch [version] [editor arguments]","run <version|default> -- <CLI arguments>","processes <version>","uninstall <version>","repair <version> [--components <directory>]","collect","resolve [--project <directory>] [--version <version>]","open --project <directory> [--version <version>]","binding --project <directory> [--set <version>|--clear]"}, option="--home <launcher-settings-directory>" },
+        [] or ["help"]=>new { version=typeof(InstallationRegistry).Assembly.GetName().Version?.ToString(3), commands=new[]{"status","settings","register <directory>","default <version>","storage <directory>","catalog [refresh]","runtime <version>","runtime-plan <version> <private|system>","plan <version> <private|system>","install <version> <private|system>","import <zip> <sha256-file>","recover","storage-report","launch [version] [editor arguments]","run <version|default> -- <CLI arguments>","processes <version>","uninstall <version>","repair <version> [--components <directory>]","collect","resolve [--project <directory>] [--version <version>]","open --project <directory> [--version <version>]","binding --project <directory> [--set <version>|--clear]","cli [--version <version>] [--project <directory>] -- <CLI arguments>","skill <install|repair|status|uninstall> --version <version> --target <directory> [--method copy|junction]"}, option="--home <launcher-settings-directory>" },
         _=>throw new ArgumentException("未知命令。使用 bgb-launcher help 查看用法。")
     };
     Console.WriteLine(JsonSerializer.Serialize(result,new JsonSerializerOptions(JsonSerializerDefaults.Web){WriteIndented=true})); return 0;
@@ -50,6 +67,24 @@ try
 catch(Exception error) { Console.Error.WriteLine(error.Message); return 1; }
 
 static object SetDefault(InstallationRegistry registry,string version) { registry.SetDefault(version); return registry.Read(); }
+static async Task<int> Route(InstallationRegistry registry,ToolExecution execution,string? version,string? project,string[] arguments,CancellationToken cancellation)
+{
+    var routing=new ToolRouting(registry);var route=routing.Prepare(version,project,arguments);
+    if(arguments is ["workspaces"])
+    {
+        Console.WriteLine(JsonSerializer.Serialize(routing.Workspaces().Where(w=>w.EngineVersion==route.Selection.Version&&(route.Selection.Project==null||string.Equals(w.Project,route.Selection.Project,StringComparison.OrdinalIgnoreCase))),new JsonSerializerOptions(JsonSerializerDefaults.Web){WriteIndented=true}));return 0;
+    }
+    return await execution.Run(route.Selection.Version,"cli",route.Arguments,cancellation);
+}
+static BoardGame.Authoring.SkillInstallStatus SkillCommand(InstallationRegistry registry,string[] arguments)
+{
+    if(arguments.Length<2) throw new ArgumentException("skill <install|repair|status|uninstall> --version <版本> --target <技能父目录> [--method copy|junction]");
+    var options=new Dictionary<string,string>();
+    for(var i=2;i<arguments.Length;i+=2)
+        if(i+1>=arguments.Length || arguments[i] is not ("--version" or "--target" or "--method") || !options.TryAdd(arguments[i],arguments[i+1])) throw new ArgumentException("无效或重复的技能选项。");
+    if(!options.TryGetValue("--version",out var version)||!options.TryGetValue("--target",out var target)) throw new ArgumentException("技能维护须显式指定 --version 和 --target。");
+    return new LauncherSkills(registry,Path.Combine(AppContext.BaseDirectory,"bgb-launcher.exe")).Execute(arguments[1],version,target,options.GetValueOrDefault("--method"));
+}
 static object ProjectCommand(InstallationRegistry registry,string[] arguments)
 {
     string? project=null,version=null;bool clear=false;var seen=new HashSet<string>();

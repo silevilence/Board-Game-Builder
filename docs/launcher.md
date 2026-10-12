@@ -65,6 +65,30 @@ GUI 的「导入本地 ZIP」要求同目录有同名 `.zip.sha256` 文件。独
 
 未传工程位置时，查询会从当前目录向上寻找入口或绑定文件。新建工程也可显式指定尚未存在的目录；保存绑定要求目录已存在。启动器只把目录交给对应 Editor，兼容检查和显式迁移仍属于该版作者工具；绑定不会修改游戏规则、定义或运行格式，导出的游戏不需要启动器或此作者配置。
 
+## 统一 CLI 与按版本作者 SKILL
+
+`cli [--version <版本>] [--project <目录>] -- <原 CLI 参数>` 使用同一选择顺序；工程可放在路由选项或原 CLI 参数中，两处不一致时拒绝。`--` 后的参数、JSON 和退出状态保留，Ctrl+C 返回 130。有效版本查询和固定多步创作示例：
+
+```powershell
+$version = (./bgb-launcher.exe resolve --project 'D:/游戏 工程' | ConvertFrom-Json).version
+./bgb-launcher.exe cli --version $version --project 'D:/游戏 工程' -- operations
+./bgb-launcher.exe cli --version $version --project 'D:/游戏 工程' -- describe project.validate
+./bgb-launcher.exe cli --version $version -- docs entry
+./bgb-launcher.exe cli --version $version --project 'D:/游戏 工程' -- call project.validate
+```
+
+GUI profile 仍由 `author.profile.json` 选择 `edit.gui`。路由的 `workspaces` 查询返回同版实例及工作区／文档代次；多步调用保留 `--version`、`--project` 和 `--instance`。CLI 会检查公告的进程启动时间与实际安装位置，跨版本或无法确认的 Editor 会被拒绝，不回退到磁盘模式。
+
+```powershell
+./bgb-launcher.exe skill install --version V0.2.0 --target 'D:/Agent/skills'
+./bgb-launcher.exe skill install --version V0.2.1 --target 'D:/Agent/skills' --method junction
+./bgb-launcher.exe skill status --version V0.2.0 --target 'D:/Agent/skills'
+./bgb-launcher.exe skill repair --version V0.2.0 --target 'D:/Agent/skills'
+./bgb-launcher.exe skill uninstall --version V0.2.0 --target 'D:/Agent/skills'
+```
+
+启动器技能分别安装为 `bgb-author-v0-2-0`、`bgb-author-v0-2-1`，模板和本地文档取自对应完整发行包，命令固定启动器路径、设置目录及显式版本。两版维护互不覆盖，也不覆盖直接单版本 CLI 的 `bgb-author` 技能。更改默认或安装新版不改变已有技能；删除引擎后调用会明确失败。手动更新启动器后，可从新启动器对同一版本执行 repair 更新路径，原固定路由不变。卸载只处理已登记归属的文件，发现用户改写会停止并保留。
+
 ## 设置与手动更新
 
 共享内容和版本目录必须在同一个本地 NTFS 固定磁盘的存储根目录内；网络盘及不支持硬链接的位置会被拒绝。内容按哈希保存，相同字节只占一份物理数据，文件管理器显示的多个版本文件大小会重复计算硬链接。不要直接修改共享对象或产品文件；校验失败时安装会明确停止。
