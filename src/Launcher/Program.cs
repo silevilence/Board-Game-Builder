@@ -43,6 +43,8 @@ internal sealed class LauncherWindow:Window
     private readonly TextBlock catalogNotice=new(){TextWrapping=TextWrapping.Wrap,Foreground=Brushes.LightGray};
     private readonly Button refreshCatalog=new(){Content="刷新 GitHub 版本"};
     private readonly HttpClient http=new(){Timeout=TimeSpan.FromSeconds(45)};
+    private readonly Button cancelInstall=new(){Content="取消安装",IsEnabled=false};
+    private CancellationTokenSource? installationLifetime;
     public LauncherWindow()
     {
         Title="Board Game Builder · 版本管理"; Width=1040; Height=720; MinWidth=780; MinHeight=520;
@@ -55,17 +57,30 @@ internal sealed class LauncherWindow:Window
         var toolbar=new StackPanel { Orientation=Orientation.Horizontal,Spacing=10 };
         var register=new Button { Content="登记已有工具包" };
         toolbar.Children.Add(location); toolbar.Children.Add(register); toolbar.Children.Add(refresh); content.Children.Add(toolbar);
+        var import=new Button {Content="导入本地 ZIP"}; var maintenance=new StackPanel {Orientation=Orientation.Horizontal,Spacing=10};
+        maintenance.Children.Add(import);maintenance.Children.Add(cancelInstall);content.Children.Add(maintenance);
+        cancelInstall.Click+=(_,_)=>installationLifetime?.Cancel();
+        import.Click+=async (_,_)=>
+        {
+            var files=await StorageProvider.OpenFilePickerAsync(new Avalonia.Platform.Storage.FilePickerOpenOptions {Title="选择官方工具包 ZIP（同目录须有 .sha256）",AllowMultiple=false,FileTypeFilter=[new("工具包 ZIP"){Patterns=["*.zip"]}]});
+            if(files.Count==0) return;
+            var path=files[0].Path.LocalPath;
+            await Install((service,progress,cancellation)=>service.Import(path,path+".sha256",progress,cancellation));
+        };
         content.Children.Add(notice); content.Children.Add(installations);
         content.Children.Add(new TextBlock {Text="官方发行版本",FontSize=26});
         content.Children.Add(refreshCatalog); content.Children.Add(catalogNotice); content.Children.Add(releases);
         Content=new ScrollViewer { Content=content };
         refresh.Click+=async (_,_)=>await Reload();
         refreshCatalog.Click+=async (_,_)=>await LoadCatalog(true);
-        Closed+=(_,_)=>http.Dispose();
+        Closed+=(_,_)=> {installationLifetime?.Cancel();http.Dispose();};
         register.Click+=async (_,_)=> { try { register.IsEnabled=false; await Task.Run(()=>registry.Register(location.Text??"")); await Reload(); } catch(Exception e) { notice.Text=e.Message; } finally { register.IsEnabled=true; } };
         Opened+=async (_,_)=>
         {
+            string? recoveryFailure=null;
+            try {await Task.Run(()=>new InstallationService(registry,http).Recover());} catch(Exception e) {recoveryFailure=e.Message;}
             await Reload();
+            if(recoveryFailure!=null) notice.Text="未完成的安装需要处理："+recoveryFailure;
             await LoadCatalog(false);
             if(Program.Verification is { } report)
             {
@@ -84,6 +99,20 @@ internal sealed class LauncherWindow:Window
                 Close();
             }
         };
+    }
+    private async Task Install(Func<InstallationService,IProgress<TransferProgress>,CancellationToken,Task<InstallationResult>> action)
+    {
+        if(installationLifetime!=null) {notice.Text="已有安装操作正在进行。";return;}
+        using var lifetime=new CancellationTokenSource(); installationLifetime=lifetime;cancelInstall.IsEnabled=true;
+        var progress=new Progress<TransferProgress>(p=>notice.Text=(p.Stage switch {"download"=>"下载组件","verify"=>"校验文件",_=>"安装版本"})+" · "+(p.DownloadedBytes/1048576d).ToString("F1")+" MiB / "+(p.TotalBytes/1048576d).ToString("F1")+" MiB");
+        try
+        {
+            var result=await Task.Run(()=>action(new InstallationService(registry,http),progress,lifetime.Token));
+            await Reload();await LoadCatalog(false);notice.Text="V"+result.Installation.Version+" 安装完成；传输 "+(result.DownloadedBytes/1048576d).ToString("F1")+" MiB，复用 "+result.ReusedObjects+" 个内容对象。";
+        }
+        catch(OperationCanceledException) {notice.Text="安装已取消，原有版本保留。";}
+        catch(Exception e) {notice.Text="安装未完成："+e.Message;}
+        finally {installationLifetime=null;cancelInstall.IsEnabled=false;}
     }
     private async Task LoadCatalog(bool online)
     {
@@ -108,6 +137,9 @@ internal sealed class LauncherWindow:Window
                     var checkRuntime=new Button {Content=package.Mode=="slim"?"检查系统运行时模式":"检查私有运行时模式"};
                     checkRuntime.Click+=async (_,_)=> {try {checkRuntime.IsEnabled=false; var resolution=await Task.Run(()=>RuntimePolicy.Resolve(RuntimePolicy.Select(version,package.Mode=="slim"?"system":"private").ReadManifest())); catalogNotice.Text="V"+version.Version+" · "+resolution.Mode+"\n"+string.Join("\n",resolution.Programs.SelectMany(p=>p.Frameworks).Distinct().Select(f=>f.Framework+" "+f.ActualVersion+" · "+f.Policy+" · "+(f.Location??"按固定组件安装")));} catch(Exception e) {catalogNotice.Text=e.Message;} finally {checkRuntime.IsEnabled=true;} };
                     row.Children.Add(checkRuntime);
+                    var install=new Button {Content=package.Mode=="slim"?"安装 · 系统运行时":"安装 · 私有运行时",IsEnabled=package.Mode!="legacy"&&!settings.Installations.Any(i=>i.Version==version.Version)};
+                    install.Click+=async (_,_)=>await Install((service,progress,cancellation)=>service.Install(version,package.Mode=="slim"?"system":"private",progress,cancellation));
+                    row.Children.Add(install);
                 }
                 row.Children.Add(new Expander {Header="发布说明",Content=new TextBlock {Text=version.Notes,TextWrapping=TextWrapping.Wrap}});
                 releases.Children.Add(new Border {Padding=new Thickness(20),Background=new SolidColorBrush(Color.Parse("#202832")),CornerRadius=new CornerRadius(10),Child=row});

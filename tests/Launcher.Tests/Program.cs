@@ -6,6 +6,9 @@ using BoardGame.Launcher;
 if(args is ["--store",var downloads,var storage]) {await ContentChecks.Real(downloads,storage);return 0;}
 if(args is ["--store-online",var onlineDownloads,var onlineStorage]) {await ContentChecks.Real(onlineDownloads,onlineStorage,true);return 0;}
 if(args is ["--measure",var storeRoot]) {Console.WriteLine(JsonSerializer.Serialize(StorageDiagnostics.Measure(new ContentStore(storeRoot)),new JsonSerializerOptions{WriteIndented=true}));return 0;}
+if(args is ["--import-real",var importDownloads,var importHome]) {await InstallationChecks.Real(importDownloads,importHome);return 0;}
+if(args is ["--install-online",var onlineHome]) {await InstallationChecks.Online(onlineHome);return 0;}
+if(args is ["--compare-installations",var firstHome,var secondHome]) {InstallationChecks.Compare(firstHome,secondHome);return 0;}
 var root=Path.Combine(Path.GetTempPath(),"bgb-launcher-tests-"+Guid.NewGuid().ToString("N")); Directory.CreateDirectory(root);
 try
 {
@@ -23,6 +26,7 @@ try
     Reject(()=>ProductManifest.Parse(Encoding.UTF8.GetBytes("{\"api\":1,\"api\":2}")));
     await CatalogChecks.Run(Path.Combine(root,"catalog"),bytes);
     await ContentChecks.Run(Path.Combine(root,"shared"),bytes);
+    await InstallationChecks.Run(Path.Combine(root,"installations"),bytes);
     var home=Path.Combine(root,"settings"); var registry=new InstallationRegistry(home);
     Check(registry.Read().Installations.Length==0,"empty startup"); registry.Register(first); registry.Register(second); registry.SetDefault("v0.2.1");
     var restarted=new InstallationRegistry(home); Check(restarted.Read().DefaultVersion=="0.2.1"&&restarted.Inspect().All(i=>i.State=="available"),"persisted installations/default");

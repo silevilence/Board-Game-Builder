@@ -1,0 +1,47 @@
+name: Verify launcher installation transactions
+on:
+  workflow_dispatch:
+permissions:
+  contents: read
+jobs:
+  verify:
+    runs-on: windows-2025
+    timeout-minutes: 25
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-dotnet@v4
+        with:
+          dotnet-version: '10.0.x'
+      - name: Verify failure, cancellation, concurrency and recovery
+        shell: pwsh
+        run: |
+          dotnet run --project tests/Launcher.Tests -c Release
+          if ($LASTEXITCODE -ne 0) { exit $LASTEXITCODE }
+      - name: Install actual releases from components
+        shell: pwsh
+        run: |
+          dotnet run --project tests/Launcher.Tests -c Release --no-build -- --install-online artifacts/online
+          if ($LASTEXITCODE -ne 0) { exit $LASTEXITCODE }
+      - name: Import original ZIPs and compare complete products
+        shell: pwsh
+        run: |
+          foreach ($tag in @('V0.2.0','V0.2.1')) {
+            New-Item -ItemType Directory -Force "artifacts/downloads/$tag" | Out-Null
+            $name="Board-Game-Builder-$tag-standalone-win-x64.zip"
+            foreach ($asset in @($name,$name+'.sha256')) {
+              Invoke-WebRequest "https://github.com/silevilence/Board-Game-Builder/releases/download/$tag/$asset" -OutFile "artifacts/downloads/$tag/$asset"
+            }
+          }
+          dotnet run --project tests/Launcher.Tests -c Release --no-build -- --import-real artifacts/downloads artifacts/imported
+          if ($LASTEXITCODE -ne 0) { exit $LASTEXITCODE }
+          dotnet run --project tests/Launcher.Tests -c Release --no-build -- --compare-installations artifacts/online artifacts/imported
+          if ($LASTEXITCODE -ne 0) { exit $LASTEXITCODE }
+      - uses: actions/upload-artifact@v4
+        if: always()
+        with:
+          name: launcher-installation-evidence
+          path: |
+            artifacts/online/*results.json
+            artifacts/online/settings.json
+            artifacts/imported/*results.json
+            artifacts/imported/settings.json
