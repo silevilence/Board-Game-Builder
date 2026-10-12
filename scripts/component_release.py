@@ -188,6 +188,10 @@ class Publisher:
         if release is not None and (release['body'].replace('\r\n', '\n').strip() != body.strip() or
                 release['target_commitish'] != self.commit or release['prerelease']):
             raise ValueError('Existing product release notes/commit conflict')
+        if release is not None and not release['draft']:
+            # Reject a rebuild conflict before publishing otherwise orphaned components.
+            self.verify_remote(self.repository, release,
+                {p.name: (p.stat().st_size, toolkit.digest(p)) for p in plan['assets']})
         for component in plan['components']:
             self.publish_component(component)
         if release is None:

@@ -49,4 +49,6 @@ API 2 组件按内容身份分别存放在 `components-<哈希>` Release 中，�
 
 失败查看 Action 日志和 `release-diagnostics`。修复前不得把失败条目标成完成。上传中断可重跑同一 tag；匹配的草稿附件保留，补传缺失附件。既有正文、提交或附件冲突会失败，绝不自动覆盖公开版本；应调查冲突并发布新版本。同版本 tag 不可指向不同提交。干净 Windows 环境的图形创作与移动验收需另行记录，不把 CI 机器当作无 SDK 验收环境。
 
+已经公开的 V0.2.0／V0.2.1 可通过手动运行 `Verify published toolkit releases` 重验：从对应 tag 读取版本与说明，匿名下载原始附件和组件，逐项校验后重放发布调用。该流程仅授予读取权限，输出附件 ID、哈希、实际下载量和可下载的验证证据，不重新生成或替换已发布字节。两版早期原生入口链接器含时间戳，直接重建旧 tag 会得到不同的原生入口并触发冲突保护；后续源码已启用可重复原生链接，并在发布前强制重新链接两次核对哈希。
+
 发布前检查 [GitHub 的附件限制](https://docs.github.com/en/repositories/releasing-projects-on-github/about-releases)：每个 Release 最多 1,000 个附件，单附件必须小于 2 GiB。上传中断产生的空 `starter` 附件仅在本仓库未公开草稿中清理后重试，依据 [Release assets API](https://docs.github.com/en/rest/releases/assets)；已公开附件不删除、不覆盖。被任一产品引用的组件 Release、tag 和附件必须长期保留，不可用一般的旧版本清理规则删除；如需纠错，应发布新的内容身份和产品版本。

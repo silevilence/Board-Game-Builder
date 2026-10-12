@@ -1,0 +1,44 @@
+name: Verify published toolkit releases
+on:
+  workflow_dispatch:
+permissions:
+  contents: read
+jobs:
+  verify:
+    runs-on: windows-2025
+    timeout-minutes: 30
+    env:
+      GH_TOKEN: ${{ github.token }}
+      GH_REPO: ${{ github.repository }}
+      PYTHONUTF8: '1'
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.13'
+      - uses: actions/checkout@v4
+        with:
+          ref: V0.2.0
+          path: release-source-020
+      - uses: actions/checkout@v4
+        with:
+          ref: V0.2.1
+          path: release-source-021
+      - name: Download anonymously, verify and replay both exact tags
+        shell: pwsh
+        run: |
+          python scripts/verify-published-release.py --source release-source-020 --tag V0.2.0 --output artifacts/downloads/V0.2.0 --cache artifacts/downloads/components
+          if ($LASTEXITCODE -ne 0) { exit $LASTEXITCODE }
+          python scripts/verify-published-release.py --source release-source-021 --tag V0.2.1 --output artifacts/downloads/V0.2.1 --cache artifacts/downloads/components
+          if ($LASTEXITCODE -ne 0) { exit $LASTEXITCODE }
+      - name: Preserve downloaded bytes and verification evidence
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: published-toolkit-verification
+          compression-level: 0
+          path: |
+            artifacts/downloads/V*/*.zip
+            artifacts/downloads/V*/*.sha256
+            artifacts/downloads/V*/*.json
+            artifacts/downloads/components/*.zip

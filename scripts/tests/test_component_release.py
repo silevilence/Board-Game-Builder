@@ -129,6 +129,16 @@ class PublicationTests(unittest.TestCase):
         self.assertFalse(self.remotes[2]['draft'])
         self.assertEqual(len(set(self.uploads)), len(self.uploads))
 
+    def test_rebuild_conflict_is_rejected_before_new_component_publication(self):
+        plan = self.plan(); self.publisher().publish('V1.0.0', 'notes', plan)
+        uploaded = len(self.uploads)
+        plan['assets'][0].write_bytes(b'different rebuilt product')
+        plan['components'][0]['source']['tag'] = 'components-unpublished-candidate'
+        with self.assertRaisesRegex(ValueError, 'Missing/incomplete'):
+            self.publisher().publish('V1.0.0', 'notes', plan)
+        self.assertEqual(len(self.remotes), 2)
+        self.assertEqual(len(self.uploads), uploaded)
+
     def test_corrupt_component_or_conflict_never_overwrites_public_assets(self):
         plan = self.plan(); self.publisher().publish('V1.0.0', 'notes', plan)
         count = len(self.uploads); self.corrupt = 'component.zip'
