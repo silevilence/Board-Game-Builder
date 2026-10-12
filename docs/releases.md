@@ -15,9 +15,33 @@
 
 精简包的正式游戏导出仍自带完整运行依赖。首次导出按固定组件清单下载并校验缺少的可再分发文件，之后本地复用；不复制系统安装作为游戏依赖。断网缺依赖时导出会失败且不生成半成品，可改用独立包或提供已下载的组件目录：`bgb.exe call player.export --project <工程> --args-file <参数.json>`，参数含 `target`、`components` 和 `offline: true`。可选 `dependencyCache` 指定同卷、支持硬链接的缓存位置。正常精简包将缓存保存到包内 `.state/export-dependencies`；该缓存可删除，之后导出须重新获取缺失组件。
 
+## 启动与导出故障排查
+
+精简包启动失败时，先按提示核对缺失的框架、最低版本与架构。可用 x64 安装目录中的 `dotnet.exe --list-runtimes` 查看已安装框架；`--list-sdks` 为空不影响运行。只有核心 Runtime 时 CLI 可能可用，但 Editor 和图形 Player 仍需要 Desktop Runtime。安装兼容的 x64 Desktop Runtime，或改用独立包；不要把 DLL 从系统目录手工复制进精简包。
+
+| 提示或现象 | 处理方式 |
+| --- | --- |
+| 缺少兼容 x64 框架、版本过旧或架构错误 | 按该包清单安装同主次版本且不低于最低补丁的 x64 Runtime；其他主次版本不能代替。 |
+| 硬链接不受支持、位置不可写或目录被链接替换 | 将完整 ZIP 解压到可写、支持硬链接的本地目录；产品入口、内容与缓存保持同卷。 |
+| 文件哈希不一致或正式导出依赖损坏 | 保留诊断，重新下载并核对 ZIP 校验文件，解压到新目录；不要覆盖正在运行的产品文件。 |
+| 精简包离线导出缺少依赖 | 联网获取一次固定导出组件，或提供事先下载的组件目录；也可从独立包导出。 |
+
+需要离线导出时，将完整组件 ZIP 保持原名放在同一个目录，并用参数文件明确指定，例如：
+
+```json
+{
+  "target": "D:/作品/我的游戏",
+  "components": "D:/发行组件",
+  "dependencyCache": "D:/作者缓存/export-dependencies",
+  "offline": true
+}
+```
+
+执行 `bgb.exe call player.export --project <工程目录> --args-file <参数文件>`。组件来源与哈希由工具包内的导出清单锁定，不需要安装旧产品；缺失或错误组件会阻止导出。缓存须与 Player 产品文件位于同卷。正式输出是独立目录，分发整个目录即可，玩家不需要这些组件 ZIP 或作者缓存。
+
 ## 维护者发布
 
-先更新根 `changelog.md` 和 `Directory.Build.props`，提交实现、日志、版本及 ROADMAP。正式 tag 是 `V主.次.修订`（也接受小写 v），数字不带前导零。运行 `python scripts/release.py check --tag V0.1.0`、`python -m unittest discover -s scripts/tests -v`，然后 `pwsh -NoProfile -File scripts/publish-toolkit.ps1 -Tag V0.1.0` 可本地构建验证。输出目录必须不存在。
+先更新根 `changelog.md` 和 `Directory.Build.props`，提交实现、日志、版本及 ROADMAP。正式 tag 是 `V主.次.修订`（也接受小写 v），数字不带前导零。运行 `python scripts/release.py check --tag V<版本>`、`python -m unittest discover -s scripts/tests -v`，然后 `pwsh -NoProfile -File scripts/publish-toolkit.ps1 -Tag V<版本>` 可本地构建验证。输出目录必须不存在。
 
 推送对应提交及 tag 后，`Release Windows toolkit` 从 tag 提交构建，读取该提交对应版本的 changelog，验证两种包、正式导出、CPU 对局、产物版本后生成各自 ZIP、校验信息与清单。也可先运行 `python scripts/release.py plan --tag V<版本> --output <构建输出>`，只检查本地完整组件集合并打印发布计划，不访问或修改 GitHub。产物必须对应当前提交；旧工作区候选不能直接当作新提交的发行物。
 
