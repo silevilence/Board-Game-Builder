@@ -132,3 +132,14 @@ V0.2.1 原始精简 ZIP 在另一断网沙盒完成缺核心、x86、旧补丁�
 第二版仅请求变化的产品组件，运行时及第三方组件请求为零。两版 4,256 个逻辑文件共 1,986,939,908 字节，实际共 437 份物理内容、206,724,123 内容字节，NTFS 分配 207,523,840 字节；核心／桌面 Runtime 各一份物理文件。该测量不包含目录元数据、各版顶层清单和可写缓存。证据在 `artifacts/launcher-store-ci/shared/measurements.json`、`physical.json` 和 `artifacts/launcher-store-action.log`；下载的证据 ZIP SHA-256 为 `0d3cebcf55eab57059bec178d0a8510675ccb458ced38927209b1b52078bcc65`。
 
 本地实际组件归档传输替身得到相同物理结果，另通过损坏归档、损坏已存对象、并发复用、取消、空间不足与网络存储拒绝测试。本机直接下载尝试在 15 分钟限时取消，已清理新对象且没有安装登记，未作为成功在线证据；实际在线成功来自上述 runner。第 7 项通过，版本安装登记事务由第 9 项继续验收。
+
+## 私有／系统 Runtime 策略（2026-10-12）
+
+启动器通过包模式选择固定私有或系统框架，检查候选与已安装版本，并显示每个程序的声明版本、实际版本、位置和兼容策略。系统解析直接编译共享原生入口的 `SystemRuntime.cs`，避免启动器与直接入口出现两套判断；此复用没有引入引擎／Editor 项目引用。私有框架依据完整清单的准确 runtimepack 归属和文件哈希检查，新增内容身份不覆盖其他版本。
+
+- `artifacts/launcher-runtime-policy-tests.log`：同一解析器的缺框架、错误架构、旧补丁／跨主版本拒绝、兼容较新补丁、Desktop 对 Core 依赖以及仅对子进程设置环境测试通过。
+- `launcher-runtime-private.json` 与 `launcher-runtime-system.json` 分别记录真实 V0.2.0 私有 Runtime 及 V0.2.1 系统框架解析，实际 Core／Desktop 为 10.0.12。第 4 项的两个独立沙盒已覆盖无 SDK、无 Runtime、仅兼容 Runtime、直接 Editor／CLI／Player 与工作进程。
+- 为父进程设置无效 `DOTNET_ROOT`／`DOTNET_ROOT_X64` 和 `Major` 滚动策略后，直接启动导入后的 V0.1.0、V0.2.0、V0.2.1 CLI，三者均返回自己的版本与文档。记录为 `artifacts/launcher-runtime-direct-*.json`，测试结束恢复当前进程变量，没有修改系统配置。
+- `artifacts/runtime-side-by-side/result.json`：两个受控 .NET 程序同时使用独立官方 10.0.11 和 10.0.12 Runtime 目录运行，实际进程分别报告对应补丁；这验证不同 Runtime 可并存，不冒充两个产品 Release 声明不同 Runtime。真实两版产品均锁定 10.0.12，并已验证跨版本只存一份。
+
+第 8 项通过；共享安装事务、启动／卸载保护仍在后续任务验收。

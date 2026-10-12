@@ -105,6 +105,9 @@ internal sealed class LauncherWindow:Window
                     var manifest=package.ReadManifest();
                     var frameworks=manifest.Json.TryGetProperty("programs",out var programs)?string.Join("；",programs.EnumerateArray().SelectMany(p=>p.GetProperty("frameworks").EnumerateArray()).Select(f=>f.GetProperty("framework").GetString()+" "+f.GetProperty("minimumVersion").GetString()+"（同次版本补丁兼容）").Distinct()):"旧完整包自带运行依赖";
                     row.Children.Add(new TextBlock {Text=(package.Mode switch {"standalone"=>"独立包／私有 Runtime", "slim"=>"精简包／系统 Runtime",_=>"旧完整包"})+" · "+(package.Archive.Size/1048576d).ToString("F1")+" MiB · "+manifest.Components.Count+" 个组件\n"+frameworks,TextWrapping=TextWrapping.Wrap});
+                    var checkRuntime=new Button {Content=package.Mode=="slim"?"检查系统运行时模式":"检查私有运行时模式"};
+                    checkRuntime.Click+=async (_,_)=> {try {checkRuntime.IsEnabled=false; var resolution=await Task.Run(()=>RuntimePolicy.Resolve(RuntimePolicy.Select(version,package.Mode=="slim"?"system":"private").ReadManifest())); catalogNotice.Text="V"+version.Version+" · "+resolution.Mode+"\n"+string.Join("\n",resolution.Programs.SelectMany(p=>p.Frameworks).Distinct().Select(f=>f.Framework+" "+f.ActualVersion+" · "+f.Policy+" · "+(f.Location??"按固定组件安装")));} catch(Exception e) {catalogNotice.Text=e.Message;} finally {checkRuntime.IsEnabled=true;} };
+                    row.Children.Add(checkRuntime);
                 }
                 row.Children.Add(new Expander {Header="发布说明",Content=new TextBlock {Text=version.Notes,TextWrapping=TextWrapping.Wrap}});
                 releases.Children.Add(new Border {Padding=new Thickness(20),Background=new SolidColorBrush(Color.Parse("#202832")),CornerRadius=new CornerRadius(10),Child=row});
@@ -129,6 +132,9 @@ internal sealed class LauncherWindow:Window
                 var choose=new Button { Content="设为默认版本",IsEnabled=item.State=="available" };
                 choose.Click+=async (_,_)=> { try { choose.IsEnabled=false; await Task.Run(()=>registry.SetDefault(item.Installation.Version)); await Reload(); } catch(Exception e) { notice.Text=e.Message; } finally { choose.IsEnabled=true; } };
                 row.Children.Add(choose); installations.Children.Add(new Border { Padding=new Thickness(20),Background=new SolidColorBrush(Color.Parse("#202832")),CornerRadius=new CornerRadius(10),Child=row });
+                var runtime=new Button {Content="查看实际运行时"};
+                runtime.Click+=async (_,_)=> {try {runtime.IsEnabled=false; var resolution=await Task.Run(()=>RuntimePolicy.Inspect(registry,item.Installation.Version)); notice.Text="V"+resolution.Version+" · "+resolution.Mode+"\n"+string.Join("\n",resolution.Programs.SelectMany(p=>p.Frameworks).Distinct().Select(f=>f.Framework+" "+f.ActualVersion+" · "+f.Policy+" · "+f.Location));} catch(Exception e) {notice.Text=e.Message;} finally {runtime.IsEnabled=true;} };
+                row.Children.Add(runtime);
             }
             notice.Text=status.Count==0?"还没有登记的引擎。可先解压官方工具包，再填写目录进行登记。":"已校验 "+status.Count+" 个版本。设置保存在 "+registry.Home;
         }

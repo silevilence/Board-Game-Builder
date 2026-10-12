@@ -18,7 +18,9 @@ try
         ["storage",var directory]=>SetStorage(registry,directory),
         ["catalog"]=>CatalogSummary(catalog.ReadCache(),registry),
         ["catalog","refresh"]=>CatalogSummary(await catalog.Refresh(),registry),
-        [] or ["help"]=>new { version=typeof(InstallationRegistry).Assembly.GetName().Version?.ToString(3), commands=new[]{"status","settings","register <directory>","default <version>","storage <directory>","catalog [refresh]"}, option="--home <launcher-settings-directory>" },
+        ["runtime",var version]=>RuntimePolicy.Inspect(registry,version),
+        ["runtime-plan",var version,var mode]=>RuntimePlan(catalog,version,mode),
+        [] or ["help"]=>new { version=typeof(InstallationRegistry).Assembly.GetName().Version?.ToString(3), commands=new[]{"status","settings","register <directory>","default <version>","storage <directory>","catalog [refresh]","runtime <version>","runtime-plan <version> <private|system>"}, option="--home <launcher-settings-directory>" },
         _=>throw new ArgumentException("未知命令。使用 bgb-launcher help 查看用法。")
     };
     Console.WriteLine(JsonSerializer.Serialize(result,new JsonSerializerOptions(JsonSerializerDefaults.Web){WriteIndented=true})); return 0;
@@ -27,4 +29,10 @@ catch(Exception error) { Console.Error.WriteLine(error.Message); return 1; }
 
 static object SetDefault(InstallationRegistry registry,string version) { registry.SetDefault(version); return registry.Read(); }
 static object SetStorage(InstallationRegistry registry,string directory) { registry.SetStorageRoot(directory); return registry.Read(); }
+static object RuntimePlan(ReleaseCatalog catalog,string version,string mode)
+{
+    version=ProductManifest.NormalizeVersion(version);
+    var product=catalog.ReadCache().Versions.SingleOrDefault(v=>v.Version==version)??throw new InvalidOperationException("缓存中没有此版本，请先刷新列表。");
+    return RuntimePolicy.Resolve(RuntimePolicy.Select(product,mode).ReadManifest());
+}
 static object CatalogSummary(CatalogSnapshot snapshot,InstallationRegistry registry)=>new {snapshot.CheckedAt,snapshot.Cached,snapshot.Diagnostic,versions=snapshot.Versions.Select(v=>new {v.Version,v.Tag,v.Notes,v.Url,v.Diagnostic,installed=registry.Read().Installations.Any(i=>i.Version==v.Version),packages=v.Packages.Select(p=>new {p.Mode,archive=p.Archive.Name,size=p.Archive.Size,components=p.ReadManifest().Components.Count,runtime=p.ReadManifest().Json.TryGetProperty("programs",out var programs)?programs.EnumerateArray().SelectMany(r=>r.GetProperty("frameworks").EnumerateArray()).Select(r=>r.Clone()).ToArray():[]})})};
