@@ -98,7 +98,8 @@ class ManifestTests(unittest.TestCase):
                      lambda m: m['components'][0]['objects'].append('0' * 64),
                      lambda m: m['files'][0].update(size=-1),
                      lambda m: m['files'][0].update(sha256='wrong'),
-                     lambda m: m.update(api=99)]
+                     lambda m: m.update(api=99), lambda m: m.update(api=True),
+                     lambda m: m['programs'][0]['frameworks'][0].update(privateVersion='10.0.99', minimumVersion='10.0.99')]
         for mutate in mutations:
             changed = copy.deepcopy(self.manifest)
             mutate(changed)

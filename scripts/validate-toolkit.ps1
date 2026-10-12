@@ -23,8 +23,10 @@ $process = [Diagnostics.Process]::Start($start)
 if (-not $process.WaitForExit(120000)) { $process.Kill($true); throw 'Player validation timed out.' }
 if ($process.ExitCode -ne 0) { throw 'Exported Player validation failed.' }
 foreach ($entry in @('bgb.dll','editor/Editor.dll','player/Player.dll','debug-player/Player.dll')) {
-    $actual = [Diagnostics.FileVersionInfo]::GetVersionInfo((Join-Path $rootPath $entry)).ProductVersion.Split('+')[0]
-    $expected = (Get-Content -LiteralPath "$rootPath/toolkit.json" -Raw | ConvertFrom-Json).version
+    $manifest = Get-Content -LiteralPath "$rootPath/toolkit.json" -Raw | ConvertFrom-Json
+    $payload = if ($manifest.PSObject.Properties['layout'] -and $manifest.layout -eq 'hardlinks-v1') { Join-Path $rootPath '.payload' } else { $rootPath }
+    $actual = [Diagnostics.FileVersionInfo]::GetVersionInfo((Join-Path $payload $entry)).ProductVersion.Split('+')[0]
+    $expected = $manifest.version
     if ($actual -ne $expected) { throw "Version mismatch: $entry $actual != $expected" }
 }
 @{ success=$true; toolkit=$rootPath; version=$expected; export=$export } | ConvertTo-Json | Set-Content -LiteralPath "$evidencePath/result.json"

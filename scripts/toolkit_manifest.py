@@ -52,6 +52,8 @@ def relative(value):
 
 
 def identity(manifest):
+    if type(manifest.get('api')) is not int:
+        raise ValueError('Manifest API must be an integer')
     if not re.fullmatch(VERSION, manifest.get('version', '')) or manifest.get('platform') != 'win-x64':
         raise ValueError('Unsupported product version/platform')
     if manifest.get('entries') != ENTRIES:
@@ -76,6 +78,8 @@ def inventory(root):
         if not path.is_file():
             continue
         name = relative(path.relative_to(root).as_posix())
+        if name.startswith('.state/'):
+            continue
         if name.casefold() in folded:
             raise ValueError(f'Conflicting Windows path: {name}')
         folded.add(name.casefold())
@@ -85,17 +89,17 @@ def inventory(root):
     return result
 
 
-def program_metadata(root, files):
+def program_metadata(root, files, payload=''):
     programs, ownership, libraries = [], {}, {}
     for name in sorted(files):
         if not name.endswith('.runtimeconfig.json'):
             continue
-        config = read(root / name)['runtimeOptions']
+        config = read(root / files[name].get('storage', name))['runtimeOptions']
         stem = name.removesuffix('.runtimeconfig.json')
         deps_path = stem + '.deps.json'
         if deps_path not in files or stem + '.exe' not in files:
             raise ValueError(f'Missing host/dependency manifest for {name}')
-        deps = read(root / deps_path)
+        deps = read(root / files[deps_path].get('storage', deps_path))
         frameworks = config.get('includedFrameworks', config.get('frameworks', []))
         if 'framework' in config:
             frameworks = [config['framework']]
@@ -137,7 +141,7 @@ def program_metadata(root, files):
         programs.append({'entry': stem + '.exe', 'runtimeConfig': name, 'dependencies': deps_path,
                          'frameworks': requirements, 'libraries': sorted(program_libraries), 'files': sorted(used)})
     for role in ('editor', 'cli', 'player', 'debugPlayer'):
-        if ENTRIES[role] not in {p['entry'] for p in programs}:
+        if payload + ENTRIES[role] not in {p['entry'] for p in programs}:
             raise ValueError(f'Missing program: {role}')
     return programs, ownership, sorted(libraries.values(), key=lambda x: x['id'])
 
@@ -161,11 +165,18 @@ def write_component(target, objects, root):
 
 
 def generate(root, output, repository):
+    if output.resolve().is_relative_to(root.resolve()):
+        raise ValueError('Component archives must be outside the product directory')
     if not re.fullmatch(r'[A-Za-z0-9_.-]+/[A-Za-z0-9_.-]+', repository):
         raise ValueError('Expected owner/repository')
     manifest = read(root / 'toolkit.json')
+    payload = '.payload/' if manifest.get('layout') == 'hardlinks-v1' else ''
+    # PowerShell hashtable order is process-dependent. Normalize generated metadata
+    # before hashing, not after components have already acquired immutable identities.
+    player_manifest = root / (payload + 'player/release.json')
+    player_manifest.write_bytes(canonical(read(player_manifest)))
     files = inventory(root)
-    programs, ownership, libraries = program_metadata(root, files)
+    programs, ownership, libraries = program_metadata(root, files, payload)
     # Assign each byte identity exactly once, even when several programs use it.
     objects = {}
     for name, file in files.items():
@@ -198,7 +209,13 @@ def generate(root, output, repository):
         file['libraries'] = sorted(ownership.get(name, []))
     manifest.update({'api': 2, 'format': FORMAT, 'architecture': 'x64', 'packageMode': 'standalone',
                      'files': list(files.values()), 'components': components, 'programs': programs,
-                     'libraries': libraries, 'runtimePlugins': read(root / 'player/release.json')['runtimePlugins']})
+                     'libraries': libraries, 'runtimePlugins': read(root / (payload + 'player/release.json'))['runtimePlugins']})
+    if payload:
+        canonical_paths = {}
+        for name, file in sorted(files.items(), key=lambda item: (item[0].startswith('.payload/'), item[0])):
+            canonical_paths.setdefault(file['sha256'], name)
+        for file in files.values():
+            file['storage'] = canonical_paths[file['sha256']]
     validate(manifest, root, output)
     (root / 'toolkit.json').write_bytes(canonical(manifest))
     return manifest
@@ -212,10 +229,14 @@ def validate(manifest, root=None, archives=None):
                 if not (root / path).is_file():
                     raise ValueError(f'Missing legacy entry: {path}')
         return mode
+    layout = manifest.get('layout')
+    if layout not in (None, 'hardlinks-v1'):
+        raise ValueError('Unknown toolkit storage layout')
+    payload = '.payload/' if layout else ''
     files, paths, all_objects = {}, set(), {}
     for file in manifest['files']:
         path = relative(file['path'])
-        if path.casefold() == 'toolkit.json' or path.casefold() in paths:
+        if path.casefold() == 'toolkit.json' or path.casefold().split('/')[0] == '.state' or path.casefold() in paths:
             raise ValueError(f'Duplicate/conflicting file: {path}')
         paths.add(path.casefold())
         if type(file['size']) is not int or file['size'] < 0 or not re.fullmatch(HASH, file['sha256']):
@@ -228,6 +249,18 @@ def validate(manifest, root=None, archives=None):
         parts = path.casefold().split('/')
         if any('/'.join(parts[:i]) in paths for i in range(1, len(parts))):
             raise ValueError(f'File/directory collision: {path}')
+    if layout:
+        storage_by_hash = {}
+        for file in files.values():
+            source = relative(file['storage'])
+            stored = files.get(source)
+            if stored is None or stored['storage'] != source or (stored['sha256'], stored['size']) != (file['sha256'], file['size']):
+                raise ValueError('Invalid canonical file storage')
+            if storage_by_hash.setdefault(file['sha256'], source) != source:
+                raise ValueError('Duplicate physical object storage')
+        expected_targets = {ENTRIES[role]: payload + ENTRIES[role] for role in ENTRIES if role != 'documentation'}
+        if manifest.get('entryTargets') != expected_targets or not set(expected_targets.values()).issubset(files):
+            raise ValueError('Invalid native entry targets')
     components, assigned = {}, {}
     for component in manifest['components']:
         cid = component['id']
@@ -290,24 +323,29 @@ def validate(manifest, root=None, archives=None):
                     requirement['minimumVersion'] != requirement['privateVersion'] or
                     requirement['rollForward'] != 'LatestPatch'):
                 raise ValueError('Invalid runtime policy')
+            runtime_library = 'runtimepack.' + framework + '.Runtime.win-x64/' + requirement['privateVersion']
+            if manifest['packageMode'] == 'standalone' and runtime_library not in program['libraries']:
+                raise ValueError('Private runtime identity does not match the program runtime pack')
             frameworks.add(framework)
         if 'Microsoft.NETCore.App' not in frameworks:
             raise ValueError('Missing core framework')
-    if not set(ENTRIES.values()).issubset(files) or not {ENTRIES[r] for r in ENTRIES if r != 'documentation'}.issubset(entries):
+    if not set(ENTRIES.values()).issubset(files) or not {payload + ENTRIES[r] for r in ENTRIES if r != 'documentation'}.issubset(entries):
         raise ValueError('Missing required entries')
     if root:
         actual = inventory(root)
-        if actual.keys() != files.keys():
+        required_paths = {f.get('storage', f['path']) for f in files.values()}
+        if not required_paths.issubset(actual) or not actual.keys() <= files.keys():
             raise ValueError('File inventory has missing or unlisted paths')
         for name, file in actual.items():
             if (file['size'], file['sha256']) != (files[name]['size'], files[name]['sha256']):
                 raise ValueError(f'File integrity failure: {name}')
-        programs, ownership, actual_libraries = program_metadata(root, actual)
+        programs, ownership, actual_libraries = program_metadata(root, files, payload)
         if programs != manifest['programs'] or actual_libraries != manifest['libraries']:
             raise ValueError('Program metadata differs from published files')
         if any(sorted(ownership.get(name, [])) != files[name]['libraries'] for name in files):
             raise ValueError('File library ownership differs from dependency metadata')
-        if manifest['runtimePlugins'] != read(root / 'player/release.json')['runtimePlugins']:
+        release_path = payload + 'player/release.json'
+        if manifest['runtimePlugins'] != read(root / files[release_path].get('storage', release_path))['runtimePlugins']:
             raise ValueError('Runtime plugin identities differ from Player catalog')
     return mode
 

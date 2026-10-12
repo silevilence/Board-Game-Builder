@@ -33,6 +33,8 @@ jobs:
         run: |
           python scripts/release.py check --tag $env:RELEASE_TAG
           if ($LASTEXITCODE -ne 0) { exit $LASTEXITCODE }
+          ./scripts/publish-toolkit-entries.ps1
+          if ($LASTEXITCODE -ne 0) { exit $LASTEXITCODE }
           python -m unittest discover -s scripts/tests -v
           if ($LASTEXITCODE -ne 0) { exit $LASTEXITCODE }
           ./scripts/check-boundaries.ps1

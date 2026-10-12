@@ -21,7 +21,18 @@ Copy-Item -LiteralPath "$repo/changelog.md" -Destination $staging
 Copy-Item -LiteralPath "$repo/docs/releases.md" -Destination "$staging/README.md"
 Copy-Item -LiteralPath "$repo/samples/quick-cards" -Destination "$staging/docs/author/example" -Recurse
 & "$PSScriptRoot/validate-toolkit.ps1" -Root $staging -Evidence "$staging.validation"
-python "$PSScriptRoot/release.py" archive --tag $Tag --root $staging --output $Archives --component-format
+python "$PSScriptRoot/toolkit_manifest.py" generate --root $staging --components "$Archives/components"
+if ($LASTEXITCODE -ne 0) { throw 'Dependency manifest generation failed.' }
+& "$PSScriptRoot/publish-toolkit-entries.ps1"
+$compact = $staging + '.compact'
+python "$PSScriptRoot/compact_toolkit.py" prepare --source $staging --root $compact --entries 'artifacts/toolkit-entries'
+if ($LASTEXITCODE -ne 0) { throw 'Compact layout preparation failed.' }
+python "$PSScriptRoot/toolkit_manifest.py" generate --root $compact --components "$Archives/components"
+if ($LASTEXITCODE -ne 0) { throw 'Compact manifest generation failed.' }
+python "$PSScriptRoot/compact_toolkit.py" compact --root $compact
+if ($LASTEXITCODE -ne 0) { throw 'Content compaction failed.' }
+& "$PSScriptRoot/validate-toolkit.ps1" -Root $compact -Evidence "$compact.validation"
+python "$PSScriptRoot/release.py" archive --tag $Tag --root $compact --output $Archives --component-format
 if ($LASTEXITCODE -ne 0) { throw 'Archive validation failed.' }
-Move-Item -LiteralPath $staging -Destination $target
+Move-Item -LiteralPath $compact -Destination $target
 Write-Output "Validated toolkit: $target"

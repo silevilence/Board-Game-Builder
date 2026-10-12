@@ -17,6 +17,7 @@
     <Project Path="src/Server/Server.csproj" />
     <Project Path="src/Player/Player.csproj" />
     <Project Path="src/Runtime/Runtime.csproj" />
+    <Project Path="src/Toolkit.Entry/Toolkit.Entry.csproj" />
     <Project Path="src/View.Abstractions/View.Abstractions.csproj" />
     <Project Path="src/View.MonoGame/View.MonoGame.csproj" />
   </Folder>

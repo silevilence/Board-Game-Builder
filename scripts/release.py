@@ -52,18 +52,23 @@ def verify(root, tag):
     toolkit_manifest.validate(manifest, root)
     if (manifest['version'], manifest['platform'], manifest['entries']) != (version(tag), 'win-x64', ENTRIES):
         raise ValueError('Toolkit identity/entries mismatch')
+    prefix = '.payload/' if manifest.get('layout') == 'hardlinks-v1' else ''
+    files = {f['path']: f for f in manifest.get('files', [])}
+    def stored(path):
+        name = prefix + path
+        return root / files.get(name, {}).get('storage', name)
     for relative in list(ENTRIES.values()) + ['templates/bgb-author/SKILL.md.template']:
-        if not (root / relative).is_file():
+        if not stored(relative).is_file():
             raise ValueError(f'Missing toolkit content: {relative}')
     for folder in ['', 'editor/', 'player/', 'debug-player/', 'worker/', 'editor/worker/', 'player/worker/', 'debug-player/worker/']:
         for native in ['coreclr.dll', 'hostfxr.dll']:
-            if not (root / folder / native).is_file():
+            if not stored(folder + native).is_file():
                 raise ValueError(f'Missing self-contained runtime: {folder}{native}')
-    player = json.loads((root / 'player/release.json').read_text(encoding='utf-8-sig'))
+    player = json.loads(stored('player/release.json').read_text(encoding='utf-8-sig'))
     if player['version'] != version(tag) or player['editorDebug'] or not player['guiEntry']:
         raise ValueError('Formal Player identity mismatch')
     for relative, digest in player['files'].items():
-        if sha(root / 'player' / relative).lower() != digest.lower():
+        if sha(stored('player/' + relative)).lower() != digest.lower():
             raise ValueError(f'Formal Player hash mismatch: {relative}')
     return manifest
 
@@ -72,11 +77,13 @@ def archive(repo, root, tag, output, component_format=False):
     body = check(repo, tag)
     # PowerShell hashtable iteration order varies between processes. Canonicalize generated
     # metadata so an interrupted upload can be resumed from a rebuild of the same commit.
-    for relative in ['toolkit.json', 'player/release.json']:
+    current = toolkit_manifest.read(root / 'toolkit.json')
+    metadata = ['toolkit.json'] if current.get('layout') else ['toolkit.json', 'player/release.json']
+    for relative in metadata:
         path = root / relative
         content = json.loads(path.read_text(encoding='utf-8-sig'))
         path.write_text(json.dumps(content, sort_keys=True, indent=2) + '\n', encoding='utf-8', newline='\n')
-    if component_format:
+    if component_format and not current.get('layout'):
         toolkit_manifest.generate(root, output / 'components', os.environ.get('GH_REPO', 'silevilence/Board-Game-Builder'))
     manifest = verify(root, tag)
     output.mkdir(parents=True, exist_ok=True)
@@ -85,8 +92,10 @@ def archive(repo, root, tag, output, component_format=False):
     if target.exists():
         raise ValueError(f'Archive already exists: {target}')
     staging = target.with_suffix('.zip.partial')
+    archived_files = ([root / p for p in sorted({'toolkit.json'} | {f['storage'] for f in manifest['files']})]
+                      if manifest.get('layout') == 'hardlinks-v1' else sorted(root.rglob('*')))
     with zipfile.ZipFile(staging, 'w', zipfile.ZIP_DEFLATED, compresslevel=6) as z:
-        for file in sorted(root.rglob('*')):
+        for file in archived_files:
             if file.is_symlink():
                 raise ValueError(f'Linked release content: {file}')
             if file.is_file():
