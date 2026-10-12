@@ -27,7 +27,7 @@ python scripts/toolkit_manifest.py verify --root artifacts/toolkit --components 
 
 文件集合覆盖目录中的全部普通文件，唯一例外是清单自身，避免循环哈希。清单自身由离线 ZIP 的 SHA-256 或后续分发协议的清单校验保护。解析清单不能代替验证外部校验信息。
 
-运行时要求从实际 runtimeconfig 读取，包含 `Microsoft.NETCore.App` 和按需使用的 `Microsoft.WindowsDesktop.App`。`privateVersion` 锁定私有版本，`minimumVersion` 设为同一已构建版本，系统选择策略为 `LatestPatch`，不允许跳到其他主次版本。后续运行时布局及启动功能负责落实该策略；本阶段仍保留已有自包含宿主的启动语义。策略语义参考 [.NET 版本选择](https://learn.microsoft.com/en-us/dotnet/core/versions/selection)。
+运行时要求从实际 runtimeconfig 读取，包含 `Microsoft.NETCore.App` 和按需使用的 `Microsoft.WindowsDesktop.App`。`privateVersion` 锁定私有版本，`minimumVersion` 设为同一已构建版本，系统选择策略为 `LatestPatch`，不允许跳到其他主次版本。原生入口按包模式落实该策略。策略语义参考 [.NET 版本选择](https://learn.microsoft.com/en-us/dotnet/core/versions/selection)。
 
 ## 组件身份与来源
 
@@ -56,3 +56,15 @@ ZIP 只存放规范文件和清单。公开入口保持 `bgb.exe`、`editor/Edit
 安装到可写的本地 NTFS 卷；不支持硬链接或有外部重解析路径时，入口明确报错并要求调整位置。解压后的目录可在同卷移动；若用普通复制操作复制已运行目录，复制工具可能把硬链接展开为多份数据，此时应从原 ZIP 重新解压到新位置，不能宣称复制品仍已去重。不要原位编辑已安装的产品文件。
 
 维护者使用 `publish-toolkit-entries.ps1` 构建原生入口，`compact_toolkit.py` 准备和压缩布局；完整发布脚本已串联这些步骤。构建机需要 Windows Native AOT 的 C++ 工具链，作者电脑不需要。`measure-toolkit.ps1` 按 Windows 文件 ID 校验物理共享，并使用 FileStandardInfo 测量实际分配空间，避免将硬链接逻辑文件大小当成磁盘占用。
+
+## 精简包及独立游戏导出
+
+`slim_toolkit.py` 从同一完整发布产物派生 `packageMode: slim`：移除仅归属 runtimepack 的文件，将各宿主的 runtimeconfig 改为 `frameworks`／`LatestPatch`，去除 deps 中对应 runtimepack 声明。产品 DLL、插件和文档保持同一构建来源，公开入口与独立包相同。最终两种包分别命名并生成校验文件。
+
+精简包原生入口读取 Windows 官方 x64 .NET 注册位置（32 位注册表视图），无登记时检查 Program Files 下的默认位置。它检查 dotnet／核心与桌面原生库架构、框架完整性、最低补丁及桌面框架对核心版本的要求；仅对子进程设置明确的运行时根目录及补丁策略，不改变全局配置，也不切换包模式。CLI／Lua 只需要核心框架，图形宿主还需要桌面框架。
+
+精简包在 `player/export.dependencies.json` 保存格式为 `board-game-builder.player-components` 的独立导出描述；完整工具包清单的 `exportDependencies` 与之完全一致。它包含原完整 Player 的文件、大小、SHA-256 及固定组件来源，包含正确的自包含 runtimeconfig／deps 和原 `release.json`。这套组件可独立恢复导出依赖，不依赖作者系统安装。
+
+`PlayerDistribution.Export` 显式解析该描述，复用经过校验的本地产品文件和缓存；缺失组件从准确 Release 附件或指定本地组件目录获取。归档、对象、路径、大小、重复项和组件身份逐层校验；组件身份的标准 JSON 使用 UTF-8、两空格缩进和 LF，不能采用操作系统默认换行。下载失败／取消不发布半成品，临时传输归档清理；缓存并发互斥，完整投影才原子登记。缓存按内容硬链接复用，最终游戏通过独立复制及再次校验输出，不持有共享目录或系统 Runtime 引用。
+
+`Preflight` 不下载组件，缺失时给出离线诊断。CLI `player.export` 增加可选 `components`、`dependencyCache` 和 `offline` 参数；GUI 继续使用同一共享导出实现及现有进度显示。

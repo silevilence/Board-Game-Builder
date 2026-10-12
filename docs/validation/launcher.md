@@ -40,3 +40,28 @@
 验证中保留了两个问题记录：Windows PowerShell 5.1 脚本需以 UTF-8 BOM 传入沙盒，且不能使用 PowerShell 7 对哈希表的 Measure-Object 属性适配，测量脚本已兼容；早期原型在与源码构建并行时一次 CPU 验证出现 Lua 限时错误，同种子通过包装／直接入口四次对照均成功。未稳定复现或归因该超时，也未修改 Lua 限额；随后从完整源码产物串行执行的全新沙盒验收全部通过。早期记录保留在 `artifacts/compact-sandbox-final/`。
 
 精简包、组件实际发布、独立启动器及最终双版本验收仍未完成，不勾选后续任务。
+
+## 独立包、精简包与完整游戏导出（2026-10-12）
+
+同一份自包含发布产物派生两个模式，再生成各自的原生入口布局、完整清单、组件和 ZIP。精简包移除私有运行时，入口检查系统框架、x64 架构、最低补丁和桌面框架依赖；正式导出依照独立的锁定描述恢复可再分发 Player，缓存复用后仍以独立复制方式输出游戏。
+
+本地候选位于 `artifacts/dual-verified/`，基于 `78855f8` 加本轮工作区实现，沿用 0.1.0 产品声明，**不是新 Release，也不替换正式 V0.1.0**。
+
+| 指标 | 独立包 | 精简包 |
+| --- | ---: | ---: |
+| ZIP 字节 | 77,852,138 | 31,115,941 |
+| 逻辑文件／唯一物理文件 | 2,128／407 | 552／193 |
+| 物理产品内容字节 | 194,252,907 | 81,407,958 |
+| 实际文件分配字节 | 195,006,960 | 81,768,944 |
+| 私有核心／桌面运行时份数 | 1／1 | 0／0 |
+
+独立 ZIP SHA-256：`46c4a9f3cf83f6f5e0634f804082d05f34796892a37d704e84afdc6b65cf0f22`；精简 ZIP SHA-256：`f9ba03cd3c393a0af4f7e7c842179e4651c12e06fe4c3d3e0a50a7ef4cea2177`。两个包均通过文件清单及完整导出组件校验；两种模式共引用 40 个固定组件，当前仅本地生成，尚未实际发布。
+
+- 脚本与原生入口相关测试 31 项通过；C# `export-dependencies`、`system-runtime`、`author-operations`、`author-exports` 通过，依赖边界检查通过。覆盖离线缺失不生成半成品、HTTP 获取与本地组件、完整性失败、归档越界、并发缓存、取消、长路径、架构／版本及兼容补丁选择。
+- `artifacts/dual-verified.log` 记录完整构建和两种模式的 CLI 校验、导出及 Player 回归。精简 ZIP 首次归档时输出目录已被测试沙盒映射，重命名遇到持续 Win32 共享锁；短重试仍拒绝发布。停止该沙盒后重新归档成功，记录在 `artifacts/dual-verified-archive-retry.log`。验收只使用最终 ZIP 与其校验信息。
+- `artifacts/dual-verified-standalone-sandbox/acceptance/result.json` 为成功：无 SDK／Runtime、断网、不映射源码，中文及空格目录移动前后各 11 项真实 Editor 检查；两种作者格式的 CLI 创作、CPU 重跑／回放、打包、SKILL Copy／Junction 维护、正式导出及图形／批处理运行全部通过。
+- `artifacts/dual-verified-slim-acceptance/runtime-checks.json` 为成功：缺少核心、错误 x86 架构、10.0.11 旧补丁、缺少桌面框架均返回 1 且提供具体诊断；兼容核心框架返回 0。随后仅安装 .NET Core／Desktop Runtime 10.0.12；`installed-sdks.json` 为空数组。官方 ZIP 已依照 [微软 10.0 发布元数据](https://builds.dotnet.microsoft.com/dotnet/release-metadata/10.0/releases.json) 的 SHA-512 校验，未复制开发机系统安装。
+- 同一精简包沙盒的 `acceptance/result.json` 为成功：离线缺导出依赖时明确拒绝，提供本地组件后完成缓存，再离线复用；移动前后 Editor 各 11 项、CLI 两种作者格式和独立 Player 均通过。
+- 两种导出均复制到另一全新、断网且无 .NET 的沙盒；该沙盒只映射两份导出与验证脚本，不映射作者工具或缓存。分别校验 565 个发行文件，运行三局批处理与真实 GUI；`artifacts/dual-export-isolation/result.json` 为两种模式全部成功。正式入口的 Windows GUI 子系统由导出预检验证，Lua 工作进程沿用无控制台启动。
+
+实际验证发现并修复了两个产品问题：Windows JSON 默认 CRLF 导致组件内容身份与 Python 的 LF 标准不一致；深目录中的原生硬链接调用未使用扩展路径，导致缓存投影失败。两者均有新增回归覆盖。验收脚本另修正了 PowerShell 5.1 对短进程退出码的采集方式；失败候选及诊断保留，未计入成功验收。

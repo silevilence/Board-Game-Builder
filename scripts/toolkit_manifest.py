@@ -207,9 +207,12 @@ def generate(root, output, repository):
     for name, file in files.items():
         file['component'] = owners_by_hash[file['sha256']]
         file['libraries'] = sorted(ownership.get(name, []))
-    manifest.update({'api': 2, 'format': FORMAT, 'architecture': 'x64', 'packageMode': 'standalone',
+    manifest.update({'api': 2, 'format': FORMAT, 'architecture': 'x64', 'packageMode': manifest.get('packageMode', 'standalone'),
                      'files': list(files.values()), 'components': components, 'programs': programs,
                      'libraries': libraries, 'runtimePlugins': read(root / (payload + 'player/release.json'))['runtimePlugins']})
+    if manifest['packageMode'] == 'slim':
+        manifest['exportDependencies'] = read(root / (payload + 'player/export.dependencies.json'))
+        validate_export_dependencies(manifest['exportDependencies'])
     if payload:
         canonical_paths = {}
         for name, file in sorted(files.items(), key=lambda item: (item[0].startswith('.payload/'), item[0])):
@@ -233,6 +236,10 @@ def validate(manifest, root=None, archives=None):
     if layout not in (None, 'hardlinks-v1'):
         raise ValueError('Unknown toolkit storage layout')
     payload = '.payload/' if layout else ''
+    if manifest['packageMode'] == 'slim':
+        validate_export_dependencies(manifest['exportDependencies'])
+        if manifest['exportDependencies']['version'] != manifest['version']:
+            raise ValueError('Export dependency product version mismatch')
     files, paths, all_objects = {}, set(), {}
     for file in manifest['files']:
         path = relative(file['path'])
@@ -347,7 +354,48 @@ def validate(manifest, root=None, archives=None):
         release_path = payload + 'player/release.json'
         if manifest['runtimePlugins'] != read(root / files[release_path].get('storage', release_path))['runtimePlugins']:
             raise ValueError('Runtime plugin identities differ from Player catalog')
+        if manifest['packageMode'] == 'slim':
+            descriptor = payload + 'player/export.dependencies.json'
+            if descriptor not in files or read(root / files[descriptor].get('storage', descriptor)) != manifest['exportDependencies']:
+                raise ValueError('Export descriptor differs from complete toolkit manifest')
     return mode
+
+
+def validate_export_dependencies(manifest):
+    if (manifest.get('api') != 1 or manifest.get('format') != 'board-game-builder.player-components' or
+            manifest.get('platform') != 'win-x64' or not re.fullmatch(VERSION, manifest.get('version', ''))):
+        raise ValueError('Unknown export dependency descriptor')
+    components, assigned = {}, {}
+    for component in manifest['components']:
+        cid = component['id']
+        expected = hashlib.sha256(canonical({'group': component['identity'], 'objects': sorted(component['objects'])})).hexdigest()
+        source = component['source']
+        if (cid in components or component['kind'] not in ('runtime', 'dependency', 'product') or
+                not component['identity'].startswith(component['kind']) or not component['objects'] or
+                cid != component['kind'] + '-' + expected or not re.fullmatch(HASH, component['sha256']) or
+                type(component['size']) is not int or component['size'] <= 0 or source['tag'] != 'components-' + expected or source['asset'] != cid + '.zip' or
+                not re.fullmatch(r'[A-Za-z0-9_.-]+/[A-Za-z0-9_.-]+', source['repository'])):
+            raise ValueError('Invalid export component identity/source')
+        for digest in component['objects']:
+            if not re.fullmatch(HASH, digest) or digest in assigned:
+                raise ValueError('Duplicate/invalid export object')
+            assigned[digest] = cid
+        components[cid] = component
+    paths, identities = set(), {}
+    for file in manifest['files']:
+        path = relative(file['path']).casefold()
+        if (path in paths or type(file['size']) is not int or file['size'] < 0 or not re.fullmatch(HASH, file['sha256']) or
+                assigned.get(file['sha256']) != file['component']):
+            raise ValueError('Invalid export file identity/dependency')
+        if identities.setdefault(file['sha256'], file['size']) != file['size']:
+            raise ValueError('Conflicting export content sizes')
+        paths.add(path)
+    for path in paths:
+        parts = path.split('/')
+        if any('/'.join(parts[:i]) in paths for i in range(1, len(parts))):
+            raise ValueError('Export file/directory collision')
+    if not {'release.json', 'player.exe'}.issubset(paths):
+        raise ValueError('Missing formal Player export entries')
 
 
 if __name__ == '__main__':

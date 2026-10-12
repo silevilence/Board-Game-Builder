@@ -19,7 +19,12 @@ try
         manifestRoot.GetProperty("layout").GetString() != "hardlinks-v1")
         throw new InvalidDataException("Unsupported toolkit layout. Install a compatible complete toolkit.");
     var entry = Path.GetRelativePath(root, executable).Replace('\\', '/');
-    var target = SafePath(root, manifestRoot.GetProperty("entryTargets").GetProperty(entry).GetString()!);
+    var targetRelative = manifestRoot.GetProperty("entryTargets").GetProperty(entry).GetString()!;
+    var target = SafePath(root, targetRelative);
+    var mode = manifestRoot.GetProperty("packageMode").GetString();
+    if (mode is not ("standalone" or "slim")) throw new InvalidDataException("Unknown runtime mode.");
+    var systemRuntime = mode == "slim" ? SystemRuntime.Resolve(manifestRoot.GetProperty("programs").EnumerateArray()
+        .Single(p => p.GetProperty("entry").GetString() == targetRelative)) : null;
     var state = Path.Combine(root, ".state");
     RejectLinks(root, state);
     Directory.CreateDirectory(state);
@@ -34,6 +39,7 @@ try
         UseShellExecute = false, CreateNoWindow = true,
         RedirectStandardInput = true, RedirectStandardOutput = true, RedirectStandardError = true
     };
+    if (systemRuntime != null) SystemRuntime.Apply(start, systemRuntime);
     foreach (var argument in args) start.ArgumentList.Add(argument);
     // Preserve the caller's working directory and standard handles (CLI / Lua pipes).
     using var child = Process.Start(start) ?? throw new IOException("Cannot start the selected tool.");

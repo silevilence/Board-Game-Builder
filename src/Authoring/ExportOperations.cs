@@ -11,7 +11,10 @@ public static class ExportOperations
     private static AuthorOperationInfo ExportInfo => PackageInfo with
     {
         Id = "player.export", Description = "Export an independent Windows Player directory using the precompiled formal Player; no SDK invocation",
-        Parameters = new() { ["target"] = new("string", true, "New independent output directory"), ["player"] = new("string", false, "Formal Player distribution; default bundled player directory") }
+        Parameters = new() { ["target"] = new("string", true, "New independent output directory"), ["player"] = new("string", false, "Formal Player distribution; default bundled player directory"),
+            ["components"] = new("string",false,"Optional directory of verified release component ZIPs for offline export"),
+            ["dependencyCache"] = new("string",false,"Optional same-volume export dependency cache"),
+            ["offline"] = new("boolean",false,"Do not download missing export components") }
     };
     public static AuthorPlugin Plugin => new("author.export", "1", 1, [], ["author.operations"], scope =>
     {
@@ -30,7 +33,9 @@ public static class ExportOperations
         if (player)
         {
             var distribution = Path.GetFullPath(call.OptionalString("player") ?? Path.Combine(AppContext.BaseDirectory, "player"));
-            PlayerDistribution.Export(distribution, snapshot.Directory, target, _ => call.Cancellation.ThrowIfCancellationRequested());
+            var offline=call.Arguments.TryGetProperty("offline",out var offlineValue) && offlineValue.GetBoolean();
+            PlayerDistribution.Export(distribution, snapshot.Directory, target, _ => call.Cancellation.ThrowIfCancellationRequested(),
+                dependencies:new(call.OptionalString("dependencyCache"),call.OptionalString("components"),!offline),cancellation:call.Cancellation);
         }
         else GamePackage.Pack(snapshot.Directory, target);
         return Task.FromResult<object>(new AuthorArtifact(call.View.Source, target, player ? "player-directory" : "game-package", module.Fingerprint));

@@ -7,6 +7,7 @@ from pathlib import Path
 import re
 import subprocess
 import tempfile
+import time
 import xml.etree.ElementTree as ET
 import zipfile
 import toolkit_manifest
@@ -43,6 +44,19 @@ def sha(path):
         return hashlib.file_digest(stream, 'sha256').hexdigest()
 
 
+def rename_archive(staging, target):
+    # Windows scanners/readers can briefly retain the just-closed ZIP. Never
+    # overwrite a target or retry an unrelated filesystem error.
+    for attempt in range(10):
+        try:
+            staging.rename(target)
+            return
+        except PermissionError as error:
+            if getattr(error, 'winerror', None) not in (32, 33) or attempt == 9:
+                raise
+            time.sleep(0.2)
+
+
 ENTRIES = {'editor': 'editor/Editor.exe', 'cli': 'bgb.exe', 'player': 'player/Player.exe',
            'debugPlayer': 'debug-player/Player.exe', 'documentation': 'docs/author/entry.md'}
 
@@ -60,15 +74,17 @@ def verify(root, tag):
     for relative in list(ENTRIES.values()) + ['templates/bgb-author/SKILL.md.template']:
         if not stored(relative).is_file():
             raise ValueError(f'Missing toolkit content: {relative}')
-    for folder in ['', 'editor/', 'player/', 'debug-player/', 'worker/', 'editor/worker/', 'player/worker/', 'debug-player/worker/']:
+    for folder in ([] if manifest.get('packageMode') == 'slim' else ['', 'editor/', 'player/', 'debug-player/', 'worker/', 'editor/worker/', 'player/worker/', 'debug-player/worker/']):
         for native in ['coreclr.dll', 'hostfxr.dll']:
             if not stored(folder + native).is_file():
                 raise ValueError(f'Missing self-contained runtime: {folder}{native}')
     player = json.loads(stored('player/release.json').read_text(encoding='utf-8-sig'))
     if player['version'] != version(tag) or player['editorDebug'] or not player['guiEntry']:
         raise ValueError('Formal Player identity mismatch')
+    export_files = {f['path']: f for f in manifest.get('exportDependencies', {}).get('files', [])}
     for relative, digest in player['files'].items():
-        if sha(stored('player/' + relative)).lower() != digest.lower():
+        actual = export_files.get(relative, {}).get('sha256') if manifest.get('packageMode') == 'slim' else sha(stored('player/' + relative))
+        if actual is None or actual.lower() != digest.lower():
             raise ValueError(f'Formal Player hash mismatch: {relative}')
     return manifest
 
@@ -78,7 +94,7 @@ def archive(repo, root, tag, output, component_format=False):
     # PowerShell hashtable iteration order varies between processes. Canonicalize generated
     # metadata so an interrupted upload can be resumed from a rebuild of the same commit.
     current = toolkit_manifest.read(root / 'toolkit.json')
-    metadata = ['toolkit.json'] if current.get('layout') else ['toolkit.json', 'player/release.json']
+    metadata = ['toolkit.json'] if current.get('api') == 2 else ['toolkit.json', 'player/release.json']
     for relative in metadata:
         path = root / relative
         content = json.loads(path.read_text(encoding='utf-8-sig'))
@@ -87,7 +103,8 @@ def archive(repo, root, tag, output, component_format=False):
         toolkit_manifest.generate(root, output / 'components', os.environ.get('GH_REPO', 'silevilence/Board-Game-Builder'))
     manifest = verify(root, tag)
     output.mkdir(parents=True, exist_ok=True)
-    name = f'Board-Game-Builder-V{version(tag)}-win-x64.zip'
+    suffix = '-' + manifest['packageMode'] if manifest.get('api') == 2 else ''
+    name = f'Board-Game-Builder-V{version(tag)}{suffix}-win-x64.zip'
     target = output / name
     if target.exists():
         raise ValueError(f'Archive already exists: {target}')
@@ -104,9 +121,9 @@ def archive(repo, root, tag, output, component_format=False):
                 with file.open('rb') as source, z.open(info, 'w', force_zip64=True) as destination:
                     import shutil
                     shutil.copyfileobj(source, destination)
-    staging.rename(target)
+    rename_archive(staging, target)
     (output / (name + '.sha256')).write_text(f'{sha(target)}  {name}\n', encoding='utf-8')
-    (output / 'toolkit.json').write_text(json.dumps(manifest, sort_keys=True, indent=2) + '\n', encoding='utf-8', newline='\n')
+    (output / ('toolkit' + suffix + '.json')).write_text(json.dumps(manifest, sort_keys=True, indent=2) + '\n', encoding='utf-8', newline='\n')
     (output / 'release-notes.md').write_text(body, encoding='utf-8')
 
 

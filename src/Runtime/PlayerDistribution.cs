@@ -8,6 +8,7 @@ public static class PlayerDistribution
 {
     public static ReleaseManifest Preflight(string release,string moduleDirectory)
     {
+        release=ExportDependencies.Resolve(release,new(AllowDownload:false));
         var manifest=Wire.Read<ReleaseManifest>(File.ReadAllText(Path.Combine(release,"release.json")));
         if(manifest.Api!=EngineVersion.Api || manifest.Platform!="win-x64") throw new InvalidDataException("release.json: incompatible Player API/platform");
         if(!manifest.GuiEntry || manifest.EditorDebug) throw new InvalidDataException("release.json: formal export requires a graphical Player without editor debug entry");
@@ -49,20 +50,24 @@ public static class PlayerDistribution
                     }
         }
     }
-    public static void Export(string release,string moduleDirectory,string destination,Action<string>? additionalSteps=null,IProgress<string>? progress=null)
+    public static void Export(string release,string moduleDirectory,string destination,Action<string>? additionalSteps=null,IProgress<string>? progress=null,
+        PlayerDependencyOptions? dependencies=null,CancellationToken cancellation=default)
     {
-        progress?.Report("检查 Player、模块与依赖…");
-        var manifest=Preflight(release,moduleDirectory);
         var target=Path.GetFullPath(destination);
         if(Directory.Exists(target) || File.Exists(target)) throw new IOException("Export target already exists; choose a new directory.");
+        release=ExportDependencies.Resolve(release,dependencies,progress,cancellation);
+        progress?.Report("检查 Player、模块与依赖…");
+        var manifest=Preflight(release,moduleDirectory);
         var staging=target+".staging-"+Guid.NewGuid(); Directory.CreateDirectory(staging);
         try
         {
             progress?.Report("复制预编译 Player 与运行时…");
             foreach(var file in manifest.Files)
             {
+                cancellation.ThrowIfCancellationRequested();
                 var output=Path.Combine(staging,file.Key); Directory.CreateDirectory(Path.GetDirectoryName(output)!);
                 File.Copy(DirectoryModule.SafeFile(release,file.Key),output);
+                if(ModulePackage.Hash(File.ReadAllBytes(output))!=file.Value) throw new InvalidDataException("Export copy hash mismatch: "+file.Key);
             }
             File.Copy(Path.Combine(release,"release.json"),Path.Combine(staging,"release.json"));
             progress?.Report("打包模块…");
@@ -77,6 +82,7 @@ public static class PlayerDistribution
             foreach(var file in protectedFiles)
                 if(ModulePackage.Hash(File.ReadAllBytes(DirectoryModule.SafeFile(staging,file.Key)))!=file.Value) throw new InvalidDataException("Export step changed Player runtime: "+file.Key);
             if(GameRuntime.Load(Path.Combine(staging,"game.bgm")).Fingerprint!=module.Fingerprint) throw new InvalidDataException("Export step changed module package");
+            cancellation.ThrowIfCancellationRequested();
             Directory.Move(staging,target);
             progress?.Report("导出完成："+target);
         }

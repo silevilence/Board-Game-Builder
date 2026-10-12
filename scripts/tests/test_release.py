@@ -42,6 +42,18 @@ class MetadataTests(unittest.TestCase):
 
 
 class ArchiveTests(unittest.TestCase):
+    def test_transient_windows_archive_lock_is_retryable(self):
+        from unittest.mock import Mock
+        staging = Mock()
+        busy = PermissionError('temporarily open'); busy.winerror = 32
+        staging.rename.side_effect = [busy, None]
+        with patch.object(release.time, 'sleep') as sleep:
+            release.rename_archive(staging, 'target')
+            self.assertEqual(staging.rename.call_count, 2)
+            sleep.assert_called_once_with(0.2)
+        staging.rename.side_effect = FileExistsError('existing target')
+        with self.assertRaises(FileExistsError): release.rename_archive(staging, 'target')
+
     def test_rebuild_ignores_metadata_order_and_file_timestamps(self):
         with tempfile.TemporaryDirectory() as directory:
             root = Path(directory) / 'root'

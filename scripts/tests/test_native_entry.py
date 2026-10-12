@@ -27,7 +27,7 @@ class NativeEntryTests(unittest.TestCase):
             data = (self.root / path).read_bytes()
             files.append({'path': path, 'storage': path, 'size': len(data), 'sha256': hashlib.sha256(data).hexdigest()})
         files.append({**files[-1], 'path': '.payload/nested/shared.bin'})
-        self.manifest = {'api': 2, 'format': 'board-game-builder.toolkit', 'platform': 'win-x64', 'layout': 'hardlinks-v1',
+        self.manifest = {'api': 2, 'format': 'board-game-builder.toolkit', 'platform': 'win-x64', 'layout': 'hardlinks-v1', 'packageMode': 'standalone',
                          'entryTargets': {'bgb.exe': '.payload/command.exe'}, 'files': files}
         self.save()
 

@@ -37,8 +37,10 @@ jobs:
           if ($LASTEXITCODE -ne 0) { exit $LASTEXITCODE }
           python -m unittest discover -s scripts/tests -v
           if ($LASTEXITCODE -ne 0) { exit $LASTEXITCODE }
+          dotnet run --project tests/Engine.Tests -c Release -- export-dependencies system-runtime author-exports
+          if ($LASTEXITCODE -ne 0) { exit $LASTEXITCODE }
           ./scripts/check-boundaries.ps1
-      - name: Build and validate self-contained toolkit
+      - name: Build and validate standalone and slim toolkits
         shell: pwsh
         run: ./scripts/publish-toolkit.ps1 -Tag $env:RELEASE_TAG
       - name: Publish verified attachments through a draft

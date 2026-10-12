@@ -1,4 +1,4 @@
-param([Parameter(Mandatory)][string]$Root, [Parameter(Mandatory)][string]$Evidence)
+param([Parameter(Mandatory)][string]$Root, [Parameter(Mandatory)][string]$Evidence, [string]$Components)
 $ErrorActionPreference = 'Stop'
 $rootPath = (Resolve-Path -LiteralPath $Root).Path
 $evidencePath = [IO.Path]::GetFullPath($Evidence)
@@ -12,7 +12,9 @@ Invoke-Cli @('docs','entry')
 Invoke-Cli @('operations','--project',"$rootPath/docs/author/example")
 Invoke-Cli @('call','project.validate','--project',"$rootPath/docs/author/example",'--args','{}')
 $export = Join-Path $evidencePath 'game'
-$parameters = @{ target=$export } | ConvertTo-Json -Compress
+$exportParameters = @{ target=$export }
+if ($Components) { $exportParameters.components=[IO.Path]::GetFullPath($Components); $exportParameters.offline=$true }
+$parameters = $exportParameters | ConvertTo-Json -Compress
 Invoke-Cli @('call','player.export','--project',"$rootPath/docs/author/example",'--args',$parameters)
 $start = [Diagnostics.ProcessStartInfo]::new("$export/Play.exe")
 $start.UseShellExecute=$false

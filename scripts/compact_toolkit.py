@@ -34,7 +34,7 @@ def prepare(source, target, entries):
     shutil.copytree(source / 'docs', target / 'docs')
     shutil.copyfile(source / 'README.md', target / 'README.md')
     manifest = {k: original[k] for k in ('version', 'platform', 'commit', 'entries')}
-    manifest.update({'api': 2, 'format': toolkit.FORMAT, 'architecture': 'x64', 'packageMode': 'standalone',
+    manifest.update({'api': 2, 'format': toolkit.FORMAT, 'architecture': 'x64', 'packageMode': original.get('packageMode', 'standalone'),
                      'layout': 'hardlinks-v1',
                      'entryTargets': {p: '.payload/' + p for r, p in toolkit.ENTRIES.items() if r != 'documentation'}})
     (target / 'toolkit.json').write_bytes(toolkit.canonical(manifest))
