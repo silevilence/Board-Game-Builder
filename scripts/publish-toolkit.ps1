@@ -21,7 +21,7 @@ Copy-Item -LiteralPath "$repo/changelog.md" -Destination $staging
 Copy-Item -LiteralPath "$repo/docs/releases.md" -Destination "$staging/README.md"
 Copy-Item -LiteralPath "$repo/samples/quick-cards" -Destination "$staging/docs/author/example" -Recurse
 & "$PSScriptRoot/validate-toolkit.ps1" -Root $staging -Evidence "$staging.validation"
-python "$PSScriptRoot/release.py" archive --tag $Tag --root $staging --output $Archives
+python "$PSScriptRoot/release.py" archive --tag $Tag --root $staging --output $Archives --component-format
 if ($LASTEXITCODE -ne 0) { throw 'Archive validation failed.' }
 Move-Item -LiteralPath $staging -Destination $target
 Write-Output "Validated toolkit: $target"

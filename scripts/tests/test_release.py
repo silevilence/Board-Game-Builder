@@ -6,6 +6,9 @@ import tempfile
 import unittest
 from unittest.mock import patch
 import zipfile
+import sys
+
+sys.path.insert(0, str(Path(__file__).parents[1]))
 
 spec = importlib.util.spec_from_file_location('release', Path(__file__).parents[1] / 'release.py')
 release = importlib.util.module_from_spec(spec)

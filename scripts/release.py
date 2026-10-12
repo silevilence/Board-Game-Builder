@@ -9,6 +9,7 @@ import subprocess
 import tempfile
 import xml.etree.ElementTree as ET
 import zipfile
+import toolkit_manifest
 
 
 def version(tag):
@@ -48,7 +49,8 @@ ENTRIES = {'editor': 'editor/Editor.exe', 'cli': 'bgb.exe', 'player': 'player/Pl
 
 def verify(root, tag):
     manifest = json.loads((root / 'toolkit.json').read_text(encoding='utf-8-sig'))
-    if (manifest['api'], manifest['version'], manifest['platform'], manifest['entries']) != (1, version(tag), 'win-x64', ENTRIES):
+    toolkit_manifest.validate(manifest, root)
+    if (manifest['version'], manifest['platform'], manifest['entries']) != (version(tag), 'win-x64', ENTRIES):
         raise ValueError('Toolkit identity/entries mismatch')
     for relative in list(ENTRIES.values()) + ['templates/bgb-author/SKILL.md.template']:
         if not (root / relative).is_file():
@@ -66,15 +68,17 @@ def verify(root, tag):
     return manifest
 
 
-def archive(repo, root, tag, output):
+def archive(repo, root, tag, output, component_format=False):
     body = check(repo, tag)
-    manifest = verify(root, tag)
     # PowerShell hashtable iteration order varies between processes. Canonicalize generated
     # metadata so an interrupted upload can be resumed from a rebuild of the same commit.
     for relative in ['toolkit.json', 'player/release.json']:
         path = root / relative
         content = json.loads(path.read_text(encoding='utf-8-sig'))
         path.write_text(json.dumps(content, sort_keys=True, indent=2) + '\n', encoding='utf-8', newline='\n')
+    if component_format:
+        toolkit_manifest.generate(root, output / 'components', os.environ.get('GH_REPO', 'silevilence/Board-Game-Builder'))
+    manifest = verify(root, tag)
     output.mkdir(parents=True, exist_ok=True)
     name = f'Board-Game-Builder-V{version(tag)}-win-x64.zip'
     target = output / name
@@ -125,6 +129,8 @@ def publish(repo, tag, output):
     name = f'Board-Game-Builder-V{version(tag)}-win-x64.zip'
     files = [output / name, output / (name + '.sha256'), output / 'toolkit.json']
     manifest = json.loads(files[2].read_text(encoding='utf-8'))
+    if manifest.get('api', 1) != 1:
+        raise ValueError('Component publication must verify all referenced assets before publishing API 2')
     if manifest['commit'] != commit or manifest['version'] != version(tag):
         raise ValueError('Artifact commit/version mismatch')
     if files[1].read_text().strip() != f'{sha(files[0])}  {name}':
@@ -173,11 +179,12 @@ if __name__ == '__main__':
     parser.add_argument('--tag', required=True)
     parser.add_argument('--root', type=Path)
     parser.add_argument('--output', type=Path, default=Path('artifacts/release'))
+    parser.add_argument('--component-format', action='store_true')
     args = parser.parse_args()
     repository = Path(__file__).resolve().parent.parent
     if args.command == 'check':
         print(check(repository, args.tag))
     elif args.command == 'archive':
-        archive(repository, args.root, args.tag, args.output)
+        archive(repository, args.root, args.tag, args.output, args.component_format)
     else:
         publish(repository, args.tag, args.output)
