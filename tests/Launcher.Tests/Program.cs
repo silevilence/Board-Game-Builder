@@ -32,8 +32,10 @@ try
     Check(registry.Read().Installations.Length==0,"empty startup"); registry.Register(first); registry.Register(second); registry.SetDefault("v0.2.1");
     var restarted=new InstallationRegistry(home); Check(restarted.Read().DefaultVersion=="0.2.1"&&restarted.Inspect().All(i=>i.State=="available"),"persisted installations/default");
     Check(restarted.Register(first).Version=="0.2.0"&&restarted.Read().Installations.Length==2,"idempotent registration");
+    ProjectVersionChecks.Run(Path.Combine(root,"projects"),restarted);
     var conflict=Fixture(Path.Combine(root,"conflict"),"0.2.0"); Reject(()=>restarted.Register(conflict));
     File.WriteAllText(Path.Combine(first,"bgb.exe"),"damaged"); Check(restarted.Inspect().Single(i=>i.Installation.Version=="0.2.0").State=="corrupt","corrupt state"); Reject(()=>restarted.SetDefault("0.2.0"));
+    Check(new ProjectVersions(restarted).Resolve("0.2.0").State=="corrupt","selected corruption cannot fall back");
     Directory.Move(second,second+"-moved"); Check(restarted.Inspect().Single(i=>i.Installation.Version=="0.2.1").State=="missing","missing state");
     var legacy=Path.Combine(root,"legacy"); Directory.CreateDirectory(legacy);
     foreach(var entry in ProductManifest.RequiredEntries.Values) { var path=Path.Combine(legacy,entry); Directory.CreateDirectory(Path.GetDirectoryName(path)!); File.WriteAllText(path,"legacy fixture"); }

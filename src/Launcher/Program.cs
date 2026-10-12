@@ -45,6 +45,10 @@ internal sealed class LauncherWindow:Window
     private readonly HttpClient http=new(){Timeout=TimeSpan.FromSeconds(45)};
     private readonly Button cancelInstall=new(){Content="取消安装",IsEnabled=false};
     private CancellationTokenSource? installationLifetime;
+    private readonly TextBox projectPath=new(){PlaceholderText="工程目录或 game.start.json",MinWidth=420};
+    private readonly ComboBox projectVersion=new(){MinWidth=180};
+    private readonly TextBox bindingVersion=new(){PlaceholderText="绑定版本，例如 0.2.0",MinWidth=210};
+    private readonly TextBlock projectNotice=new(){TextWrapping=TextWrapping.Wrap,Foreground=Brushes.LightGray};
     public LauncherWindow()
     {
         Title="Board Game Builder · 版本管理"; Width=1040; Height=720; MinWidth=780; MinHeight=520;
@@ -68,6 +72,7 @@ internal sealed class LauncherWindow:Window
             await Install((service,progress,cancellation)=>service.Import(path,path+".sha256",progress,cancellation));
         };
         content.Children.Add(notice); content.Children.Add(installations);
+        AddProjectControls(content);
         content.Children.Add(new TextBlock {Text="官方发行版本",FontSize=26});
         content.Children.Add(refreshCatalog); content.Children.Add(catalogNotice); content.Children.Add(releases);
         Content=new ScrollViewer { Content=content };
@@ -99,6 +104,34 @@ internal sealed class LauncherWindow:Window
                 Close();
             }
         };
+    }
+    private void AddProjectControls(StackPanel content)
+    {
+        content.Children.Add(new TextBlock {Text="打开作者工程",FontSize=26});
+        var browse=new Button {Content="选择工程目录"};
+        var pathRow=new StackPanel {Orientation=Orientation.Horizontal,Spacing=10};pathRow.Children.Add(projectPath);pathRow.Children.Add(browse);content.Children.Add(pathRow);
+        browse.Click+=async (_,_)=> {var folders=await StorageProvider.OpenFolderPickerAsync(new(){Title="选择作者工程",AllowMultiple=false});if(folders.Count>0) {projectPath.Text=folders[0].Path.LocalPath;await ProjectAction(false);}};
+        var inspect=new Button {Content="查看实际版本"};var open=new Button {Content="打开工程"};
+        var actions=new StackPanel {Orientation=Orientation.Horizontal,Spacing=10};actions.Children.Add(projectVersion);actions.Children.Add(inspect);actions.Children.Add(open);content.Children.Add(actions);
+        inspect.Click+=async (_,_)=>await ProjectAction(false);open.Click+=async (_,_)=>await ProjectAction(true);
+        var bind=new Button {Content="保存工程绑定"};var clear=new Button {Content="清除工程绑定"};
+        var binding=new StackPanel {Orientation=Orientation.Horizontal,Spacing=10};binding.Children.Add(bindingVersion);binding.Children.Add(bind);binding.Children.Add(clear);content.Children.Add(binding);
+        bind.Click+=async (_,_)=> {try {if(string.IsNullOrWhiteSpace(bindingVersion.Text)) throw new ArgumentException("请填写要绑定的版本；清除请使用独立按钮。");new ProjectVersions(registry).Bind(RequireProject(),bindingVersion.Text);await ProjectAction(false);} catch(Exception e) {projectNotice.Text=e.Message;}};
+        clear.Click+=async (_,_)=> {try {new ProjectVersions(registry).Bind(RequireProject(),null);await ProjectAction(false);} catch(Exception e) {projectNotice.Text=e.Message;}};
+        content.Children.Add(new TextBlock {Text="临时选择其他版本只影响本次打开。保存／清除绑定是独立操作；工程兼容检查交给所选 Editor。",TextWrapping=TextWrapping.Wrap});content.Children.Add(projectNotice);
+    }
+    private string RequireProject()=>string.IsNullOrWhiteSpace(projectPath.Text)?throw new ArgumentException("请先填写工程目录。"):projectPath.Text;
+    private async Task ProjectAction(bool open)
+    {
+        try
+        {
+            var project=RequireProject();var version=projectVersion.SelectedIndex>0?projectVersion.SelectedItem as string:null;
+            var selection=await Task.Run(()=>new ProjectVersions(registry).Resolve(version,project));
+            bindingVersion.Text=selection.BoundVersion;
+            projectNotice.Text="V"+selection.Version+" · 来源："+(selection.Source switch {"explicit"=>"本次显式选择","project"=>"工程绑定",_=>"用户默认"})+" · "+selection.Project+(selection.Diagnostic==null?"":"\n"+selection.Diagnostic);
+            if(open) {selection.RequireAvailable();if(!Directory.Exists(selection.Project)) throw new DirectoryNotFoundException("工程目录不存在。");using var process=await Task.Run(()=>new ToolExecution(registry).Start(selection.Version,"editor",[selection.Project!]));projectNotice.Text+="\n已启动 Editor，进程 "+process.Id;}
+        }
+        catch(Exception e) {projectNotice.Text=e.Message;}
     }
     private async Task Install(Func<InstallationService,IProgress<TransferProgress>,CancellationToken,Task<InstallationResult>> action)
     {
@@ -163,6 +196,9 @@ internal sealed class LauncherWindow:Window
         try
         {
             var status=await Task.Run(()=>registry.Inspect()); var settings=registry.Read(); installations.Children.Clear();
+            var selected=projectVersion.SelectedItem as string;
+            projectVersion.ItemsSource=new[]{"自动：绑定／默认"}.Concat(settings.Installations.Select(i=>i.Version)).ToArray();
+            projectVersion.SelectedItem=selected!=null&&settings.Installations.Any(i=>i.Version==selected)?selected:"自动：绑定／默认";
             foreach(var item in status)
             {
                 var row=new StackPanel { Spacing=8 };

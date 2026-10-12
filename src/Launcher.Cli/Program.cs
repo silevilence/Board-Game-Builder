@@ -13,6 +13,11 @@ try
     var catalog=new ReleaseCatalog(http,registry.Home);
     var installer=new InstallationService(registry,http);
     var execution=new ToolExecution(registry);var maintenance=new InstallationMaintenance(registry);
+    if(arguments.Count>0 && arguments[0] is "resolve" or "open" or "binding")
+    {
+        var projectResult=ProjectCommand(registry,arguments.ToArray());
+        Console.WriteLine(JsonSerializer.Serialize(projectResult,new JsonSerializerOptions(JsonSerializerDefaults.Web){WriteIndented=true}));return 0;
+    }
     if(arguments.ToArray() is ["run",var runVersion,"--",..var forwarded]) return await execution.Run(runVersion=="default"?null:runVersion,"cli",forwarded,cancellation.Token);
     object result=arguments.ToArray() switch
     {
@@ -37,7 +42,7 @@ try
         ["collect"]=>new {collectedObjects=await maintenance.Collect(cancellation.Token)},
         ["repair",var version]=>await new InstallationRepair(registry,http).Repair(version,cancellation:cancellation.Token),
         ["repair",var version,"--components",var directory]=>await RepairLocal(registry,version,directory,cancellation.Token),
-        [] or ["help"]=>new { version=typeof(InstallationRegistry).Assembly.GetName().Version?.ToString(3), commands=new[]{"status","settings","register <directory>","default <version>","storage <directory>","catalog [refresh]","runtime <version>","runtime-plan <version> <private|system>","plan <version> <private|system>","install <version> <private|system>","import <zip> <sha256-file>","recover","storage-report","launch [version] [editor arguments]","run <version|default> -- <CLI arguments>","processes <version>","uninstall <version>","repair <version> [--components <directory>]","collect"}, option="--home <launcher-settings-directory>" },
+        [] or ["help"]=>new { version=typeof(InstallationRegistry).Assembly.GetName().Version?.ToString(3), commands=new[]{"status","settings","register <directory>","default <version>","storage <directory>","catalog [refresh]","runtime <version>","runtime-plan <version> <private|system>","plan <version> <private|system>","install <version> <private|system>","import <zip> <sha256-file>","recover","storage-report","launch [version] [editor arguments]","run <version|default> -- <CLI arguments>","processes <version>","uninstall <version>","repair <version> [--components <directory>]","collect","resolve [--project <directory>] [--version <version>]","open --project <directory> [--version <version>]","binding --project <directory> [--set <version>|--clear]"}, option="--home <launcher-settings-directory>" },
         _=>throw new ArgumentException("未知命令。使用 bgb-launcher help 查看用法。")
     };
     Console.WriteLine(JsonSerializer.Serialize(result,new JsonSerializerOptions(JsonSerializerDefaults.Web){WriteIndented=true})); return 0;
@@ -45,6 +50,31 @@ try
 catch(Exception error) { Console.Error.WriteLine(error.Message); return 1; }
 
 static object SetDefault(InstallationRegistry registry,string version) { registry.SetDefault(version); return registry.Read(); }
+static object ProjectCommand(InstallationRegistry registry,string[] arguments)
+{
+    string? project=null,version=null;bool clear=false;var seen=new HashSet<string>();
+    for(var i=1;i<arguments.Length;i++)
+    {
+        var option=arguments[i];if(!seen.Add(option)) throw new ArgumentException("重复选项："+option);
+        if(option=="--clear"&&arguments[0]=="binding") {clear=true;continue;}
+        if(i+1>=arguments.Length) throw new ArgumentException("选项缺少值："+option);
+        if(option=="--project") project=arguments[++i];
+        else if(option=="--version"&&arguments[0]!="binding" || option=="--set"&&arguments[0]=="binding") version=arguments[++i];
+        else throw new ArgumentException("未知选项："+option);
+    }
+    var service=new ProjectVersions(registry);
+    if(arguments[0]=="binding")
+    {
+        if(project==null || clear&&version!=null) throw new ArgumentException("binding --project <目录> [--set <版本>|--clear]");
+        var root=ProjectVersions.Locate(project)!;
+        return new {project=root,binding=clear||version!=null?service.Bind(root,version):ProjectVersions.Read(root)};
+    }
+    var selection=service.Resolve(version,project);
+    if(arguments[0]=="resolve") return selection;
+    if(selection.Project==null || !Directory.Exists(selection.Project)) throw new ArgumentException("open 需要现有工程目录。");
+    selection.RequireAvailable();using var process=new ToolExecution(registry).Start(selection.Version,"editor",[selection.Project]);
+    return new {selection,processId=process.Id,startedAt=process.StartTime.ToUniversalTime(),image=process.StartInfo.FileName};
+}
 static object SetStorage(InstallationRegistry registry,string directory) { registry.SetStorageRoot(directory); return registry.Read(); }
 static async Task<object> Recover(InstallationService installer) {await installer.Recover(); return new {recovered=true};}
 static object Launch(ToolExecution execution,string? version,string[] arguments) {using var process=execution.Start(version,"editor",arguments);return new {processId=process.Id,startedAt=process.StartTime.ToUniversalTime(),image=process.StartInfo.FileName};}
