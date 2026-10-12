@@ -18,6 +18,7 @@ try
         n=>n["programs"]![0]!["files"]=new JsonArray(), n=>n["files"]!.AsArray().Add(n["files"]![0]!.DeepClone()) })
     { var node=JsonNode.Parse(bytes)!; change(node); Reject(()=>ProductManifest.Parse(Encoding.UTF8.GetBytes(node.ToJsonString()))); }
     Reject(()=>ProductManifest.Parse(Encoding.UTF8.GetBytes("{\"api\":1,\"api\":2}")));
+    await CatalogChecks.Run(Path.Combine(root,"catalog"),bytes);
     var home=Path.Combine(root,"settings"); var registry=new InstallationRegistry(home);
     Check(registry.Read().Installations.Length==0,"empty startup"); registry.Register(first); registry.Register(second); registry.SetDefault("v0.2.1");
     var restarted=new InstallationRegistry(home); Check(restarted.Read().DefaultVersion=="0.2.1"&&restarted.Inspect().All(i=>i.State=="available"),"persisted installations/default");

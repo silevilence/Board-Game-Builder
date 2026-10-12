@@ -111,3 +111,9 @@ V0.2.1 原始精简 ZIP 在另一断网沙盒完成缺核心、x86、旧补丁�
 - `artifacts/launcher-registry-sandbox/result.json`：断网、没有引擎或系统 .NET 的新沙盒中，CLI 与 GUI 均可启动；程序目录移动到新的中文及空格路径后继续启动，设置保持不变，前后截图已检查。
 - 原始 V0.2.0、V0.2.1 独立包在 `artifacts/release-acceptance/registry-products/` 解压后同时登记。新 CLI 进程读取设置、选择 `v0.2.1` 为默认并重新校验，两个版本均为 available；记录为 `registry-status.json`。GUI 的 `registry-gui.json` 与截图显示两个独立版本及准确默认值。
 - 最新自包含构建位于 `artifacts/launcher-registry-final/`；`docs/launcher.md` 说明独立设置、版本运行缓存、存储位置和手动更新。当前登记不宣称已实现共享安装，后续任务继续补充。
+
+## GitHub 版本目录与离线列表（2026-10-12）
+
+启动器与 CLI 使用统一的 Release 目录，分页扫描固定官方仓库，验证两种产品清单、必需附件和跨 Release 组件来源；排除草稿、预发布、组件 tag、源码归档及其他平台。以数值版本排序，规范化重复来源作为冲突显示。缓存仅在整次读取成功后原子更新，网络失败与限流保留原列表；本地登记独立于远端存在性。
+
+`artifacts/launcher-catalog-tests.log` 通过历史分页、V0.9.0／v0.10.0 排序、重复版本、离线缓存、组件失效、远端移除和取消测试。实际匿名调用官方 GitHub 得到 V0.2.1、V0.2.0、V0.1.0 三个产品，新格式均识别 standalone／slim，旧版识别 legacy，所有依赖来源有效；45 个组件 Release 没有进入产品列表。完整结果在 `artifacts/launcher-catalog-live.json`。GUI 从该缓存展示产品与已登记状态，启动无需联网。

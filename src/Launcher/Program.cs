@@ -39,6 +39,10 @@ internal sealed class LauncherWindow:Window
     private readonly TextBlock notice=new(){TextWrapping=TextWrapping.Wrap,Foreground=Brushes.LightGray};
     private readonly TextBox location=new(){PlaceholderText="已解压工具包的完整目录",MinWidth=420};
     private readonly Button refresh=new(){Content="校验本地版本"};
+    private readonly StackPanel releases=new(){Spacing=12};
+    private readonly TextBlock catalogNotice=new(){TextWrapping=TextWrapping.Wrap,Foreground=Brushes.LightGray};
+    private readonly Button refreshCatalog=new(){Content="刷新 GitHub 版本"};
+    private readonly HttpClient http=new(){Timeout=TimeSpan.FromSeconds(45)};
     public LauncherWindow()
     {
         Title="Board Game Builder · 版本管理"; Width=1040; Height=720; MinWidth=780; MinHeight=520;
@@ -52,12 +56,17 @@ internal sealed class LauncherWindow:Window
         var register=new Button { Content="登记已有工具包" };
         toolbar.Children.Add(location); toolbar.Children.Add(register); toolbar.Children.Add(refresh); content.Children.Add(toolbar);
         content.Children.Add(notice); content.Children.Add(installations);
+        content.Children.Add(new TextBlock {Text="官方发行版本",FontSize=26});
+        content.Children.Add(refreshCatalog); content.Children.Add(catalogNotice); content.Children.Add(releases);
         Content=new ScrollViewer { Content=content };
         refresh.Click+=async (_,_)=>await Reload();
+        refreshCatalog.Click+=async (_,_)=>await LoadCatalog(true);
+        Closed+=(_,_)=>http.Dispose();
         register.Click+=async (_,_)=> { try { register.IsEnabled=false; await Task.Run(()=>registry.Register(location.Text??"")); await Reload(); } catch(Exception e) { notice.Text=e.Message; } finally { register.IsEnabled=true; } };
         Opened+=async (_,_)=>
         {
             await Reload();
+            await LoadCatalog(false);
             if(Program.Verification is { } report)
             {
                 try
@@ -65,15 +74,44 @@ internal sealed class LauncherWindow:Window
                     await Task.Delay(200);
                     var statuses=await Task.Run(()=>registry.Inspect());
                     if(installations.Children.Count!=statuses.Count) throw new InvalidOperationException("安装列表未正确呈现。");
+                    if(releases.Children.Count!=new ReleaseCatalog(http,registry.Home).ReadCache().Versions.Length) throw new InvalidOperationException("缓存发行列表未正确呈现。");
                     Directory.CreateDirectory(Path.GetDirectoryName(report)!);
                     using var screenshot=new Avalonia.Media.Imaging.RenderTargetBitmap(new(1040,720));
                     screenshot.Render(this); screenshot.Save(report+".png",Avalonia.Media.Imaging.PngBitmapEncoderOptions.Default);
-                    File.WriteAllText(report,System.Text.Json.JsonSerializer.Serialize(new {success=true,installations=statuses.Count,settings=registry.Home,states=statuses.Select(s=>s.State)}));
+                    File.WriteAllText(report,System.Text.Json.JsonSerializer.Serialize(new {success=true,installations=statuses.Count,catalogVersions=releases.Children.Count,settings=registry.Home,states=statuses.Select(s=>s.State)}));
                 }
                 catch(Exception e) { File.WriteAllText(report,System.Text.Json.JsonSerializer.Serialize(new {success=false,error=e.ToString()})); }
                 Close();
             }
         };
+    }
+    private async Task LoadCatalog(bool online)
+    {
+        refreshCatalog.IsEnabled=false;
+        try
+        {
+            var catalog=new ReleaseCatalog(http,registry.Home);
+            if(online) catalogNotice.Text="正在分页读取官方 Release 与依赖清单…";
+            var snapshot=online?await catalog.Refresh():catalog.ReadCache();
+            catalogNotice.Text=(snapshot.Cached?"缓存列表":"在线列表")+" · "+(snapshot.CheckedAt==DateTimeOffset.MinValue?"尚未刷新":snapshot.CheckedAt.ToLocalTime().ToString("g"))+(snapshot.Diagnostic==null?"":"\n"+snapshot.Diagnostic);
+            releases.Children.Clear(); var settings=registry.Read();
+            foreach(var version in snapshot.Versions)
+            {
+                var row=new StackPanel {Spacing=8};
+                row.Children.Add(new TextBlock {Text="V"+version.Version+(settings.Installations.Any(i=>i.Version==version.Version)?" · 已登记":""),FontSize=21});
+                if(version.Diagnostic!=null) row.Children.Add(new TextBlock {Text=version.Diagnostic,Foreground=Brushes.Orange,TextWrapping=TextWrapping.Wrap});
+                foreach(var package in version.Packages)
+                {
+                    var manifest=package.ReadManifest();
+                    var frameworks=manifest.Json.TryGetProperty("programs",out var programs)?string.Join("；",programs.EnumerateArray().SelectMany(p=>p.GetProperty("frameworks").EnumerateArray()).Select(f=>f.GetProperty("framework").GetString()+" "+f.GetProperty("minimumVersion").GetString()+"（同次版本补丁兼容）").Distinct()):"旧完整包自带运行依赖";
+                    row.Children.Add(new TextBlock {Text=(package.Mode switch {"standalone"=>"独立包／私有 Runtime", "slim"=>"精简包／系统 Runtime",_=>"旧完整包"})+" · "+(package.Archive.Size/1048576d).ToString("F1")+" MiB · "+manifest.Components.Count+" 个组件\n"+frameworks,TextWrapping=TextWrapping.Wrap});
+                }
+                row.Children.Add(new Expander {Header="发布说明",Content=new TextBlock {Text=version.Notes,TextWrapping=TextWrapping.Wrap}});
+                releases.Children.Add(new Border {Padding=new Thickness(20),Background=new SolidColorBrush(Color.Parse("#202832")),CornerRadius=new CornerRadius(10),Child=row});
+            }
+        }
+        catch(Exception e) {catalogNotice.Text="版本列表不可用："+e.Message;}
+        finally {refreshCatalog.IsEnabled=true;}
     }
     private async Task Reload()
     {
