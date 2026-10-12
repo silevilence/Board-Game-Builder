@@ -19,6 +19,10 @@
 
 先更新根 `changelog.md` 和 `Directory.Build.props`，提交实现、日志、版本及 ROADMAP。正式 tag 是 `V主.次.修订`（也接受小写 v），数字不带前导零。运行 `python scripts/release.py check --tag V0.1.0`、`python -m unittest discover -s scripts/tests -v`，然后 `pwsh -NoProfile -File scripts/publish-toolkit.ps1 -Tag V0.1.0` 可本地构建验证。输出目录必须不存在。
 
-推送对应提交及 tag 后，`Release Windows toolkit` 从 tag 提交构建，读取该提交对应版本的 changelog，验证自包含运行依赖及正式导出、CPU 对局、产物版本后生成 ZIP、校验信息与清单。全部上传到草稿并回读核对后才公开；分支推送不发布。所有发布使用同一并发锁，大小写别名对应同一产品版本。
+推送对应提交及 tag 后，`Release Windows toolkit` 从 tag 提交构建，读取该提交对应版本的 changelog，验证两种包、正式导出、CPU 对局、产物版本后生成各自 ZIP、校验信息与清单。也可先运行 `python scripts/release.py plan --tag V<版本> --output <构建输出>`，只检查本地完整组件集合并打印发布计划，不访问或修改 GitHub。产物必须对应当前提交；旧工作区候选不能直接当作新提交的发行物。
+
+API 2 组件按内容身份分别存放在 `components-<哈希>` Release 中，标记为预发布且不设为 latest；它们不是可安装产品版本。首次上传组件，后续版本读取已有固定附件并校验后复用，只上传新增组件及新的用户包／清单。产品公开前回读所有直接和导出依赖，确认完整后才公开产品草稿。原 V0.1.0 的三个附件和旧 tag 保持不变。分支推送不发布，所有正式发布使用同一并发锁，大小写别名对应同一产品版本。
 
 失败查看 Action 日志和 `release-diagnostics`。修复前不得把失败条目标成完成。上传中断可重跑同一 tag；匹配的草稿附件保留，补传缺失附件。既有正文、提交或附件冲突会失败，绝不自动覆盖公开版本；应调查冲突并发布新版本。同版本 tag 不可指向不同提交。干净 Windows 环境的图形创作与移动验收需另行记录，不把 CI 机器当作无 SDK 验收环境。
+
+发布前检查 [GitHub 的附件限制](https://docs.github.com/en/repositories/releasing-projects-on-github/about-releases)：每个 Release 最多 1,000 个附件，单附件必须小于 2 GiB。上传中断产生的空 `starter` 附件仅在本仓库未公开草稿中清理后重试，依据 [Release assets API](https://docs.github.com/en/rest/releases/assets)；已公开附件不删除、不覆盖。被任一产品引用的组件 Release、tag 和附件必须长期保留，不可用一般的旧版本清理规则删除；如需纠错，应发布新的内容身份和产品版本。

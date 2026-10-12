@@ -182,6 +182,23 @@ class PublicationTests(unittest.TestCase):
             self.publish()
         self.assertIsNone(self.remote)
 
+    def test_new_format_uses_complete_dependency_publication(self):
+        (self.root / 'toolkit-standalone.json').write_text('{}')
+        plan = {'checked': True}
+        with patch.object(release.component_release, 'prepare', return_value=plan) as prepare, patch.object(release.component_release, 'Publisher') as publisher:
+            publisher.return_value.publish.return_value = 'https://example.test/release'
+            self.publish()
+            prepare.assert_called_once_with(self.root, '0.1.0', 'abc', 'test/repository')
+            publisher.return_value.publish.assert_called_once_with('V0.1.0', '### Features\n- release\n', plan)
+        self.assertIsNone(self.remote)
+
+    def test_new_format_invalid_artifacts_never_create_component_or_product(self):
+        (self.root / 'toolkit-standalone.json').write_text('{}')
+        with patch.object(release.component_release, 'prepare', side_effect=ValueError('missing dependency')), patch.object(release.component_release, 'Publisher') as publisher:
+            with self.assertRaisesRegex(ValueError, 'missing dependency'): self.publish()
+            publisher.assert_not_called()
+        self.assertIsNone(self.remote)
+
 
 if __name__ == '__main__':
     unittest.main()

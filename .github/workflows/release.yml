@@ -43,7 +43,7 @@ jobs:
       - name: Build and validate standalone and slim toolkits
         shell: pwsh
         run: ./scripts/publish-toolkit.ps1 -Tag $env:RELEASE_TAG
-      - name: Publish verified attachments through a draft
+      - name: Verify and publish immutable components before product visibility
         shell: pwsh
         run: python scripts/release.py publish --tag $env:RELEASE_TAG
       - name: Retain validation and failure diagnostics

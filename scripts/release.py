@@ -11,6 +11,7 @@ import time
 import xml.etree.ElementTree as ET
 import zipfile
 import toolkit_manifest
+import component_release
 
 
 def version(tag):
@@ -148,6 +149,10 @@ def publish(repo, tag, output):
             raise ValueError('Equivalent version tag points to another commit')
     if not any(r['ref'] == 'refs/tags/' + tag for r in refs):
         raise ValueError('Remote tag is missing')
+    if any((output / ('toolkit-' + mode + '.json')).exists() for mode in ('standalone', 'slim')):
+        plan = component_release.prepare(output, version(tag), commit, repository)
+        print(component_release.Publisher(gh, repository, commit, output).publish(tag, body, plan))
+        return
     releases = json.loads(gh('api', '--paginate', '--slurp', f'repos/{repository}/releases?per_page=100'))
     existing = [r for page in releases for r in page if r['tag_name'].lower() == tag.lower()]
     if len(existing) > 1:
@@ -201,7 +206,7 @@ def publish(repo, tag, output):
 
 if __name__ == '__main__':
     parser = argparse.ArgumentParser()
-    parser.add_argument('command', choices=['check', 'archive', 'publish'])
+    parser.add_argument('command', choices=['check', 'archive', 'plan', 'publish'])
     parser.add_argument('--tag', required=True)
     parser.add_argument('--root', type=Path)
     parser.add_argument('--output', type=Path, default=Path('artifacts/release'))
@@ -212,5 +217,11 @@ if __name__ == '__main__':
         print(check(repository, args.tag))
     elif args.command == 'archive':
         archive(repository, args.root, args.tag, args.output, args.component_format)
+    elif args.command == 'plan':
+        check(repository, args.tag)
+        commit = subprocess.check_output(['git', 'rev-parse', 'HEAD'], cwd=repository, text=True).strip()
+        plan = component_release.prepare(args.output, version(args.tag), commit, os.environ.get('GH_REPO', 'silevilence/Board-Game-Builder'))
+        print(json.dumps({'version': version(args.tag), 'commit': commit, 'assets': [p.name for p in plan['assets']],
+                          'components': [{'id': c['id'], 'source': c['source'], 'size': c['size'], 'sha256': c['sha256']} for c in plan['components']]}, indent=2))
     else:
         publish(repository, args.tag, args.output)
