@@ -126,7 +126,7 @@ public sealed class InstallationMaintenance(InstallationRegistry registry)
         }
         return count;
     }
-    private static void RequireOnlyOwnedFiles(ContentStore store,string directory,ProductManifest manifest)
+    internal static void RequireOnlyOwnedFiles(ContentStore store,string directory,ProductManifest manifest)
     {
         var owned=(manifest.Legacy?LegacyOwnership.Read(store,manifest).Files:manifest.Files.Select(f=>f.Path).Append("toolkit.json")).ToHashSet(StringComparer.OrdinalIgnoreCase);
         ExportCacheOwnership.Add(directory,manifest,owned);

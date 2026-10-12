@@ -48,6 +48,25 @@ internal static class MaintenanceChecks
         await installer.Recover();await repair.Repair("0.2.0");Assert(registry.Inspect().All(s=>s.State=="available"),"partial failure restored and repaired");
         await maintenance.Uninstall("0.2.0");Assert(registry.Inspect().Single().State=="available","other version preserved after unlink");
         await maintenance.Uninstall("0.2.1");Assert(!Directory.EnumerateFiles(Path.Combine(registry.Read().StorageRoot,"objects")).Any(),"last reference collection");
+        // Simulate a crash after directory publication, then a direct launch before registration recovery.
+        var pending=(await installer.Import(first,first+".sha256")).Installation;
+        using(var running=execution.Start("0.2.0","cli",["/d","/c","ping -n 120 127.0.0.1 > nul"]))
+        {
+            try
+            {
+                var settings=registry.Read();
+                File.WriteAllText(Path.Combine(registry.Home,"settings.json"),System.Text.Json.JsonSerializer.Serialize(settings with {Installations=[],DefaultVersion=null},new System.Text.Json.JsonSerializerOptions(System.Text.Json.JsonSerializerDefaults.Web)));
+                var transaction=Path.Combine(settings.StorageRoot,"transactions",Guid.NewGuid().ToString("N"));Directory.CreateDirectory(transaction);
+                File.WriteAllText(Path.Combine(transaction,"journal.json"),System.Text.Json.JsonSerializer.Serialize(new {pending.Version,pending.ManifestHash}));
+                await Reject(()=>installer.Recover());Assert(!running.HasExited&&Directory.Exists(pending.Directory),"interrupted install recovery preserves direct process");
+            }
+            finally {if(!running.HasExited) running.Kill(true);await running.WaitForExitAsync();}
+        }
+        var notes=Path.Combine(pending.Directory,"user-notes.txt");File.WriteAllText(notes,"preserve");
+        await Reject(()=>installer.Recover());Assert(File.ReadAllText(notes)=="preserve","recovery retains newly created user data");File.Delete(notes);
+        await installer.Recover();Assert(!Directory.Exists(pending.Directory),"stopped owned pending install recovered");
+        var partial=Path.Combine(registry.Read().StorageRoot,"transactions",Guid.NewGuid().ToString("N"));Directory.CreateDirectory(partial);File.WriteAllText(Path.Combine(partial,"journal.json.tmp"),"{incomplete");
+        await installer.Recover();Assert(!Directory.Exists(partial),"interrupted journal construction recovered");await maintenance.Collect();
         Console.WriteLine("Launcher process/repair/uninstall/shared-reference checks passed.");
     }
     private static void Assert(bool condition,string name) {if(!condition) throw new Exception(name);}

@@ -53,7 +53,9 @@ public sealed class InstallationService(InstallationRegistry registry,HttpClient
         var transaction="transactions/"+Guid.NewGuid().ToString("N"); var stage=ProductManifest.SafePath(store.Root,transaction+"/product");
         Directory.CreateDirectory(stage);
         var journalPath=ProductManifest.SafePath(store.Root,transaction+"/journal.json");
-        using(var file=new FileStream(journalPath,FileMode.CreateNew,FileAccess.Write,FileShare.None)) {JsonSerializer.Serialize(file,new Journal(manifest.Version,manifest.Digest));file.Flush(true);}
+        var journalTemporary=journalPath+".tmp";
+        using(var file=new FileStream(journalTemporary,FileMode.CreateNew,FileAccess.Write,FileShare.None)) {JsonSerializer.Serialize(file,new Journal(manifest.Version,manifest.Digest));file.Flush(true);}
+        File.Move(journalTemporary,journalPath);
         var moved=false; var committed=false; var reused=manifest.Legacy?0:store.Plan(manifest).ReusedObjects;
         try
         {
@@ -102,7 +104,12 @@ public sealed class InstallationService(InstallationRegistry registry,HttpClient
                 {
                     using var registryGate=registry.Lock();
                     if(moved && registry.Read().Installations.Any(i=>i.Directory.Equals(destination,StringComparison.OrdinalIgnoreCase))) operation.Commit();
-                    else if(moved) StoreFiles.DeleteTree(store.Root,"versions/"+manifest.Version);
+                    else if(moved)
+                    {
+                        InstallationMaintenance.RequireStopped(destination,manifest,registry.Read().Installations.Select(i=>i.Directory));
+                        InstallationMaintenance.RequireOnlyOwnedFiles(store,destination,manifest);
+                        StoreFiles.DeleteTree(store.Root,"versions/"+manifest.Version);
+                    }
                     StoreFiles.DeleteTree(store.Root,transaction);
                 }
                 catch {operation.Commit();throw new IOException("安装失败且清理尚未完成；事务记录已保留，下次安装会恢复，请勿手动改动共享文件。");}
@@ -133,7 +140,10 @@ public sealed class InstallationService(InstallationRegistry registry,HttpClient
                     var installed=registry.Read().Installations.FirstOrDefault(i=>i.Directory.Equals(destination,StringComparison.OrdinalIgnoreCase));
                     if(installed==null)
                     {
-                        if(ProductManifest.Read(Path.Combine(destination,"toolkit.json")).Digest!=journal.ManifestHash) throw new InvalidDataException("恢复时发现目标版本身份冲突，已保留目录。");
+                        var manifest=ProductManifest.Read(ProductManifest.SafePath(destination,"toolkit.json"));
+                        if(manifest.Digest!=journal.ManifestHash) throw new InvalidDataException("恢复时发现目标版本身份冲突，已保留目录。");
+                        InstallationMaintenance.RequireStopped(destination,manifest,registry.Read().Installations.Select(i=>i.Directory));
+                        InstallationMaintenance.RequireOnlyOwnedFiles(store,destination,manifest);
                         StoreFiles.DeleteTree(store.Root,"versions/"+journal.Version);
                     }
                     else if(installed.ManifestHash!=journal.ManifestHash) throw new InvalidDataException("恢复时安装登记冲突。");

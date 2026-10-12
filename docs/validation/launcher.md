@@ -217,4 +217,16 @@ Launcher GUI 与 CLI 构建通过；此项没有修改 Editor 插件、引擎或
 
 玩家隔离验收也通过：`scripts/validate-launcher-export-isolation.ps1` 在第三个全新、断网、无 .NET／SDK／作者工具的 Sandbox 中只映射四个已导出的游戏目录。两种模式 × V0.2.0／V0.2.1 均完成三局 CPU、重复与回放验证以及实际图形 Player smoke；入口 PE 子系统均为 GUI。没有映射启动器、下载目录、工程或共享存储。结果、游戏 SHA-256、四份 GUI 报告和逐局记录在 `artifacts/launcher-export-isolation-sandbox/`，总结果 `result.json` 的四项全部成功。
 
-第 13 项通过；接下来进行整组代码审核与最终回归，后续结果另记。
+第 13 项通过。
+
+## 整组审核与最终回归（2026-10-12）
+
+以首项实现前的 `5ba0887^` 为起点审核整组发行协议、组件发布、共享存储、安装维护、运行时选择、工程绑定和作者路由。最终发现并修复了一个中断恢复边界：版本目录已就位但尚未登记时，恢复／回滚现在同样检查直接运行的进程及新增用户文件，拒绝清理并保留事务；安装日志先写临时文件并刷盘，再原子提交，未完成日志不会阻塞后续恢复。针对真实运行进程、用户文件和半份临时日志的回归全部通过。
+
+- `artifacts/launcher-final-build.log`：整个 `BoardGameBuilder.slnx` Release 构建通过，零警告、零错误。
+- `artifacts/launcher-final-python-tests.log`：45 项发行脚本测试全部通过，包含原生入口的固定链接及重复链接验证。
+- `artifacts/launcher-final-engine-tests.log`：系统运行时、导出依赖、作者 profile／导出、技能模板及技能安装六组回归通过。
+- `artifacts/launcher-review-tests.log`：Launcher 全套目录、存储、安装恢复、进程保护、修复卸载、绑定、CLI／技能路由和登记测试通过；`scripts/check-boundaries.ps1` 通过。
+- `artifacts/launcher-delivery-smoke2/result.json`：最终恢复修复构建的自包含启动器导入原始 V0.2.0，实际 CLI 返回准确版本；模拟未登记安装并添加用户文件，恢复拒绝且保留文件，移除测试文件后恢复成功；重新导入与卸载成功，最终共享对象为零。第一次补充脚本误传文档主题 `--json`，改为已有协议的 `docs entry` 后重新完整验证，未修改发行包。
+
+13 项均已验收，无剩余阻塞。完整干净环境作者／隔离玩家矩阵使用最终恢复修复之前的构建；恢复修复之后执行上述针对性回归和自包含真实附件检查，没有将两者冒充同一次验证。V0.1.0 及已公开 V0.2.0／V0.2.1 标签、附件保持不变。启动器版本独立为 0.1.0，使用 `scripts/publish-launcher.ps1` 交付 Windows x64 自包含目录；不需要系统 .NET，首期通过替换程序目录手动更新。
