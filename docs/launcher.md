@@ -27,6 +27,22 @@
 
 GUI 可检查候选包的模式或查看已安装版本的实际解析。命令行使用 `runtime-plan V0.2.1 private`、`runtime-plan V0.2.1 system` 或 `runtime V0.2.0`；先刷新目录以取得候选清单。直接运行版本目录的 Editor／CLI／Player 使用同一策略，私有模式不依赖启动器设置临时环境。
 
+## 安装与离线导入
+
+首次安装前可用 `storage <目录>` 选择本地 NTFS 存储根目录。刷新版本后，在候选包中选择私有或系统模式安装；页面显示下载、校验和安装状态，并可取消。同一版本只登记一个模式，已存在的不同内容或模式不会被覆盖。
+
+```powershell
+./bgb-launcher.exe catalog refresh
+./bgb-launcher.exe plan V0.2.1 private
+./bgb-launcher.exe install V0.2.1 private
+./bgb-launcher.exe import 'D:/下载/Board-Game-Builder-V0.2.1-standalone-win-x64.zip' 'D:/下载/Board-Game-Builder-V0.2.1-standalone-win-x64.zip.sha256'
+./bgb-launcher.exe storage-report
+```
+
+GUI 的「导入本地 ZIP」要求同目录有同名 `.zip.sha256` 文件。独立 ZIP 可断网导入；精简 ZIP 导入前必须具备兼容系统 Runtime。V0.1.0 旧完整包可导入并按原布局运行，不会被自动解释成新共享格式。`storage-report` 测量新共享格式的物理身份与分配，旧布局不计入新格式统计。
+
+安装在校验完整内容与运行时之后才原子登记。取消或失败保留旧版本，未完成安装不会出现在可用列表；重启 GUI 或下一次安装会恢复中断事务，也可运行 `recover`。设置或恢复身份冲突会报告错误并保留证据，不自动覆盖用户目录。CLI 安装可用 Ctrl+C 取消。
+
 ## 设置与手动更新
 
 共享内容和版本目录必须在同一个本地 NTFS 固定磁盘的存储根目录内；网络盘及不支持硬链接的位置会被拒绝。内容按哈希保存，相同字节只占一份物理数据，文件管理器显示的多个版本文件大小会重复计算硬链接。不要直接修改共享对象或产品文件；校验失败时安装会明确停止。

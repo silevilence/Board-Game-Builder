@@ -143,3 +143,14 @@ V0.2.1 原始精简 ZIP 在另一断网沙盒完成缺核心、x86、旧补丁�
 - `artifacts/runtime-side-by-side/result.json`：两个受控 .NET 程序同时使用独立官方 10.0.11 和 10.0.12 Runtime 目录运行，实际进程分别报告对应补丁；这验证不同 Runtime 可并存，不冒充两个产品 Release 声明不同 Runtime。真实两版产品均锁定 10.0.12，并已验证跨版本只存一份。
 
 第 8 项通过；共享安装事务、启动／卸载保护仍在后续任务验收。
+
+## 安装事务与 ZIP 导入（2026-10-12）
+
+安装持有共享存储事务锁，在私有暂存目录恢复内容、建立硬链接并校验全部文件与运行时，然后原子移动并登记。日志记录准确版本及清单身份，重启恢复未登记目录；清理只处理受控存储路径，删除只解除当前硬链接，不改变其他版本文件属性。导入锁定已校验 ZIP 的读句柄，拒绝不匹配校验文件、重复／越界路径、外部链接、未知清单、缺失文件与超限归档。
+
+- `artifacts/launcher-install-tests.log`：清单边界、损坏 ZIP、越界、取消、同版本并发导入、旧版保留、原子目录移动后中断恢复和恢复后重试通过。
+- [真实在线／离线等价验证 38202260899](https://github.com/silevilence/Board-Game-Builder/actions/runs/38202260899) 成功：从官方目录解析两版并以实际 HTTP 组件安装；另匿名下载原始独立 ZIP 并导入，逐版比较清单身份及全部内容，两条路径等价，物理统计均为 437 份内容和 207,523,840 分配字节。证据在 `artifacts/launcher-install-ci/` 与 `launcher-install-action.log`；证据 ZIP SHA-256 为 `9fde4780ba637fdaf353eedf6270653519e1c9ca85a725f966e2cce2a9eb189c`。较早的工作流因本地检查发现 PowerShell 数组拼接问题而取消，修正后使用此成功运行，不计入成功记录。
+- `artifacts/launcher-import-real/` 在本机独立导入相同两版，再导入原始 V0.1.0（ZIP SHA-256 `4cde7c2cf61c90cf862270c1f9c03794cf88969cef0e9076d8b891018ed978ea`），登记为 legacy，保留原布局；三版直接 CLI 都返回各自版本及文档。V0.1.0 的清单 digest 与官方原附件完全一致。
+- `artifacts/launcher-import-slim.json` 记录 V0.2.1 原始精简 ZIP 导入成功，模式为 slim；兼容系统 Runtime 下直接 CLI 成功，记录为 `launcher-import-slim-direct.json`。
+
+第 9 项通过。安装 GUI 具备状态、取消、模式选择、ZIP 选择和启动时恢复；运行保护、卸载、共享修复及最终干净系统中的启动器闭环继续由后续任务验收。
