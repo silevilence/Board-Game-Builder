@@ -81,3 +81,24 @@
 - V0.2.0 的首次同 tag 重建失败，原产品附件没有被替换。对照首次下载清单与第二次构建清单，差异仅在四个 Native AOT 入口；本地强制重新链接复现了三个 PE 时间戳位置的差异。加入原生链接器 `/Brepro` 后，强制重新链接两次得到相同 SHA-256；回归脚本为 `scripts/test-native-repro.ps1`，实测结果见 `artifacts/native-repro-regression/result.json`。
 - 发布器新增已公开产品的前置比对，拒绝冲突时不再先发布候选组件。旧 tag 的源码与附件保持原样。新增读取权限的公开版本重验流程，依据原 tag 和原始附件验证完整依赖、匿名下载及发布调用幂等性；该流程的成功结果尚待取得，不将旧 tag 的重建失败记录改写为成功。
 - 本机直连 GitHub 下载发生 TLS 超时；已匿名取得 V0.2.0 精简清单，其 SHA-256 与 Release 元数据一致。完整下载验收尚未结束，不将不完整 ZIP 当作合格发行物。
+
+### 原始公开附件重验（2026-10-12）
+
+读取权限工作流 [38197957403](https://github.com/silevilence/Board-Game-Builder/actions/runs/38197957403) 成功：在新的 GitHub Windows runner 上匿名下载两版原始用户包、校验附件、完整清单与组件；验证后使用各自准确 tag 源码执行发布调用重放，两个 `publicationReplay` 均为 true。该重放检查已公开附件的幂等性，不表示前述旧 tag 原生重建成功。未来构建已加入 `/Brepro` 及强制重新链接回归。
+
+| 实际 Release | 独立 ZIP 字节 | 精简 ZIP 字节 | 组件下载字节 | 已有附件复用数 |
+| --- | ---: | ---: | ---: | ---: |
+| [V0.2.0](https://github.com/silevilence/Board-Game-Builder/releases/tag/V0.2.0) | 77,853,052 | 31,116,858 | 89,138,717 | 0 |
+| [V0.2.1](https://github.com/silevilence/Board-Game-Builder/releases/tag/V0.2.1) | 77,854,110 | 31,117,821 | 19,332,691 | 37 |
+
+两版各自包含导出依赖的闭包为 40 个组件，合并为 43 个；第二版只新增 3 个产品组件。37 个运行时／第三方组件复用相同附件 ID、固定来源和哈希。早期失败的旧 tag 重建额外公开过 2 个未被这两版清单引用的候选产品组件，保留原样；发布器的新前置比对避免后续同类冲突先产生候选附件。
+
+原始附件及逐项证据下载到 `artifacts/release-acceptance/verified-downloads/`。证据归档 329,676,598 字节，SHA-256 为 `aa98d16c3bba46ef18a84122082d52c47346a26d8d261a85f205e10a87124b0d`；本机再次对两套用户包及完整组件执行 `component_release.prepare`，全部通过。各版 `verified.json` 记录原始产品附件 ID、哈希、组件附件 ID、请求与传输字节。
+
+再次读取 V0.1.0 Release：产品提交仍为 `1f139e231124d8768f7ed4e711d04f2ce9d00e2d`，三个附件的 ID、名称、大小、digest、更新时间与发布前快照完全相同；证据为 `v010-before.json` / `v010-after.json`。
+
+V0.2.0 原始独立 ZIP 在断网、无源码／SDK／系统 Runtime 的 Windows Sandbox 验证成功，路径含中文及空格，移动前后真实 Editor、CLI 作者操作、正式导出与 Player 均通过。记录为 `artifacts/release-acceptance/V0.2.0-standalone-sandbox/acceptance/result.json`，ZIP SHA-256 为 `3c7b713bd6c10186552730deb5307772a08b32c4cf3cc43a3f763c90ee8a51f7`。
+
+V0.2.1 原始精简 ZIP 在另一断网沙盒完成缺核心、x86、旧补丁、缺桌面框架四类拒绝，以及兼容核心成功检查；安装官方已校验 Core／Desktop 10.0.12 后，SDK 列表为空。移动前后 Editor 各 11 项、CLI 作者操作、缺导出依赖时拒绝、完整组件恢复与离线复用、正式导出和 Player 全部通过。记录为 `artifacts/release-acceptance/V0.2.1-slim-sandbox/runtime-checks.json` 和 `acceptance/result.json`；ZIP SHA-256 为 `306eb3cf70c20baedfdf17130f4a7650f7f3e9cf496e77772af4e6e886561103`。
+
+第 4 项通过；后续启动器共享安装及最终双版本闭环仍按各自任务验收。
