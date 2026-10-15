@@ -33,13 +33,24 @@ public sealed partial class GameEngine
                 if (!s.Accepted && entry.Effects.Count != 0) throw new InvalidDataException("Rejected command has effects.");
                 if (s.Accepted)
                 {
-                    if (!CanAct(engine.state,s.Actor) || entry.Effects.Count is < 1 or > 64) throw new InvalidDataException("Invalid replay actor/effects.");
+                    var flow=engine.state.Flow;
+                    if(flow==null ? s.Execution!=null || !CanAct(engine.state,s.Actor) || entry.Effects.Count is <1 or >64 :
+                        s.Execution is not ("system" or "player") || entry.Effects.Count is <1 or >66 ||
+                        (s.Execution=="system" ? s.Actor!="" || flow.Status!="ready" : !CanAct(engine.state,s.Actor)) ||
+                        entry.Effects[^1].Flow==null || entry.Effects.Take(entry.Effects.Count-1).Any(e=>e.Flow!=null))
+                        throw new InvalidDataException("Invalid replay actor/effects.");
                     var submittedInBatch=false;
                     foreach (var effect in entry.Effects)
                     {
+                        if(effect.Flow is {} continuation)
+                        {
+                            if(flow==null || effect.Command.Kind!="flow-state" || continuation.Revision!=flow.Revision+1 || continuation.DefinitionHash!=flow.DefinitionHash || effect.RandomAfter!=engine.state.RandomState || effect.Order!=null || effect.Roll!=null)
+                                throw new InvalidDataException("Invalid replay flow continuation");
+                            engine.state.Flow=Wire.Copy(continuation);StateValidation.Validate(engine.state);continue;
+                        }
                         if ((effect.Command.Kind=="shuffle") != (effect.Order!=null)) throw new InvalidDataException("Missing or unexpected random outcome.");
                         if((effect.Command.Kind=="roll")!=(effect.Roll!=null)) throw new InvalidDataException("Missing or unexpected dice outcome.");
-                        Apply(engine.state,s.Actor,effect.Command,effect.Order,effect.RuleEffect,effect.Roll,submittedInBatch);
+                        Apply(engine.state,s.Actor,effect.Command,effect.Order,effect.RuleEffect,effect.Roll,submittedInBatch,system:s.Execution=="system");
                         submittedInBatch|=effect.Command.Kind=="secret-submit";
                         if (effect.RandomAfter==0 || (effect.Command.Kind is not ("shuffle" or "roll") && effect.RandomAfter!=engine.state.RandomState)) throw new InvalidDataException("Invalid random state.");
                         engine.state.RandomState=effect.RandomAfter;

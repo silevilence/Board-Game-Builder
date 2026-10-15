@@ -14,7 +14,7 @@ public sealed partial class GameEngine
     public IReadOnlyList<Diagnostic> ExportDiagnostics() => Wire.Copy(diagnostics);
     public bool CanAct(string actor)=>CanAct(state,actor);
     private static bool CanAct(GameState state,string actor)=>!state.Ended && state.Seats.Any(s=>s.Id==actor) &&
-        (state.Seats[state.CurrentSeat].Id==actor || state.Secret is {Status:"collecting"} round &&
+        (state.Flow is {} flow ? flow.Status=="waiting" && flow.Seat==actor : state.Seats[state.CurrentSeat].Id==actor || state.Secret is {Status:"collecting"} round &&
             (round.Coordinator==actor || round.Remaining>0 && round.Declaration.Participants.Contains(actor) && !round.Locked.Contains(actor)));
     public IReadOnlyList<ActionOffer> Actions(string actor)
     {
@@ -42,7 +42,7 @@ public sealed partial class GameEngine
         var sequence = submissions.Count + 1L;
         try
         {
-            if (!CanAct(actor)) throw new CommandRejected("operation-not-allowed");
+            if (state.Flow!=null || !CanAct(actor)) throw new CommandRejected("operation-not-allowed");
             var candidate = Wire.Copy(state);
             List<AppliedCommand> effects = [];
             if (rules == null) effects.Add(Execute(candidate,actor,command));
@@ -69,18 +69,18 @@ public sealed partial class GameEngine
             return new(sequence,false,"script-failure");
         }
     }
-    private static Entity Access(GameState state, string actor, string? id, bool ruleEffect = false)
+    private static Entity Access(GameState state, string actor, string? id, bool ruleEffect = false, bool system = false)
     {
-        if (id == null || !state.Entities.TryGetValue(id, out var entity) || (!ruleEffect && entity.Owner != null && entity.Owner != actor) || !IdentityVisible(state, entity, actor))
+        if (id == null || !state.Entities.TryGetValue(id, out var entity) || !system && ((!ruleEffect && entity.Owner != null && entity.Owner != actor) || !IdentityVisible(state, entity, actor)))
             throw new CommandRejected("operation-not-allowed");
         return entity;
     }
-    private static AppliedCommand Execute(GameState state, string actor, Command command, bool ruleEffect = false,bool submittedInBatch=false)
+    private static AppliedCommand Execute(GameState state, string actor, Command command, bool ruleEffect = false,bool submittedInBatch=false,bool system=false)
     {
-        Apply(state,actor,command,ruleEffect:ruleEffect,submittedInBatch:submittedInBatch);
+        Apply(state,actor,command,ruleEffect:ruleEffect,submittedInBatch:submittedInBatch,system:system);
         return new(Wire.Copy(command),ruleEffect,command.Kind == "shuffle" ? [..state.Entities[command.Entity!].Contents] : null,state.RandomState,command.Kind=="roll"?state.Entities[command.Entity!].Properties["value"]:null);
     }
-    private static void Apply(GameState state, string actor, Command command, List<string>? recordedOrder = null, bool ruleEffect = false,int? recordedRoll=null,bool submittedInBatch=false)
+    private static void Apply(GameState state, string actor, Command command, List<string>? recordedOrder = null, bool ruleEffect = false,int? recordedRoll=null,bool submittedInBatch=false,bool system=false)
     {
         if (state.Ended) throw new CommandRejected("operation-not-allowed");
         if(command.Kind.StartsWith("secret-",StringComparison.Ordinal)) {ApplySecret(state,actor,command,ruleEffect,submittedInBatch);return;}
@@ -97,7 +97,7 @@ public sealed partial class GameEngine
             if (command.Phase != null) state.Phase=command.Phase;
             return;
         }
-        var entity = Access(state, actor, command.Entity,ruleEffect);
+        var entity = Access(state, actor, command.Entity,ruleEffect,system);
         switch (command.Kind)
         {
             case "resize-container":
@@ -145,20 +145,22 @@ public sealed partial class GameEngine
                 if (command.Visibility == "owner" && entity.Owner == null) throw new CommandRejected("invalid-owner");
                 entity.Visibility = command.Visibility; entity.FaceUp = command.Visibility == "public"; break;
             case "draw":
-                var hand = Access(state, actor, command.Target,ruleEffect);
+                var hand = Access(state, actor, command.Target,ruleEffect,system);
                 if (!entity.IsContainer || !entity.Ordered || entity.Contents.Count == 0 || !hand.IsContainer || hand.Id == entity.Id || hand.Contents.Count >= hand.Capacity)
                     throw new CommandRejected("invalid-container");
                 var card = state.Entities[entity.Contents[0]];
                 if (card.IsContainer) throw new CommandRejected("invalid-container");
                 entity.Contents.RemoveAt(0); hand.Contents.Add(card.Id); card.Container = hand.Id;
                 if(command.Visibility is not (null or "owner" or "hidden" or "public")) throw new CommandRejected("invalid-visibility");
-                card.Owner = hand.Owner ?? actor; card.Visibility = command.Visibility ?? "owner"; card.FaceUp = card.Visibility=="public"; break;
+                card.Owner = hand.Owner ?? (system?command.Seat:actor); card.Visibility = command.Visibility ?? "owner";
+                if(card.Owner!=null && !state.Seats.Any(s=>s.Id==card.Owner) || card.Visibility=="owner" && card.Owner==null) throw new CommandRejected("invalid-owner");
+                card.FaceUp = card.Visibility=="public"; break;
             case "transfer":
-                var target = Access(state, actor, command.Target,ruleEffect);
+                var target = Access(state, actor, command.Target,ruleEffect,system);
                 if (!target.IsContainer || target.Contents.Count >= target.Capacity || entity.Container == target.Id) throw new CommandRejected("invalid-container");
                 for (Entity? parent = target; parent != null; parent = parent.Container == null ? null : state.Entities[parent.Container])
                     if (parent.Id == entity.Id) throw new CommandRejected("invalid-container");
-                if (entity.Container != null) Access(state, actor, entity.Container,ruleEffect).Contents.Remove(entity.Id);
+                if (entity.Container != null) Access(state, actor, entity.Container,ruleEffect,system).Contents.Remove(entity.Id);
                 target.Contents.Add(entity.Id); entity.Container = target.Id; break;
             default: throw new CommandRejected("unknown-command");
         }

@@ -10,8 +10,9 @@ internal sealed class RuleBinding : IGameRules
     public RuleDecision Decide(SeatView view,Command command)=>rules?.Decide(view,command) ?? new(true,"",[command]);
 }
 
-internal sealed class KernelAuthority(GameEngine engine) : IAuthoritySession
+internal sealed class KernelAuthority(GameEngine engine) : IAuthoritySession,IFlowAuthority
 {
+    public CommandResult SubmitFlow(string? actor,Command command,long revision,Action<GameEngine.FlowTransaction> operation)=>engine.SubmitFlow(actor,command,revision,operation);
     public SeatView Project(string seat)=>engine.Project(seat);
     public bool CanAct(string seat)=>engine.CanAct(seat);
     public IReadOnlyList<ActionOffer> Actions(string seat)=>engine.Actions(seat);
@@ -24,7 +25,7 @@ internal sealed class KernelAuthority(GameEngine engine) : IAuthoritySession
 internal static class AuthorityPlugin
 {
     public static readonly string[] Required=["authority","projection","random","rule-binding"];
-    public static RuntimePluginDefinition Create(Func<LoadedModule> input,uint seed)=>new("kernel","1",1,Required,[],scope=>
+    public static RuntimePluginDefinition Create(Func<LoadedModule> input,uint seed)=>new("kernel","1",1,[..Required,"flow-transactions"],[],scope=>
     {
         var module=input();
         var binding=new RuleBinding();
@@ -33,5 +34,6 @@ internal static class AuthorityPlugin
         scope.Provide("projection",authority);
         scope.Provide("random",authority);
         scope.Provide("rule-binding",binding);
+        scope.Provide("flow-transactions",authority);
     });
 }

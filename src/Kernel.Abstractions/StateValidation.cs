@@ -9,6 +9,7 @@ public static class StateValidation
         if(state.Phases==null || state.Phases.Count==0 || state.Phases.Any(string.IsNullOrWhiteSpace) || state.Phases.Distinct().Count()!=state.Phases.Count || !state.Phases.Contains(state.Phase) || state.CurrentSeat<0 || state.CurrentSeat>=state.Seats.Count || state.Turn<0)
             throw new InvalidDataException("turn/phases: invalid state");
         if(state.Winners==null || state.Winners.Distinct().Count()!=state.Winners.Count || state.Winners.Any(w=>!state.Seats.Any(s=>s.Id==w))) throw new InvalidDataException("winners: invalid seat");
+        state.Flow?.Validate(state);
         if(state.Secret is {} round)
         {
             var d=round.Declaration;

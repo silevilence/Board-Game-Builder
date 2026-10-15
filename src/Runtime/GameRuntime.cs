@@ -29,12 +29,18 @@ public static class GameRuntime
             string[] fields=selection.Id switch
             {
                 "definition.module"=>["path","presets"],"definition.state"=>["path"],"lua.rules" or "lua.cpu"=>["file"],"wasm"=>["extensions"],
-                "rules.commands"=>["actions"],_=>[]
+                "rules.commands"=>["actions"],"flow"=>["path","maxAutomaticSteps"],_=>[]
             };
             if(ResourcePlugins.IsResource(selection.Id)) fields=["sources"];
             CheckObject(selection.Configuration,fields,selection.Id+".configuration");
             if(ResourcePlugins.IsResource(selection.Id)) _=ResourceSource.Read(selection.Configuration,selection.Id);
             if(selection.Id=="rules.commands") _=new CommandRuleProvider(selection.Configuration);
+            if(selection.Id=="flow")
+            {
+                ModulePackage.ValidatePath(selection.Configuration.GetProperty("path").GetString()!);
+                if(selection.Configuration.TryGetProperty("maxAutomaticSteps",out var limit) && (!limit.TryGetInt32(out var steps) || steps is <1 or >100000)) throw new InvalidDataException("flow: maxAutomaticSteps must be 1..100000");
+                if(startup.Plugins.Any(p=>p.Id=="wasm")) throw new InvalidDataException("flow: WASM effects are not supported by this version");
+            }
             if(selection.Id is "definition.module" or "definition.state") ModulePackage.ValidatePath(selection.Configuration.GetProperty("path").GetString()!);
             if(selection.Id is "lua.rules" or "lua.cpu") ModulePackage.ValidatePath(selection.Configuration.GetProperty("file").GetString()!);
             if(selection.Id=="wasm")
@@ -71,6 +77,19 @@ public static class GameRuntime
             throw new InvalidDataException("Invalid/legacy runtime identity");
         if(module.Fingerprint!=ModuleSnapshot.Fingerprint(module)) throw new InvalidDataException("Runtime identity fingerprint mismatch");
         ValidateStartup(identity.Startup);
+        var flowSelection=FlowContent.Selection(identity.Startup);
+        if(flowSelection==null)
+        {
+            if(module.FlowFiles!=null || module.Initial.Flow!=null) throw new InvalidDataException("flow: payload without enabled plugin");
+        }
+        else
+        {
+            var flow=FlowContent.Read(identity.Startup,module.FlowFiles ?? throw new InvalidDataException("flow: missing payload"));
+            foreach(var file in module.FlowFiles!)
+                if(identity.ContentHashes.GetValueOrDefault(file.Key)!=ModulePackage.Hash(file.Value)) throw new InvalidDataException("flow: content identity mismatch");
+            var expected=new FlowState {DefinitionHash=flow.Hash,Node=flow.Definition.Nodes.Single(n=>n.Kind=="start").Id};
+            if(Wire.Json(expected)!=Wire.Json(module.Initial.Flow)) throw new InvalidDataException("flow: initial cursor mismatch");
+        }
         StateValidation.Validate(module.Initial);
         var resourceHashes=module.ResourceHashes ?? new(StringComparer.Ordinal);
         var resourceData=module.ResourceData ?? new(StringComparer.Ordinal);
@@ -131,10 +150,17 @@ public static class GameRuntime
         using var host=RuntimeHost.StartAsync(loaderPlan,loaders,["definition"]).GetAwaiter().GetResult();
         var loader=host.Service<IDefinitionLoader>("definition");
         var pool=startup.Plugins.Any(p=>p.Id=="resources")?host.Service<ResourceRegistry>("resources").Load(new DirectoryResourceInput(directory)):ResourcePool.Empty;
-        var content=ContentFiles(directory,startup,loader,pool);
+        var flowFiles=FlowContent.Load(directory,startup);
+        var content=ContentFiles(directory,startup,loader,pool,flowFiles);
         if(content.Count>ModuleContentLimits.MaxFiles-1 || content.Sum(p=>new FileInfo(DirectoryModule.SafeFile(directory,p)).Length)>ModuleContentLimits.MaxTotalBytes)
             throw new InvalidDataException("Directory content size budget exceeded");
         var definition=loader.Load(directory) with {Resources=pool};
+        if(flowFiles!=null)
+        {
+            var flow=FlowContent.Read(startup,flowFiles);
+            if(definition.Initial.Ended || definition.Initial.Flow!=null || definition.Initial.Secret!=null) throw new InvalidDataException("flow: definition must contain a fresh non-secret state");
+            definition.Initial.Flow=new(){DefinitionHash=flow.Hash,Node=flow.Definition.Nodes.Single(n=>n.Kind=="start").Id};
+        }
         ValidateImages(definition.Initial,pool);
         var hashes=new SortedDictionary<string,string>(StringComparer.Ordinal);
         foreach(var file in content) hashes[file]=ModulePackage.Hash(File.ReadAllBytes(DirectoryModule.SafeFile(directory,file)));
@@ -144,14 +170,15 @@ public static class GameRuntime
         var cpu=definition.CapabilityData.TryGetValue("lua.cpu",out var c)?c.Deserialize<LuaScript>(Wire.Options):null;
         var wasm=definition.CapabilityData.TryGetValue("wasm",out var w)?w.Deserialize<List<RuntimePlugin>>(Wire.Options):null;
         var result=new LoadedModule(startup.Id,startup.Version,"",definition.Initial,rules?.Source ?? "",cpu?.Source ?? "",rules?.Path ?? "",cpu?.Path ?? "",
-            definition.ResourceHashes,definition.ResourceData,null,wasm is {Count:>0}?wasm:null,identity,definition,pool);
+            definition.ResourceHashes,definition.ResourceData,null,wasm is {Count:>0}?wasm:null,identity,definition,pool,flowFiles);
         return result with {Fingerprint=ModuleSnapshot.Fingerprint(result)};
     }
-    internal static IReadOnlyList<string> ContentFiles(string directory,RuntimeStartup startup,IDefinitionLoader loader,ResourcePool? resources=null)
+    internal static IReadOnlyList<string> ContentFiles(string directory,RuntimeStartup startup,IDefinitionLoader loader,ResourcePool? resources=null,SortedDictionary<string,byte[]>? flowFiles=null)
     {
         var paths=loader.ContentFiles(directory).ToList();
         paths.AddRange(RuntimeContent.Files(startup));
         paths.AddRange(resources?.Files.Keys ?? []);
+        paths.AddRange((flowFiles ?? FlowContent.Load(directory,startup))?.Keys.AsEnumerable() ?? []);
         foreach(var path in paths)
         {
             ModulePackage.ValidatePath(path);

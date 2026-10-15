@@ -6,6 +6,48 @@ namespace Engine.Tests;
 
 public static class FlowTests
 {
+    internal static LoadedModule Module(FlowDefinition graph,Dictionary<string,string>? scripts=null,int budget=256)
+    {
+        var directory=Path.Combine(Path.GetTempPath(),"bgb-flow-"+Guid.NewGuid());Directory.CreateDirectory(directory);
+        try {WriteGame(directory,graph,scripts,budget);return GameRuntime.Load(directory);}
+        finally {Directory.Delete(directory,true);}
+    }
+    internal static void WriteGame(string directory,FlowDefinition graph,Dictionary<string,string>? scripts=null,int budget=256)
+    {
+        var state=new GameState {Seats=[new("p1","one"),new("p2","two")],Phases=["play"],Phase="play",
+            Entities=new(StringComparer.Ordinal) { ["counter"]=new(){Id="counter",Properties=new(StringComparer.Ordinal){{"value",0}}},
+                ["private"]=new(){Id="private",Visibility="hidden",Properties=new(StringComparer.Ordinal){{"value",42}}} }};
+        var plugins=new List<RuntimePluginSelection>();
+        void Add(string id,object config)=>plugins.Add(new(id,"1",1,JsonSerializer.SerializeToElement(config)));
+        foreach(var id in new[]{"kernel","session.local","recording"}) Add(id,new {});
+        Add("definition.state",new {path="position.json"});Add("flow",new {path="flow.json",maxAutomaticSteps=budget});
+        if(scripts?.ContainsKey("cpu.lua")==true) Add("lua.cpu",new{file="cpu.lua"});
+        File.WriteAllText(Path.Combine(directory,GameRuntime.Entry),Wire.Json(new RuntimeStartup(1,"flow-fixture","1",plugins)));
+        File.WriteAllText(Path.Combine(directory,"position.json"),Wire.Json(new {format=1,state}));
+        File.WriteAllText(Path.Combine(directory,"flow.json"),FlowFile.Write(graph));
+        foreach(var script in scripts ?? []) File.WriteAllText(Path.Combine(directory,script.Key),script.Value);
+    }
+    internal static FlowDefinition Minimal()=>new(1,[new(){Id="start",Kind="start"},
+        new(){Id="set",Kind="system",Commands=[new(){Kind="set",Entity="private",Property="value",Value=7}]},
+        new(){Id="end",Kind="end",Winners=[]}],[new("a","start","set"),new("b","set","end")]);
+    public static void Runtime()
+    {
+        var module=Module(Minimal());using var session=new PlaySession(module);
+        Check.That(session.Ended && session.Fault==null);
+        Check.That(session.ExportAuthorityState().Entities["private"].Properties["value"]==7);
+        var count=session.ExportAuthorityLog().EntryCount;
+        for(var i=0;i<3;i++) {_=session.View("p1");_=session.Actions();}
+        Check.That(session.ExportAuthorityLog().EntryCount==count);
+        Check.That(session.ExportAuthorityLog().Entries.All(e=>e.Submission.Actor=="" && e.Submission.Execution=="system"));
+        Check.That(session.AuthorityStateHash()==Wire.Hash(Wire.Json(session.ExportRecording().Replay().ExportAuthorityState())));
+        var bad=Minimal();bad.Nodes[1]=bad.Nodes[1] with {Commands=[new(){Kind="set",Entity="private",Property="value",Value=8},new(){Kind="set",Entity="missing"}]};
+        using var failed=new PlaySession(Module(bad));
+        Check.That(failed.Fault!=null && failed.ExportAuthorityState().Entities["private"].Properties["value"]==42 && failed.ExportAuthorityState().Flow!.Node=="set");
+        var engine=new GameEngine(module.Initial);
+        var accepted=engine.SubmitFlow(null,new(){Kind="flow-enter"},0,tx=>tx.Complete(tx.Snapshot().Flow! with {Revision=1,Node="set"}));
+        Check.That(accepted.Accepted && !engine.SubmitFlow(null,new(){Kind="flow-enter"},0,_=>throw new Exception()).Accepted);
+        Check.That(!engine.Submit("p1",new(){Kind="finish",Winners=[]}).Accepted);
+    }
     internal static FlowDefinition Example() => new(1,
     [
         new() { Id="start", Kind="start" },

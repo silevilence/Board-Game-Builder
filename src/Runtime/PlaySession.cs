@@ -33,6 +33,8 @@ public sealed class PlaySession : IGameSession
 
 internal sealed class LocalGameSession : IGameSession
 {
+    private readonly FlowController? flow;
+    private SessionFault? fault;
     private readonly object commands=new();
     private LoadedModule module;
     private readonly IRecordingProvider recording;
@@ -46,20 +48,21 @@ internal sealed class LocalGameSession : IGameSession
     private readonly IRuleProvider rules;
     private readonly ICpuDecisionProvider? cpu;
     private volatile bool disposed;
-    public SessionFault? Fault { get; private set; }
+    public SessionFault? Fault { get=>fault ?? flow?.Fault; private set=>fault=value; }
     public int Steps { get; private set; }
     public bool Ended => engine.Project(module.Initial.Seats[0].Id).Ended;
     public string CurrentSeat => engine.Project(module.Initial.Seats[0].Id).CurrentSeat;
     public bool IsCpu => controllers[CurrentSeat]=="cpu";
     public bool SupportsCpu => cpu!=null;
     internal LocalGameSession(LoadedModule module,uint seed,IReadOnlyDictionary<string,string> controllers,int maxSteps,
-        IAuthoritySession engine,RuleBinding ruleBinding,IRuleProvider rules,ICpuDecisionProvider? cpu,IEffectProvider? effects,IRecordingProvider recording)
+        IAuthoritySession engine,RuleBinding ruleBinding,IRuleProvider rules,ICpuDecisionProvider? cpu,IEffectProvider? effects,IRecordingProvider recording,FlowController? flow=null)
     {
         if(maxSteps<1) throw new ArgumentOutOfRangeException(nameof(maxSteps));
         this.module=Wire.Copy(module);this.seed=seed;this.maxSteps=maxSteps;
         this.recording=recording;
-        this.controllers=new(controllers);this.engine=engine;this.ruleBinding=ruleBinding;this.rules=rules;this.cpu=cpu;this.effects=effects;
+        this.controllers=new(controllers);this.engine=flow ?? engine;this.ruleBinding=ruleBinding;this.rules=rules;this.cpu=cpu;this.effects=effects;this.flow=flow;
         ruleBinding.Replace(ComposeRules(rules.Rules));
+        flow?.Advance();
     }
     public SeatView View(string seat) => engine.Project(seat);
     public IReadOnlyList<ActionOffer> Actions(string? seat=null)

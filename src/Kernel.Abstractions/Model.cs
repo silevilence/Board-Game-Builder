@@ -66,6 +66,8 @@ public sealed class Entity
 public sealed class GameState
 {
     [JsonIgnore(Condition=JsonIgnoreCondition.WhenWritingNull)]
+    public FlowState? Flow { get; set; }
+    [JsonIgnore(Condition=JsonIgnoreCondition.WhenWritingNull)]
     public SecretRound? Secret {get;set;}
     public BoardLayout? Layout { get; set; }
     public SortedDictionary<string, Entity> Entities { get; set; } = new(StringComparer.Ordinal);
@@ -84,4 +86,5 @@ public sealed record LoadedModule(string Id, string Version, string Fingerprint,
     [property:JsonIgnore(Condition=JsonIgnoreCondition.WhenWritingNull)] List<RuntimePlugin>? RuntimePlugins=null,
     [property:JsonIgnore(Condition=JsonIgnoreCondition.WhenWritingNull)] RuntimeIdentity? RuntimeIdentity=null,
     [property:JsonIgnore(Condition=JsonIgnoreCondition.WhenWritingNull)] GameDefinition? Definition=null,
-    [property:JsonIgnore(Condition=JsonIgnoreCondition.WhenWritingNull)] ResourcePool? Resources=null);
+    [property:JsonIgnore(Condition=JsonIgnoreCondition.WhenWritingNull)] ResourcePool? Resources=null,
+    [property:JsonIgnore(Condition=JsonIgnoreCondition.WhenWritingNull)] SortedDictionary<string,byte[]>? FlowFiles=null);
