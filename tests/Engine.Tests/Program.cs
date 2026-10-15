@@ -8,6 +8,7 @@ try
     tests.Add("flow-validation",FlowTests.Validation);
     tests.Add("flow-runtime",FlowTests.Runtime);
     tests.Add("flow-systems",FlowTests.Systems);
+    tests.Add("flow-players",FlowTests.Players);
     tests.Add("export-dependencies",ExportDependencyTests.Run);
     tests.Add("system-runtime",SystemRuntimeTests.Run);
     tests.Add("author-contract",AuthorProjectTests.Contract);

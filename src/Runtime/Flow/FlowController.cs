@@ -35,12 +35,19 @@ internal sealed class FlowController : IAuthoritySession,IRuleProvider,IGameRule
         for(var step=0;step<budget;step++)
         {
             var state=authority.ExportAuthorityState();var flow=state.Flow!;
-            if(state.Ended || flow.Status=="waiting" || Fault!=null)return;
+            if(state.Ended || Fault!=null)return;
+            if(flow.Status=="waiting") {CheckActions(flow);return;}
             var node=nodes[flow.Node];
             var result=transactions.SubmitFlow(null,new(){Kind="flow-enter",Entity=node.Id},flow.Revision,tx=>Enter(tx,node,flow));
             if(!result.Accepted) {Fault=new("flow-execution", "", "Node "+node.Id+": "+result.Reason);return;}
         }
         if(authority.ExportAuthorityState().Flow is {Status:"ready"} current) Fault=new("flow-budget","","Automatic step budget exhausted at node "+current.Node);
+        else if(authority.ExportAuthorityState().Flow is {Status:"waiting"} waiting) CheckActions(waiting);
+    }
+    private void CheckActions(FlowState flow)
+    {
+        try {if(Actions(flow.Seat!).Count==0) Fault=new("flow-no-actions",flow.Seat!,"No legal action at node "+flow.Node);}
+        catch(Exception e) when(e is not OutOfMemoryException) {Fault=new("flow-actions-error",flow.Seat!,"Action query failed at node "+flow.Node);}
     }
     private void Enter(GameEngine.FlowTransaction tx,FlowNode node,FlowState flow)
     {
@@ -48,8 +55,14 @@ internal sealed class FlowController : IAuthoritySession,IRuleProvider,IGameRule
         foreach(var command in node.Commands) tx.Apply(command);
         var outcome=node.Script==null?new FlowOutcome():Invoke<FlowOutcome>(node.Script,Input(tx.Snapshot(),node,next),tx.Snapshot().RandomState);
         next=ApplyOutcome(tx,node,next,outcome);
-        if(node.Kind=="player") throw new InvalidDataException("flow: player execution is unavailable");
-        if(node.Kind=="end") tx.Complete(next with {Status="ended",Result=outcome.Result,Seat=null,
+        if(node.Kind=="player")
+        {
+            var state=tx.Snapshot();var selector=node.Seat!;
+            var seat=selector.Fixed ?? (selector.Current?state.Seats[state.CurrentSeat].Id:Invoke<string>(selector.Script!,Input(state,node,next),state.RandomState));
+            if(!state.Seats.Any(s=>s.Id==seat)) throw new FlowOperationException("flow-invalid-seat");
+            tx.Complete(next with {Status="waiting",Seat=seat});
+        }
+        else if(node.Kind=="end") tx.Complete(next with {Status="ended",Result=outcome.Result,Seat=null,
             Trace=next.Trace.Append(new(next.Revision,node.Id,outcome.Result,null)).TakeLast(64).ToList()},outcome.Winners ?? node.Winners ?? throw new InvalidDataException("flow-end-result"));
         else tx.Complete(Leave(tx.Snapshot(),node,next,outcome.Result));
     }
@@ -78,8 +91,38 @@ internal sealed class FlowController : IAuthoritySession,IRuleProvider,IGameRule
     }
     public SeatView Project(string seat)=>authority.Project(seat);
     public bool CanAct(string seat)=>Fault==null && authority.CanAct(seat);
-    public IReadOnlyList<ActionOffer> Actions(string seat)=>[];
-    public CommandResult Submit(string seat,Command command)=>new(0,false,"operation-not-allowed");
+    public IReadOnlyList<ActionOffer> Actions(string seat)
+    {
+        if(!CanAct(seat))return [];
+        var state=authority.ExportAuthorityState();var flow=state.Flow!;var node=nodes[flow.Node];
+        var offers=node.ActionsScript==null?node.Actions.Select(a=>new ActionOffer(a.Id,a.Label,new(){Kind="flow-action",Entity=a.Id})).ToList():
+            Invoke<List<ActionOffer>>(node.ActionsScript,new {view=authority.Project(seat),parameters=node.Parameters},state.RandomState);
+        if(offers.Count>256 || offers.Any(a=>a==null || string.IsNullOrWhiteSpace(a.Id) || string.IsNullOrWhiteSpace(a.Label) || a.Command==null || string.IsNullOrWhiteSpace(a.Command.Kind)) || offers.Select(a=>a.Id).Distinct().Count()!=offers.Count)
+            throw new FlowOperationException("flow-action-schema");
+        return offers.Select(a=>a with {Command=a.Command with {FlowRevision=flow.Revision}}).ToList();
+    }
+    public CommandResult Submit(string seat,Command command)
+    {
+        if(!CanAct(seat))return new(0,false,"operation-not-allowed");
+        var state=authority.ExportAuthorityState();var flow=state.Flow!;var node=nodes[flow.Node];
+        if(command.FlowRevision!=flow.Revision || !Actions(seat).Any(a=>Wire.Json(a.Command)==Wire.Json(command))) return new(0,false,"flow-stale-or-illegal-action");
+        var result=transactions.SubmitFlow(seat,command,flow.Revision,tx=>
+        {
+            FlowOutcome outcome;
+            if(node.DecideScript==null)
+            {
+                var action=node.Actions.Single(a=>a.Id==command.Entity);
+                outcome=new(){Commands=action.Commands,Result=action.Result,Complete=action.Complete};
+            }
+            else outcome=Invoke<FlowOutcome>(node.DecideScript,new {view=authority.Project(seat),parameters=node.Parameters,command=command with {FlowRevision=null}},state.RandomState);
+            if(outcome.GameContext!=null || outcome.NodeContext!=null || outcome.Winners!=null) throw new FlowOperationException("flow-player-context-denied");
+            var next=ApplyOutcome(tx,node,flow with {Revision=flow.Revision+1},outcome);
+            tx.Complete(outcome.Complete?Leave(tx.Snapshot(),node,next,outcome.Result):next);
+        });
+        if(result.Accepted)Advance();
+        else if(result.Reason.StartsWith("flow-",StringComparison.Ordinal)) Fault=new("flow-execution",seat,"Node "+node.Id+": "+result.Reason);
+        return result;
+    }
     public GameState ExportAuthorityState()=>authority.ExportAuthorityState();
     public ReplayLog ExportLog()=>authority.ExportLog();
     public IReadOnlyList<Diagnostic> ExportDiagnostics()=>authority.ExportDiagnostics();

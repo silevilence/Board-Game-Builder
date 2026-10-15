@@ -73,6 +73,46 @@ public static class FlowTests
             Check.That(!Wire.Json(failed.ExportAuthorityLog()).Contains("hidden-value-42") && !Wire.Json(failed.ExportDiagnostics()).Contains("hidden-value-42"));
         }
     }
+    internal static (FlowDefinition Graph,Dictionary<string,string> Scripts) PlayerGraph()
+    {
+        var graph=new FlowDefinition(1,[new(){Id="start",Kind="start"},new(){Id="play",Kind="player",Seat=new(Script:new("player.lua","seat")),
+            Script=new("player.lua","enter"),ActionsScript=new("player.lua","actions"),DecideScript=new("player.lua","decide")},
+            new(){Id="end",Kind="end",Winners=["p2"]}],[new("a","start","play"),new("b","play","end")]);
+        var scripts=new Dictionary<string,string>{{"player.lua","""
+            return {
+              seat=function(x) return 'p2' end,
+              enter=function(x) return {gameContext={hidden=42},nodeContext={entered=1},commands={{kind='set',entity='private',property='value',value=9}}} end,
+              actions=function(x)
+                assert(x.state==nil and x.gameContext==nil and x.nodeContext==nil)
+                local value=0
+                for _,e in ipairs(x.view.entities) do assert(e.id~='private');if e.id=='counter' then value=e.properties.value end end
+                if value<2 then return {{id='add',label='Add',command={kind='set',entity='counter',property='value',value=value+1}}} end
+                return {{id='done',label='Done',command={kind='phase',phase='play'}}}
+              end,
+              decide=function(x) return {commands={x.command},complete=x.command.kind=='phase'} end
+            }
+            """},{"cpu.lua","return {decide=function(x) assert(x.view.flow==nil);return x.actions[1].command end}"}};
+        return (graph,scripts);
+    }
+    public static void Players()
+    {
+        var (graph,scripts)=PlayerGraph();var module=Module(graph,scripts);
+        using var human=new PlaySession(module);
+        Check.That(human.CurrentSeat=="p2" && human.ExportAuthorityState().CurrentSeat==0 && human.Fault==null);
+        var action=human.Actions().Single().Command;
+        Check.That(!human.SubmitHuman("p1",action).Accepted && human.SubmitHuman("p2",action).Accepted);
+        Check.That(!human.SubmitHuman("p2",action).Accepted);
+        Check.That(human.ExportAuthorityState().Flow!.NodeContext["entered"].GetInt32()==1);
+        Check.That(human.SubmitHuman("p2",human.Actions().Single().Command).Accepted);
+        Check.That(!human.Ended && human.ExportAuthorityState().Entities["private"].Properties["value"]==9);
+        Check.That(human.SubmitHuman("p2",human.Actions().Single().Command).Accepted && human.Ended);
+        using var cpu=new PlaySession(module,controllers:new Dictionary<string,string>{{"p2","cpu"}});
+        while(cpu.StepCpu()) { }
+        Check.That(cpu.Ended && cpu.Fault==null && cpu.AuthorityStateHash()==human.AuthorityStateHash());
+        graph.Nodes[1]=graph.Nodes[1] with {ActionsScript=null,DecideScript=null,Actions=[]};
+        using var stuck=new PlaySession(Module(graph,scripts));
+        Check.That(stuck.Fault?.Code=="flow-no-actions");
+    }
     internal static FlowDefinition Example() => new(1,
     [
         new() { Id="start", Kind="start" },
