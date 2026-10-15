@@ -16,13 +16,20 @@ public static class FlowConditions
         if (c.Op == "not") return !Evaluate(c.Items![0], resolve, lua);
         if (c.Op is "all" or "any")
         {
-            var values=c.Items!.Select(i=>Evaluate(i,resolve,lua)).ToArray();
-            return c.Op=="all" ? values.Contains(false)?false:values.Contains(null)?null:true :
-                values.Contains(true)?true:values.Contains(null)?null:false;
+            var unknown=false;
+            foreach(var item in c.Items!)
+            {
+                var value=Evaluate(item,resolve,lua);
+                if(c.Op=="all" && value==false)return false;
+                if(c.Op=="any" && value==true)return true;
+                unknown|=value==null;
+            }
+            return unknown?null:c.Op=="all";
         }
         var left=Value(c.Left!,resolve);var right=Value(c.Right!,resolve);
         if (left == null || right == null) return null;
-        if (left.Value.ValueKind != right.Value.ValueKind) throw new InvalidDataException("condition-type: operands must have the same type");
+        var booleans=left.Value.ValueKind is JsonValueKind.True or JsonValueKind.False && right.Value.ValueKind is JsonValueKind.True or JsonValueKind.False;
+        if (left.Value.ValueKind != right.Value.ValueKind && !booleans) throw new InvalidDataException("condition-type: operands must have the same type");
         var kind=left.Value.ValueKind;
         if (kind is JsonValueKind.Array or JsonValueKind.Object or JsonValueKind.Undefined) throw new InvalidDataException("condition-type: scalar required");
         var equal=kind==JsonValueKind.Number ? left.Value.GetDecimal()==right.Value.GetDecimal() : left.Value.ToString()==right.Value.ToString();
@@ -47,7 +54,7 @@ public static class FlowConditions
     }
     private static bool IsFalse(FlowScript script,IReadOnlyDictionary<string,string>? scripts)
     {
-        if(scripts==null || !scripts.TryGetValue(script.Path,out var source)) return false;
+        if(scripts==null || string.IsNullOrWhiteSpace(script.Path) || string.IsNullOrWhiteSpace(script.Entry) || !scripts.TryGetValue(script.Path,out var source)) return false;
         // Deliberately recognizes only an entire trivial file, never arbitrary Lua bodies/comments.
         return Regex.IsMatch(source,@"\A\s*return\s+false\s*;?\s*\z",RegexOptions.CultureInvariant) ||
             Regex.IsMatch(source,@"\A\s*return\s*\{\s*"+Regex.Escape(script.Entry)+@"\s*=\s*function\s*\(\s*[a-zA-Z_]*\s*\)\s*return\s+false\s*;?\s*end\s*\}\s*;?\s*\z",RegexOptions.CultureInvariant);

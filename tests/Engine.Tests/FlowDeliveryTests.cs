@@ -13,6 +13,22 @@ public static class FlowDeliveryTests
         var root=Path.Combine(Path.GetTempPath(),"bgb-flow-delivery-"+Guid.NewGuid());Directory.CreateDirectory(root);
         try
         {
+            var flowOnly=Path.Combine(root,"flow-only");Directory.CreateDirectory(flowOnly);
+            var graph=FlowTests.Minimal();graph.Nodes[1]=graph.Nodes[1] with {Script=new("execute.lua")};
+            FlowTests.WriteGame(flowOnly,graph,new(){{"execute.lua","return {execute=function(x) return {} end}"}});
+            var entryPath=Path.Combine(flowOnly,GameRuntime.Entry);var entry=File.ReadAllText(entryPath);
+            var startup=Wire.Read<RuntimeStartup>(entry);
+            startup.Plugins.Add(new("rules.commands","1",1,JsonSerializer.SerializeToElement(new{})));
+            File.WriteAllText(entryPath,Wire.Json(startup));Check.Throws(()=>GameRuntime.Load(flowOnly),"capability");
+            startup=Wire.Read<RuntimeStartup>(entry);var index=startup.Plugins.FindIndex(p=>p.Id=="flow");
+            startup.Plugins[index]=startup.Plugins[index] with {Version="unknown"};
+            File.WriteAllText(entryPath,Wire.Json(startup));Check.Throws(()=>GameRuntime.Load(flowOnly),"version");
+            File.WriteAllText(entryPath,entry);
+            var release=Path.Combine(root,"release");Directory.CreateDirectory(release);
+            var files=new SortedDictionary<string,string>(StringComparer.Ordinal);
+            foreach(var path in new[]{"Player.exe","Player.dll","Player.deps.json","Player.runtimeconfig.json","Runtime.dll","Modules.dll","Kernel.dll","Kernel.Abstractions.dll","coreclr.dll","hostfxr.dll","CordiSharp.dll"})files[path]="stub";
+            File.WriteAllText(Path.Combine(release,"release.json"),Wire.Json(new ReleaseManifest(EngineVersion.Api,"1","win-x64",files,true,false,GameRuntime.PluginVersions)));
+            Check.Throws(()=>PlayerDistribution.Preflight(release,flowOnly),"worker/Lua.exe");
             using(var minimal=new PlaySession(GameRuntime.Load("samples/flow-minimal"))) Check.That(minimal.Ended);
             var source=Path.Combine(root,"source");TestModules.CopyGame("samples/flow-cards",source);
             var module=GameRuntime.Load(source);

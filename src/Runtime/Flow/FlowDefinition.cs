@@ -48,6 +48,7 @@ public static class FlowFile
         try
         {
             if (json.Length > 1024 * 1024) throw new InvalidDataException("flow: file size limit exceeded");
+            using(var document=JsonDocument.Parse(json)) CheckKeys(document.RootElement);
             var value = Wire.Read<FlowDefinition>(json);
             if (value.Format != Version) throw new InvalidDataException("flow.format: unsupported version " + value.Format);
             if (value.Nodes == null || value.Edges == null) throw new InvalidDataException("flow: nodes and edges are required");
@@ -60,12 +61,25 @@ public static class FlowFile
         catch (JsonException error) { throw new InvalidDataException("flow: " + error.Message, error); }
     }
     public static string Write(FlowDefinition definition) => Wire.Json(definition);
+    private static void CheckKeys(JsonElement value)
+    {
+        if(value.ValueKind==JsonValueKind.Object)
+        {
+            var keys=new HashSet<string>();
+            foreach(var property in value.EnumerateObject())
+            {
+                if(!keys.Add(property.Name))throw new InvalidDataException("flow: duplicate field "+property.Name);
+                CheckKeys(property.Value);
+            }
+        }
+        else if(value.ValueKind==JsonValueKind.Array) foreach(var item in value.EnumerateArray()) CheckKeys(item);
+    }
     public static IEnumerable<FlowScript> Scripts(FlowDefinition definition)
     {
-        foreach (var node in definition.Nodes)
+        foreach (var node in definition.Nodes.Where(n=>n!=null))
             foreach (var script in new[] { node.Script, node.Seat?.Script, node.ActionsScript, node.DecideScript })
                 if (script != null) yield return script;
-        foreach (var edge in definition.Edges)
+        foreach (var edge in definition.Edges.Where(e=>e!=null))
             foreach (var script in ConditionScripts(edge.Condition)) yield return script;
     }
     private static IEnumerable<FlowScript> ConditionScripts(FlowCondition? condition)

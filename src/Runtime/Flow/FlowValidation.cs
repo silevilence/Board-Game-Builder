@@ -14,6 +14,7 @@ public static class FlowValidation
         foreach(var n in graph.Nodes)
         {
             if(n==null || string.IsNullOrWhiteSpace(n.Id) || !nodes.TryAdd(n.Id,n)) {Error("node-id","Missing or duplicate node ID",n?.Id);continue;}
+            if(n.Id.Length>128 || n.Results?.Any(r=>r?.Length>128)==true) Error("node-id","Node/result IDs cannot exceed 128 characters",n.Id);
             if(n.Kind is not ("start" or "system" or "player" or "end")) Error("node-kind","Unknown node type",n.Id);
             if(n.Results==null || n.Results.Count==0 || n.Results.Any(string.IsNullOrWhiteSpace) || n.Results.Distinct().Count()!=n.Results.Count) Error("node-results","Nonempty unique results required",n.Id);
             if(n.Commands==null || n.Commands.Count>64 || n.Commands.Any(c=>c==null || string.IsNullOrWhiteSpace(c.Kind))) Error("node-commands","Invalid commands",n.Id);
@@ -37,6 +38,7 @@ public static class FlowValidation
         foreach(var e in graph.Edges)
         {
             if(e==null || string.IsNullOrWhiteSpace(e.Id) || !ids.Add(e.Id)) {Error("edge-id","Missing or duplicate edge ID",edge:e?.Id);continue;}
+            if(e.Id.Length>128) Error("edge-id","Edge IDs cannot exceed 128 characters",edge:e.Id);
             if(e.From==null || e.To==null || !nodes.TryGetValue(e.From,out var from) || !nodes.TryGetValue(e.To,out var to)) {Error("edge-endpoint","Unknown node endpoint",edge:e.Id);continue;}
             if(from.Kind=="end" || to.Kind=="start") Error("edge-direction","Start has no incoming edges; end has no outgoing edges",edge:e.Id);
             if(!(from.Results?.Contains(e.Result)??false)) Error("edge-result","Unknown source result",from.Id,e.Id);
@@ -50,11 +52,18 @@ public static class FlowValidation
         }
         foreach(var group in graph.Edges.Where(e=>e!=null && e.Default).GroupBy(e=>(e.From,e.Result)))
             if(group.Count()>1) foreach(var e in group) Error("edge-default","More than one default for result",e.From,e.Id);
+        // A known-true branch also makes defaults and lower-priority exits impossible.
+        foreach(var group in usable.GroupBy(e=>(e.From,e.Result)).ToArray())
+        {
+            var certain=group.Where(e=>!e.Default && FlowConditions.Constant(e.Condition,scripts)==true).ToArray();
+            if(certain.Length>0) usable.RemoveAll(e=>e.From==group.Key.From && e.Result==group.Key.Result &&
+                (e.Default || e.Priority<certain.Max(c=>c.Priority)));
+        }
         if(diagnostics.Any(d=>d.Code is "node-config" or "node-id")) return diagnostics;
         foreach(var script in FlowFile.Scripts(graph))
         {
             try {ModulePackage.ValidatePath(script.Path);if(string.IsNullOrWhiteSpace(script.Entry)) throw new InvalidDataException("Missing script entry");}
-            catch(Exception e) when(e is InvalidDataException or ArgumentException) {Error("script-reference",e.Message);}
+            catch(Exception e) when(e is InvalidDataException or ArgumentException) {Error("script-reference",e.Message);continue;}
             if(scripts!=null && !scripts.ContainsKey(script.Path)) Error("script-missing","Missing script: "+script.Path);
         }
         // Reverse reachability from all terminals rejects closed SCCs and every feeder into them.

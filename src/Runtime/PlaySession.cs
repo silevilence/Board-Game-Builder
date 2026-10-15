@@ -69,8 +69,9 @@ internal sealed class LocalGameSession : IGameSession
         ruleBinding.Replace(ComposeRules(rules.Rules));
         Steps=engine.ExportLog().Entries.Count(e=>e.Submission.Accepted && e.Submission.Execution=="player");
         flow?.Advance();
+        if(Ended) StopExecution();
     }
-    public SeatView View(string seat) => engine.Project(seat);
+    public SeatView View(string seat) {lock(commands) return engine.Project(seat);}
     public IReadOnlyList<ActionOffer> Actions(string? seat=null)
     {lock(commands) return ReadActions(seat);}
     private IReadOnlyList<ActionOffer> ReadActions(string? seat)
@@ -144,10 +145,10 @@ internal sealed class LocalGameSession : IGameSession
     }
     private void StopExecution() { (rules as IDisposable)?.Dispose();(cpu as IDisposable)?.Dispose(); }
     private void Stop(string code,string detail) { Fault ??=new(code,CurrentSeat,detail); cpuDiagnostics.Add(new(engine.ExportLog().EntryCount+1,CurrentSeat,cpu?.Entry ?? "session",code+": "+detail)); StopExecution(); }
-    public ReplayLog ExportAuthorityLog() => engine.ExportLog();
-    public IReadOnlyList<Diagnostic> ExportDiagnostics() => engine.ExportDiagnostics().Concat(Wire.Copy(cpuDiagnostics)).OrderBy(d=>d.Sequence).ToArray();
-    public string AuthorityStateHash() => Wire.Hash(Wire.Json(engine.ExportAuthorityState()));
-    public GameState ExportAuthorityState() => engine.ExportAuthorityState();
+    public ReplayLog ExportAuthorityLog() {lock(commands) return engine.ExportLog();}
+    public IReadOnlyList<Diagnostic> ExportDiagnostics() {lock(commands) return engine.ExportDiagnostics().Concat(Wire.Copy(cpuDiagnostics)).OrderBy(d=>d.Sequence).ToArray();}
+    public string AuthorityStateHash() {lock(commands) return Wire.Hash(Wire.Json(engine.ExportAuthorityState()));}
+    public GameState ExportAuthorityState() {lock(commands) return engine.ExportAuthorityState();}
     // The owner serializes this with commands. A successful switch affects the next submission.
     public void ReloadScripts(LoadedModule candidate)
     {lock(commands) ReloadScriptsCore(candidate);}
@@ -175,7 +176,7 @@ internal sealed class LocalGameSession : IGameSession
         rules.Apply(preparedRules);applyCpu?.Invoke();ruleBinding.Replace(ComposeRules(rules.Rules));module=next;
         recording.RecordVersion(next);
     }
-    public SessionRecording ExportRecording() => recording.Capture();
+    public SessionRecording ExportRecording() {lock(commands) return recording.Capture();}
     private IGameRules ComposeRules(IGameRules value)=>effects==null?value:new EffectRules(value,effects);
     public void Dispose()
     {

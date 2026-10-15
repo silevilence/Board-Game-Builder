@@ -200,6 +200,9 @@ public static class FlowTests
     }
     public static void Validation()
     {
+        Check.That(FlowConditions.Constant(new("eq",new(JsonSerializer.SerializeToElement(true)),new(JsonSerializer.SerializeToElement(false))))==false);
+        Check.That(FlowConditions.Evaluate(new("all",Items:[new("false"),new("eq",new(Path:"/absent"),new(JsonSerializer.SerializeToElement(1)))]),_=>throw new Exception("Must short circuit"),_=>false)==false);
+        Check.Throws(()=>FlowFile.Parse("{\"format\":1,\"format\":1,\"nodes\":[],\"edges\":[]}"),"duplicate field");
         Check.That(!FlowValidation.Validate(Example()).Any(d=>d.Severity=="error"));
         var nodes=new List<FlowNode> {new(){Id="s",Kind="start"},new(){Id="a",Kind="system"},new(){Id="b",Kind="system"},new(){Id="e",Kind="end",Winners=[]}};
         var cycle=new FlowDefinition(1,nodes,[new("sa","s","a"),new("ab","a","b"),new("ba","b","a")]);
@@ -218,5 +221,50 @@ public static class FlowTests
         Check.That(FlowValidation.Validate(bad).Any(d=>d.Code=="edge-direction"));
         var waiting=valid with {Nodes=nodes.Select(n=>n.Id=="a"?n with {Kind="player",Seat=new(Current:true),Actions=[new("wait","Wait",[],false)]}:n).ToList()};
         Check.That(!FlowValidation.Validate(waiting).Any(d=>d.Severity=="error"));
+        var shadowed=cycle with {Edges=[..cycle.Edges,new("shadowed","b","e",Default:true)]};
+        Check.That(FlowValidation.Validate(shadowed).Any(d=>d.Code=="no-terminal-path"));
+    }
+    public static void Review()
+    {
+        var graph=Minimal();graph.Nodes[1]=graph.Nodes[1] with {Commands=[],Script=new("loop.lua")};
+        graph.Edges[1]=graph.Edges[1] with {Condition=new("lua",Script:new("loop.lua","exit")),Priority=1};
+        graph.Edges.Add(new("again","set","set",Default:true));
+        var scripts=new Dictionary<string,string>{{"loop.lua","return {execute=function(x) return {commands={{kind='set',entity='counter',property='value',value=x.state.entities.counter.properties.value+1}}} end, exit=function(x) local exit=false; return exit end}"}};
+        using var game=new PlaySession(Module(graph,scripts,1));
+        using var cancel=new CancellationTokenSource();
+        cancel.CancelAfter(10);
+        var work=Task.Run(()=> {while(!cancel.IsCancellationRequested)game.ResumeFlow(cancel.Token);});
+        Check.That(work.Wait(TimeSpan.FromSeconds(5)),"Cancellation left a hanging flow task");
+        if(game.Fault?.Code=="flow-budget")game.ResumeFlow(cancel.Token);
+        Check.That(game.Fault?.Code=="flow-cancelled");
+        var before=game.ExportAuthorityState().Entities["counter"].Properties["value"];
+        game.ResumeFlow();Check.That(game.ExportAuthorityState().Entities["counter"].Properties["value"]==before+1);
+        Check.That(game.AuthorityStateHash()==Wire.Hash(Wire.Json(game.ExportRecording().Replay().ExportAuthorityState())));
+        var invalid=Minimal();invalid.Nodes[1]=invalid.Nodes[1] with {Script=new("bad.lua")};
+        using var oversized=new PlaySession(Module(invalid,new(){{"bad.lua","return {execute=function(x) return {nodeContext={a=string.rep('a',9000),b=string.rep('b',9000)}} end}"}}));
+        Check.That(oversized.Fault!=null && oversized.ExportAuthorityState().Entities["private"].Properties["value"]==42);
+        var failedRecording=oversized.ExportRecording();
+        using var failedRestore=PlaySession.Restore(failedRecording.Versions.Values.Single(),failedRecording);
+        Check.That(failedRestore.Fault?.Code=="flow-execution");Check.Throws(()=>failedRestore.ResumeFlow(),"restart");
+        using var cancelling=new PlaySession(Module(graph,scripts,1));
+        using var invoked=new ManualResetEventSlim();
+        using var listener=new System.Diagnostics.ActivityListener {
+            ShouldListenTo=source=>source.Name=="BoardGame.Lua",
+            Sample=(ref System.Diagnostics.ActivityCreationOptions<System.Diagnostics.ActivityContext> options)=>System.Diagnostics.ActivitySamplingResult.AllData,
+            ActivityStarted=_=>invoked.Set()
+        };
+        System.Diagnostics.ActivitySource.AddActivityListener(listener);
+        var running=Task.Run(()=>cancelling.ResumeFlow());
+        Check.That(invoked.Wait(TimeSpan.FromSeconds(5)),"Lua invocation did not start");
+        cancelling.CancelFlow();
+        Check.That(running.Wait(TimeSpan.FromSeconds(5)),"In-flight Lua cancellation hung");
+        if(cancelling.Fault?.Code=="flow-budget")cancelling.ResumeFlow(new CancellationToken(true));
+        Check.That(cancelling.Fault?.Code=="flow-cancelled");
+        // Player-query randomness is a function of the visible input, never authority random state.
+        var (players,playerScripts)=PlayerGraph();
+        playerScripts["player.lua"]="return {seat=function(x) return 'p2' end,enter=function(x) return {} end, actions=function(x) return {{id='r',label='R',command={kind='set',entity='counter',property='value',value=random_index(10000)}}} end,decide=function(x) return {commands={x.command}} end}";
+        var module=Module(players,playerScripts);
+        using var first=new PlaySession(module,1);using var second=new PlaySession(module,999);
+        Check.That(Wire.Json(first.Actions())==Wire.Json(second.Actions()),"Player actions depended on hidden random state");
     }
 }

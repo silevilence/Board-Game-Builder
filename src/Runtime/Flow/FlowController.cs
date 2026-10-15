@@ -39,6 +39,8 @@ internal sealed class FlowController : IAuthoritySession,IRuleProvider,IGameRule
             if(flow.DefinitionHash!=content.Hash || !controller.nodes.TryGetValue(flow.Node,out var node) || flow.Status=="waiting" && node.Kind!="player" || flow.Status=="ended" && node.Kind!="end")
                 throw new InvalidDataException("flow: restored cursor/configuration mismatch");
             if(flow.Status=="ready") controller.Fault=new("flow-restored","","Restored committed boundary; explicitly resume node "+flow.Node);
+            if(controller.ExportLog().Entries.LastOrDefault()?.Submission is {Accepted:false} failed)
+                controller.Fault=new(failed.Reason=="flow-cancelled"?"flow-cancelled":"flow-execution","","Restored failed transaction at node "+flow.Node+": "+failed.Reason);
         }
         scope.Provide("flow",controller);scope.Provide("rules",controller);
     });
@@ -93,9 +95,15 @@ internal sealed class FlowController : IAuthoritySession,IRuleProvider,IGameRule
     {
         if(outcome.Commands==null || !node.Results.Contains(outcome.Result) || node.Kind!="end" && outcome.Winners!=null) throw new FlowOperationException("flow-outcome");
         foreach(var command in outcome.Commands) tx.Apply(command);
-        return next with {GameContext=outcome.GameContext ?? next.GameContext,NodeContext=outcome.NodeContext ?? next.NodeContext};
+        next=next with {GameContext=outcome.GameContext ?? next.GameContext,NodeContext=outcome.NodeContext ?? next.NodeContext};
+        next.Validate(tx.Snapshot());return next;
     }
-    private static object Input(GameState state,FlowNode node,FlowState flow)=>new {state,parameters=node.Parameters,gameContext=flow.GameContext,nodeContext=flow.NodeContext};
+    private static object Input(GameState state,FlowNode node,FlowState flow)
+    {
+        state.Flow=Wire.Copy(flow);
+        return new {state,parameters=node.Parameters,gameContext=flow.GameContext,nodeContext=flow.NodeContext};
+    }
+    private static uint PublicRandom(SeatView view)=>uint.Parse(Wire.Hash(Wire.Json(view))[..8],System.Globalization.NumberStyles.HexNumber,System.Globalization.CultureInfo.InvariantCulture);
     private T Invoke<T>(FlowScript script,object input,uint random)
     {
         using var linked=CancellationTokenSource.CreateLinkedTokenSource(lifetime,stop.Token,activeCancellation);
@@ -119,8 +127,9 @@ internal sealed class FlowController : IAuthoritySession,IRuleProvider,IGameRule
     {
         if(!CanAct(seat))return [];
         var state=authority.ExportAuthorityState();var flow=state.Flow!;var node=nodes[flow.Node];
+        var view=authority.Project(seat);
         var offers=node.ActionsScript==null?node.Actions.Select(a=>new ActionOffer(a.Id,a.Label,new(){Kind="flow-action",Entity=a.Id})).ToList():
-            Invoke<List<ActionOffer>>(node.ActionsScript,new {view=authority.Project(seat),parameters=node.Parameters},state.RandomState);
+            Invoke<List<ActionOffer>>(node.ActionsScript,new {view,parameters=node.Parameters},PublicRandom(view));
         if(offers.Count>256 || offers.Any(a=>a==null || string.IsNullOrWhiteSpace(a.Id) || string.IsNullOrWhiteSpace(a.Label) || a.Command==null || string.IsNullOrWhiteSpace(a.Command.Kind)) || offers.Select(a=>a.Id).Distinct().Count()!=offers.Count)
             throw new FlowOperationException("flow-action-schema");
         return offers.Select(a=>a with {Command=a.Command with {FlowRevision=flow.Revision}}).ToList();
@@ -129,7 +138,13 @@ internal sealed class FlowController : IAuthoritySession,IRuleProvider,IGameRule
     {
         if(!CanAct(seat))return new(0,false,"operation-not-allowed");
         var state=authority.ExportAuthorityState();var flow=state.Flow!;var node=nodes[flow.Node];
-        if(command.FlowRevision!=flow.Revision || !Actions(seat).Any(a=>Wire.Json(a.Command)==Wire.Json(command))) return new(0,false,"flow-stale-or-illegal-action");
+        if(command.FlowRevision!=flow.Revision) return new(0,false,"flow-stale-or-illegal-action");
+        try {if(!Actions(seat).Any(a=>Wire.Json(a.Command)==Wire.Json(command))) return new(0,false,"flow-stale-or-illegal-action");}
+        catch(Exception e) when(e is not OutOfMemoryException)
+        {
+            var code=stop.IsCancellationRequested || lifetime.IsCancellationRequested?"flow-cancelled":"flow-actions-error";
+            Fault=new(code,seat,"Action query stopped at node "+node.Id);return new(0,false,code);
+        }
         var result=transactions.SubmitFlow(seat,command,flow.Revision,tx=>
         {
             FlowOutcome outcome;
@@ -138,7 +153,11 @@ internal sealed class FlowController : IAuthoritySession,IRuleProvider,IGameRule
                 var action=node.Actions.Single(a=>a.Id==command.Entity);
                 outcome=new(){Commands=action.Commands,Result=action.Result,Complete=action.Complete};
             }
-            else outcome=Invoke<FlowOutcome>(node.DecideScript,new {view=authority.Project(seat),parameters=node.Parameters,command=command with {FlowRevision=null}},state.RandomState);
+            else
+            {
+                var view=authority.Project(seat);
+                outcome=Invoke<FlowOutcome>(node.DecideScript,new {view,parameters=node.Parameters,command=command with {FlowRevision=null}},PublicRandom(view));
+            }
             if(outcome.GameContext!=null || outcome.NodeContext!=null || outcome.Winners!=null) throw new FlowOperationException("flow-player-context-denied");
             var next=ApplyOutcome(tx,node,flow with {Revision=flow.Revision+1},outcome);
             tx.Complete(outcome.Complete?Leave(tx.Snapshot(),node,next,outcome.Result):next);
