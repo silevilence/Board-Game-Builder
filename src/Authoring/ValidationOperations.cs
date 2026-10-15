@@ -56,7 +56,7 @@ public static class ValidationOperations
                         break;
                     case "runtime":
                         var module = GameRuntime.Load(snapshot.Directory);
-                        using (var game = new PlaySession(module))
+                        using (var game = new PlaySession(module,cancellation:call.Cancellation))
                         {
                             _ = game.Actions();
                             if (game.Fault != null) throw new AuthorOperationException(game.Fault.Code, game.Fault.Detail);
@@ -64,7 +64,7 @@ public static class ValidationOperations
                         if (module.RuntimeIdentity!.Startup.Plugins.Any(p => p.Id == "lua.cpu"))
                         {
                             checks.Add("initial-cpu-action");
-                            using var cpu = new PlaySession(module, 1, module.Initial.Seats.ToDictionary(s => s.Id, _ => "cpu"));
+                            using var cpu = new PlaySession(module, 1, module.Initial.Seats.ToDictionary(s => s.Id, _ => "cpu"),cancellation:call.Cancellation);
                             _ = cpu.StepCpu();
                             if (cpu.Fault != null) throw new AuthorOperationException(cpu.Fault.Code, cpu.Fault.Detail);
                         }

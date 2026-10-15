@@ -66,6 +66,7 @@ public static class FormatOperations
     };
     public static AuthorPlugin Configuration => new("author.configuration", "1", 1, [], ["author.operations"], scope =>
     {
+        FlowOperations.Register(scope);
         scope.Register(new(ReadInfo, call =>
         {
             var format = Resolve(call);
@@ -79,7 +80,7 @@ public static class FormatOperations
             var data = format.Serialize(call.View, configuration);
             return await call.Mode.Apply(call.View.Change(call.RequestId, new Dictionary<string, byte[]?> { [format.DefinitionPath] = Encoding.UTF8.GetBytes(data) }), call.Cancellation);
         }));
-    }, "Format-independent structured author operations") { Operations = [ReadInfo, ReplaceInfo] };
+    }, "Format-independent structured author operations") { Operations = [ReadInfo, ReplaceInfo,..FlowOperations.Operations] };
     private static IGameAuthorFormat Resolve(AuthorCall call) => call.Formats.Resolve(call.View)
         ?? throw new AuthorOperationException("format.unavailable", "Enable matching author.module or author.state support, or use files.read/files.write and direct editing", GameRuntime.Entry);
 }

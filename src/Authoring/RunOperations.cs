@@ -11,7 +11,8 @@ public sealed record RunResult(ProjectSource Source, RunSummary[] Runs) : IAutho
     public int ExitCode => Success ? 0 : 1;
 }
 public sealed record DebugStep(string RequestId, string Seat, string Action, Command Command);
-public sealed record DebugDocument(string Id, ProjectSource Source, LoadedModule Module, uint Seed, DebugStep[] Steps);
+public sealed record DebugDocument(string Id, ProjectSource Source, LoadedModule Module, uint Seed, DebugStep[] Steps,
+    [property:System.Text.Json.Serialization.JsonIgnore(Condition=System.Text.Json.Serialization.JsonIgnoreCondition.WhenWritingNull)] SessionRecording? Recording=null);
 
 public static class RunOperations
 {
@@ -54,7 +55,7 @@ public static class RunOperations
         return Task.FromResult<object>(new RunResult(call.View.Source, runs.ToArray()));
         PlaySession Run(uint currentSeed)
         {
-            var game = new PlaySession(module, currentSeed, controllers, limit);
+            var game = new PlaySession(module, currentSeed, controllers, limit,call.Cancellation);
             try
             {
                 while (!game.Ended && game.Fault == null) { call.Cancellation.ThrowIfCancellationRequested(); if (!game.StepCpu()) break; }
@@ -69,6 +70,11 @@ public static class RunOperations
         using var snapshot = new ProjectSnapshot(call.View);
         var module = GameRuntime.Load(snapshot.Directory);
         var document = new DebugDocument(Guid.NewGuid().ToString("N"), call.View.Source, module, (uint)seed, []);
+        if(module.Initial.Flow!=null)
+        {
+            using var game=new PlaySession(module,(uint)seed,module.Initial.Seats.ToDictionary(s=>s.Id,_=>"human"),cancellation:call.Cancellation);
+            document=document with {Recording=game.ExportRecording()};
+        }
         var target = Path.GetFullPath(call.String("target"));
         AtomicTextFile.Write(target, Wire.Json(document), false);
         return Task.FromResult<object>(new { document.Id, document.Source, target, step = 0 });
@@ -76,6 +82,9 @@ public static class RunOperations
     private static DebugDocument Read(AuthorCall call) => Wire.Read<DebugDocument>(File.ReadAllText(Path.GetFullPath(call.String("session"))));
     private static PlaySession Rebuild(DebugDocument document, CancellationToken cancellation)
     {
+        if(document.Module.Initial.Flow!=null)
+            return PlaySession.Restore(document.Module,document.Recording ?? throw new AuthorOperationException("debug.corrupt","Missing flow recording"),
+                document.Module.Initial.Seats.ToDictionary(s=>s.Id,_=>"human"),cancellation:cancellation);
         var game = new PlaySession(document.Module, document.Seed, document.Module.Initial.Seats.ToDictionary(s => s.Id, _ => "human"));
         try
         {
@@ -114,7 +123,8 @@ public static class RunOperations
         var action = game.Actions(seat).SingleOrDefault(a => a.Id == call.String("action")) ?? throw new AuthorOperationException("debug.action", "Action is not offered to this seat");
         var result = game.SubmitHuman(seat, action.Command);
         if (!result.Accepted) throw new AuthorOperationException("debug.rejected", result.Reason);
-        document = document with { Steps = [..document.Steps, new(call.RequestId, seat, action.Id, action.Command)] };
+        document = document with { Steps = [..document.Steps, new(call.RequestId, seat, action.Id, action.Command)],
+            Recording=document.Module.Initial.Flow==null?null:game.ExportRecording() };
         AtomicTextFile.Write(target, Wire.Json(document), true);
         return Task.FromResult<object>(new { document.Id, document.Source, step = game.Steps, result, game.Ended, game.Fault });
     }

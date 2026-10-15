@@ -1,0 +1,19 @@
+{"format":1,"nodes":[
+  {"id":"start","kind":"start"},
+  {"id":"deal","kind":"system","script":{"path":"setup.lua","entry":"deal"}},
+  {"id":"play","kind":"player","seat":{"script":{"path":"turn.lua","entry":"seat"}},"actionsScript":{"path":"player.lua","entry":"actions"},"decideScript":{"path":"player.lua","entry":"decide"}},
+  {"id":"judge","kind":"system","results":["again","finished"],"script":{"path":"turn.lua","entry":"judge"}},
+  {"id":"next","kind":"system","script":{"path":"turn.lua","entry":"next"}},
+  {"id":"settle","kind":"system","results":["win","draw"],"script":{"path":"settle.lua","entry":"score"}},
+  {"id":"win","kind":"end","script":{"path":"settle.lua","entry":"finish"}},
+  {"id":"draw","kind":"end","winners":[]}
+],"edges":[
+  {"id":"begin","from":"start","to":"deal"},
+  {"id":"dealt","from":"deal","to":"play","condition":{"op":"lua","script":{"path":"setup.lua","entry":"dealt"}}},
+  {"id":"played","from":"play","to":"judge"},
+  {"id":"continue","from":"judge","to":"next","result":"again"},
+  {"id":"repeat","from":"next","to":"play"},
+  {"id":"finish-rounds","from":"judge","to":"settle","result":"finished"},
+  {"id":"winner","from":"settle","to":"win","result":"win"},
+  {"id":"tie","from":"settle","to":"draw","result":"draw"}
+]}

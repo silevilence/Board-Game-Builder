@@ -1,0 +1,5 @@
+{"format":1,"nodes":[
+  {"id":"start","kind":"start"},
+  {"id":"prepare","kind":"system","commands":[{"kind":"set","entity":"counter","property":"value","value":1}]},
+  {"id":"end","kind":"end","winners":[]}
+],"edges":[{"id":"begin","from":"start","to":"prepare"},{"id":"finish","from":"prepare","to":"end"}]}

@@ -39,12 +39,17 @@
 | resources.texturepacker | resources.texturepacker；依赖 resources，`sources` 加载 TexturePacker JSON Hash |
 | lua.rules | rules；`file` 指向 Lua 规则入口 |
 | rules.commands | rules；可选 `actions` 标准动作列表，启动前校验结构 |
+| flow | rules、flow；`path` 指向版本化流程图，`maxAutomaticSteps` 限定自动推进；与其他 rules 提供者互斥 |
 | lua.cpu | cpu；`file` 指向 CPU 脚本 |
 | wasm | effects；`extensions` 含 id/version/api/kind/file/sha256/permissions |
 | session.local | session；空配置，按实际组合依赖 CPU／扩展 |
 | recording | recording；空配置，依赖 authority |
 
 完整最小配置见 `samples/state-minimal/game.start.json`；Lua 示例见 `samples/quick-cards/game.start.json`；WASM 见 `samples/wasm-counter/game.start.json`。新增内置实现使用 `RuntimePluginDefinition` 声明 Provides/Requires，在 `RuntimeComposition.Catalog` 注册，通过 scope 获取声明服务和提供能力，资源通过 `scope.Own` 归属 effect。不得订阅事件来决定权威命令次序。目录加载器提供 `GameDefinition` 与内容依赖；获准目录保持静态，不承诺运行时任意第三方插件发现。
+
+可选流程模式详见 [流程协议](flow-runtime.md)，配置示例位于 `samples/flow-minimal`，Lua 卡牌流程位于
+`samples/flow-cards`。流程文件及全部引用脚本独立收集进内容身份、快照和包；系统事务使用明确 system
+身份、流程续行效果与普通效果一起原子记录。第一版流程不组合 WASM／秘密收集调度，以免多个调度器争夺控制权。
 
 `GameRuntime.Load` 供宿主读取新输入，`PlaySession` 是公开门面，委托 `IGameSession`；旧 `LoadedModule` 字段仅为迁移适配，进入新会话须与公共定义和启动配置一致。快照／录制交叉验证插件版本、配置、定义来源、Lua 路径／内容、资源字节及 WASM 权限／载荷哈希，不在回放中执行脚本。发行清单的 `runtimePlugins` 由实际编译目录生成，导出同时验证 `.deps.json` 执行依赖。
 

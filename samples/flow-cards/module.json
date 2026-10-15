@@ -1,0 +1,475 @@
+{
+  "format": 1,
+  "resources": {},
+  "seats": [
+    {
+      "id": "p1",
+      "team": "red",
+      "controller": "human"
+    },
+    {
+      "id": "p2",
+      "team": "blue",
+      "controller": "cpu"
+    }
+  ],
+  "phases": [
+    "setup",
+    "play"
+  ],
+  "entities": [
+    {
+      "id": "deck",
+      "components": [
+        {
+          "type": "container",
+          "data": {
+            "capacity": 12,
+            "ordered": true,
+            "contents": [
+              "card-01",
+              "card-02",
+              "card-03",
+              "card-04",
+              "card-05",
+              "card-06",
+              "card-07",
+              "card-08",
+              "card-09",
+              "card-10",
+              "card-11",
+              "card-12"
+            ]
+          }
+        },
+        {
+          "type": "visibility",
+          "data": {
+            "mode": "hidden"
+          }
+        }
+      ]
+    },
+    {
+      "id": "table",
+      "components": [
+        {
+          "type": "container",
+          "data": {
+            "capacity": 12,
+            "ordered": false,
+            "contents": []
+          }
+        }
+      ]
+    },
+    {
+      "id": "match",
+      "components": [
+        {
+          "type": "properties",
+          "data": {
+            "rounds": 3,
+            "initialHand": 3
+          }
+        }
+      ]
+    },
+    {
+      "id": "hand-p1",
+      "components": [
+        {
+          "type": "container",
+          "data": {
+            "capacity": 12,
+            "ordered": false,
+            "contents": []
+          }
+        },
+        {
+          "type": "owner",
+          "data": {
+            "seat": "p1"
+          }
+        },
+        {
+          "type": "visibility",
+          "data": {
+            "mode": "owner"
+          }
+        }
+      ]
+    },
+    {
+      "id": "score-p1",
+      "components": [
+        {
+          "type": "properties",
+          "data": {
+            "score": 0
+          }
+        }
+      ]
+    },
+    {
+      "id": "hand-p2",
+      "components": [
+        {
+          "type": "container",
+          "data": {
+            "capacity": 12,
+            "ordered": false,
+            "contents": []
+          }
+        },
+        {
+          "type": "owner",
+          "data": {
+            "seat": "p2"
+          }
+        },
+        {
+          "type": "visibility",
+          "data": {
+            "mode": "owner"
+          }
+        }
+      ]
+    },
+    {
+      "id": "score-p2",
+      "components": [
+        {
+          "type": "properties",
+          "data": {
+            "score": 0
+          }
+        }
+      ]
+    },
+    {
+      "id": "card-01",
+      "components": [
+        {
+          "type": "faces",
+          "data": {
+            "names": [
+              "Power 1"
+            ],
+            "resources": [],
+            "up": false
+          }
+        },
+        {
+          "type": "properties",
+          "data": {
+            "value": 1
+          }
+        },
+        {
+          "type": "visibility",
+          "data": {
+            "mode": "hidden"
+          }
+        }
+      ]
+    },
+    {
+      "id": "card-02",
+      "components": [
+        {
+          "type": "faces",
+          "data": {
+            "names": [
+              "Power 2"
+            ],
+            "resources": [],
+            "up": false
+          }
+        },
+        {
+          "type": "properties",
+          "data": {
+            "value": 2
+          }
+        },
+        {
+          "type": "visibility",
+          "data": {
+            "mode": "hidden"
+          }
+        }
+      ]
+    },
+    {
+      "id": "card-03",
+      "components": [
+        {
+          "type": "faces",
+          "data": {
+            "names": [
+              "Power 3"
+            ],
+            "resources": [],
+            "up": false
+          }
+        },
+        {
+          "type": "properties",
+          "data": {
+            "value": 3
+          }
+        },
+        {
+          "type": "visibility",
+          "data": {
+            "mode": "hidden"
+          }
+        }
+      ]
+    },
+    {
+      "id": "card-04",
+      "components": [
+        {
+          "type": "faces",
+          "data": {
+            "names": [
+              "Power 4"
+            ],
+            "resources": [],
+            "up": false
+          }
+        },
+        {
+          "type": "properties",
+          "data": {
+            "value": 4
+          }
+        },
+        {
+          "type": "visibility",
+          "data": {
+            "mode": "hidden"
+          }
+        }
+      ]
+    },
+    {
+      "id": "card-05",
+      "components": [
+        {
+          "type": "faces",
+          "data": {
+            "names": [
+              "Power 5"
+            ],
+            "resources": [],
+            "up": false
+          }
+        },
+        {
+          "type": "properties",
+          "data": {
+            "value": 5
+          }
+        },
+        {
+          "type": "visibility",
+          "data": {
+            "mode": "hidden"
+          }
+        }
+      ]
+    },
+    {
+      "id": "card-06",
+      "components": [
+        {
+          "type": "faces",
+          "data": {
+            "names": [
+              "Power 6"
+            ],
+            "resources": [],
+            "up": false
+          }
+        },
+        {
+          "type": "properties",
+          "data": {
+            "value": 6
+          }
+        },
+        {
+          "type": "visibility",
+          "data": {
+            "mode": "hidden"
+          }
+        }
+      ]
+    },
+    {
+      "id": "card-07",
+      "components": [
+        {
+          "type": "faces",
+          "data": {
+            "names": [
+              "Power 1"
+            ],
+            "resources": [],
+            "up": false
+          }
+        },
+        {
+          "type": "properties",
+          "data": {
+            "value": 1
+          }
+        },
+        {
+          "type": "visibility",
+          "data": {
+            "mode": "hidden"
+          }
+        }
+      ]
+    },
+    {
+      "id": "card-08",
+      "components": [
+        {
+          "type": "faces",
+          "data": {
+            "names": [
+              "Power 2"
+            ],
+            "resources": [],
+            "up": false
+          }
+        },
+        {
+          "type": "properties",
+          "data": {
+            "value": 2
+          }
+        },
+        {
+          "type": "visibility",
+          "data": {
+            "mode": "hidden"
+          }
+        }
+      ]
+    },
+    {
+      "id": "card-09",
+      "components": [
+        {
+          "type": "faces",
+          "data": {
+            "names": [
+              "Power 3"
+            ],
+            "resources": [],
+            "up": false
+          }
+        },
+        {
+          "type": "properties",
+          "data": {
+            "value": 3
+          }
+        },
+        {
+          "type": "visibility",
+          "data": {
+            "mode": "hidden"
+          }
+        }
+      ]
+    },
+    {
+      "id": "card-10",
+      "components": [
+        {
+          "type": "faces",
+          "data": {
+            "names": [
+              "Power 4"
+            ],
+            "resources": [],
+            "up": false
+          }
+        },
+        {
+          "type": "properties",
+          "data": {
+            "value": 4
+          }
+        },
+        {
+          "type": "visibility",
+          "data": {
+            "mode": "hidden"
+          }
+        }
+      ]
+    },
+    {
+      "id": "card-11",
+      "components": [
+        {
+          "type": "faces",
+          "data": {
+            "names": [
+              "Power 5"
+            ],
+            "resources": [],
+            "up": false
+          }
+        },
+        {
+          "type": "properties",
+          "data": {
+            "value": 5
+          }
+        },
+        {
+          "type": "visibility",
+          "data": {
+            "mode": "hidden"
+          }
+        }
+      ]
+    },
+    {
+      "id": "card-12",
+      "components": [
+        {
+          "type": "faces",
+          "data": {
+            "names": [
+              "Power 6"
+            ],
+            "resources": [],
+            "up": false
+          }
+        },
+        {
+          "type": "properties",
+          "data": {
+            "value": 6
+          }
+        },
+        {
+          "type": "visibility",
+          "data": {
+            "mode": "hidden"
+          }
+        }
+      ]
+    }
+  ]
+}
