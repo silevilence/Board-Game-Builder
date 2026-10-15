@@ -71,3 +71,15 @@ decideScript，分别返回标准 ActionOffer 数组和上述裁决结果。合�
 从当前已提交节点继续，不重放效果。结构错误、脚本错误、无动作或分支错误须修正内容后重开。
 构造 PlaySession 时可传 cancellation 作为会话流程的生命周期取消令牌；该令牌取消后需重开。
 事务失败记录使用固定诊断代码，脚本抛出的文本不会进入玩家错误或记录；私有上下文和轨迹只供权威作者查看。
+
+## 记录与宿主
+
+`ExportRecording()` 保存运行身份、流程／脚本原字节和实际效果。系统记录 `execution: "system"`、空 actor；
+玩家记录 `execution: "player"` 和真实席位。旧模式省略 execution 与 flow 字段，保留旧记录校验语义。
+每次事务末尾的 flow-state 效果保存完整续行信息；回放只应用记录，不执行 Lua。
+`PlaySession.Restore(module, recording, controllers)` 校验内容身份后恢复。等待节点直接继续等待，
+终局不再执行；系统边界以 `flow-restored` 暂停，须显式 `ResumeFlow()` 才执行下一个尚未提交的节点。
+正在执行的事务没有中间快照，恢复时使用最后已提交边界。改变图、脚本或版本须重建。
+恢复保留动作计数和完整历史，不能通过恢复绕过 CPU 动作上限。
+Editor 试玩的共享 DebugSession、PlayerSession 与既有 OnlineSession 均使用同一 PlaySession；
+联网重连只刷新投影，不恢复或重入节点。普通投影只有当前行动席位，不包含私有游标上下文。

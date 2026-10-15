@@ -10,6 +10,7 @@ try
     tests.Add("flow-systems",FlowTests.Systems);
     tests.Add("flow-players",FlowTests.Players);
     tests.Add("flow-protection",FlowTests.Protection);
+    tests.Add("flow-restoration",FlowTests.Restoration);
     tests.Add("export-dependencies",ExportDependencyTests.Run);
     tests.Add("system-runtime",SystemRuntimeTests.Run);
     tests.Add("author-contract",AuthorProjectTests.Contract);

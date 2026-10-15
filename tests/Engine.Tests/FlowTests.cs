@@ -1,6 +1,7 @@
 using System.Text.Json;
 using BoardGame.Kernel;
 using BoardGame.Runtime;
+using BoardGame.Networking;
 
 namespace Engine.Tests;
 
@@ -133,6 +134,41 @@ public static class FlowTests
         using var pending=new PlaySession(Module(graph,scripts,1));
         pending.CancelFlow();pending.ResumeFlow();
         Check.That(pending.ExportAuthorityState().Entities["counter"].Properties["value"]==1);
+    }
+    public static void Restoration()
+    {
+        var (graph,scripts)=PlayerGraph();var module=Module(graph,scripts);
+        using var original=new PlaySession(module);original.SubmitHuman("p2",original.Actions().Single().Command);
+        var recording=Wire.Copy(original.ExportRecording());
+        using var restored=PlaySession.Restore(module,recording);
+        Check.That(restored.AuthorityStateHash()==original.AuthorityStateHash() && restored.ExportAuthorityLog().EntryCount==recording.Log.EntryCount && restored.Steps==1);
+        while(!restored.Ended) Check.That(restored.SubmitHuman("p2",restored.Actions().Single().Command).Accepted);
+        using var ended=PlaySession.Restore(module,restored.ExportRecording());
+        Check.That(ended.Ended && ended.AuthorityStateHash()==restored.AuthorityStateHash());
+        Check.That(Wire.Hash(Wire.Json(restored.ExportRecording().Replay().ExportAuthorityState()))==restored.AuthorityStateHash());
+        var boundaryModule=Module(Minimal(),budget:1);
+        using var boundary=new PlaySession(boundaryModule);
+        using var continuation=PlaySession.Restore(boundaryModule,boundary.ExportRecording());
+        Check.That(continuation.Fault?.Code=="flow-restored" && continuation.ExportAuthorityState().Entities["private"].Properties["value"]==42);
+        continuation.ResumeFlow();Check.That(continuation.ExportAuthorityState().Entities["private"].Properties["value"]==7);
+        scripts["player.lua"]+="\n-- changed";
+        Check.Throws(()=>PlaySession.Restore(Module(graph,scripts),recording),"mismatch");
+        var controllers=module.Initial.Seats.ToDictionary(s=>s.Id,_=>"human");
+        using var online=new OnlineSession(module,1,controllers);
+        _=online.Join(OnlineIdentity.For(module),"p1");var lease=online.Join(OnlineIdentity.For(module),"p2");
+        var frame=online.Read(lease.Token);
+        Check.That(frame.View.CurrentSeat=="p2" && !Wire.Json(frame).Contains("gameContext"));
+        var before=online.ExportAuthorityRecording().Log.EntryCount;
+        online.Disconnect(lease.Token);var reconnect=online.Resume(OnlineIdentity.For(module),lease.ResumeToken,frame.Revision);
+        Check.That(online.ExportAuthorityRecording().Log.EntryCount==before);
+        frame=online.Read(reconnect.Lease.Token);
+        Check.That(online.Submit(reconnect.Lease.Token,new(1,frame.Revision,"p2",frame.Actions.Single().Command)).Result.Accepted);
+        using var debug=new InProcessDebugSession(module,1,controllers,"p2");
+        var response=debug.SendAsync(new("frame")).Result;
+        Check.That(response.Frame.View.CurrentSeat=="p2" && response.Frame.Actions.Count==1);
+        using var player=PlayerSession.CreateAsync(module,1,"p2").Result;
+        while(!player.Frame.View.Ended) Check.That(player.SubmitAsync(player.Frame.Revision,new("action",Action:player.Frame.Actions.Single().Id)).Result.Accepted);
+        Check.That(player.Frame.View.Winners.SequenceEqual(["p2"]));
     }
     internal static FlowDefinition Example() => new(1,
     [

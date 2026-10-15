@@ -36,11 +36,16 @@ internal sealed class SessionRecorder : IRecordingProvider
     private readonly IAuthoritySession authority;
     private readonly List<ScriptSwitch> switches=[];
     private readonly Dictionary<string,LoadedModule> versions=new(StringComparer.Ordinal);
-    public SessionRecorder(IAuthoritySession authority,LoadedModule module) {this.authority=authority;RecordVersion(module);}
+    public SessionRecorder(IAuthoritySession authority,LoadedModule module,SessionRecording? recording=null)
+    {
+        this.authority=authority;
+        if(recording==null) RecordVersion(module);
+        else {switches.AddRange(Wire.Copy(recording.Switches));foreach(var version in Wire.Copy(recording.Versions)) versions.Add(version.Key,version.Value);}
+    }
     public void RecordVersion(LoadedModule module)
     {versions[module.Fingerprint]=Wire.Copy(module);switches.Add(new(authority.ExportLog().EntryCount,module.Fingerprint));}
     public SessionRecording Capture()=>SessionRecording.Create(authority.ExportLog(),switches,versions);
     public IAuthoritySession Replay(SessionRecording recording)=>new KernelAuthority(recording.Replay());
-    public static RuntimePluginDefinition Plugin(Func<LoadedModule> module)=>new("recording","1",1,["recording"],["authority"],scope=>
-        scope.Provide("recording",new SessionRecorder(scope.Service<IAuthoritySession>("authority"),module())));
+    public static RuntimePluginDefinition Plugin(Func<LoadedModule> module,SessionRecording? recording=null)=>new("recording","1",1,["recording"],["authority"],scope=>
+        scope.Provide("recording",new SessionRecorder(scope.Service<IAuthoritySession>("authority"),module(),recording)));
 }

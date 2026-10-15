@@ -25,11 +25,11 @@ internal sealed class KernelAuthority(GameEngine engine) : IAuthoritySession,IFl
 internal static class AuthorityPlugin
 {
     public static readonly string[] Required=["authority","projection","random","rule-binding"];
-    public static RuntimePluginDefinition Create(Func<LoadedModule> input,uint seed)=>new("kernel","1",1,[..Required,"flow-transactions"],[],scope=>
+    public static RuntimePluginDefinition Create(Func<LoadedModule> input,uint seed,GameEngine? restored=null)=>new("kernel","1",1,[..Required,"flow-transactions"],[],scope=>
     {
         var module=input();
         var binding=new RuleBinding();
-        var authority=new KernelAuthority(new GameEngine(module.Initial,seed,module.Fingerprint,binding));
+        var authority=new KernelAuthority(restored ?? new GameEngine(module.Initial,seed,module.Fingerprint,binding));
         scope.Provide("authority",authority);
         scope.Provide("projection",authority);
         scope.Provide("random",authority);

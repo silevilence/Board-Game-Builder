@@ -43,7 +43,10 @@ public sealed class DebugSession : IDisposable
             case "reload": session.ReloadScripts(request.Module ?? throw new InvalidDataException("Missing script version")); revision++; message="脚本已切换，下条命令生效。"; break;
             case "recording": recording=session.ExportRecording(); break;
             case "pause": paused=true; break;
-            case "resume": paused=false; if(replay!=null) revision++; replay=null; restored=null; break;
+            case "resume":
+                paused=false; if(replay!=null) revision++;
+                else if(session.Fault?.Code is "flow-budget" or "flow-cancelled" or "flow-restored") {session.ResumeFlow();revision++;}
+                replay=null; restored=null; break;
             case "replay":
                 var history=request.Recording ?? session.ExportRecording(); var engine=history.Replay();
                 _=engine.Project(observer); restored=engine; replay=history; paused=true; revision++;

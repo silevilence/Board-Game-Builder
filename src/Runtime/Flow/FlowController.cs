@@ -28,11 +28,18 @@ internal sealed class FlowController : IAuthoritySession,IRuleProvider,IGameRule
         this.authority=authority;this.transactions=transactions;this.content=content;this.budget=budget;this.lifetime=lifetime;
         nodes=content.Definition.Nodes.ToDictionary(n=>n.Id);
     }
-    public static RuntimePluginDefinition Plugin(Func<LoadedModule> module,CancellationToken lifetime)=>new("flow","1",1,["rules","flow"],["authority","flow-transactions"],scope=>
+    public static RuntimePluginDefinition Plugin(Func<LoadedModule> module,CancellationToken lifetime,bool restored)=>new("flow","1",1,["rules","flow"],["authority","flow-transactions"],scope=>
     {
         var input=module();var content=FlowContent.Read(input.RuntimeIdentity!.Startup,input.FlowFiles!);
         var budget=scope.Configuration.TryGetProperty("maxAutomaticSteps",out var value)?value.GetInt32():256;
         var controller=scope.Own(new FlowController(scope.Service<IAuthoritySession>("authority"),scope.Service<IFlowAuthority>("flow-transactions"),content,budget,lifetime));
+        if(restored)
+        {
+            var flow=controller.ExportAuthorityState().Flow ?? throw new InvalidDataException("flow: missing restored cursor");
+            if(flow.DefinitionHash!=content.Hash || !controller.nodes.TryGetValue(flow.Node,out var node) || flow.Status=="waiting" && node.Kind!="player" || flow.Status=="ended" && node.Kind!="end")
+                throw new InvalidDataException("flow: restored cursor/configuration mismatch");
+            if(flow.Status=="ready") controller.Fault=new("flow-restored","","Restored committed boundary; explicitly resume node "+flow.Node);
+        }
         scope.Provide("flow",controller);scope.Provide("rules",controller);
     });
     public void Advance(CancellationToken cancellation=default)
@@ -55,7 +62,7 @@ internal sealed class FlowController : IAuthoritySession,IRuleProvider,IGameRule
     public void Cancel() {lock(cancellationGate) if(!disposed) stop.Cancel();}
     public void Resume(CancellationToken cancellation)
     {
-        if(Fault?.Code is not ("flow-budget" or "flow-cancelled")) throw new InvalidOperationException("Only a budget/cancellation pause can continue; other errors require restart");
+        if(Fault?.Code is not ("flow-budget" or "flow-cancelled" or "flow-restored")) throw new InvalidOperationException("Only a budget/cancellation/restored pause can continue; other errors require restart");
         lock(cancellationGate) {ObjectDisposedException.ThrowIf(disposed,this);stop.Dispose();stop=new();}
         Fault=null;Advance(cancellation);
     }

@@ -11,6 +11,9 @@ public sealed class PlaySession : IGameSession
         host=RuntimeComposition.Start(module,seed,controllers,maxSteps,cancellation);
         session=host.Service<IGameSession>("session");
     }
+    private PlaySession(RuntimeHost host) {this.host=host;session=host.Service<IGameSession>("session");}
+    public static PlaySession Restore(LoadedModule module,SessionRecording recording,IReadOnlyDictionary<string,string>? controllers=null,int maxSteps=500,CancellationToken cancellation=default)=>
+        new(RuntimeComposition.Start(module,recording.Log.Seed,controllers,maxSteps,cancellation,Wire.Copy(recording)));
     public SessionFault? Fault=>session.Fault;
     public int Steps=>session.Steps;
     public bool Ended=>session.Ended;
@@ -64,6 +67,7 @@ internal sealed class LocalGameSession : IGameSession
         this.recording=recording;
         this.controllers=new(controllers);this.engine=flow ?? engine;this.ruleBinding=ruleBinding;this.rules=rules;this.cpu=cpu;this.effects=effects;this.flow=flow;
         ruleBinding.Replace(ComposeRules(rules.Rules));
+        Steps=engine.ExportLog().Entries.Count(e=>e.Submission.Accepted && e.Submission.Execution=="player");
         flow?.Advance();
     }
     public SeatView View(string seat) => engine.Project(seat);
