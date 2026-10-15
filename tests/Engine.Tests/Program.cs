@@ -5,6 +5,7 @@ var tests = new Dictionary<string, Action> { ["cordi"] = CordiTests.Run, ["freec
 try
 {
     tests.Add("flow-contract",FlowTests.Contract);
+    tests.Add("flow-validation",FlowTests.Validation);
     tests.Add("export-dependencies",ExportDependencyTests.Run);
     tests.Add("system-runtime",SystemRuntimeTests.Run);
     tests.Add("author-contract",AuthorProjectTests.Contract);
