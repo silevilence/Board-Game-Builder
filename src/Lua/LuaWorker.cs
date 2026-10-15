@@ -28,22 +28,23 @@ public sealed class LuaWorkerSession : IDisposable
     private bool disposed;
     private int requests;
     internal int? ProcessId { get { lock(sync) return process?.Id; } }
-    public string Invoke(string source,string path,string entry,string input,uint seed=1) =>
-        InvokeAsync(new(source,path,entry,input,seed)).GetAwaiter().GetResult();
+    public string Invoke(string source,string path,string entry,string input,uint seed=1,CancellationToken cancellation=default) =>
+        InvokeAsync(new(source,path,entry,input,seed),cancellation).GetAwaiter().GetResult();
 
-    private async Task<string> InvokeAsync(LuaRequest request)
+    private async Task<string> InvokeAsync(LuaRequest request,CancellationToken cancellation)
     {
         using var activity=LuaWorker.Diagnostics.StartActivity("invoke");
         activity?.SetTag("lua.path",request.Path);
         activity?.SetTag("lua.entry",request.Entry);
         if(request.Source.Length>262144 || request.Input.Length>2097152)
             throw new InvalidDataException($"{request.Path}:{request.Entry}: input budget exceeded.");
-        await gate.WaitAsync(lifetime.Token).ConfigureAwait(false);
+        using var requestLifetime=CancellationTokenSource.CreateLinkedTokenSource(lifetime.Token,cancellation);
+        await gate.WaitAsync(requestLifetime.Token).ConfigureAwait(false);
         Process? worker=null;
         try
         {
             worker=GetProcess();
-            using var deadline=CancellationTokenSource.CreateLinkedTokenSource(lifetime.Token);
+            using var deadline=CancellationTokenSource.CreateLinkedTokenSource(requestLifetime.Token);
             deadline.CancelAfter(WallTime);
             var exchange=Exchange(worker,request,deadline.Token);
             // Observe faults even if the health monitor cancels this request first.

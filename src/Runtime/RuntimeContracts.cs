@@ -51,6 +51,8 @@ public interface IGameSession : IDisposable
     IReadOnlyList<ActionOffer> Actions(string? seat=null);
     CommandResult SubmitHuman(string seat,Command command);
     bool StepCpu();
+    void CancelFlow();
+    void ResumeFlow(CancellationToken cancellation=default);
     void SetController(string seat, string controller);
     ReplayLog ExportAuthorityLog();
     SessionRecording ExportRecording();

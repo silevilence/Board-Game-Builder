@@ -6,9 +6,9 @@ public sealed class PlaySession : IGameSession
 {
     private readonly RuntimeHost host;
     private readonly IGameSession session;
-    public PlaySession(LoadedModule module,uint seed=1,IReadOnlyDictionary<string,string>? controllers=null,int maxSteps=500)
+    public PlaySession(LoadedModule module,uint seed=1,IReadOnlyDictionary<string,string>? controllers=null,int maxSteps=500,CancellationToken cancellation=default)
     {
-        host=RuntimeComposition.Start(module,seed,controllers,maxSteps);
+        host=RuntimeComposition.Start(module,seed,controllers,maxSteps,cancellation);
         session=host.Service<IGameSession>("session");
     }
     public SessionFault? Fault=>session.Fault;
@@ -21,6 +21,8 @@ public sealed class PlaySession : IGameSession
     public IReadOnlyList<ActionOffer> Actions(string? seat=null)=>session.Actions(seat);
     public CommandResult SubmitHuman(string seat,Command command)=>session.SubmitHuman(seat,command);
     public bool StepCpu()=>session.StepCpu();
+    public void CancelFlow()=>session.CancelFlow();
+    public void ResumeFlow(CancellationToken cancellation=default)=>session.ResumeFlow(cancellation);
     public void SetController(string seat,string controller)=>session.SetController(seat,controller);
     public ReplayLog ExportAuthorityLog()=>session.ExportAuthorityLog();
     public SessionRecording ExportRecording()=>session.ExportRecording();
@@ -82,6 +84,16 @@ internal sealed class LocalGameSession : IGameSession
     }
     public bool StepCpu()
     {lock(commands) return StepCpuCore();}
+    public void CancelFlow()=>flow?.Cancel();
+    public void ResumeFlow(CancellationToken cancellation=default)
+    {
+        lock(commands)
+        {
+            ObjectDisposedException.ThrowIf(disposed,this);
+            if(fault!=null || flow==null) throw new InvalidOperationException("Session requires restart or has no flow");
+            flow.Resume(cancellation);
+        }
+    }
     public void SetController(string seat,string controller)
     {
         lock(commands)
@@ -118,7 +130,7 @@ internal sealed class LocalGameSession : IGameSession
         var result=engine.Submit(actor ?? CurrentSeat,command);
         if(!result.Accepted)
         {
-            if(cpu || result.Reason=="script-failure" || result.Reason=="rule-command-limit") Stop(cpu?"cpu-rejected":"rule-failure",result.Reason);
+            if(flow?.Fault==null && (cpu || result.Reason=="script-failure" || result.Reason=="rule-command-limit")) Stop(cpu?"cpu-rejected":"rule-failure",result.Reason);
             return result;
         }
         Steps++;

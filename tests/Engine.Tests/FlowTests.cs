@@ -113,6 +113,27 @@ public static class FlowTests
         using var stuck=new PlaySession(Module(graph,scripts));
         Check.That(stuck.Fault?.Code=="flow-no-actions");
     }
+    public static void Protection()
+    {
+        var graph=Minimal();graph.Nodes[1]=graph.Nodes[1] with {Commands=[],Script=new("loop.lua")};
+        graph.Edges[1]=graph.Edges[1] with {Condition=new("ge",new(Path:"/state/entities/counter/properties/value"),new(JsonSerializer.SerializeToElement(8)))};
+        graph.Edges.Add(new("again","set","set",Default:true));
+        var scripts=new Dictionary<string,string>{{"loop.lua","return {execute=function(x) return {commands={{kind='set',entity='counter',property='value',value=x.state.entities.counter.properties.value+1}}} end}"}};
+        using var game=new PlaySession(Module(graph,scripts,2));
+        Check.That(game.Fault?.Code=="flow-budget" && game.ExportAuthorityState().Entities["counter"].Properties["value"]==1);
+        for(var i=0;i<8 && !game.Ended;i++) {Check.That(game.Fault?.Code=="flow-budget");game.ResumeFlow();}
+        Check.That(game.Ended && game.Fault==null && game.ExportAuthorityState().Entities["counter"].Properties["value"]==8);
+        Check.That(game.ExportAuthorityState().Flow!.Trace.Count==10);
+        using var source=new CancellationTokenSource();source.Cancel();
+        using var cancelled=new PlaySession(Module(graph,scripts),cancellation:source.Token);
+        Check.That(cancelled.Fault?.Code=="flow-cancelled" && cancelled.ExportAuthorityLog().EntryCount==0);
+        var (players,playerScripts)=PlayerGraph();
+        using var cpu=new PlaySession(Module(players,playerScripts),controllers:new Dictionary<string,string>{{"p2","cpu"}},maxSteps:1);
+        Check.That(cpu.StepCpu() && !cpu.StepCpu() && cpu.Fault?.Code=="step-limit");
+        using var pending=new PlaySession(Module(graph,scripts,1));
+        pending.CancelFlow();pending.ResumeFlow();
+        Check.That(pending.ExportAuthorityState().Entities["counter"].Properties["value"]==1);
+    }
     internal static FlowDefinition Example() => new(1,
     [
         new() { Id="start", Kind="start" },

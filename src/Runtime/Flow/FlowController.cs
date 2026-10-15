@@ -17,37 +17,52 @@ internal sealed class FlowController : IAuthoritySession,IRuleProvider,IGameRule
     private readonly Dictionary<string,FlowNode> nodes;
     private readonly int budget;
     private readonly LuaWorkerSession worker=new();
+    private readonly CancellationToken lifetime;
+    private readonly object cancellationGate=new();
+    private CancellationTokenSource stop=new();
+    private CancellationToken activeCancellation;
+    private bool disposed;
     public SessionFault? Fault {get;private set;}
-    public FlowController(IAuthoritySession authority,IFlowAuthority transactions,FlowContent content,int budget)
+    public FlowController(IAuthoritySession authority,IFlowAuthority transactions,FlowContent content,int budget,CancellationToken lifetime)
     {
-        this.authority=authority;this.transactions=transactions;this.content=content;this.budget=budget;
+        this.authority=authority;this.transactions=transactions;this.content=content;this.budget=budget;this.lifetime=lifetime;
         nodes=content.Definition.Nodes.ToDictionary(n=>n.Id);
     }
-    public static RuntimePluginDefinition Plugin(Func<LoadedModule> module)=>new("flow","1",1,["rules","flow"],["authority","flow-transactions"],scope=>
+    public static RuntimePluginDefinition Plugin(Func<LoadedModule> module,CancellationToken lifetime)=>new("flow","1",1,["rules","flow"],["authority","flow-transactions"],scope=>
     {
         var input=module();var content=FlowContent.Read(input.RuntimeIdentity!.Startup,input.FlowFiles!);
         var budget=scope.Configuration.TryGetProperty("maxAutomaticSteps",out var value)?value.GetInt32():256;
-        var controller=scope.Own(new FlowController(scope.Service<IAuthoritySession>("authority"),scope.Service<IFlowAuthority>("flow-transactions"),content,budget));
+        var controller=scope.Own(new FlowController(scope.Service<IAuthoritySession>("authority"),scope.Service<IFlowAuthority>("flow-transactions"),content,budget,lifetime));
         scope.Provide("flow",controller);scope.Provide("rules",controller);
     });
-    public void Advance()
+    public void Advance(CancellationToken cancellation=default)
     {
+        using var linked=CancellationTokenSource.CreateLinkedTokenSource(lifetime,stop.Token,cancellation);
+        activeCancellation=linked.Token;
         for(var step=0;step<budget;step++)
         {
             var state=authority.ExportAuthorityState();var flow=state.Flow!;
             if(state.Ended || Fault!=null)return;
+            if(activeCancellation.IsCancellationRequested) {Fault=new("flow-cancelled","","Cancelled at committed node "+flow.Node);return;}
             if(flow.Status=="waiting") {CheckActions(flow);return;}
             var node=nodes[flow.Node];
             var result=transactions.SubmitFlow(null,new(){Kind="flow-enter",Entity=node.Id},flow.Revision,tx=>Enter(tx,node,flow));
-            if(!result.Accepted) {Fault=new("flow-execution", "", "Node "+node.Id+": "+result.Reason);return;}
+            if(!result.Accepted) {Fault=new(result.Reason=="flow-cancelled"?"flow-cancelled":"flow-execution", "", "Node "+node.Id+": "+result.Reason);return;}
         }
         if(authority.ExportAuthorityState().Flow is {Status:"ready"} current) Fault=new("flow-budget","","Automatic step budget exhausted at node "+current.Node);
         else if(authority.ExportAuthorityState().Flow is {Status:"waiting"} waiting) CheckActions(waiting);
     }
+    public void Cancel() {lock(cancellationGate) if(!disposed) stop.Cancel();}
+    public void Resume(CancellationToken cancellation)
+    {
+        if(Fault?.Code is not ("flow-budget" or "flow-cancelled")) throw new InvalidOperationException("Only a budget/cancellation pause can continue; other errors require restart");
+        lock(cancellationGate) {ObjectDisposedException.ThrowIf(disposed,this);stop.Dispose();stop=new();}
+        Fault=null;Advance(cancellation);
+    }
     private void CheckActions(FlowState flow)
     {
         try {if(Actions(flow.Seat!).Count==0) Fault=new("flow-no-actions",flow.Seat!,"No legal action at node "+flow.Node);}
-        catch(Exception e) when(e is not OutOfMemoryException) {Fault=new("flow-actions-error",flow.Seat!,"Action query failed at node "+flow.Node);}
+        catch(Exception e) when(e is not OutOfMemoryException) {Fault=new(stop.IsCancellationRequested || activeCancellation.IsCancellationRequested?"flow-cancelled":"flow-actions-error",flow.Seat!,"Action query stopped at node "+flow.Node);}
     }
     private void Enter(GameEngine.FlowTransaction tx,FlowNode node,FlowState flow)
     {
@@ -65,6 +80,7 @@ internal sealed class FlowController : IAuthoritySession,IRuleProvider,IGameRule
         else if(node.Kind=="end") tx.Complete(next with {Status="ended",Result=outcome.Result,Seat=null,
             Trace=next.Trace.Append(new(next.Revision,node.Id,outcome.Result,null)).TakeLast(64).ToList()},outcome.Winners ?? node.Winners ?? throw new InvalidDataException("flow-end-result"));
         else tx.Complete(Leave(tx.Snapshot(),node,next,outcome.Result));
+        if(activeCancellation.IsCancellationRequested) throw new FlowOperationException("flow-cancelled");
     }
     private FlowState ApplyOutcome(GameEngine.FlowTransaction tx,FlowNode node,FlowState next,FlowOutcome outcome)
     {
@@ -75,8 +91,9 @@ internal sealed class FlowController : IAuthoritySession,IRuleProvider,IGameRule
     private static object Input(GameState state,FlowNode node,FlowState flow)=>new {state,parameters=node.Parameters,gameContext=flow.GameContext,nodeContext=flow.NodeContext};
     private T Invoke<T>(FlowScript script,object input,uint random)
     {
-        try {return Wire.Read<T>(worker.Invoke(content.Scripts[script.Path],script.Path,script.Entry,Wire.Json(input),random));}
-        catch(Exception e) when(e is not OutOfMemoryException) {throw new FlowOperationException("flow-script-error");}
+        using var linked=CancellationTokenSource.CreateLinkedTokenSource(lifetime,stop.Token,activeCancellation);
+        try {return Wire.Read<T>(worker.Invoke(content.Scripts[script.Path],script.Path,script.Entry,Wire.Json(input),random,linked.Token));}
+        catch(Exception e) when(e is not OutOfMemoryException) {throw new FlowOperationException(linked.IsCancellationRequested?"flow-cancelled":"flow-script-error");}
     }
     private FlowState Leave(GameState state,FlowNode node,FlowState flow,string result)
     {
@@ -118,9 +135,10 @@ internal sealed class FlowController : IAuthoritySession,IRuleProvider,IGameRule
             if(outcome.GameContext!=null || outcome.NodeContext!=null || outcome.Winners!=null) throw new FlowOperationException("flow-player-context-denied");
             var next=ApplyOutcome(tx,node,flow with {Revision=flow.Revision+1},outcome);
             tx.Complete(outcome.Complete?Leave(tx.Snapshot(),node,next,outcome.Result):next);
+            if(stop.IsCancellationRequested || lifetime.IsCancellationRequested) throw new FlowOperationException("flow-cancelled");
         });
         if(result.Accepted)Advance();
-        else if(result.Reason.StartsWith("flow-",StringComparison.Ordinal)) Fault=new("flow-execution",seat,"Node "+node.Id+": "+result.Reason);
+        else if(result.Reason.StartsWith("flow-",StringComparison.Ordinal)) Fault=new(result.Reason=="flow-cancelled"?"flow-cancelled":"flow-execution",seat,"Node "+node.Id+": "+result.Reason);
         return result;
     }
     public GameState ExportAuthorityState()=>authority.ExportAuthorityState();
@@ -131,5 +149,9 @@ internal sealed class FlowController : IAuthoritySession,IRuleProvider,IGameRule
     public void Apply(IGameRules rules)=>throw new InvalidOperationException("Flow content changed; restart required");
     IReadOnlyList<ActionOffer> IGameRules.Actions(SeatView view)=>[];
     public RuleDecision Decide(SeatView view,Command command)=>new(false,"flow-owned",[]);
-    public void Dispose()=>worker.Dispose();
+    public void Dispose()
+    {
+        lock(cancellationGate) {if(disposed)return;disposed=true;stop.Cancel();}
+        worker.Dispose();
+    }
 }

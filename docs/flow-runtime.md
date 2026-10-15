@@ -61,3 +61,13 @@ decideScript，分别返回标准 ActionOffer 数组和上述裁决结果。合�
 常量折叠只处理标量比较及 all/any/not。Lua 只识别整文件 `return false`，或整文件唯一的
 `return { entry = function(input) return false end }`（entry 与引用一致，允许空白和分号）；
 带其他语句、注释或外部变量的脚本一律视为未知，不运行 Lua 来猜测能否终止。
+
+## 自动推进与恢复操作
+
+插件配置 `maxAutomaticSteps` 默认 256，范围 1..100000。每次进入节点消耗一步；到达玩家等待或结束
+立即停止推进。超限产生 `flow-budget`，保留已提交状态及最多 64 条权威轨迹，不称为死循环。
+全 CPU 的动作总数另由 PlaySession 的 maxSteps 限定，耗尽后须重开。
+`CancelFlow()` 可从其他线程取消当前推进／Lua 请求；`ResumeFlow(token)` 仅允许继续预算或取消暂停，
+从当前已提交节点继续，不重放效果。结构错误、脚本错误、无动作或分支错误须修正内容后重开。
+构造 PlaySession 时可传 cancellation 作为会话流程的生命周期取消令牌；该令牌取消后需重开。
+事务失败记录使用固定诊断代码，脚本抛出的文本不会进入玩家错误或记录；私有上下文和轨迹只供权威作者查看。

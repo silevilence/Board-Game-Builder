@@ -4,7 +4,7 @@ namespace BoardGame.Runtime;
 
 internal static class RuntimeComposition
 {
-    public static RuntimeHost Start(LoadedModule original,uint seed,IReadOnlyDictionary<string,string>? overrides,int maxSteps)
+    public static RuntimeHost Start(LoadedModule original,uint seed,IReadOnlyDictionary<string,string>? overrides,int maxSteps,CancellationToken cancellation=default)
     {
         if(maxSteps<1) throw new ArgumentOutOfRangeException(nameof(maxSteps));
         var module=Wire.Copy(original);
@@ -16,18 +16,18 @@ internal static class RuntimeComposition
             controllers[value.Key]=value.Value;
         }
         var startup=module.RuntimeIdentity!.Startup;
-        var catalog=Catalog(module,seed,controllers,maxSteps,startup);
+        var catalog=Catalog(module,seed,controllers,maxSteps,startup,cancellation);
         return RuntimeHost.StartAsync(startup,catalog,
             AuthorityPlugin.Required.Concat(["rules","session","recording"]).Concat(controllers.Values.Contains("cpu")?["cpu"]:[])
                 .Concat(module.RuntimePlugins is {Count:>0}?["effects"]:[])).GetAwaiter().GetResult();
     }
-    internal static IReadOnlyList<RuntimePluginDefinition> Catalog(LoadedModule? module=null,uint seed=1,IReadOnlyDictionary<string,string>? controllers=null,int maxSteps=500,RuntimeStartup? startup=null)
+    internal static IReadOnlyList<RuntimePluginDefinition> Catalog(LoadedModule? module=null,uint seed=1,IReadOnlyDictionary<string,string>? controllers=null,int maxSteps=500,RuntimeStartup? startup=null,CancellationToken cancellation=default)
     {
         LoadedModule Module()=>module ?? throw new InvalidOperationException("Session input is required to activate this capability");
         GameDefinition Definition()=>RuntimeDefinition.From(Module());
         RuntimeStartup Startup()=>startup ?? throw new InvalidOperationException("Startup configuration is required to activate this capability");
         var catalog=new List<RuntimePluginDefinition>
-        {AuthorityPlugin.Create(Module,seed),FlowController.Plugin(Module),LuaRuntimePlugins.Rules(Definition,seed),LuaRuntimePlugins.Cpu(Definition),CommandRuleProvider.Plugin,WasmRuntimePlugin.Create(Definition)};
+        {AuthorityPlugin.Create(Module,seed),FlowController.Plugin(Module,cancellation),LuaRuntimePlugins.Rules(Definition,seed),LuaRuntimePlugins.Cpu(Definition),CommandRuleProvider.Plugin,WasmRuntimePlugin.Create(Definition)};
         catalog.Add(DefinitionPlugins.Module(Startup));
         catalog.Add(StateDefinitionLoader.Plugin(Startup));
         catalog.Add(SessionRecorder.Plugin(Module));
