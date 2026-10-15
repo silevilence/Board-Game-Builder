@@ -24,7 +24,7 @@ public sealed partial class GameEngine
         catch(Exception error) when(error is not OutOfMemoryException)
         {
             // Script exceptions may contain authority data. Never record their text in public reasons.
-            var reason=error is CommandRejected?error.Message:"flow-execution-failed";
+            var reason=error is CommandRejected or FlowOperationException?error.Message:"flow-execution-failed";
             diagnostics.Add(new(sequence,actor ?? "","flow",reason));
             Record(new(sequence,actor ?? "",Wire.Copy(command),false,reason,identity),[]);
             return new(sequence,false,reason);

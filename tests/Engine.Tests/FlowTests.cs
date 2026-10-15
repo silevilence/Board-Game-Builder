@@ -48,6 +48,31 @@ public static class FlowTests
         Check.That(accepted.Accepted && !engine.SubmitFlow(null,new(){Kind="flow-enter"},0,_=>throw new Exception()).Accepted);
         Check.That(!engine.Submit("p1",new(){Kind="finish",Winners=[]}).Accepted);
     }
+    public static void Systems()
+    {
+        var graph=Minimal();
+        graph.Nodes[1]=graph.Nodes[1] with {Script=new("calc.lua"),Commands=[]};
+        graph.Nodes.Add(new(){Id="other",Kind="end",Winners=["p2"]});
+        graph.Edges[1]=graph.Edges[1] with {Condition=new("eq",new(Path:"/state/entities/counter/properties/value"),new(JsonSerializer.SerializeToElement(7))),Priority=1};
+        graph.Edges.Add(new("default","set","other",Default:true));
+        var scripts=new Dictionary<string,string> {{"calc.lua","return { execute = function(x) return {commands={{kind='set',entity='counter',property='value',value=7}}, gameContext={secret=x.state.entities.private.properties.value}, result='done'} end }"}};
+        var module=Module(graph,scripts);using var session=new PlaySession(module);
+        Check.That(session.Ended && session.ExportAuthorityState().Flow!.Node=="end");
+        Check.That(session.ExportAuthorityState().Flow!.GameContext["secret"].GetInt32()==42 && !Wire.Json(session.View("p1")).Contains("secret"));
+        using var again=new PlaySession(module);Check.That(again.AuthorityStateHash()==session.AuthorityStateHash());
+        graph.Edges.Add(new("conflict","set","other",Condition:graph.Edges[1].Condition,Priority:1));
+        using var conflict=new PlaySession(Module(graph,scripts));
+        Check.That(conflict.Fault?.Detail.Contains("flow-ambiguous-branch")==true && conflict.ExportAuthorityState().Entities["counter"].Properties["value"]==0);
+        graph.Edges.RemoveAt(graph.Edges.Count-1);
+        foreach(var source in new[]{"return {execute=function(x) error('hidden-value-42') end}",
+            "return {execute=function(x) return {commands={{kind='set',entity='counter',property='value',value=7},{kind='finish',winners={}}}} end}",
+            "return {execute=function(x) return {target='end'} end}"})
+        {
+            scripts["calc.lua"]=source;using var failed=new PlaySession(Module(graph,scripts));
+            Check.That(failed.Fault!=null && failed.ExportAuthorityState().Entities["counter"].Properties["value"]==0);
+            Check.That(!Wire.Json(failed.ExportAuthorityLog()).Contains("hidden-value-42") && !Wire.Json(failed.ExportDiagnostics()).Contains("hidden-value-42"));
+        }
+    }
     internal static FlowDefinition Example() => new(1,
     [
         new() { Id="start", Kind="start" },

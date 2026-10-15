@@ -26,3 +26,5 @@ public sealed record FlowState
     }
 }
 public sealed record FlowTrace(long Revision,string Node,string? Result,string? Edge);
+// Engine/plugin-owned diagnostic code; never populate from script error text or returned data.
+public sealed class FlowOperationException(string code) : Exception(code);
