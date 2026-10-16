@@ -7,6 +7,42 @@ namespace Engine.Tests;
 
 public static class FlowEditorTests
 {
+    public static void Conflicts() => ConflictsAsync().GetAwaiter().GetResult();
+    private static async Task ConflictsAsync()
+    {
+        using var documents = new DocumentWorkspace(); documents.Set(ModuleDocument.Open("samples/flow-cards"));
+        var flow = new FlowWorkspace(documents); var snapshot = flow.Load(); var nodes = snapshot.Model.Definition.Nodes.Take(2).ToArray();
+        foreach (var node in nodes)
+        {
+            _ = flow.Properties(snapshot, "flow.node", node.Id);
+            documents.EditForm(flow.FormKey("flow.node", node.Id), Wire.Json(node with { Results = ["changed"] }));
+        }
+        flow.ApplyProperties(snapshot, "flow.node", nodes[0].Id);
+        Check.That(documents.HasPendingForms, "Applying one form discarded another");
+        Check.Throws(() => flow.ApplyProperties(snapshot, "flow.node", nodes[1].Id), "版本");
+        documents.DiscardForm(flow.FormKey("flow.node", nodes[1].Id)); documents.Undo();
+        Check.That(flow.Read().Definition.Nodes[0].Results.SequenceEqual(nodes[0].Results));
+        var path = snapshot.Model.Path;
+        documents.EditDraft(path, documents.Draft(path).Text + "\n");
+        var yaml = new DocumentDraftTarget(path, true);
+        documents.EditDraft(yaml, documents.Draft(yaml).Text + "\n");
+        Check.Throws(() => flow.Load(), "JSON and YAML");
+        Check.That(documents.Draft(path).Dirty && documents.Draft(yaml).Dirty);
+        documents.DiscardDraft(path); documents.DiscardDraft(yaml);
+        var change = FlowDesign.Change(flow.View(), flow.Read().Definition with { Edges = [] });
+        using var cancellation = new CancellationTokenSource(); cancellation.Cancel();
+        var rejected = false; try { await flow.Apply(change, cancellation.Token); } catch (OperationCanceledException) { rejected = true; }
+        Check.That(rejected && flow.Read().Success);
+        var directory = Path.Combine(Path.GetTempPath(), "bgb-flow-external-" + Guid.NewGuid());
+        try
+        {
+            TestModules.CopyGame("samples/flow-cards", directory); documents.Set(ModuleDocument.Open(directory));
+            var old = flow.Load(); File.AppendAllText(Path.Combine(directory, "turn.lua"), "\n-- external");
+            rejected = false; try { await flow.Delete(old, "flow.node", "play"); } catch (AuthorOperationException e) { rejected = e.Code == "workspace.external"; }
+            Check.That(rejected && documents.Current!.Text("turn.lua") == old.View.Text("turn.lua"));
+        }
+        finally { if (Directory.Exists(directory)) Directory.Delete(directory, true); }
+    }
     public static void Playback() => PlaybackAsync().GetAwaiter().GetResult();
     private static async Task PlaybackAsync()
     {
@@ -75,6 +111,20 @@ public static class FlowEditorTests
         documents.Redo(); Check.That(documents.Current.Paths.Contains("scripts/seat.lua"));
         documents.EditDraft("scripts/seat.lua", "invalid Lua preserved");
         Check.That(new FlowWorkspace(documents).Load().Model.Definition.Nodes.First(n => n.Id == node.Id).Seat!.Script!.Path == "scripts/seat.lua");
+        documents.Set(ModuleDocument.Create()); await flow.Create("flow.json");
+        await flow.Update(flow.Load(), new(1, [new() { Id = "start", Kind = "start" }, new() { Id = "player", Kind = "player", Seat = new(Current: true) }, new() { Id = "end", Kind = "end", Winners = [] }],
+            [new("enter", "start", "player"), new("finish", "player", "end")]));
+        foreach (var role in new[] { "seat", "actions", "decide" }) await flow.CreateScript(flow.Load(), "player", role, role + ".lua");
+        await flow.CreateScript(flow.Load(), "start", "execute", "execute.lua");
+        Check.That(flow.Read().Success);
+        using (var game = new PlaySession(documents.Current!.Snapshot()))
+        {
+            Check.That(game.Fault == null && game.CurrentSeat == "p1");
+            Check.That(game.SubmitHuman("p1", game.Actions()[0].Command).Accepted && game.Ended, "Generated player script templates cannot complete a game");
+        }
+        var sourceIdentity = documents.Current.Snapshot().Fingerprint; var source = flow.Load();
+        _ = flow.Name(source, "player"); documents.EditForm(flow.NameKey("player"), "等待操作"); flow.ApplyName(source, "player");
+        Check.That(documents.Current.Snapshot().Fingerprint == sourceIdentity && flow.Read().Definition.Nodes.Any(n => n.Id == "player"));
     }
     public static void Canvas() => CanvasAsync().GetAwaiter().GetResult();
     private static async Task CanvasAsync()
@@ -113,11 +163,15 @@ public static class FlowEditorTests
         await flow.Create("graphs/main.json");
         Check.That(flow.Read().Success && flow.Read().Path == "graphs/main.json");
         var first = documents.Current!.Snapshot().Fingerprint;
+        _ = documents.Draft("cpu.lua"); documents.Undo();
+        Check.That(!flow.Supported, "Opening a clean script draft blocked create Undo"); documents.Redo();
         var view = flow.View(); var graph = flow.Read().Definition;
         await flow.Apply(FlowDesign.Change(view, graph, new() { PanX = 25, Zoom = 1.5 }));
         Check.That(documents.Current.Snapshot().Fingerprint == first, "Design metadata changed runtime identity");
         documents.Undo(); Check.That(FlowDesign.ReadView(flow.View(), "graphs/main.json").Zoom == 1);
         documents.Redo(); Check.That(FlowDesign.ReadView(flow.View(), "graphs/main.json").Zoom == 1.5);
+        await flow.Update(flow.Load(), graph, new() { Names = new() { ["start"] = null! } });
+        Check.Throws(() => flow.Load(), "design"); documents.Undo();
         var stale = FlowDesign.Change(flow.View(), graph);
         documents.Set(ModuleDocument.Open("samples/flow-minimal"));
         Check.That(!documents.Current.SupportsStructuredEditing && flow.Read().Success, "Flow must be independent of the main definition format");

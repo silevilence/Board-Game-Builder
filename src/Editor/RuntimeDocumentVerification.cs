@@ -26,8 +26,10 @@ internal static class RuntimeDocumentVerification
                 await WaitFor<ConfigurationPanel>();
                 Trace("first panels ready");
                 var definition=documents.Current!.DefinitionPath;
+                Trace("edit draft");
                 documents.EditDraft(definition,documents.Draft(definition).Text+"\n");
-                await app.Reload("author.configuration");await WaitFor<ConfigurationPanel>();
+                Trace("reload configuration");
+                await app.Reload("author.configuration").WaitAsync(TimeSpan.FromSeconds(20));Trace("wait configuration");await WaitFor<ConfigurationPanel>();
                 if(!documents.Draft(definition).Dirty) throw new Exception("Draft lost during format panel rebuild");
                 documents.DiscardDraft(definition);
                 for(var i=0;i<3;i++)

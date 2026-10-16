@@ -5,6 +5,30 @@ namespace Engine.Tests;
 
 public static class CordiTests
 {
+    public static void Dispatch()=>DispatchAsync().GetAwaiter().GetResult();
+    private static async Task DispatchAsync()
+    {
+        using var release=new ManualResetEventSlim();
+        var entered=new TaskCompletionSource(TaskCreationOptions.RunContinuationsAsynchronously);
+        var blocking=false;var released=false;
+        await using var app=new EditorApplication(action=>
+        {
+            if(blocking) {entered.TrySetResult();release.Wait(TimeSpan.FromSeconds(10));}
+            action();
+        });
+        app.Install(new("dispatch-probe",1,[],[],scope=>scope.Own(new Cleanup(()=>released=true))));
+        await app.Enable("dispatch-probe");blocking=true;
+        var removing=app.Disable("dispatch-probe");
+        var independent=CordiSharp.Context.Create();
+        try
+        {
+            await entered.Task.WaitAsync(TimeSpan.FromSeconds(2));
+            var other=independent.Inject(Array.Empty<string>(),(_,_)=>Task.CompletedTask);
+            await other.Await().WaitAsync(TimeSpan.FromSeconds(2));
+        }
+        finally {release.Set();await removing;await independent.Fiber.DisposeAsync();}
+        Check.That(released,"UI cleanup was not awaited");
+    }
     public static void Run()=>RunAll().WaitAsync(TimeSpan.FromSeconds(50)).GetAwaiter().GetResult();
     private static async Task RunAll() {await Verify();await InitializationTimeouts();}
     private static async Task InitializationTimeouts()

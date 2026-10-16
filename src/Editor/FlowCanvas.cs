@@ -64,14 +64,14 @@ public sealed class FlowCanvas : Control
         var y = Math.Min(Box(from).Top, box.Top) - 30 * Design.Zoom;
         return [a, new(a.X + 25 * Design.Zoom, a.Y), new(a.X + 25 * Design.Zoom, y), new(b.X - 25 * Design.Zoom, y), new(b.X - 25 * Design.Zoom, b.Y), b];
     }
-    public static string KindTitle(string kind) => kind switch { "start" => "游戏开始", "system" => "系统操作", "player" => "玩家操作", "end" => "游戏结束", _ => kind };
+    public static string KindTitle(string kind) => kind switch { "start" => "游戏开始", "system" => "系统操作", "player" => "玩家操作", "end" => "游戏结束", _ => "未知节点" };
     private static IBrush Accent(string kind) => Brush.Parse(kind switch { "start" => "#59CFAC", "system" => "#88ADFF", "player" => "#EDC47C", "end" => "#D89CDC", _ => "#AAAAAA" });
     public override void Render(DrawingContext context)
     {
         base.Render(context); context.FillRectangle(Brush.Parse("#151C29"), new Rect(Bounds.Size));
         if (Snapshot == null) return;
         var scale = Design.Zoom;
-        void Text(string value, Point at, IBrush brush, double size = 12) => context.DrawText(new FormattedText(value, CultureInfo.CurrentCulture, FlowDirection.LeftToRight, new Typeface("Microsoft YaHei"), size * scale, brush), at);
+        void Text(string value, Point at, IBrush brush, double size = 12) => context.DrawText(new FormattedText(value ?? "（无效文本）", CultureInfo.CurrentCulture, FlowDirection.LeftToRight, new Typeface("Microsoft YaHei"), size * scale, brush), at);
         for (double x = Design.PanX % (32 * scale); x < Bounds.Width; x += 32 * scale)
             for (double y = Design.PanY % (32 * scale); y < Bounds.Height; y += 32 * scale)
                 context.DrawEllipse(Brush.Parse("#303B4D"), null, new(x, y), 1, 1);

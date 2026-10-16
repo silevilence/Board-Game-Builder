@@ -7,7 +7,7 @@ namespace BoardGame.Editor;
 // Startup, root context, composition and startup-failure reporting only.
 public sealed class EditorHost
 {
-    public EditorApplication Application { get; }=new(action=>Dispatcher.UIThread.Invoke(action));
+    public EditorApplication Application { get; }=new(action=>Dispatcher.UIThread.Invoke(action),async action=>await Dispatcher.UIThread.InvokeAsync(action));
     public Window Window { get; }=new() {Title="Board Game Builder · Editor",Width=1400,Height=900};
     public Task Ready { get; private set; }=Task.CompletedTask;
     private bool closing;

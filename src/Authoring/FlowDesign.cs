@@ -25,11 +25,13 @@ public static class FlowDesign
         var result = view.Exists(ViewPath(path)) ? Wire.Read<FlowDesignView>(view.Text(ViewPath(path))) : new();
         if (result.Format != 1 || result.Positions == null || result.Names == null ||
             !double.IsFinite(result.Zoom) || result.Zoom is < .2 or > 3 ||
-            !double.IsFinite(result.PanX) || !double.IsFinite(result.PanY) ||
-            result.Positions.Values.Any(p => p == null || !double.IsFinite(p.X) || !double.IsFinite(p.Y)))
+            !Coordinate(result.PanX) || !Coordinate(result.PanY) ||
+            result.Positions.Values.Any(p => p == null || !Coordinate(p.X) || !Coordinate(p.Y)) ||
+            result.Names.Values.Any(name => name == null || name.Length > 128))
             throw new InvalidDataException("Invalid flow design view");
         return result;
     }
+    private static bool Coordinate(double value) => double.IsFinite(value) && Math.Abs(value) <= 1000000;
     public static ProjectChanges Create(ProjectView view, string path)
     {
         ProjectPaths.Validate(path);

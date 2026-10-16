@@ -7,7 +7,7 @@ public sealed class ExportPanel : UserControl,IDisposable
     private readonly ExportWorkflow workflow;
     private readonly TextBlock progress=new() {TextWrapping=Avalonia.Media.TextWrapping.Wrap};
     private readonly Button preflight=new() {Content="依赖预检"};
-    private readonly Button export=new() {Content="保存并导出独立游戏"};
+    private readonly Button export=new() {Content="导出当前草稿的独立游戏"};
     private readonly ProgressBar bar=new() {IsIndeterminate=true,IsVisible=false};
     public ExportPanel(EditorPluginScope scope)
     {

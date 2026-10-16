@@ -139,6 +139,6 @@ public static class FlowEditorPlugin
             await flow.Create(path, scope.Cancellation); Open();
         }, () => documents.Current != null));
         scope.OnDocumentChanged(commands.Refresh);
-        scope.Service<PanelContributions>("panels").Register(scope, "author.flow", "流程设计", () => new FlowPanel(scope));
+        scope.Service<PanelContributions>("panels").Register(scope, "author.flow", "流程设计", () => new FormatPanel(scope, child => new FlowPanel(child), () => flow.Supported, () => flow.UnavailableReason ?? ""));
     });
 }

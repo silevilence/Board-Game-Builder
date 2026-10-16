@@ -23,6 +23,7 @@ public sealed class EditorApplication : IAsyncDisposable
     private readonly Dictionary<string,List<Func<string?>>> guards=new(StringComparer.Ordinal);
     private readonly SemaphoreSlim lifecycle=new(1,1);
     private readonly Action<Action> dispatch;
+    private readonly Func<Action,Task> dispatchAsync;
     private bool disposed;
     private readonly List<Func<Task<bool>>> shutdownChecks=[];
     public IDisposable BeforeShutdown(Func<Task<bool>> check) {shutdownChecks.Add(check);return new Cleanup(()=>shutdownChecks.Remove(check));}
@@ -36,8 +37,14 @@ public sealed class EditorApplication : IAsyncDisposable
     public IReadOnlyList<EditorPluginState> States=>states.Values.ToArray();
     public event Action? Changed;
     public List<string> Diagnostics { get; }=[];
-    public EditorApplication(Action<Action>? dispatch=null) { this.dispatch=dispatch ?? (action=>action()); }
+    public EditorApplication(Action<Action>? dispatch=null):this(dispatch,null) { }
+    public EditorApplication(Action<Action>? dispatch,Func<Action,Task>? dispatchAsync)
+    {
+        this.dispatch=dispatch ?? (action=>action());
+        this.dispatchAsync=dispatchAsync ?? (dispatch==null?action=>{action();return Task.CompletedTask;}:action=>Task.Run(()=>dispatch(action)));
+    }
     internal void OnOwnerThread(Action action)=>dispatch(action);
+    internal Task OnOwnerThreadAsync(Action action)=>dispatchAsync(action);
     public T Service<T>(string key) where T:class => Root.Get<T>(key) ?? throw new InvalidOperationException("服务未启用："+key);
     public void Install(EditorPluginDefinition plugin)
     {
@@ -68,7 +75,7 @@ public sealed class EditorApplication : IAsyncDisposable
                 {
                     var scope=new EditorPluginScope(this,ctx,definition);scopes[next]=scope;
                     Task? initialization=null;
-                    OnOwnerThread(()=>
+                    await OnOwnerThreadAsync(()=>
                     {
                         definition.Activate(scope);
                         initialization=definition.InitializeAsync?.Invoke(scope);
@@ -197,6 +204,7 @@ public sealed class EditorPluginScope
     public CancellationToken Cancellation { get; }
     private readonly CancellationTokenSource cancellation;
     private bool requiresStructuredFormat;
+    private Func<bool>? formatAvailable;
     internal EditorPluginScope(EditorApplication application,Context context,EditorPluginDefinition definition,CancellationToken parent=default)
     {
         this.application=application;Context=context;this.definition=definition;
@@ -212,7 +220,8 @@ public sealed class EditorPluginScope
     public void Own(IDisposable resource)
     {
         if(Cancellation.IsCancellationRequested) {application.OnOwnerThread(resource.Dispose);Cancellation.ThrowIfCancellationRequested();}
-        Context.Effect(()=> (Action)(()=>application.OnOwnerThread(resource.Dispose)));
+        // Never block CordiSharp's pump on a UI thread that may be loading a runtime snapshot.
+        Context.Effect(()=> (Func<Task>)(()=>application.OnOwnerThreadAsync(resource.Dispose)));
     }
     public void Guard(Func<string?> reason)=>Own(application.Guard(Id,reason));
     public void Provide(string key,object service)
@@ -233,16 +242,17 @@ public sealed class EditorPluginScope
         Context.On(key,(_,value)=> {if(!Cancellation.IsCancellationRequested) application.OnOwnerThread(()=>handler(value));return null;});
     }
     public void Emit<T>(EventKey<T> key,T value) {Cancellation.ThrowIfCancellationRequested();Context.Emit(key,value);}
-    public EditorPluginScope ForContext(Context context,bool requiresStructuredFormat=false)
-    {Cancellation.ThrowIfCancellationRequested();return new(application,context,definition,Cancellation) {requiresStructuredFormat=requiresStructuredFormat};}
+    public EditorPluginScope ForContext(Context context,bool requiresStructuredFormat=false)=>ForContext(context,requiresStructuredFormat,null);
+    public EditorPluginScope ForContext(Context context,bool requiresStructuredFormat,Func<bool>? formatAvailable)
+    {Cancellation.ThrowIfCancellationRequested();return new(application,context,definition,Cancellation) {requiresStructuredFormat=requiresStructuredFormat,formatAvailable=formatAvailable};}
     public ModuleDocument? Document
     {
-        get {var document=Service<DocumentWorkspace>("documents").Current;return requiresStructuredFormat && document?.SupportsStructuredEditing!=true?null:document;}
+        get {var document=Service<DocumentWorkspace>("documents").Current;return requiresStructuredFormat && document?.SupportsStructuredEditing!=true || formatAvailable?.Invoke()==false?null:document;}
     }
     public void OnDocumentChanged(Action action)
     {
         var documents=Service<DocumentWorkspace>("documents");
-        void Refresh() {if(!Cancellation.IsCancellationRequested && (!requiresStructuredFormat || documents.Current?.SupportsStructuredEditing==true)) action();}
+        void Refresh() {if(!Cancellation.IsCancellationRequested && formatAvailable?.Invoke()!=false && (!requiresStructuredFormat || documents.Current?.SupportsStructuredEditing==true)) action();}
         documents.Changed+=Refresh;
         Own(new Cleanup(()=>documents.Changed-=Refresh));
     }

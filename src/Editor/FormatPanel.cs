@@ -10,7 +10,8 @@ public sealed class FormatPanel : UserControl,IAsyncDisposable
     private Task pending=Task.CompletedTask;
     private bool disposed;
     public Task Ready=>pending;
-    public FormatPanel(EditorPluginScope owner,Func<EditorPluginScope,Control> factory)
+    public FormatPanel(EditorPluginScope owner,Func<EditorPluginScope,Control> factory):this(owner,factory,null) { }
+    public FormatPanel(EditorPluginScope owner,Func<EditorPluginScope,Control> factory,Func<bool>? supports,Func<string>? unavailableText=null)
     {
         PluginHandle? child=null;bool? supported=null;
         var gate=new SemaphoreSlim(1,1);
@@ -20,29 +21,36 @@ public sealed class FormatPanel : UserControl,IAsyncDisposable
         Schedule();
         async Task Refresh()
         {
-            await gate.WaitAsync();
+            var entered=false;
             try
             {
+                await gate.WaitAsync(owner.Cancellation);entered=true;
                 if(disposed || owner.Cancellation.IsCancellationRequested) return;
-                var next=owner.Document?.SupportsStructuredEditing ?? false;
-                if(next==supported) return;supported=next;
+                var next=supports?.Invoke() ?? (owner.Document?.SupportsStructuredEditing ?? false);
+                if(next==supported)
+                {
+                    if(!next && unavailableText!=null && Content is TextBlock message) message.Text=unavailableText();
+                    return;
+                }
+                supported=next;
                 Content=null;
-                if(child!=null) {await child.DisposeAsync();child=null;}
+                if(child!=null) {await child.DisposeAsync().AsTask().WaitAsync(owner.Cancellation);child=null;}
                 if(disposed || owner.Cancellation.IsCancellationRequested) return;
-                Content=new TextBlock {Text="此定义格式没有专用作者界面。可在“游戏文件”中编辑，并使用试玩与导出。",TextWrapping=Avalonia.Media.TextWrapping.Wrap};
+                Content=new TextBlock {Text=unavailableText?.Invoke() ?? "此定义格式没有专用作者界面。可在“游戏文件”中编辑，并使用试玩与导出。",TextWrapping=Avalonia.Media.TextWrapping.Wrap};
                 if(!next) return;
                 child=owner.Context.Inject(Array.Empty<string>(),(context,_)=>Mount(context));
-                await child.Await();
+                await child.Await().WaitAsync(owner.Cancellation);
             }
+            catch(OperationCanceledException) when(owner.Cancellation.IsCancellationRequested) { }
             catch(Exception error) {if(!disposed && !owner.Cancellation.IsCancellationRequested) {supported=null;Content=new TextBlock {Text=error.Message,TextWrapping=Avalonia.Media.TextWrapping.Wrap};}}
-            finally {gate.Release();}
+            finally {if(entered) gate.Release();}
         }
         async Task Mount(CordiSharp.Context context)
         {
             await Dispatcher.UIThread.InvokeAsync(()=>
             {
                 if(disposed || owner.Cancellation.IsCancellationRequested) return;
-                var scope=owner.ForContext(context,true);
+                var scope=owner.ForContext(context,supports==null,supports);
                 Content=factory(scope);
                 if(Content is IDisposable resource) scope.Own(resource);
             });

@@ -13,6 +13,15 @@ public sealed class FlowWorkspace(DocumentWorkspace documents)
     public ProjectIdentity Identity => new(documents.Current?.DirectoryPath!, "editor.flow", "gui", documents.WorkspaceId, documents.Generation);
     public ProjectView View() => documents.AuthorView(Identity);
     public FlowAuthorModel Read() => FlowOperations.Read(View());
+    public bool Supported => UnavailableReason == null;
+    public string? UnavailableReason
+    {
+        get
+        {
+            try { if (documents.Current == null) return "请先打开工程。"; _ = FlowOperations.Format(documents.PreviewAuthorView(Identity)); return null; }
+            catch (Exception error) when (error is not OutOfMemoryException) { return error.Message + "\n可使用运行插件配置、游戏文件或外部编辑协调面板处理；新建流程命令会显式替换规则控制器。"; }
+        }
+    }
     public FlowGraphSnapshot Load()
     {
         var view = documents.PreviewAuthorView(Identity); var model = FlowOperations.Read(view);
@@ -48,6 +57,27 @@ public sealed class FlowWorkspace(DocumentWorkspace documents)
     }
     public Task Create(string path, CancellationToken cancellation = default) => Apply(FlowDesign.Create(View(), path), cancellation);
     public string FormKey(string collection, string id) => $"flow.properties/{collection}/{id}";
+    public string NameKey(string id) => "flow.name/" + id;
+    public string ScriptKey(string id) => "flow.script.create/" + id;
+    public DocumentDraft ScriptDraft(FlowGraphSnapshot snapshot, string id) => documents.Form(ScriptKey(id), () => Wire.Json(new[] { "", "execute" }), snapshot.View.Source.Version);
+    public void ApplyScript(FlowGraphSnapshot snapshot, string id, CancellationToken cancellation = default)
+    {
+        var draft = ScriptDraft(snapshot, id);
+        if (draft.Baseline != documents.PreviewAuthorView(Identity).Source.Version) throw new InvalidOperationException("脚本创建基线已变化；输入已保留，请协调后重试。");
+        var values = Wire.Read<string[]>(draft.Text);
+        if (values.Length != 2) throw new InvalidDataException("Script path and role are required");
+        documents.ApplyAuthorForm(ScriptKey(id), () => CreateScript(snapshot, id, values[1], values[0], cancellation).GetAwaiter().GetResult());
+    }
+    public DocumentDraft Name(FlowGraphSnapshot snapshot, string id) => documents.Form(NameKey(id), () => snapshot.Design.Names.GetValueOrDefault(id, id), snapshot.View.Source.Version);
+    public void ApplyName(FlowGraphSnapshot snapshot, string id)
+    {
+        var draft = Name(snapshot, id);
+        if (draft.Baseline != documents.PreviewAuthorView(Identity).Source.Version) throw new InvalidOperationException("视图版本已改变；名称草稿已保留，请合并或放弃后重试。");
+        if (draft.Text.Length > 128) throw new InvalidDataException("显示名称最多 128 字符。");
+        var design = snapshot.Design with { Names = new(snapshot.Design.Names) { [id] = draft.Text } };
+        var change = FlowDesign.Change(snapshot.View, snapshot.Model.Definition, design);
+        documents.ApplyAuthorForm(NameKey(id), () => Apply(change).GetAwaiter().GetResult());
+    }
     public DocumentDraft Properties(FlowGraphSnapshot snapshot, string collection, string id)
     {
         var graph = snapshot.Model.Definition;
