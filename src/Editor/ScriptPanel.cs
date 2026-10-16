@@ -4,6 +4,41 @@ using Avalonia.Media;
 using BoardGame.Kernel;
 namespace BoardGame.Editor;
 
+// Shared file editor used by both the script and flow author panels.
+public sealed class ScriptFileEditor : UserControl
+{
+    private readonly ComboBox paths = new();
+    public void Open(string path) { if (paths.Items.Contains(path)) paths.SelectedItem = path; }
+    public ScriptFileEditor(EditorPluginScope scope, string stateKey)
+    {
+        var documents = scope.Service<DocumentWorkspace>("documents");
+        var text = new TextBox { AcceptsReturn = true, MinHeight = 220, FontFamily = FontFamily.Parse("Consolas") };
+        var discard = new Button { Content = "放弃脚本草稿" }; var loading = false; string? selected = null;
+        Content = new StackPanel { Children = { paths, discard, text } };
+        void Refresh()
+        {
+            if (loading) return; loading = true;
+            try
+            {
+                var files = documents.Current?.Paths.Where(p => p.EndsWith(".lua", StringComparison.OrdinalIgnoreCase)).ToArray() ?? [];
+                selected = documents.ViewState.GetValueOrDefault(stateKey);
+                if (!files.Contains(selected)) selected = files.FirstOrDefault();
+                paths.ItemsSource = files; paths.SelectedItem = selected;
+                text.IsEnabled = selected != null; text.Text = selected == null ? "" : documents.Draft(selected).Text;
+            }
+            finally { loading = false; }
+        }
+        paths.SelectionChanged += (_, _) => { if (!loading && paths.SelectedItem is string path) { documents.ViewState[stateKey] = path; Refresh(); } };
+        text.PropertyChanged += (_, e) =>
+        {
+            if (!loading && selected != null && e.Property == TextBox.TextProperty)
+            { loading = true; try { documents.EditDraft(selected, text.Text ?? ""); } finally { loading = false; } }
+        };
+        discard.Click += (_, _) => { if (selected != null) documents.DiscardDraft(selected); };
+        scope.OnDocumentChanged(Refresh); Refresh();
+    }
+}
+
 public sealed class ScriptPanel : UserControl
 {
     public ScriptPanel(EditorPluginScope context)
@@ -16,6 +51,7 @@ public sealed class ScriptPanel : UserControl
         var apply=new Button {Content="应用规则与 CPU 脚本"}; var hot=new Button {Content="在下一命令边界热重载"};
         var scriptTabs=new TabControl(); var ruleTab=new TabItem {Header="规则",Content=new ScrollViewer {Content=rules}}; var cpuTab=new TabItem {Header="CPU",Content=new ScrollViewer {Content=cpu}};
         scriptTabs.Items.Add(ruleTab); scriptTabs.Items.Add(cpuTab);
+        scriptTabs.Items.Add(new TabItem { Header = "工程 Lua 文件", Content = new ScriptFileEditor(context, "scripts.file") });
         var top=new StackPanel {Orientation=Avalonia.Layout.Orientation.Horizontal,Children={apply,hot}};
         var root=new DockPanel {Margin=new Thickness(8)}; DockPanel.SetDock(top,Dock.Top); DockPanel.SetDock(diagnostics,Dock.Bottom); root.Children.Add(top); root.Children.Add(diagnostics); root.Children.Add(scriptTabs); Content=root;
         ModuleDocument? loaded=null; string rulePath="",cpuPath="";

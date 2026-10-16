@@ -55,6 +55,13 @@ public sealed partial class DocumentWorkspace : IDisposable
     }
     public void EditForm(string name,string text) {forms[name].Edit(text);Changed?.Invoke();}
     public void DiscardForm(string name) {forms.Remove(name);Changed?.Invoke();}
+    internal void ApplyAuthorForm(string name,Action apply)
+    {
+        var field = forms[name]; forms.Remove(name);
+        try { apply(); }
+        catch { forms[name] = field; throw; }
+        finally { Notify(); }
+    }
     public bool HasPendingForms=>forms.Values.Any(d=>d.Dirty);
     public void DiscardForms() {forms.Clear();Changed?.Invoke();}
     public void ApplyForm(string name,Action<ModuleDocument> apply)

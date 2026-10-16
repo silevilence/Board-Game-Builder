@@ -7,6 +7,35 @@ namespace Engine.Tests;
 
 public static class FlowEditorTests
 {
+    public static void Properties() => PropertiesAsync().GetAwaiter().GetResult();
+    private static async Task PropertiesAsync()
+    {
+        using var documents = new DocumentWorkspace(); documents.Set(ModuleDocument.Open("samples/flow-cards"));
+        var flow = new FlowWorkspace(documents); var snapshot = flow.Load(); var node = snapshot.Model.Definition.Nodes.First(n => n.Kind == "player");
+        _ = flow.Properties(snapshot, "flow.node", node.Id); var key = flow.FormKey("flow.node", node.Id);
+        documents.EditForm(key, "{"); Check.Throws(() => flow.ApplyProperties(snapshot, "flow.node", node.Id));
+        Check.That(flow.Properties(flow.Load(), "flow.node", node.Id).Text == "{");
+        Check.Throws(() => flow.View(), "fields");
+        documents.EditForm(key, Wire.Json(node with { Seat = new(Fixed: "missing") }));
+        flow.ApplyProperties(snapshot, "flow.node", node.Id);
+        Check.That(flow.Read().Definition.Nodes.First(n => n.Id == node.Id).Seat!.Fixed == "missing");
+        Check.That(flow.Read().Diagnostics.Any(d => d.Code == "seat-reference" && d.Node == node.Id));
+        _ = flow.Properties(flow.Load(), "flow.node", node.Id); documents.Undo();
+        Check.That(flow.Read().Definition.Nodes.First(n => n.Id == node.Id).Seat == node.Seat, "Clean form prevents graph undo");
+        snapshot = flow.Load(); _ = flow.Properties(snapshot, "flow.node", node.Id);
+        documents.EditForm(key, Wire.Json(node with { Parameters = new() }));
+        documents.EditDraft(snapshot.Model.Path, FlowFile.Write(snapshot.Model.Definition) + "\n");
+        Check.Throws(() => flow.ApplyProperties(snapshot, "flow.node", node.Id), "版本");
+        Check.That(documents.HasPendingForms && documents.Draft(snapshot.Model.Path).Dirty);
+        documents.DiscardForm(key); documents.DiscardDraft(snapshot.Model.Path);
+        await flow.CreateScript(flow.Load(), node.Id, "seat", "scripts/seat.lua");
+        Check.That(documents.Current!.Paths.Contains("scripts/seat.lua"));
+        using (var game = new PlaySession(documents.Current.Snapshot())) Check.That(game.CurrentSeat == "p1" && game.Fault == null);
+        documents.Undo(); Check.That(!documents.Current.Paths.Contains("scripts/seat.lua"));
+        documents.Redo(); Check.That(documents.Current.Paths.Contains("scripts/seat.lua"));
+        documents.EditDraft("scripts/seat.lua", "invalid Lua preserved");
+        Check.That(new FlowWorkspace(documents).Load().Model.Definition.Nodes.First(n => n.Id == node.Id).Seat!.Script!.Path == "scripts/seat.lua");
+    }
     public static void Canvas() => CanvasAsync().GetAwaiter().GetResult();
     private static async Task CanvasAsync()
     {

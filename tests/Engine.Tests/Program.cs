@@ -6,6 +6,7 @@ try
 {
     tests.Add("flow-editor-model",FlowEditorTests.Model);
     tests.Add("flow-editor-canvas",FlowEditorTests.Canvas);
+    tests.Add("flow-editor-properties",FlowEditorTests.Properties);
     tests.Add("flow-contract",FlowTests.Contract);
     tests.Add("flow-validation",FlowTests.Validation);
     tests.Add("flow-runtime",FlowTests.Runtime);

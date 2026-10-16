@@ -25,7 +25,9 @@ public sealed class FlowPanel : UserControl
         }
         var help = new TextBlock { Text = "拖动节点移动 · 空白/中键平移 · 滚轮缩放 · 出口→输入连线 · Delete 删除 · 文档 Undo/Redo", TextWrapping = TextWrapping.Wrap };
         var top = new StackPanel { Children = { tools, help, status } };
-        var root = new DockPanel(); DockPanel.SetDock(top, Dock.Top); root.Children.Add(top); root.Children.Add(canvas); Content = root;
+        var inspector = new FlowInspector(scope, flow) { Width = 360, Margin = new Avalonia.Thickness(8, 0) };
+        var root = new DockPanel(); DockPanel.SetDock(top, Dock.Top); DockPanel.SetDock(inspector, Dock.Right);
+        root.Children.Add(top); root.Children.Add(inspector); root.Children.Add(canvas); Content = root;
         void Refresh()
         {
             try { var graph = flow.Load(); canvas.Load(graph); tools.IsEnabled = true; var model = graph.Model; status.Text = $"流程 {model.Path} · {model.Definition.Nodes.Count} 节点 · {model.Diagnostics.Count} 个问题"; }

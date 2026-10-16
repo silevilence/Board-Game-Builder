@@ -38,7 +38,7 @@ public static class FlowOperations
             if(!string.IsNullOrWhiteSpace(script.Path))
                 try {if(view.Exists(script.Path)) scripts[script.Path]=view.Text(script.Path);}
                 catch(Exception error) when(error is ArgumentException or InvalidDataException) {references.Add(new("script-reference",error.Message));}
-        return new(view.Source,format.DefinitionPath,definition,[..references,..FlowValidation.Validate(definition,scripts)]);
+        return new(view.Source,format.DefinitionPath,definition,[..references,..FlowValidation.Validate(definition,scripts),..FlowReferences.Validate(view,definition)]);
     }
     private static AuthorOperationInfo Info(string id,string description)=>new(id,"author.configuration",description,new(),
         new(){["type"]="object",["description"]="Project source/version, flow definition and node/edge diagnostics"},["flow enabled in game.start.json"],[]);

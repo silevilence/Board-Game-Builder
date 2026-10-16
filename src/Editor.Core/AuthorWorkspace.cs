@@ -19,7 +19,7 @@ public sealed partial class DocumentWorkspace
     {
         files = Current!.Revision,
         drafts = drafts.OrderBy(p => p.Key.Path).ThenBy(p => p.Key.Yaml).Select(p => new { p.Key, p.Value.Text, p.Value.Baseline }),
-        forms = forms.Where(p => p.Key != ExternalMergeForm).OrderBy(p => p.Key).Select(p => new { p.Key, p.Value.Text, p.Value.Baseline })
+        forms = forms.Where(p => p.Key != ExternalMergeForm && p.Value.Dirty).OrderBy(p => p.Key).Select(p => new { p.Key, p.Value.Text, p.Value.Baseline })
     }));
     private void RestoreAuthor(AuthorState state)
     {
@@ -38,11 +38,14 @@ public sealed partial class DocumentWorkspace
         if (Current == null || authorRedo.Count == 0 || HasPendingForms || AuthorVersion() != authorRedo.Peek().BeforeVersion) return false;
         var edit = authorRedo.Pop(); RestoreAuthor(edit.After); authorUndo.Push(edit); return true;
     }
-    public ProjectView AuthorView(ProjectIdentity identity, bool checkExternal = true)
+    public ProjectView AuthorView(ProjectIdentity identity, bool checkExternal = true) => CaptureAuthorView(identity, checkExternal, false);
+    // Read-only previews may show applied content while fields remain uncommitted.
+    internal ProjectView PreviewAuthorView(ProjectIdentity identity) => CaptureAuthorView(identity, true, true);
+    private ProjectView CaptureAuthorView(ProjectIdentity identity, bool checkExternal, bool allowPendingForms)
     {
         CheckIdentity(identity);
         if (checkExternal && Current!.DiskChanged()) throw new AuthorOperationException("workspace.external", "External files changed; inspect workspace.external.status and explicitly reload or merge");
-        if (HasPendingForms) throw new AuthorOperationException("workspace.forms", "Apply or coordinate pending form fields before external operations; fields are preserved");
+        if (!allowPendingForms && HasPendingForms) throw new AuthorOperationException("workspace.forms", "Apply or coordinate pending form fields before external operations; fields are preserved");
         var dirty = drafts.Where(p => p.Value.Dirty).ToArray();
         if (dirty.GroupBy(p => p.Key.Path, StringComparer.OrdinalIgnoreCase).Any(g => g.Count() > 1))
             throw new AuthorOperationException("workspace.drafts", "JSON and YAML drafts target the same file; both are preserved");
