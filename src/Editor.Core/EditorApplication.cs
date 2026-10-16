@@ -7,6 +7,7 @@ namespace BoardGame.Editor;
 public sealed record EditorPluginDefinition(string Id, int Api, string[] Provides, string[] Requires,
     Action<EditorPluginScope> Activate, bool Required=false)
 {
+    public string Version { get; init; } = "1";
     public Func<EditorPluginScope,Task>? InitializeAsync { get; init; }
 }
 public enum EditorPluginStatus { Disabled, Waiting, Enabled, Failed }
@@ -41,7 +42,7 @@ public sealed class EditorApplication : IAsyncDisposable
     public void Install(EditorPluginDefinition plugin)
     {
         ObjectDisposedException.ThrowIf(disposed,this);
-        if(string.IsNullOrWhiteSpace(plugin.Id) || plugin.Api!=1 || plugin.Provides==null || plugin.Requires==null || plugin.Provides.Concat(plugin.Requires).Any(string.IsNullOrWhiteSpace)
+        if(string.IsNullOrWhiteSpace(plugin.Id) || string.IsNullOrWhiteSpace(plugin.Version) || plugin.Api!=1 || plugin.Provides==null || plugin.Requires==null || plugin.Provides.Concat(plugin.Requires).Any(string.IsNullOrWhiteSpace)
             || plugin.Provides.Distinct().Count()!=plugin.Provides.Length) throw new InvalidDataException("Invalid plugin identity/API: "+plugin.Id);
         if(definitions.Values.Any(p=>p.Provides.Intersect(plugin.Provides).Any())) throw new InvalidDataException("Duplicate capability: "+plugin.Id);
         if(!definitions.TryAdd(plugin.Id,plugin)) throw new InvalidDataException("Duplicate plugin: "+plugin.Id);
