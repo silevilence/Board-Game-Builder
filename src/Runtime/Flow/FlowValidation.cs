@@ -46,7 +46,10 @@ public static class FlowValidation
             try
             {
                 ValidateCondition(e.Condition,0);
-                if(FlowConditions.Constant(e.Condition,scripts)!=false) usable.Add(e);
+                var constant=FlowConditions.Constant(e.Condition,scripts);
+                if(constant!=false) usable.Add(e);
+                if(constant==false) diagnostics.Add(new("false-exit","Constant-false exit does not provide a terminal path",e.From,e.Id,"warning"));
+                if(constant==null) diagnostics.Add(new("conditional-exit","State/Lua condition: termination remains the author's responsibility",e.From,e.Id,"info"));
             }
             catch(Exception ex) when(ex is InvalidDataException or OverflowException or FormatException) {Error("edge-condition",ex.Message,from.Id,e.Id);}
         }
@@ -60,11 +63,14 @@ public static class FlowValidation
                 (e.Default || e.Priority<certain.Max(c=>c.Priority)));
         }
         if(diagnostics.Any(d=>d.Code is "node-config" or "node-id")) return diagnostics;
-        foreach(var script in FlowFile.Scripts(graph))
+        var scriptOwners=graph.Nodes.SelectMany(n=>FlowFile.Scripts(new(1,[n],[])).Select(s=>(Script:s,Node:(string?)n.Id,Edge:(string?)null)))
+            .Concat(graph.Edges.Where(e=>e!=null).SelectMany(e=>FlowFile.Scripts(new(1,[],[e])).Select(s=>(Script:s,Node:(string?)e.From,Edge:(string?)e.Id))));
+        foreach(var owner in scriptOwners)
         {
+            var script=owner.Script;
             try {ModulePackage.ValidatePath(script.Path);if(string.IsNullOrWhiteSpace(script.Entry)) throw new InvalidDataException("Missing script entry");}
-            catch(Exception e) when(e is InvalidDataException or ArgumentException) {Error("script-reference",e.Message);continue;}
-            if(scripts!=null && !scripts.ContainsKey(script.Path)) Error("script-missing","Missing script: "+script.Path);
+            catch(Exception e) when(e is InvalidDataException or ArgumentException) {Error("script-reference",e.Message,owner.Node,owner.Edge);continue;}
+            if(scripts!=null && !scripts.ContainsKey(script.Path)) Error("script-missing","Missing script: "+script.Path,owner.Node,owner.Edge);
         }
         // Reverse reachability from all terminals rejects closed SCCs and every feeder into them.
         var terminal=Reach(nodes.Values.Where(n=>n.Kind=="end").Select(n=>n.Id),usable,true);

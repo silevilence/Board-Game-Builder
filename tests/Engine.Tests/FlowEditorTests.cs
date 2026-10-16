@@ -7,6 +7,27 @@ namespace Engine.Tests;
 
 public static class FlowEditorTests
 {
+    public static void Validation() => ValidationAsync().GetAwaiter().GetResult();
+    private static async Task ValidationAsync()
+    {
+        using var documents = new DocumentWorkspace(); documents.Set(ModuleDocument.Open("samples/flow-minimal"));
+        var flow = new FlowWorkspace(documents); var snapshot = flow.Load();
+        var graph = new FlowDefinition(1, [new() { Id = "s", Kind = "start" }, new() { Id = "a", Kind = "system" }, new() { Id = "b", Kind = "system" }, new() { Id = "e", Kind = "end", Winners = [] }],
+            [new("sa", "s", "a"), new("ab", "a", "b"), new("ba", "b", "a"), new("exit", "b", "e", Condition: new("false"))]);
+        await flow.Update(snapshot, graph);
+        var model = flow.Read();
+        Check.That(model.Diagnostics.Count(d => d.Code == "no-terminal-path") == 3);
+        Check.That(model.Diagnostics.Any(d => d.Code == "false-exit" && d.Edge == "exit"));
+        Check.That(Wire.Json(model.Diagnostics) == Wire.Json(FlowOperations.Read(flow.View()).Diagnostics), "CLI/editor diagnostics differ");
+        graph = graph with { Edges = graph.Edges.Select(e => e.Id == "exit" ? e with { Condition = new("eq", new(Path: "/turn"), new(Literal: System.Text.Json.JsonSerializer.SerializeToElement(5))), Priority = 1 } : e).ToList() };
+        await flow.Update(flow.Load(), graph);
+        Check.That(flow.Read().Success && flow.Read().Diagnostics.Any(d => d.Code == "conditional-exit"));
+        graph.Nodes[1] = graph.Nodes[1] with { Script = new("missing.lua") };
+        await flow.Update(flow.Load(), graph);
+        Check.That(flow.Read().Diagnostics.Any(d => d.Code == "script-missing" && d.Node == "a"));
+        documents.Set(ModuleDocument.Open("samples/flow-cards"));
+        Check.That(flow.Read().Success && flow.Read().Source.Identity.Generation != model.Source.Identity.Generation);
+    }
     public static void Properties() => PropertiesAsync().GetAwaiter().GetResult();
     private static async Task PropertiesAsync()
     {
