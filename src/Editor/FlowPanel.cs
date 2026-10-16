@@ -6,13 +6,26 @@ namespace BoardGame.Editor;
 
 public sealed class FlowPanel : UserControl
 {
+    internal FlowCanvas Canvas { get; }
     public FlowPanel(EditorPluginScope scope)
     {
         var documents = scope.Service<DocumentWorkspace>("documents");
         var flow = scope.Service<FlowWorkspace>("flow.author");
+        var sessions = scope.Service<SessionController>("sessions");
         var status = new TextBlock { TextWrapping = TextWrapping.Wrap };
         var canvas = new FlowCanvas(documents, flow, scope.Cancellation, message => status.Text = message);
+        Canvas = canvas;
         var tools = new WrapPanel();
+        var playback = new TextBlock { TextWrapping = TextWrapping.Wrap };
+        var trace = new ListBox { MaxHeight = 110 };
+        var commands = scope.Service<EditorCommands>("commands");
+        foreach (var id in new[] { "flow.play", "flow.stop", "flow.observe", "flow.resume" })
+        {
+            var command = commands.Items.First(c => c.Id == id); var button = new Button { Content = command.Title };
+            button.Click += async (_, _) => { try { await commands.Execute(id); } catch (Exception error) { status.Text = error.Message; } };
+            void Enabled() => button.IsEnabled = commands.CanExecute(id);
+            commands.Changed += Enabled; scope.Own(new Cleanup(() => commands.Changed -= Enabled)); Enabled(); tools.Children.Add(button);
+        }
         var issues = new ListBox { MaxHeight = 145 };
         var validate = new Button { Content = "校验当前草稿" };
         tools.Children.Add(validate);
@@ -27,11 +40,37 @@ public sealed class FlowPanel : UserControl
             tools.Children.Add(button);
         }
         var help = new TextBlock { Text = "拖动节点移动 · 空白/中键平移 · 滚轮缩放 · 出口→输入连线 · Delete 删除 · 文档 Undo/Redo", TextWrapping = TextWrapping.Wrap };
-        var top = new StackPanel { Children = { tools, help, status } };
+        var top = new StackPanel { Children = { tools, help, status, playback } };
         var inspector = new FlowInspector(scope, flow) { Width = 360, Margin = new Avalonia.Thickness(8, 0) };
         var root = new DockPanel(); DockPanel.SetDock(top, Dock.Top); DockPanel.SetDock(inspector, Dock.Right);
-        DockPanel.SetDock(issues, Dock.Bottom);
-        root.Children.Add(top); root.Children.Add(inspector); root.Children.Add(issues); root.Children.Add(canvas); Content = root;
+        var bottom = new StackPanel { Children = { issues, trace } }; DockPanel.SetDock(bottom, Dock.Bottom);
+        root.Children.Add(top); root.Children.Add(inspector); root.Children.Add(bottom); root.Children.Add(canvas); Content = root;
+        BoardGame.Kernel.FlowTrace[] entries = [];
+        var matching = false;
+        trace.SelectionChanged += (_, _) =>
+        {
+            if (!matching || trace.SelectedIndex < 0 || trace.SelectedIndex >= entries.Length) return;
+            var entry = entries[trace.SelectedIndex];
+            canvas.Locate(entry.Edge == null ? "flow.node" : "flow.edge", entry.Edge ?? entry.Node);
+        };
+        void RefreshPlayback()
+        {
+            entries = []; trace.ItemsSource = null; canvas.ActiveNode = null; canvas.TraceEdges = []; matching = false;
+            if (!sessions.Active) playback.Text = "未开始试玩。席位与 CPU 在“试玩与调试”面板配置。";
+            else if (canvas.Snapshot is not {} graph || !FlowPlayback.Matches(sessions.SourceView, graph, documents.HasPendingForms))
+                playback.Text = $"运行快照 {sessions.SourceView?.Source.Version[..8]} 与当前草稿不同；已关闭高亮，请显式重开。";
+            else if (sessions.Reply?.AuthorityState?.Flow is not {} state)
+                playback.Text = "席位投影模式。点击“显示作者轨迹”查看作者调试信息；普通玩家界面不显示这些内容。";
+            else
+            {
+                matching = true; canvas.ActiveNode = state.Node;
+                entries = state.Trace.ToArray(); canvas.TraceEdges = entries.Where(e => e.Edge != null).Select(e => e.Edge!).ToHashSet();
+                trace.ItemsSource = entries.Select(e => $"{e.Revision} · {e.Node} → {e.Edge ?? "等待"} · {e.Result}").ToArray();
+                playback.Text = "作者调试 · " + FlowPlayback.Status(state) + $" · 运行版本 {sessions.SourceView?.Source.Version[..8]}" +
+                    (sessions.Frame?.Fault is {} fault ? $"\n{fault.Code}: {fault.Detail}（选择轨迹可定位节点与脚本）" : "");
+            }
+            canvas.InvalidateVisual();
+        }
         BoardGame.Runtime.FlowDiagnostic[] diagnostics = [];
         issues.SelectionChanged += (_, _) =>
         {
@@ -44,7 +83,7 @@ public sealed class FlowPanel : UserControl
             diagnostics = []; issues.ItemsSource = null;
             try
             {
-                var graph = flow.Load(); canvas.Load(graph); tools.IsEnabled = true; var model = graph.Model;
+                var graph = flow.Load(); canvas.Load(graph); var model = graph.Model;
                 diagnostics = model.Diagnostics.ToArray();
                 canvas.ProblemNodes = diagnostics.Where(d => d.Severity == "error" && d.Node != null).Select(d => d.Node!).ToHashSet();
                 canvas.ProblemEdges = diagnostics.Where(d => d.Severity != "info" && d.Edge != null).Select(d => d.Edge!).ToHashSet();
@@ -52,10 +91,12 @@ public sealed class FlowPanel : UserControl
                 status.Text = $"流程 {model.Path} · {model.Definition.Nodes.Count} 节点 · {diagnostics.Count(d => d.Severity == "error")} 错误 · 版本 {model.Source.Version[..8]}" +
                     (documents.HasPendingForms ? " · 未应用字段不参与校验" : "");
             }
-            catch (Exception error) { canvas.Load(null); tools.IsEnabled = false; status.Text = error.Message + "\n可使用“游戏文件”编辑；新建流程会显式切换运行控制模式。"; }
+            catch (Exception error) { canvas.Load(null); status.Text = error.Message + "\n可使用“游戏文件”编辑；新建流程会显式切换运行控制模式。"; }
+            RefreshPlayback();
         }
         validate.Click += (_, _) => Refresh();
         documents.SelectionChanged += canvas.InvalidateVisual; scope.Own(new Cleanup(() => documents.SelectionChanged -= canvas.InvalidateVisual));
+        sessions.Changed += RefreshPlayback; scope.Own(new Cleanup(() => sessions.Changed -= RefreshPlayback));
         scope.OnDocumentChanged(Refresh); Refresh();
     }
 }
@@ -67,6 +108,18 @@ public static class FlowEditorPlugin
         var documents = scope.Service<DocumentWorkspace>("documents");
         var flow = new FlowWorkspace(documents); scope.Provide("flow.author", flow);
         var commands = scope.Service<EditorCommands>("commands");
+        var sessions = scope.Service<SessionController>("sessions");
+        commands.Register(scope, new("flow.play", "重开流程试玩（作者）", async () =>
+        {
+            var model = flow.Read(); if (!model.Success) throw new InvalidDataException("请先修复流程校验错误。");
+            await sessions.Start();
+            if (!scope.Cancellation.IsCancellationRequested && sessions.Active) await sessions.Send(new("observe", Authority: true));
+        }, () => documents.Current != null && !documents.HasPendingForms && !sessions.Busy));
+        commands.Register(scope, new("flow.stop", "停止试玩", () => { sessions.Stop(); return Task.CompletedTask; }, () => sessions.Active));
+        commands.Register(scope, new("flow.observe", "显示作者轨迹", async () => { await sessions.Send(new("observe", Authority: true)); }, () => sessions.Active && !sessions.Busy));
+        commands.Register(scope, new("flow.resume", "显式继续", async () => { await sessions.Send(new("resume")); }, () => sessions.Active && !sessions.Busy &&
+            (sessions.Frame?.Paused == true || sessions.Frame?.Fault?.Code is "flow-budget" or "flow-cancelled" or "flow-restored")));
+        sessions.Changed += commands.Refresh; scope.Own(new Cleanup(() => sessions.Changed -= commands.Refresh));
         void Open()
         {
             var tabs = scope.Service<WorkspaceShell>("workspace").Tabs;

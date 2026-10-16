@@ -1,6 +1,7 @@
 using Avalonia.Threading;
 using BoardGame.Kernel;
 using BoardGame.Runtime;
+using BoardGame.Authoring;
 
 namespace BoardGame.Editor;
 
@@ -13,6 +14,7 @@ public sealed class SessionController : IDisposable
     private int generation;
     private bool pendingPause;
     public LoadedModule? Module { get; private set; }
+    public ProjectView? SourceView { get; private set; }
     public DebugFrame? Frame { get; private set; }
     public DebugReply? Reply { get; private set; }
     public bool Busy { get; private set; }
@@ -54,6 +56,7 @@ public sealed class SessionController : IDisposable
         {
             if(!uint.TryParse(Seed,out var seed)) throw new InvalidDataException("种子必须是无符号整数");
             documents.ApplyDrafts();Module=documents.Current?.Snapshot() ?? throw new InvalidOperationException("请打开模块");SyncSeats(Module);
+            SourceView = new(new(documents.Current!.DirectoryPath!, "editor.session", "gui", documents.WorkspaceId, documents.Generation), documents.Current.CopyFiles());
             var controllers=CpuSeats.ToDictionary(p=>p.Key,p=>p.Value?"cpu":"human");
             var observer=Module.Initial.Seats.FirstOrDefault(s=>controllers[s.Id]=="human")?.Id ?? Module.Initial.Seats[0].Id;
             var created=External?(IDebugSession)await ExternalDebugSession.Launch(Executable,Module,seed,controllers,observer):new InProcessDebugSession(Module,seed,controllers,observer);
@@ -81,7 +84,7 @@ public sealed class SessionController : IDisposable
             {
                 if(error is IOException or ObjectDisposedException)
                 {
-                    timer.Stop();active.Dispose();session=null;Frame=null;Reply=null;Module=null;pendingPause=false;
+                    timer.Stop();active.Dispose();session=null;Frame=null;Reply=null;Module=null;SourceView=null;pendingPause=false;
                 }
                 Status="试玩故障："+error.Message;
             }
@@ -111,7 +114,7 @@ public sealed class SessionController : IDisposable
     }
     public void Stop()
     {
-        generation++;timer.Stop();session?.Dispose();session=null;Frame=null;Reply=null;Module=null;Busy=false;pendingPause=false;
+        generation++;timer.Stop();session?.Dispose();session=null;Frame=null;Reply=null;Module=null;SourceView=null;Busy=false;pendingPause=false;
         Status="已停止；作者初始局面保持不变。";Changed?.Invoke();
     }
     internal IDebugSession? Session {get=>session;set=>session=value;}

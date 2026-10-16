@@ -8,6 +8,7 @@ try
     tests.Add("flow-editor-canvas",FlowEditorTests.Canvas);
     tests.Add("flow-editor-properties",FlowEditorTests.Properties);
     tests.Add("flow-editor-validation",FlowEditorTests.Validation);
+    tests.Add("flow-editor-playback",FlowEditorTests.Playback);
     tests.Add("flow-contract",FlowTests.Contract);
     tests.Add("flow-validation",FlowTests.Validation);
     tests.Add("flow-runtime",FlowTests.Runtime);

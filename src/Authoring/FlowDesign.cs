@@ -52,7 +52,10 @@ public static class FlowDesign
         IReadOnlyDictionary<string, string>? scripts = null)
     {
         var format = FlowOperations.Format(view);
-        var files = new Dictionary<string, byte[]?> { [format.DefinitionPath] = Encoding.UTF8.GetBytes(format.Serialize(view, JsonNode.Parse(FlowFile.Write(graph))!.AsObject())) };
+        var candidate = JsonNode.Parse(FlowFile.Write(graph))!.AsObject();
+        var serialized = format.Serialize(view, candidate);
+        var files = new Dictionary<string, byte[]?>();
+        if (!JsonNode.DeepEquals(format.Read(view), candidate)) files[format.DefinitionPath] = Encoding.UTF8.GetBytes(serialized);
         if (design != null) files.Add(ViewPath(format.DefinitionPath), Encoding.UTF8.GetBytes(Wire.Json(design)));
         foreach (var file in scripts ?? new Dictionary<string, string>())
         {

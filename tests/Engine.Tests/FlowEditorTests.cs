@@ -7,6 +7,25 @@ namespace Engine.Tests;
 
 public static class FlowEditorTests
 {
+    public static void Playback() => PlaybackAsync().GetAwaiter().GetResult();
+    private static async Task PlaybackAsync()
+    {
+        using var documents = new DocumentWorkspace(); documents.Set(ModuleDocument.Open("samples/flow-cards"));
+        var flow = new FlowWorkspace(documents); var source = flow.View(); var module = documents.Current!.Snapshot();
+        using var session = new DebugSession(module, 42, module.Initial.Seats.ToDictionary(s => s.Id, _ => "human"), "p1");
+        Check.That(session.Handle(new("frame")).AuthorityState == null);
+        var reply = session.Handle(new("observe", Authority: true)); var state = reply.AuthorityState!.Flow!;
+        Check.That(state.Status == "waiting" && state.Seat == "p1" && state.Trace.Count > 0);
+        var before = reply.Frame.StateHash;
+        Check.That(session.Handle(new("frame")).Frame.StateHash == before, "Query reentered a node");
+        Check.That(FlowPlayback.Matches(source, flow.Load(), false));
+        var snapshot = flow.Load(); await flow.Update(snapshot, snapshot.Model.Definition, new() { Zoom = .75 });
+        Check.That(FlowPlayback.Matches(source, flow.Load(), false), "View-only edit invalidated graph playback");
+        documents.EditDraft("turn.lua", documents.Draft("turn.lua").Text + "\n");
+        Check.That(!FlowPlayback.Matches(source, flow.Load(), false));
+        documents.DiscardDraft("turn.lua"); Check.That(!FlowPlayback.Matches(source, flow.Load(), true));
+        documents.Set(ModuleDocument.Open("samples/flow-cards")); Check.That(!FlowPlayback.Matches(source, flow.Load(), false));
+    }
     public static void Validation() => ValidationAsync().GetAwaiter().GetResult();
     private static async Task ValidationAsync()
     {
