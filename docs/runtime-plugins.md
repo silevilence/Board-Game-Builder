@@ -31,7 +31,7 @@
 
 | 插件（实现版本均为 1，API 均为 1） | 能力／配置 |
 | --- | --- |
-| kernel | authority、projection、random、rule-binding；空配置 |
+| kernel | authority、projection、random、rule-binding、flow-transactions；空配置 |
 | definition.module | definition；`path` 指向实体／组件定义，可选 `presets` 声明开局定义预设 |
 | definition.state | definition；`path` 指向 `{format:1,state:GameState}` |
 | resources | resources；管理资源池与原始文件，`sources` 声明读取来源 |
@@ -42,7 +42,7 @@
 | flow | rules、flow；`path` 指向版本化流程图，`maxAutomaticSteps` 限定自动推进；与其他 rules 提供者互斥 |
 | lua.cpu | cpu；`file` 指向 CPU 脚本 |
 | wasm | effects；`extensions` 含 id/version/api/kind/file/sha256/permissions |
-| session.local | session；空配置，按实际组合依赖 CPU／扩展 |
+| session.local | session；空配置，按实际组合依赖 CPU／扩展／flow |
 | recording | recording；空配置，依赖 authority |
 
 完整最小配置见 `samples/state-minimal/game.start.json`；Lua 示例见 `samples/quick-cards/game.start.json`；WASM 见 `samples/wasm-counter/game.start.json`。新增内置实现使用 `RuntimePluginDefinition` 声明 Provides/Requires，在 `RuntimeComposition.Catalog` 注册，通过 scope 获取声明服务和提供能力，资源通过 `scope.Own` 归属 effect。不得订阅事件来决定权威命令次序。目录加载器提供 `GameDefinition` 与内容依赖；获准目录保持静态，不承诺运行时任意第三方插件发现。

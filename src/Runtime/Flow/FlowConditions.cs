@@ -5,9 +5,12 @@ namespace BoardGame.Runtime;
 
 public static class FlowConditions
 {
+    // null means unknown, not false: state-dependent or unrecognized Lua conditions
+    // remain potential exits during validation. Runtime evaluation resolves their inputs.
     public static bool? Constant(FlowCondition? condition, IReadOnlyDictionary<string,string>? scripts = null) =>
         Evaluate(condition, _ => null, script => IsFalse(script, scripts) ? false : null);
 
+    /// <returns>True or false when resolved; null when a value or Lua result is unknown.</returns>
     public static bool? Evaluate(FlowCondition? c, Func<string,JsonElement?> resolve, Func<FlowScript,bool?> lua)
     {
         if (c == null || c.Op == "true") return true;

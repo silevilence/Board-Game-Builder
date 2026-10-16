@@ -41,6 +41,8 @@ decideScript，分别返回标准 ActionOffer 数组和上述裁决结果。合�
 连线包含 id、from、to、result、condition、priority、default。
 只考虑与命名结果相同的出口，priority 越大越优先，同最高优先级多个匹配报错；
 无匹配时使用唯一默认出口，再无出口则报错。默认出口不得再带条件。
+校验要求每个非结束节点声明的结果至少有一条潜在可用的后继边；缺失或只有恒假条件的结果出口拒绝运行。
+这不证明动态条件在每个局面都能匹配，运行时仍保留无匹配诊断。
 条件省略表示 true；op 支持 true、false、eq、ne、lt、le、gt、ge、all、any、not、lua。
 比较的 left/right 各取一种 `{"literal":...}` 或 `{"path":"/state/turn"}`（JSON Pointer）；
 逻辑组合使用 items，lua 使用 script 引用。比较只支持相同类型的标量，大小比较只支持数字。

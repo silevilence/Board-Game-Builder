@@ -1,4 +1,5 @@
 using System.Text.Json;
+using System.Text;
 using BoardGame.Kernel;
 
 namespace BoardGame.Runtime;
@@ -11,6 +12,16 @@ public sealed record FlowValue(JsonElement? Literal = null, string? Path = null)
 public sealed record FlowCondition(string Op, FlowValue? Left = null, FlowValue? Right = null,
     List<FlowCondition>? Items = null, FlowScript? Script = null);
 public sealed record FlowAction(string Id, string Label, List<Command> Commands, bool Complete = true, string Result = "done");
+public static class FlowNodeKinds
+{
+    public const string Start = "start";
+    public const string System = "system";
+    public const string Player = "player";
+    public const string End = "end";
+    public static IReadOnlyList<string> All { get; } = Array.AsReadOnly(new[] { Start, System, Player, End });
+    public static bool IsValid(string kind) => All.Contains(kind, StringComparer.Ordinal);
+}
+
 public sealed record FlowNode
 {
     public required string Id { get; init; }
@@ -43,11 +54,13 @@ public static class FlowFile
     public const int Version = 1;
     public const int MaxNodes = 1024;
     public const int MaxEdges = 8192;
+    public const int MaxBytes = 1024 * 1024;
+    public const int MaxScriptBytes = 262144;
     public static FlowDefinition Parse(string json)
     {
         try
         {
-            if (json.Length > 1024 * 1024) throw new InvalidDataException("flow: file size limit exceeded");
+            if (Encoding.UTF8.GetByteCount(json) > MaxBytes) throw new InvalidDataException("flow: file size limit exceeded");
             using(var document=JsonDocument.Parse(json)) CheckKeys(document.RootElement);
             var value = Wire.Read<FlowDefinition>(json);
             if (value.Format != Version) throw new InvalidDataException("flow.format: unsupported version " + value.Format);

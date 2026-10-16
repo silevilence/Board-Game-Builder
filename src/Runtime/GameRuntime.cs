@@ -87,7 +87,7 @@ public static class GameRuntime
             var flow=FlowContent.Read(identity.Startup,module.FlowFiles ?? throw new InvalidDataException("flow: missing payload"));
             foreach(var file in module.FlowFiles!)
                 if(identity.ContentHashes.GetValueOrDefault(file.Key)!=ModulePackage.Hash(file.Value)) throw new InvalidDataException("flow: content identity mismatch");
-            var expected=new FlowState {DefinitionHash=flow.Hash,Node=flow.Definition.Nodes.Single(n=>n.Kind=="start").Id};
+            var expected=new FlowState {DefinitionHash=flow.Hash,Node=flow.Definition.Nodes.Single(n=>n.Kind==FlowNodeKinds.Start).Id};
             if(Wire.Json(expected)!=Wire.Json(module.Initial.Flow)) throw new InvalidDataException("flow: initial cursor mismatch");
         }
         StateValidation.Validate(module.Initial);
@@ -159,7 +159,7 @@ public static class GameRuntime
         {
             var flow=FlowContent.Read(startup,flowFiles);
             if(definition.Initial.Ended || definition.Initial.Flow!=null || definition.Initial.Secret!=null) throw new InvalidDataException("flow: definition must contain a fresh non-secret state");
-            definition.Initial.Flow=new(){DefinitionHash=flow.Hash,Node=flow.Definition.Nodes.Single(n=>n.Kind=="start").Id};
+            definition.Initial.Flow=new(){DefinitionHash=flow.Hash,Node=flow.Definition.Nodes.Single(n=>n.Kind==FlowNodeKinds.Start).Id};
         }
         ValidateImages(definition.Initial,pool);
         var hashes=new SortedDictionary<string,string>(StringComparer.Ordinal);

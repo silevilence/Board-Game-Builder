@@ -1,0 +1,13 @@
+{
+  "input": "docs/validation/evidence/flow-20261016-round3/coverage.xml",
+  "inputSha256": "7962e3541431e517b12a22467934b974166cfc1525efbc38c5a5769a5e144e9c",
+  "freshCoverageCollection": false,
+  "toolCovered": 2161,
+  "toolTotal": 2334,
+  "uniqueCovered": 1974,
+  "uniqueTotal": 2128,
+  "methodsBelow90": 83,
+  "sourceAndMethodDetailsUnchanged": true,
+  "markdownTotalsVerified": true,
+  "summaryScriptSha256": "35e5ac3b376ed5510a1d53780c04beac91e6a28858c9ce6fa05a64937bf32823"
+}

@@ -20,6 +20,8 @@ internal sealed class FlowController : IAuthoritySession,IRuleProvider,IGameRule
     private readonly CancellationToken lifetime;
     private readonly object cancellationGate=new();
     private CancellationTokenSource stop=new();
+    // After construction, LocalGameSession serializes Advance/Submit/Resume/Actions with its
+    // commands lock. Cancel only signals stop under cancellationGate; Advance assigns activeCancellation.
     private CancellationToken activeCancellation;
     private bool disposed;
     public SessionFault? Fault {get;private set;}
@@ -36,7 +38,7 @@ internal sealed class FlowController : IAuthoritySession,IRuleProvider,IGameRule
         if(restored)
         {
             var flow=controller.ExportAuthorityState().Flow ?? throw new InvalidDataException("flow: missing restored cursor");
-            if(flow.DefinitionHash!=content.Hash || !controller.nodes.TryGetValue(flow.Node,out var node) || flow.Status=="waiting" && node.Kind!="player" || flow.Status=="ended" && node.Kind!="end")
+            if(flow.DefinitionHash!=content.Hash || !controller.nodes.TryGetValue(flow.Node,out var node) || flow.Status=="waiting" && node.Kind!=FlowNodeKinds.Player || flow.Status=="ended" && node.Kind!=FlowNodeKinds.End)
                 throw new InvalidDataException("flow: restored cursor/configuration mismatch");
             if(flow.Status=="ready") controller.Fault=new("flow-restored","","Restored committed boundary; explicitly resume node "+flow.Node);
             if(controller.ExportLog().Entries.LastOrDefault()?.Submission is {Accepted:false} failed)
@@ -79,21 +81,21 @@ internal sealed class FlowController : IAuthoritySession,IRuleProvider,IGameRule
         foreach(var command in node.Commands) tx.Apply(command);
         var outcome=node.Script==null?new FlowOutcome():Invoke<FlowOutcome>(node.Script,Input(tx.Snapshot(),node,next),tx.Snapshot().RandomState);
         next=ApplyOutcome(tx,node,next,outcome);
-        if(node.Kind=="player")
+        if(node.Kind==FlowNodeKinds.Player)
         {
             var state=tx.Snapshot();var selector=node.Seat!;
             var seat=selector.Fixed ?? (selector.Current?state.Seats[state.CurrentSeat].Id:Invoke<string>(selector.Script!,Input(state,node,next),state.RandomState));
             if(!state.Seats.Any(s=>s.Id==seat)) throw new FlowOperationException("flow-invalid-seat");
             tx.Complete(next with {Status="waiting",Seat=seat});
         }
-        else if(node.Kind=="end") tx.Complete(next with {Status="ended",Result=outcome.Result,Seat=null,
+        else if(node.Kind==FlowNodeKinds.End) tx.Complete(next with {Status="ended",Result=outcome.Result,Seat=null,
             Trace=next.Trace.Append(new(next.Revision,node.Id,outcome.Result,null)).TakeLast(64).ToList()},outcome.Winners ?? node.Winners ?? throw new InvalidDataException("flow-end-result"));
         else tx.Complete(Leave(tx.Snapshot(),node,next,outcome.Result));
         if(activeCancellation.IsCancellationRequested) throw new FlowOperationException("flow-cancelled");
     }
     private FlowState ApplyOutcome(GameEngine.FlowTransaction tx,FlowNode node,FlowState next,FlowOutcome outcome)
     {
-        if(outcome.Commands==null || !node.Results.Contains(outcome.Result) || node.Kind!="end" && outcome.Winners!=null) throw new FlowOperationException("flow-outcome");
+        if(outcome.Commands==null || !node.Results.Contains(outcome.Result) || node.Kind!=FlowNodeKinds.End && outcome.Winners!=null) throw new FlowOperationException("flow-outcome");
         foreach(var command in outcome.Commands) tx.Apply(command);
         next=next with {GameContext=outcome.GameContext ?? next.GameContext,NodeContext=outcome.NodeContext ?? next.NodeContext};
         next.Validate(tx.Snapshot());return next;

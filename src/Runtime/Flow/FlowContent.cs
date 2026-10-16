@@ -17,7 +17,7 @@ internal sealed record FlowContent(FlowDefinition Definition,SortedDictionary<st
             if(new FileInfo(full).Length>limit) throw new InvalidDataException("flow: file size limit exceeded: "+file);
             return File.ReadAllBytes(full);
         }
-        var files=new SortedDictionary<string,byte[]>(StringComparer.Ordinal) {[path]=ReadFile(path,1024*1024)};
+        var files=new SortedDictionary<string,byte[]>(StringComparer.Ordinal) {[path]=ReadFile(path,FlowFile.MaxBytes)};
         var graph=FlowFile.Parse(Text(files[path]));
         FlowValidation.RequireValid(graph);
         foreach(var script in FlowFile.Scripts(graph))
@@ -26,7 +26,7 @@ internal sealed record FlowContent(FlowDefinition Definition,SortedDictionary<st
             if(!files.ContainsKey(script.Path))
             {
                 if(files.Count>=ModuleContentLimits.MaxFiles-1) throw new InvalidDataException("flow: content file count limit exceeded");
-                files[script.Path]=ReadFile(script.Path,262144);
+                files[script.Path]=ReadFile(script.Path,FlowFile.MaxScriptBytes);
                 if(files.Sum(p=>(long)p.Value.Length)>ModuleContentLimits.MaxTotalBytes) throw new InvalidDataException("flow: content size limit exceeded");
             }
         }
@@ -35,7 +35,7 @@ internal sealed record FlowContent(FlowDefinition Definition,SortedDictionary<st
     public static FlowContent Read(RuntimeStartup startup,SortedDictionary<string,byte[]> files)
     {
         var path=Selection(startup)!.Configuration.GetProperty("path").GetString()!;
-        if(!files.TryGetValue(path,out var graphBytes) || graphBytes==null || graphBytes.Length>1024*1024 || files.Count>ModuleContentLimits.MaxFiles-1 || files.Any(p=>p.Value==null) || files.Sum(p=>(long)p.Value.Length)>ModuleContentLimits.MaxTotalBytes)
+        if(!files.TryGetValue(path,out var graphBytes) || graphBytes==null || graphBytes.Length>FlowFile.MaxBytes || files.Count>ModuleContentLimits.MaxFiles-1 || files.Any(p=>p.Value==null) || files.Sum(p=>(long)p.Value.Length)>ModuleContentLimits.MaxTotalBytes)
             throw new InvalidDataException("flow: missing graph or content limits exceeded");
         var graph=FlowFile.Parse(Text(graphBytes));
         var scripts=new SortedDictionary<string,string>(StringComparer.Ordinal);
@@ -43,7 +43,7 @@ internal sealed record FlowContent(FlowDefinition Definition,SortedDictionary<st
         {
             ModulePackage.ValidatePath(script.Path);
             if(!files.TryGetValue(script.Path,out var data)) throw new InvalidDataException("flow: missing script "+script.Path);
-            if(data.Length>262144) throw new InvalidDataException("flow: script size limit exceeded");
+            if(data.Length>FlowFile.MaxScriptBytes) throw new InvalidDataException("flow: script size limit exceeded");
             scripts[script.Path]=Text(data);
         }
         if(files.Keys.Except(scripts.Keys.Append(path)).Any()) throw new InvalidDataException("flow: unexpected payload");

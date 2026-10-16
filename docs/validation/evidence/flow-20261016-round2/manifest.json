@@ -1,0 +1,127 @@
+{
+  "date": "2026-10-16",
+  "baseCommit": "4ffb163a201f9db501fd72602b5bc9ffd451255b",
+  "kind": "Second-review repair; full build, regression, UI/export coverage collection and hash-bound clean Windows Sandbox",
+  "files": [
+    {
+      "file": "boundaries.log",
+      "original": "artifacts/flow-second-review/boundaries.log",
+      "sha256": "66e566eaa63fa1e37a53b140273770204db80e98d598ad440d40276b95a78635"
+    },
+    {
+      "file": "build.log",
+      "original": "artifacts/flow-second-review/build.log",
+      "sha256": "ba1df5b3f6406a5237ec1803512dbb01fcc8975b750dcf5e50a16e161e3be1a7"
+    },
+    {
+      "file": "collection.log",
+      "original": "artifacts/flow-second-review/collection.log",
+      "sha256": "bdcf7ed32700ed712ea2da66efae53b130ab04c63cdcc85ba295ab01d27fa449"
+    },
+    {
+      "file": "coverage-summary.json",
+      "original": "artifacts/flow-second-review/coverage-summary.json",
+      "sha256": "1fea92039f653f47c0aa928e9bd9a560c692d999d94c33e8c6c6d3b3ea4db5f9"
+    },
+    {
+      "file": "coverage-tool.json",
+      "original": "artifacts/flow-second-review/coverage-tool.json",
+      "sha256": "f5dee34aed0bd6fb9bba02f157a3b8cf4953762bb6bd0d3840611c7f8f76f07f"
+    },
+    {
+      "file": "coverage.xml",
+      "original": "artifacts/flow-second-review/coverage.xml",
+      "sha256": "9e5355ac60cca4e6160fca71c60614b7b10f086fc845e4abc2b63ef3f54b6764"
+    },
+    {
+      "file": "export.json",
+      "original": "artifacts/flow-second-review/export-check/result.json",
+      "sha256": "e156c1de751f0fc41f3ce5edefd256d25e3bb7ff2db3f9f7a65a4ff7df4c3ddc"
+    },
+    {
+      "file": "formats.json",
+      "original": "artifacts/flow-second-review/formats.json",
+      "sha256": "ff861acfd31046f6bb65cddfcf8687f52c50c0041ec0f1215e7536074c6af4c9"
+    },
+    {
+      "file": "publish.log",
+      "original": "artifacts/flow-second-publish.log",
+      "sha256": "cf9b7ff1f7a2a96ed10d7d89eed12ada97e497de8c10b23d2d18df032310db35"
+    },
+    {
+      "file": "regression.log",
+      "original": "artifacts/flow-second-review/tests.log",
+      "sha256": "300c39a160d98603a45f74c5586d23fc592c60bf4a3bdeb34c253ada9eb0fd12"
+    },
+    {
+      "file": "release-manifest.json",
+      "original": "artifacts/player-release-flow-second-review/release.json",
+      "sha256": "17c4f3b61e4ed7a02f7c8957db2156fd319a20622d17b006d389e5c24bded490"
+    },
+    {
+      "file": "source.json",
+      "original": "artifacts/flow-second-review/result.json",
+      "sha256": "e6b7d09fb708ea73b618ca133320cfd4aee7ef172377a39130a6a3f767cdf6f2"
+    },
+    {
+      "file": "ui.json",
+      "original": "artifacts/flow-second-review/ui.json",
+      "sha256": "ff861acfd31046f6bb65cddfcf8687f52c50c0041ec0f1215e7536074c6af4c9"
+    },
+    {
+      "file": "ui.png",
+      "original": "artifacts/flow-second-review/ui.json.png",
+      "sha256": "9c949642e71d90cc35ba994d6b397edc2b5512af32aa671a916aa0a6fd3d5b4a"
+    },
+    {
+      "file": "sandbox-environment.json",
+      "original": "artifacts/flow-second-sandbox-final/environment.json",
+      "sha256": "ae38a3bac1530b0dec85cc1e6e7bfad965d43dcd929d02f0fba13b480c9a644b"
+    },
+    {
+      "file": "sandbox.json",
+      "original": "artifacts/flow-second-sandbox-final/result.json",
+      "sha256": "9043055ec2e8ea3aac4469391f3dde3665e22de0eae12bd47aa93ea7100dc084"
+    },
+    {
+      "file": "sandbox-player.json",
+      "original": "artifacts/flow-second-sandbox-final/gui.json",
+      "sha256": "67738395f89a25da4eed3c3d92e9130f6a64e94660b67e4cc9de4b570fb4ac5a"
+    },
+    {
+      "file": "sandbox-batch.log",
+      "original": "artifacts/flow-second-sandbox-final/batch.stdout",
+      "sha256": "9f478f53224b9c84970541d93601539d19519efa85576dc0bc5d28ec5cd47fee"
+    },
+    {
+      "file": "export-manifest.json",
+      "original": "artifacts/flow-second-sandbox-final/export-manifest.json",
+      "sha256": "8a6756cb450702b89ff55ab4279903f0ba728db8ac814b1eb1547340fcbcecb8"
+    },
+    {
+      "file": "sandbox.wsb",
+      "original": "artifacts/flow-second-sandbox-final/verify.wsb",
+      "sha256": "110610cb7c686d8eee5641e9a261030dada20a93005071aef400730a35842ff4"
+    },
+    {
+      "file": "validate-standalone-windows.ps1",
+      "original": "scripts/validate-standalone-windows.ps1",
+      "sha256": "fe78a3e86b44074f8b92b85fc1eaae8fb75709e0f32d7cfb5cbe7762da2de4cf"
+    },
+    {
+      "file": "validate-flow-sandbox.ps1",
+      "original": "scripts/validate-flow-sandbox.ps1",
+      "sha256": "d9dae5d5294a94792cf00b0529bce6c5cc2de9146786ca007705af38d15222cc"
+    },
+    {
+      "file": "sandbox-host.json",
+      "original": "Host execution observation, exit code returned by exec session 44263",
+      "sha256": "de87cdfe5aca0872cd0d710c9f0e08728a58fd84bf6249fcd87476a96e86f504"
+    },
+    {
+      "file": "validate-flow-sandbox-source.ps1",
+      "original": "Reconstructed from archived script by reverting the instance guard, timeout and timeout comment; exact SHA-256 matches source.json capture. Not asserted to be the successful Sandbox launch version.",
+      "sha256": "c796e44d268eaf2ce780e5c13c3f6b1cf0a384688bbc8b14c5339cbf40f4a29b"
+    }
+  ]
+}

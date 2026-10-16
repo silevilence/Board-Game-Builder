@@ -1,0 +1,90 @@
+{
+  "date": "2026-10-16",
+  "tests": [
+    "cordi",
+    "cordi-dispatch",
+    "debug-play",
+    "documents",
+    "packages",
+    "replay",
+    "cpu",
+    "flow-editor-lifetime",
+    "flow-editor-model",
+    "flow-editor-canvas",
+    "flow-editor-properties",
+    "flow-editor-validation",
+    "flow-editor-playback",
+    "flow-editor-conflicts",
+    "flow-contract",
+    "flow-validation",
+    "flow-runtime",
+    "flow-systems",
+    "flow-players",
+    "flow-protection",
+    "flow-restoration",
+    "flow-delivery",
+    "flow-review",
+    "author-operations",
+    "author-validation",
+    "author-runs",
+    "author-workspace",
+    "author-external",
+    "runtime-host",
+    "startup",
+    "runtime-recording",
+    "runtime-entry"
+  ],
+  "note": "32 regression groups passed before the test-harness cleanup fix. Both UI probes then passed in an exit-code-checked rerun. Only excluded verification harnesses changed between captures; production code is unchanged. Coverage merges these captures, not their pass/fail verdicts. Final uninstrumented UI rerun records explicit exitCode=0 for both probes in source-current.json.",
+  "coverageInputs": [
+    {
+      "sha256": "80afc9c485321ba99003c08b21ace505d69ead62d9fb17b8963eb88393c10d81",
+      "path": "artifacts/flow-review-final.xml"
+    },
+    {
+      "sha256": "70793a68d364158aeb07c23cd5cb07f1a1292b3b29e0a851008e8f0e5c7c66fb",
+      "path": "artifacts/flow-review-ui-fixed.xml"
+    }
+  ],
+  "files": [
+    {
+      "file": "coverage-current-summary.json",
+      "original": "artifacts/flow-review-summary.json",
+      "sha256": "190b3c2d0eac434e37567fe51b727bc1606c4accac8f318f4632efe3f6d097f9"
+    },
+    {
+      "file": "coverage-current.xml",
+      "original": "artifacts/flow-review-merged.xml",
+      "sha256": "5e4c608ab0730147b79bf3f772e16dafd08b07a30def8242ce20fbe56d3b62a1"
+    },
+    {
+      "file": "formats-current.json",
+      "original": "artifacts/flow-review-exit-verified/formats.json",
+      "sha256": "ff861acfd31046f6bb65cddfcf8687f52c50c0041ec0f1215e7536074c6af4c9"
+    },
+    {
+      "file": "regression-current.log",
+      "original": "artifacts/flow-review-final/tests.log",
+      "sha256": "300c39a160d98603a45f74c5586d23fc592c60bf4a3bdeb34c253ada9eb0fd12"
+    },
+    {
+      "file": "source-current.json",
+      "original": "artifacts/flow-review-exit-verified/result.json",
+      "sha256": "8609cf89d6cf9b951ca6ac23ee1706ad54cd560be46c8927269c9cdd1e662b1d"
+    },
+    {
+      "file": "ui-current.json",
+      "original": "artifacts/flow-review-exit-verified/ui.json",
+      "sha256": "ff861acfd31046f6bb65cddfcf8687f52c50c0041ec0f1215e7536074c6af4c9"
+    },
+    {
+      "file": "ui-current.png",
+      "original": "artifacts/flow-review-exit-verified/ui.json.png",
+      "sha256": "6643c012713fb76d32cde80d82419f6fd31616e712a89669519188324cbb5090"
+    },
+    {
+      "file": "ui-failed-cleanup-events.json",
+      "original": "Windows Application event log, .NET Runtime entries captured during first-review verification",
+      "sha256": "38c7f212e6912ee9e2929553755c5fb4fe408a846d73a63073315cfb69cace3e"
+    }
+  ]
+}

@@ -40,8 +40,8 @@ public static class FlowOperations
                 catch(Exception error) when(error is ArgumentException or InvalidDataException) {references.Add(new("script-reference",error.Message));}
         return new(view.Source,format.DefinitionPath,definition,[..references,..FlowValidation.Validate(definition,scripts),..FlowReferences.Validate(view,definition)]);
     }
-    private static AuthorOperationInfo Info(string id,string description)=>new(id,"author.configuration",description,new(),
-        new(){["type"]="object",["description"]="Project source/version, flow definition and node/edge diagnostics"},["flow enabled in game.start.json"],[]);
+    private static AuthorOperationInfo Info(string id,string description)=>new(Id:id,Plugin:"author.configuration",Description:description,Parameters:new(),
+        ResultSchema:new(){["type"]="object",["description"]="Project source/version, flow definition and node/edge diagnostics"},Conditions:["flow enabled in game.start.json"],Effects:[]);
     public static AuthorOperationInfo[] Operations=>[
         Info("flow.read","Read the flow graph and shared diagnostics from the current project view"),
         Info("flow.validate","Validate the flow graph without running scripts or saving drafts"),

@@ -1,0 +1,147 @@
+{
+  "date": "2026-10-16T11:28:09.5199383+08:00",
+  "baseCommit": "4ffb163a201f9db501fd72602b5bc9ffd451255b",
+  "kind": "Third-review repair; captured source, authored project, build, regression, export coverage and frozen-script clean Windows Sandbox",
+  "files": [
+    {
+      "file": "source-snapshot.zip",
+      "original": "artifacts/flow-third-review/source-snapshot",
+      "sha256": "5f416d0c964d67590c9ee8482479b27a61593073ae09a485c10651134242f795"
+    },
+    {
+      "file": "build.log",
+      "original": "artifacts/flow-third-review/build.log",
+      "sha256": "0a19f3a081970beab301b348ff07c71d8fffaaa86128e036edaf8defbd835621"
+    },
+    {
+      "file": "collection.log",
+      "original": "artifacts/flow-third-review/collection.log",
+      "sha256": "f9d41a58cb4913136a1ca8830a7363cd3f838880d478ba44e2f69fb0b57800c3"
+    },
+    {
+      "file": "regression.log",
+      "original": "artifacts/flow-third-review/tests.log",
+      "sha256": "300c39a160d98603a45f74c5586d23fc592c60bf4a3bdeb34c253ada9eb0fd12"
+    },
+    {
+      "file": "boundaries.log",
+      "original": "artifacts/flow-third-review/boundaries.log",
+      "sha256": "66e566eaa63fa1e37a53b140273770204db80e98d598ad440d40276b95a78635"
+    },
+    {
+      "file": "coverage.xml",
+      "original": "artifacts/flow-third-review/coverage.xml",
+      "sha256": "7962e3541431e517b12a22467934b974166cfc1525efbc38c5a5769a5e144e9c"
+    },
+    {
+      "file": "coverage-summary.json",
+      "original": "artifacts/flow-third-review/coverage-summary.json",
+      "sha256": "fc19a82fd0de4fc9d22dad53ef463e31a527b7337df98269a66677b53bbd7321"
+    },
+    {
+      "file": "coverage-tool.json",
+      "original": "artifacts/flow-third-review/coverage-tool.json",
+      "sha256": "f5dee34aed0bd6fb9bba02f157a3b8cf4953762bb6bd0d3840611c7f8f76f07f"
+    },
+    {
+      "file": "source.json",
+      "original": "artifacts/flow-third-review/result.json",
+      "sha256": "92984de31827fe5b7a195fde8d465b5582bc73ff5ad108b51e8c60128a590bb5"
+    },
+    {
+      "file": "ui.json",
+      "original": "artifacts/flow-third-review/ui.json",
+      "sha256": "dcac0f02180b42048270d9523d5efa5be6f73c2fa444ccc25e8785f3045f1890"
+    },
+    {
+      "file": "ui.png",
+      "original": "artifacts/flow-third-review/ui.json.png",
+      "sha256": "34159ee91459da1edb1cefa92501625bd6b8e887d375c7636c68efc0824b0cd3"
+    },
+    {
+      "file": "formats.json",
+      "original": "artifacts/flow-third-review/formats.json",
+      "sha256": "ff861acfd31046f6bb65cddfcf8687f52c50c0041ec0f1215e7536074c6af4c9"
+    },
+    {
+      "file": "export.json",
+      "original": "artifacts/flow-third-review/export-check/result.json",
+      "sha256": "ef518e02544095c4e6a19b8f4c150a57e15df949a6fcf428bdaba516b9ef7b25"
+    },
+    {
+      "file": "release-manifest.json",
+      "original": "artifacts/player-release-flow-third-review/release.json",
+      "sha256": "8e787c8bc15b009462eda74be19193a6a4264fd772bdb7f1d5833b0fbbfe8078"
+    },
+    {
+      "file": "publish.log",
+      "original": "artifacts/flow-third-publish.log",
+      "sha256": "97986e970cbc2b80f390ebffad3613a87bca255b5920f5a0744e5ffd532ca560"
+    },
+    {
+      "file": "authored-project.zip",
+      "original": "artifacts/flow-third-review/ui.json.project",
+      "sha256": "72fdb28114016530ea0d824a2c9fdaa65c7c1c93b7591acdd5d69a4edf8f2a84"
+    },
+    {
+      "file": "sandbox.json",
+      "original": "artifacts/flow-third-sandbox/result.json",
+      "sha256": "897a2271ba199a01373390f3b5a044454048baf3fe17690b5a5f54f6d4d15fee"
+    },
+    {
+      "file": "sandbox-host.json",
+      "original": "artifacts/flow-third-sandbox/host.json",
+      "sha256": "85a788877c09a7334c3bee9a22ff5dd5784f2edfe02f973cf92b85ac024d8a93"
+    },
+    {
+      "file": "sandbox-environment.json",
+      "original": "artifacts/flow-third-sandbox/environment.json",
+      "sha256": "ae38a3bac1530b0dec85cc1e6e7bfad965d43dcd929d02f0fba13b480c9a644b"
+    },
+    {
+      "file": "sandbox-player.json",
+      "original": "artifacts/flow-third-sandbox/gui.json",
+      "sha256": "257646de761d5b87a82358362f420c8d7ef4ae158d7c542ef82af1d099fc2ac2"
+    },
+    {
+      "file": "sandbox-batch.log",
+      "original": "artifacts/flow-third-sandbox/batch.stdout",
+      "sha256": "9f478f53224b9c84970541d93601539d19519efa85576dc0bc5d28ec5cd47fee"
+    },
+    {
+      "file": "export-manifest.json",
+      "original": "artifacts/flow-third-sandbox/export-manifest.json",
+      "sha256": "942d935d5b57b81b8924ac5e26f1272d898569990702be623a0e0a4a0412c56c"
+    },
+    {
+      "file": "sandbox.wsb",
+      "original": "artifacts/flow-third-sandbox/verify.wsb",
+      "sha256": "0b38615f8530afb3c49c49e7c3bac62a4396470244f8a21599976127302e67a9"
+    },
+    {
+      "file": "validate-flow-sandbox.ps1",
+      "original": "artifacts/flow-third-sandbox/scripts/validate-flow-sandbox.ps1",
+      "sha256": "6a313255e4faec83e51410d275d95e85106b27ff4fe1b9502425b03dd3cffbe8"
+    },
+    {
+      "file": "validate-standalone-windows.ps1",
+      "original": "artifacts/flow-third-sandbox/scripts/validate-standalone-windows.ps1",
+      "sha256": "fe78a3e86b44074f8b92b85fc1eaae8fb75709e0f32d7cfb5cbe7762da2de4cf"
+    },
+    {
+      "file": "artifact-archives.json",
+      "original": "ZIP byte-by-byte verification against original release/export manifests",
+      "sha256": "00374b08873acd5d431385a93bfafd067707dd2b981f4abded0ffefd76efa4a1"
+    },
+    {
+      "file": "finalization.json",
+      "original": "Post-validation document snapshot and observed completion record",
+      "sha256": "287bd1337422abc1fc684df0627405f8c2b36a251b7b2cf6047d83e9e86896e0"
+    },
+    {
+      "file": "final-documents.zip",
+      "original": "Post-validation document snapshot and observed completion record",
+      "sha256": "b004b2e27d2d8265f893ded923e4c5b5abf59037960326e266aa974ac7c3adfd"
+    }
+  ]
+}

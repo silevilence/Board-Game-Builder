@@ -7,6 +7,56 @@ namespace Engine.Tests;
 
 public static class FlowEditorTests
 {
+    public static void Lifetime() => LifetimeAsync().GetAwaiter().GetResult();
+    private static async Task LifetimeAsync()
+    {
+        // Signals establish ordering; this is only a deadlock watchdog for loaded CI machines.
+        var watchdog=TimeSpan.FromSeconds(30);
+        using var documents = new DocumentWorkspace(); documents.Set(ModuleDocument.Open("samples/flow-minimal"));
+        await using var app = new EditorApplication();
+        FlowEditorWork? work = null; var reports = new List<string>();
+        app.Install(new("documents", 1, ["documents"], [], scope => scope.Provide("documents", documents)));
+        app.Install(new("flow-work", 1, [], ["documents"], scope => work = new(scope, reports.Add)));
+        for (var cycle = 0; cycle < 2; cycle++)
+        {
+            await app.Enable("flow-work");
+            var cancelled = new TaskCompletionSource(TaskCreationOptions.RunContinuationsAsynchronously);
+            var release = new TaskCompletionSource(TaskCreationOptions.RunContinuationsAsynchronously);
+            var finished = false;
+            work!.Run(async token =>
+            {
+                try { await Task.Delay(Timeout.Infinite, token); }
+                finally { cancelled.SetResult(); await release.Task; finished = true; }
+            });
+            var stopping = app.Disable("flow-work");
+            try
+            {
+                await cancelled.Task.WaitAsync(watchdog);
+                Check.That(!stopping.IsCompleted, "Plugin cleanup did not await its gesture work");
+            }
+            finally { release.TrySetResult(); }
+            await stopping.WaitAsync(watchdog);
+            Check.That(finished && reports.Count == 0, "Cancelled work reported a late error");
+            work.Run(_ => throw new Exception("Disposed work executed"));
+        }
+        await app.Enable("flow-work");
+        work!.Run(_ => throw new InvalidOperationException("visible failure"));
+        Check.That(reports.SequenceEqual(new[] { "visible failure" }));
+        var delayed = new TaskCompletionSource(TaskCreationOptions.RunContinuationsAsynchronously);
+        work.Run(async _ => { await delayed.Task; throw new InvalidOperationException("old document"); });
+        documents.Set(ModuleDocument.Open("samples/flow-minimal"));
+        delayed.SetResult();
+        await app.Disable("flow-work");
+        Check.That(reports.Count == 1, "Old document work updated the new panel");
+        app.Install(new("failed-work", 1, [], ["documents"], scope =>
+        {
+            work = new(scope, reports.Add);
+            work.Run(token => Task.Delay(Timeout.Infinite, token));
+            throw new InvalidOperationException("factory failed");
+        }));
+        try { await app.Enable("failed-work").WaitAsync(watchdog); throw new Exception("Expected activation failure"); }
+        catch (InvalidOperationException error) when (error.Message == "factory failed") { }
+    }
     public static void Conflicts() => ConflictsAsync().GetAwaiter().GetResult();
     private static async Task ConflictsAsync()
     {
@@ -17,6 +67,10 @@ public static class FlowEditorTests
             _ = flow.Properties(snapshot, "flow.node", node.Id);
             documents.EditForm(flow.FormKey("flow.node", node.Id), Wire.Json(node with { Results = ["changed"] }));
         }
+        foreach (var node in nodes) Check.Throws(() => flow.View(), flow.FormKey("flow.node", node.Id));
+        var names = string.Join(", ", nodes.Select(n => flow.FormKey("flow.node", n.Id)).Order(StringComparer.Ordinal));
+        Check.Throws(() => flow.View(), names);
+        Check.Throws(() => documents.ApplyDrafts(), names);
         flow.ApplyProperties(snapshot, "flow.node", nodes[0].Id);
         Check.That(documents.HasPendingForms, "Applying one form discarded another");
         Check.Throws(() => flow.ApplyProperties(snapshot, "flow.node", nodes[1].Id), "版本");
@@ -33,6 +87,13 @@ public static class FlowEditorTests
         using var cancellation = new CancellationTokenSource(); cancellation.Cancel();
         var rejected = false; try { await flow.Apply(change, cancellation.Token); } catch (OperationCanceledException) { rejected = true; }
         Check.That(rejected && flow.Read().Success);
+        using (var mode = new WorkspaceEditMode(documents, flow.Identity))
+        {
+            Check.Throws(() => mode.ApplyInline(change, cancellation.Token));
+            Check.That(flow.Read().Success, "Cancelled inline edit changed the document");
+        }
+        using (var dispatched = new WorkspaceEditMode(documents, flow.Identity, action => Task.FromResult(action())))
+            Check.Throws(() => dispatched.ApplyInline(change), "awaited");
         var directory = Path.Combine(Path.GetTempPath(), "bgb-flow-external-" + Guid.NewGuid());
         try
         {

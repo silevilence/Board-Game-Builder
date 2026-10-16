@@ -44,7 +44,8 @@ public sealed partial class DocumentWorkspace
     {
         CheckIdentity(identity);
         if (checkExternal && Current!.DiskChanged()) throw new AuthorOperationException("workspace.external", "External files changed; inspect workspace.external.status and explicitly reload or merge");
-        if (!allowPendingForms && !applyingAuthorForm && HasPendingForms) throw new AuthorOperationException("workspace.forms", "Apply or coordinate pending form fields before external operations; fields are preserved");
+        if (!allowPendingForms && !applyingAuthorForm && HasPendingForms) throw new AuthorOperationException("workspace.forms",
+            "Apply or coordinate pending form fields before external operations; fields are preserved: " + PendingFormNames);
         var dirty = drafts.Where(p => p.Value.Dirty).ToArray();
         if (dirty.GroupBy(p => p.Key.Path, StringComparer.OrdinalIgnoreCase).Any(g => g.Count() > 1))
             throw new AuthorOperationException("workspace.drafts", "JSON and YAML drafts target the same file; both are preserved");
@@ -117,11 +118,19 @@ public sealed class WorkspaceEditMode(DocumentWorkspace documents, ProjectIdenti
         return (T)(dispatch == null ? Run() : await dispatch(Run));
     }
     public Task<ProjectView> Read(CancellationToken cancellation = default) => OnThread(() => documents.AuthorView(identity), cancellation);
-    public Task<EditReceipt> Apply(ProjectChanges changes, CancellationToken cancellation = default) => OnThread(() =>
+    public Task<EditReceipt> Apply(ProjectChanges changes, CancellationToken cancellation = default) => OnThread(() => ApplyCore(changes), cancellation);
+    // For callers already on the workspace owner thread; dispatched modes must use Apply.
+    public EditReceipt ApplyInline(ProjectChanges changes, CancellationToken cancellation = default)
+    {
+        if (dispatch != null) throw new InvalidOperationException("Dispatched workspace edits must be awaited");
+        ObjectDisposedException.ThrowIf(disposed, this); cancellation.ThrowIfCancellationRequested();
+        return ApplyCore(changes);
+    }
+    private EditReceipt ApplyCore(ProjectChanges changes)
     {
         if (changes.Source.Identity != identity) throw new AuthorOperationException("workspace.stale", "Request is bound to another workspace");
         return documents.ApplyAuthor(changes);
-    }, cancellation);
+    }
     public Task<EditReceipt> Result(string requestId, CancellationToken cancellation = default) => OnThread(() =>
     {
         documents.CheckIdentity(identity);

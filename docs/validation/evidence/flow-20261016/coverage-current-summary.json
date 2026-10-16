@@ -1,0 +1,445 @@
+{
+  "coverageSha256": "5e4c608ab0730147b79bf3f772e16dafd08b07a30def8242ce20fbe56d3b62a1",
+  "settingsSha256": "a11e9b3fc97a201b07c4c1c74aed18e3f5a35b3f27934c48f8a9b6e7b8d7d0bd",
+  "covered": 2096,
+  "total": 2328,
+  "lineRate": 0.9003436426116839,
+  "sourceCounting": "Distinct source line numbers per file; tool totals may count a line in multiple generated classes.",
+  "excluded": [
+    "src/Editor/FlowVerification.cs (test harness)"
+  ],
+  "sources": [
+    {
+      "path": "src/Authoring/FlowDesign.cs",
+      "covered": 39,
+      "total": 40,
+      "uncoveredLines": [
+        39
+      ]
+    },
+    {
+      "path": "src/Authoring/FlowOperations.cs",
+      "covered": 37,
+      "total": 39,
+      "uncoveredLines": [
+        12,
+        40
+      ]
+    },
+    {
+      "path": "src/Authoring/FlowReferences.cs",
+      "covered": 16,
+      "total": 16,
+      "uncoveredLines": []
+    },
+    {
+      "path": "src/Authoring/FlowScriptTemplates.cs",
+      "covered": 7,
+      "total": 8,
+      "uncoveredLines": [
+        12
+      ]
+    },
+    {
+      "path": "src/Authoring/RunOperations.cs",
+      "covered": 95,
+      "total": 98,
+      "uncoveredLines": [
+        11,
+        64,
+        98
+      ]
+    },
+    {
+      "path": "src/Authoring/ValidationOperations.cs",
+      "covered": 48,
+      "total": 49,
+      "uncoveredLines": [
+        10
+      ]
+    },
+    {
+      "path": "src/Editor.Core/AuthorWorkspace.cs",
+      "covered": 91,
+      "total": 110,
+      "uncoveredLines": [
+        59,
+        76,
+        77,
+        106,
+        134,
+        135,
+        136,
+        137,
+        138,
+        139,
+        140,
+        141,
+        142,
+        143,
+        144,
+        145,
+        146,
+        152,
+        153
+      ]
+    },
+    {
+      "path": "src/Editor.Core/DocumentWorkspace.cs",
+      "covered": 81,
+      "total": 104,
+      "uncoveredLines": [
+        63,
+        70,
+        71,
+        72,
+        73,
+        83,
+        96,
+        97,
+        98,
+        102,
+        103,
+        104,
+        109,
+        110,
+        111,
+        112,
+        113,
+        125,
+        142,
+        143,
+        154,
+        155,
+        156
+      ]
+    },
+    {
+      "path": "src/Editor.Core/EditorApplication.cs",
+      "covered": 154,
+      "total": 158,
+      "uncoveredLines": [
+        99,
+        104,
+        244,
+        245
+      ]
+    },
+    {
+      "path": "src/Editor.Core/FlowEditorWork.cs",
+      "covered": 29,
+      "total": 29,
+      "uncoveredLines": []
+    },
+    {
+      "path": "src/Editor.Core/FlowPlayback.cs",
+      "covered": 6,
+      "total": 6,
+      "uncoveredLines": []
+    },
+    {
+      "path": "src/Editor.Core/FlowWorkspace.cs",
+      "covered": 82,
+      "total": 82,
+      "uncoveredLines": []
+    },
+    {
+      "path": "src/Editor/EditorHost.cs",
+      "covered": 23,
+      "total": 29,
+      "uncoveredLines": [
+        26,
+        39,
+        41,
+        43,
+        44,
+        45
+      ]
+    },
+    {
+      "path": "src/Editor/ExportPanel.cs",
+      "covered": 0,
+      "total": 16,
+      "uncoveredLines": [
+        8,
+        9,
+        10,
+        11,
+        12,
+        14,
+        15,
+        16,
+        17,
+        18,
+        19,
+        20,
+        21,
+        22,
+        23,
+        24
+      ]
+    },
+    {
+      "path": "src/Editor/ExportWorkflow.cs",
+      "covered": 0,
+      "total": 33,
+      "uncoveredLines": [
+        7,
+        9,
+        10,
+        11,
+        17,
+        18,
+        19,
+        20,
+        23,
+        24,
+        25,
+        26,
+        27,
+        28,
+        29,
+        30,
+        31,
+        32,
+        33,
+        34,
+        35,
+        36,
+        37,
+        38,
+        39,
+        40,
+        41,
+        42,
+        43,
+        46,
+        47,
+        48,
+        50
+      ]
+    },
+    {
+      "path": "src/Editor/FlowCanvas.cs",
+      "covered": 107,
+      "total": 108,
+      "uncoveredLines": [
+        122
+      ]
+    },
+    {
+      "path": "src/Editor/FlowInspector.cs",
+      "covered": 85,
+      "total": 89,
+      "uncoveredLines": [
+        57,
+        77,
+        83,
+        103
+      ]
+    },
+    {
+      "path": "src/Editor/FlowPanel.cs",
+      "covered": 107,
+      "total": 116,
+      "uncoveredLines": [
+        52,
+        53,
+        54,
+        55,
+        80,
+        94,
+        131,
+        132,
+        133
+      ]
+    },
+    {
+      "path": "src/Editor/FormatPanel.cs",
+      "covered": 58,
+      "total": 59,
+      "uncoveredLines": [
+        45
+      ]
+    },
+    {
+      "path": "src/Editor/SessionController.cs",
+      "covered": 48,
+      "total": 66,
+      "uncoveredLines": [
+        22,
+        67,
+        80,
+        81,
+        83,
+        85,
+        87,
+        89,
+        104,
+        105,
+        106,
+        107,
+        108,
+        111,
+        112,
+        113,
+        114,
+        120
+      ]
+    },
+    {
+      "path": "src/Kernel.Abstractions/FlowState.cs",
+      "covered": 13,
+      "total": 13,
+      "uncoveredLines": []
+    },
+    {
+      "path": "src/Kernel/FlowTransaction.cs",
+      "covered": 28,
+      "total": 29,
+      "uncoveredLines": [
+        18
+      ]
+    },
+    {
+      "path": "src/Kernel/GameEngine.cs",
+      "covered": 96,
+      "total": 109,
+      "uncoveredLines": [
+        12,
+        27,
+        39,
+        65,
+        67,
+        68,
+        69,
+        104,
+        105,
+        136,
+        137,
+        150,
+        165
+      ]
+    },
+    {
+      "path": "src/Kernel/Replay.cs",
+      "covered": 44,
+      "total": 47,
+      "uncoveredLines": [
+        41,
+        48,
+        65
+      ]
+    },
+    {
+      "path": "src/Runtime/DebugSession.cs",
+      "covered": 32,
+      "total": 40,
+      "uncoveredLines": [
+        43,
+        44,
+        45,
+        51,
+        52,
+        53,
+        54,
+        61
+      ]
+    },
+    {
+      "path": "src/Runtime/Flow/FlowConditions.cs",
+      "covered": 33,
+      "total": 36,
+      "uncoveredLines": [
+        29,
+        52,
+        53
+      ]
+    },
+    {
+      "path": "src/Runtime/Flow/FlowContent.cs",
+      "covered": 30,
+      "total": 31,
+      "uncoveredLines": [
+        39
+      ]
+    },
+    {
+      "path": "src/Runtime/Flow/FlowController.cs",
+      "covered": 114,
+      "total": 127,
+      "uncoveredLines": [
+        40,
+        74,
+        134,
+        143,
+        145,
+        146,
+        153,
+        154,
+        167,
+        169,
+        175,
+        176,
+        177
+      ]
+    },
+    {
+      "path": "src/Runtime/Flow/FlowDefinition.cs",
+      "covered": 46,
+      "total": 47,
+      "uncoveredLines": [
+        60
+      ]
+    },
+    {
+      "path": "src/Runtime/Flow/FlowValidation.cs",
+      "covered": 78,
+      "total": 82,
+      "uncoveredLines": [
+        12,
+        28,
+        54,
+        76
+      ]
+    },
+    {
+      "path": "src/Runtime/GameRuntime.cs",
+      "covered": 142,
+      "total": 147,
+      "uncoveredLines": [
+        98,
+        111,
+        120,
+        156,
+        202
+      ]
+    },
+    {
+      "path": "src/Runtime/PlaySession.cs",
+      "covered": 112,
+      "total": 125,
+      "uncoveredLines": [
+        22,
+        29,
+        61,
+        104,
+        106,
+        107,
+        108,
+        109,
+        110,
+        111,
+        164,
+        167,
+        170
+      ]
+    },
+    {
+      "path": "src/Runtime/RuntimeComposition.cs",
+      "covered": 35,
+      "total": 35,
+      "uncoveredLines": []
+    }
+  ]
+}

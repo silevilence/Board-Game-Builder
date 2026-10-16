@@ -1,0 +1,23 @@
+{
+  "sourceSnapshotFilesVerified": 305,
+  "archives": [
+    {
+      "path": "artifacts/flow-third-release.zip",
+      "localOnly": true,
+      "bytes": 113028766,
+      "sha256": "18302fddbf951c007a72859f6b0bd6152b8258108640b4454e755861d7ffa01a",
+      "filesVerified": 566,
+      "fileManifest": "artifacts/player-release-flow-third-review/release.json",
+      "manifestSha256": "8e787c8bc15b009462eda74be19193a6a4264fd772bdb7f1d5833b0fbbfe8078"
+    },
+    {
+      "path": "artifacts/flow-third-export.zip",
+      "localOnly": true,
+      "bytes": 113107514,
+      "sha256": "a097ede16e6d2d02b38d28fa580aa6098db196d714dae1b85a92a5b76a723a11",
+      "filesVerified": 571,
+      "fileManifest": "artifacts/flow-third-sandbox/export-manifest.json",
+      "manifestSha256": "942d935d5b57b81b8924ac5e26f1272d898569990702be623a0e0a4a0412c56c"
+    }
+  ]
+}

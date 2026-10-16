@@ -1,6 +1,7 @@
 using Avalonia.Controls;
 using Avalonia.Media;
 using BoardGame.Authoring;
+using BoardGame.Runtime;
 
 namespace BoardGame.Editor;
 
@@ -13,7 +14,8 @@ public sealed class FlowPanel : UserControl
         var flow = scope.Service<FlowWorkspace>("flow.author");
         var sessions = scope.Service<SessionController>("sessions");
         var status = new TextBlock { TextWrapping = TextWrapping.Wrap };
-        var canvas = new FlowCanvas(documents, flow, scope.Cancellation, message => status.Text = message);
+        var work = new FlowEditorWork(scope, message => status.Text = message);
+        var canvas = new FlowCanvas(documents, flow, work, message => status.Text = message);
         Canvas = canvas;
         var tools = new WrapPanel();
         var playback = new TextBlock { TextWrapping = TextWrapping.Wrap };
@@ -22,20 +24,19 @@ public sealed class FlowPanel : UserControl
         foreach (var id in new[] { "flow.play", "flow.stop", "flow.observe", "flow.resume" })
         {
             var command = commands.Items.First(c => c.Id == id); var button = new Button { Content = command.Title };
-            button.Click += async (_, _) => { try { await commands.Execute(id); } catch (Exception error) { status.Text = error.Message; } };
+            button.Click += (_, _) => work.Run(_ => commands.Execute(id));
             void Enabled() => button.IsEnabled = commands.CanExecute(id);
             commands.Changed += Enabled; scope.Own(new Cleanup(() => commands.Changed -= Enabled)); Enabled(); tools.Children.Add(button);
         }
         var issues = new ListBox { MaxHeight = 145 };
         var validate = new Button { Content = "校验当前草稿" };
         tools.Children.Add(validate);
-        foreach (var kind in new[] { "start", "system", "player", "end" })
+        foreach (var kind in FlowNodeKinds.All)
         {
             var button = new Button { Content = "+ " + FlowCanvas.KindTitle(kind) };
-            button.Click += async (_, _) =>
+            button.Click += (_, _) =>
             {
-                try { if (canvas.Snapshot is {} graph) await flow.Add(graph, kind, (60 - graph.Design.PanX) / graph.Design.Zoom, (80 - graph.Design.PanY) / graph.Design.Zoom, scope.Cancellation); }
-                catch (Exception error) { status.Text = error.Message; }
+                if (canvas.Snapshot is {} graph) work.Run(token => flow.Add(graph, kind, (60 - graph.Design.PanX) / graph.Design.Zoom, (80 - graph.Design.PanY) / graph.Design.Zoom, token));
             };
             tools.Children.Add(button);
         }

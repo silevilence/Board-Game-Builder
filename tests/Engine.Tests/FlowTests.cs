@@ -40,6 +40,7 @@ public static class FlowTests
         for(var i=0;i<3;i++) {_=session.View("p1");_=session.Actions();}
         Check.That(session.ExportAuthorityLog().EntryCount==count);
         Check.That(session.ExportAuthorityLog().Entries.All(e=>e.Submission.Actor=="" && e.Submission.Execution=="system"));
+        Check.That(session.ExportAuthorityState().Flow!.Trace.Select(t=>t.Revision).SequenceEqual(new long[] {1,2,3}), "Trace must identify committed revisions, including the end node");
         Check.That(session.AuthorityStateHash()==Wire.Hash(Wire.Json(session.ExportRecording().Replay().ExportAuthorityState())));
         var bad=Minimal();bad.Nodes[1]=bad.Nodes[1] with {Commands=[new(){Kind="set",Entity="private",Property="value",Value=8},new(){Kind="set",Entity="missing"}]};
         using var failed=new PlaySession(Module(bad));
@@ -77,7 +78,7 @@ public static class FlowTests
     internal static (FlowDefinition Graph,Dictionary<string,string> Scripts) PlayerGraph()
     {
         var graph=new FlowDefinition(1,[new(){Id="start",Kind="start"},new(){Id="play",Kind="player",Seat=new(Script:new("player.lua","seat")),
-            Script=new("player.lua","enter"),ActionsScript=new("player.lua","actions"),DecideScript=new("player.lua","decide")},
+            Script=new("player.lua","enter"),ActionsScript=new("player.lua","actions"),DecideScript=new("player.lua","decide"),Results=["done","stay"]},
             new(){Id="end",Kind="end",Winners=["p2"]}],[new("a","start","play"),new("b","play","end")]);
         var scripts=new Dictionary<string,string>{{"player.lua","""
             return {
@@ -90,7 +91,7 @@ public static class FlowTests
                 if value<2 then return {{id='add',label='Add',command={kind='set',entity='counter',property='value',value=value+1}}} end
                 return {{id='done',label='Done',command={kind='phase',phase='play'}}}
               end,
-              decide=function(x) return {commands={x.command},complete=x.command.kind=='phase'} end
+              decide=function(x) return {commands={x.command},complete=x.command.kind=='phase',result=x.command.kind=='phase' and 'done' or 'stay'} end
             }
             """},{"cpu.lua","return {decide=function(x) assert(x.view.flow==nil);return x.actions[1].command end}"}};
         return (graph,scripts);
@@ -107,9 +108,31 @@ public static class FlowTests
         Check.That(human.SubmitHuman("p2",human.Actions().Single().Command).Accepted);
         Check.That(!human.Ended && human.ExportAuthorityState().Entities["private"].Properties["value"]==9);
         Check.That(human.SubmitHuman("p2",human.Actions().Single().Command).Accepted && human.Ended);
+        Check.That(human.ExportAuthorityState().Flow!.Trace.Select(t=>t.Revision).SequenceEqual(new long[] {1,5,6}), "Player leave and terminal traces must use committed revisions");
         using var cpu=new PlaySession(module,controllers:new Dictionary<string,string>{{"p2","cpu"}});
         while(cpu.StepCpu()) { }
         Check.That(cpu.Ended && cpu.Fault==null && cpu.AuthorityStateHash()==human.AuthorityStateHash());
+        Check.That(FlowValidation.Validate(graph,scripts).Any(d=>d.Code=="result-dynamic" && d.Severity=="info"));
+        var invalidScripts=new Dictionary<string,string>(scripts);
+        invalidScripts["complete.lua"]="return {decide=function(x) return {commands={x.command},complete=true,result='stay'} end}";
+        var invalidGraph=graph with {Nodes=graph.Nodes.ToList()};
+        invalidGraph.Nodes[1]=graph.Nodes[1] with {DecideScript=new("complete.lua","decide")};
+        using var invalidCompletion=new PlaySession(Module(invalidGraph,invalidScripts));
+        var before=invalidCompletion.AuthorityStateHash();
+        var rejected=invalidCompletion.SubmitHuman("p2",invalidCompletion.Actions().Single().Command);
+        Check.That(!rejected.Accepted && rejected.Reason.Contains("flow-no-branch") && invalidCompletion.AuthorityStateHash()==before,"Completing an unconnected Lua result must roll back");
+        var staticGraph=graph with {Nodes=graph.Nodes.ToList()};
+        staticGraph.Nodes[1]=graph.Nodes[1] with {ActionsScript=null,DecideScript=null,Actions=[
+            new("wait","Wait",[new(){Kind="set",Entity="counter",Property="value",Value=1}],Complete:false,Result:"stay"),new("finish","Finish",[])]};
+        using var waiting=new PlaySession(Module(staticGraph,scripts));
+        Check.That(waiting.SubmitHuman("p2",waiting.Actions().Single(a=>a.Id=="wait").Command).Accepted);
+        Check.That(waiting.ExportAuthorityState().Flow is {Node:"play",Status:"waiting"} && waiting.ExportAuthorityState().Entities["counter"].Properties["value"]==1);
+        Check.That(waiting.SubmitHuman("p2",waiting.Actions().Single(a=>a.Id=="finish").Command).Accepted && waiting.Ended);
+        staticGraph.Nodes[1].Actions.Add(new("bad","Bad",[],Result:"stay"));
+        Check.Throws(()=>Module(staticGraph,scripts),"result-no-successor");
+        staticGraph.Nodes[1].Actions.RemoveAt(2);
+        staticGraph.Nodes[1].Actions[0]=staticGraph.Nodes[1].Actions[0] with {Result="undeclared"};
+        Check.Throws(()=>Module(staticGraph,scripts),"player-actions");
         graph.Nodes[1]=graph.Nodes[1] with {ActionsScript=null,DecideScript=null,Actions=[]};
         using var stuck=new PlaySession(Module(graph,scripts));
         Check.That(stuck.Fault?.Code=="flow-no-actions");
@@ -131,6 +154,7 @@ public static class FlowTests
         var (players,playerScripts)=PlayerGraph();
         using var cpu=new PlaySession(Module(players,playerScripts),controllers:new Dictionary<string,string>{{"p2","cpu"}},maxSteps:1);
         Check.That(cpu.StepCpu() && !cpu.StepCpu() && cpu.Fault?.Code=="step-limit");
+        Check.Throws(()=>cpu.ResumeFlow(),"restart");
         using var pending=new PlaySession(Module(graph,scripts,1));
         pending.CancelFlow();pending.ResumeFlow();
         Check.That(pending.ExportAuthorityState().Entities["counter"].Properties["value"]==1);
@@ -187,6 +211,14 @@ public static class FlowTests
 
     public static void Contract()
     {
+        Check.That(FlowNodeKinds.All.SequenceEqual(new[] { "start", "system", "player", "end" }));
+        Check.That(FlowNodeKinds.All.All(FlowNodeKinds.IsValid) && !FlowNodeKinds.IsValid("Start") && !FlowNodeKinds.IsValid("unknown"));
+        const string empty = "{\"format\":1,\"nodes\":[],\"edges\":[]}";
+        _ = FlowFile.Parse(empty + new string(' ', FlowFile.MaxBytes - empty.Length));
+        Check.Throws(() => FlowFile.Parse(empty + new string(' ', FlowFile.MaxBytes - empty.Length + 1)), "size limit");
+        var unicode = "{\"format\":1,\"nodes\":[{\"id\":\"" + new string('界', FlowFile.MaxBytes / 3) + "\",\"kind\":\"start\"}],\"edges\":[]}";
+        Check.That(unicode.Length < FlowFile.MaxBytes);
+        Check.Throws(() => FlowFile.Parse(unicode), "size limit");
         var graph=Example();
         Check.That(FlowFile.Write(FlowFile.Parse(FlowFile.Write(graph)))==FlowFile.Write(graph));
         Check.That(FlowFile.Scripts(graph).Count()==3);
@@ -204,6 +236,15 @@ public static class FlowTests
         Check.That(FlowConditions.Evaluate(new("all",Items:[new("false"),new("eq",new(Path:"/absent"),new(JsonSerializer.SerializeToElement(1)))]),_=>throw new Exception("Must short circuit"),_=>false)==false);
         Check.Throws(()=>FlowFile.Parse("{\"format\":1,\"format\":1,\"nodes\":[],\"edges\":[]}"),"duplicate field");
         Check.That(!FlowValidation.Validate(Example()).Any(d=>d.Severity=="error"));
+        var missingResult=Minimal();missingResult.Nodes[1]=missingResult.Nodes[1] with {Results=["done","draw"]};
+        Check.That(FlowValidation.Validate(missingResult).Any(d=>d.Code=="result-no-successor" && d.Node=="set" && d.Message.Contains("draw")));
+        Check.Throws(()=>Module(missingResult),"result-no-successor");
+        missingResult.Edges.Add(new("draw","set","end","draw",new("false")));
+        Check.That(FlowValidation.Validate(missingResult).Any(d=>d.Code=="result-no-successor"));
+        missingResult.Edges[^1]=missingResult.Edges[^1] with {Condition=new("eq",new(Path:"/state/turn"),new(JsonSerializer.SerializeToElement(1)))};
+        FlowValidation.RequireValid(missingResult);
+        missingResult.Edges[^1]=missingResult.Edges[^1] with {Condition=null,Default=true};
+        FlowValidation.RequireValid(missingResult);
         var nodes=new List<FlowNode> {new(){Id="s",Kind="start"},new(){Id="a",Kind="system"},new(){Id="b",Kind="system"},new(){Id="e",Kind="end",Winners=[]}};
         var cycle=new FlowDefinition(1,nodes,[new("sa","s","a"),new("ab","a","b"),new("ba","b","a")]);
         Check.That(FlowValidation.Validate(cycle).Count(d=>d.Code=="no-terminal-path")==3);
@@ -266,5 +307,6 @@ public static class FlowTests
         var module=Module(players,playerScripts);
         using var first=new PlaySession(module,1);using var second=new PlaySession(module,999);
         Check.That(Wire.Json(first.Actions())==Wire.Json(second.Actions()),"Player actions depended on hidden random state");
+        Check.Throws(()=>first.ReloadScripts(module),"restart required");
     }
 }

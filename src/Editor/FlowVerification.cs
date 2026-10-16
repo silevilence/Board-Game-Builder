@@ -19,10 +19,17 @@ internal static class FlowVerification
         host.Window.Opened += async (_, _) =>
         {
             string? error = null;
+            var passed = new List<string>();
+            object? pluginIdentity = null;
             try
             {
                 await host.Ready;
                 var app = host.Application; var documents = app.Service<DocumentWorkspace>("documents");
+                var authorPlugin = app.Catalog.Single(p => p.Id == "author.flow");
+                var runtimePlugins = GameRuntime.PluginVersions;
+                if (runtimePlugins.ContainsKey("author.flow") || !runtimePlugins.ContainsKey("flow") || app.Catalog.Any(p => p.Id == "flow")) throw new Exception("Flow plugin catalogs are not independent");
+                pluginIdentity = new { author = new { authorPlugin.Id, authorPlugin.Version, authorPlugin.Api, authorPlugin.Provides, authorPlugin.Requires }, runtime = new { id = "flow", version = runtimePlugins["flow"] } };
+                passed.Add("separate-editor-and-runtime-plugin-identities");
                 FormatPanel Wrapper() => (FormatPanel)app.Service<WorkspaceShell>("workspace").Tabs.Items.OfType<TabItem>().Single(t => Equals(t.Tag, "author.flow")).Content!;
                 async Task Enable() { await app.Enable("author.flow"); await Wrapper().Ready; }
                 async Task Reload() { await app.Reload("author.flow"); await Wrapper().Ready; }
@@ -49,7 +56,7 @@ internal static class FlowVerification
                 await app.Service<EditorCommands>("commands").Execute("flow.create"); await Wrapper().Ready;
                 if (!app.Service<FlowWorkspace>("flow.author").Read().Success) throw new Exception("Create command did not associate startup");
                 var draftFlow = app.Service<FlowWorkspace>("flow.author"); var incomplete = draftFlow.Load();
-                await draftFlow.Update(incomplete, incomplete.Model.Definition with { Nodes = incomplete.Model.Definition.Nodes.Select(n => n.Kind == "start" ? n with { Results = ["done", null!] } : n).ToList() });
+                await draftFlow.Update(incomplete, incomplete.Model.Definition with { Nodes = incomplete.Model.Definition.Nodes.Select(n => n.Kind == FlowNodeKinds.Start ? n with { Results = ["done", null!] } : n).ToList() });
                 await app.Service<EditorCommands>("commands").Execute("flow.open"); await Task.Delay(50);
                 using (var invalidPreview = new RenderTargetBitmap(new(1400, 900))) invalidPreview.Render(host.Window);
                 if (draftFlow.Read().Success) throw new Exception("Invalid output was accepted");
@@ -62,8 +69,9 @@ internal static class FlowVerification
                 FlowPanel Panel() => (FlowPanel)Wrapper().Content!;
                 await commands.Execute("flow.open"); await Task.Delay(150);
                 await BuildPrototype(app, host.Window, Panel);
+                passed.Add("layout-nodes-scripts-authored-through-editor-controls");
                 var generated = app.Service<FlowWorkspace>("flow.author").Read().Definition;
-                var playerId = generated.Nodes.Single(n => n.Kind == "player").Id;
+                var playerId = generated.Nodes.Single(n => n.Kind == FlowNodeKinds.Player).Id;
                 await commands.Execute("flow.open"); await commands.Execute("flow.play"); sessions.SuspendScheduler();
                 if (sessions.Frame?.Fault != null || Panel().Canvas.ActiveNode != playerId) throw new Exception("Missing author flow playback: " + sessions.Status);
                 var hash = sessions.Frame!.StateHash;
@@ -85,13 +93,16 @@ internal static class FlowVerification
                     else throw new Exception("Human has no action");
                 }
                 if (sessions.Frame is not { View.Ended: true, Fault: null }) throw new Exception("Mixed game did not end");
+                passed.Add("authored-human-and-cpu-game-ended");
                 foreach (var seat in sessions.CpuSeats.Keys) sessions.CpuSeats[seat] = true;
                 await commands.Execute("flow.play"); sessions.SuspendScheduler();
                 for (var step = 0; step < 30 && sessions.Frame is { View.Ended: false, Fault: null }; step++) await sessions.Send(new("step", sessions.Frame.Revision));
                 if (sessions.Frame is not { View.Ended: true, Fault: null }) throw new Exception("CPU game did not end");
+                passed.Add("authored-all-cpu-game-ended");
                 var saved = Path.GetFullPath(output + ".project");
                 documents.Current!.Save(saved); documents.Set(ModuleDocument.Open(saved)); await Wrapper().Ready;
                 if (Panel().Canvas.Snapshot?.Model.Definition.Nodes.Count != 8) throw new Exception("Saved graph did not reopen");
+                passed.Add("authored-project-saved-and-reopened");
                 documents.Select("flow.node", playerId);
                 var flowWorkspace = app.Service<FlowWorkspace>("flow.author");
                 var fields = flowWorkspace.FormKey("flow.node", playerId); _ = flowWorkspace.Properties(flowWorkspace.Load(), "flow.node", playerId);
@@ -105,7 +116,7 @@ internal static class FlowVerification
                 if (ReferenceEquals(Panel().Canvas, oldCanvas)) throw new Exception("Format child was reused after unload");
                 documents.Set(ModuleDocument.Open("samples/flow-minimal")); await Wrapper().Ready;
                 var budgetFlow = app.Service<FlowWorkspace>("flow.author");
-                var loop = new FlowDefinition(1, [new() { Id = "s", Kind = "start" }, new() { Id = "loop", Kind = "system" }, new() { Id = "end", Kind = "end", Winners = [] }],
+                var loop = new FlowDefinition(1, [new() { Id = "s", Kind = FlowNodeKinds.Start }, new() { Id = "loop", Kind = FlowNodeKinds.System }, new() { Id = "end", Kind = FlowNodeKinds.End, Winners = [] }],
                     [new("enter", "s", "loop"), new("again", "loop", "loop"), new("exit", "loop", "end", Condition: new("eq", new(Path: "/state/turn"), new(Literal: System.Text.Json.JsonSerializer.SerializeToElement(999))), Priority: 1)]);
                 await budgetFlow.Update(budgetFlow.Load(), loop);
                 var startup = documents.Current!.Startup;
@@ -122,6 +133,7 @@ internal static class FlowVerification
                 await commands.Execute("flow.play"); sessions.SuspendScheduler();
                 await app.Disable("author.flow");
                 if (!sessions.Active) throw new Exception("Plugin shutdown destroyed session");
+                passed.Add("runtime-session-survives-author-plugin-disable");
                 app.Install(new("probe.flow.failure", 1, [], ["commands", "panels"], scope =>
                 {
                     scope.Service<EditorCommands>("commands").Register(scope, new("flow.failure", "probe", () => Task.CompletedTask, () => true));
@@ -137,9 +149,16 @@ internal static class FlowVerification
             catch (Exception failure) { error = failure.ToString(); }
             finally
             {
-                File.WriteAllText(output, Wire.Json(new { success = error == null, error }));
-                try { host.Application.Service<DocumentWorkspace>("documents").Set(null); } catch (ObjectDisposedException) { }
-                await host.Application.DisposeAsync(); host.Window.Close();
+                try
+                {
+                    // The successful path already disposed the application and removed its services.
+                    host.Application.Root.Get<DocumentWorkspace>("documents")?.Set(null);
+                    await host.Application.DisposeAsync();
+                    passed.Add("application-cleanup-completed");
+                }
+                catch (Exception cleanup) { error = error == null ? cleanup.ToString() : error + "\nCleanup: " + cleanup; }
+                File.WriteAllText(output, Wire.Json(new { success = error == null, error, passed, pluginIdentity }));
+                host.Window.Close();
             }
         };
         return host.Window;

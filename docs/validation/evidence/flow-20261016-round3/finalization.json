@@ -1,0 +1,28 @@
+{
+  "date": "2026-10-16T11:32:19.9657102+08:00",
+  "sourceInputCount": 305,
+  "unchangedInputCount": 302,
+  "postCollectionSourceChanges": [
+    {
+      "file": "ROADMAP.md",
+      "collectedSha256": "00b63411926325aaba03ab1cef4baedf41012824ce67b5c3a61ba59edc8dc8cf",
+      "finalSha256": "0e1f471504f7d890b87f87627bd45f9bb225c7baeceec5ebefe7a39264d367f6"
+    },
+    {
+      "file": "docs/validation/flow-editor-review.md",
+      "collectedSha256": "871784fdd16e1cfb694d52fc69c5236e9889730d2004af0b703011b81cc92d68",
+      "finalSha256": "e982d42118fd38fe8d94b20cabdbafc3504a5f5d127ffe9483878963398feb53"
+    },
+    {
+      "file": "docs/validation/flow-editor-coverage.md",
+      "collectedSha256": "84db4cb89dff1f889c7e66da9573375d4b6325d3b38dc80f6470c61312af9252",
+      "finalSha256": "128627ed7e0904750f4e8f3d15f33c5658cc0e2d5ff9aa9696dbbcb02ea6bbdd"
+    }
+  ],
+  "finalDocumentSnapshot": "final-documents.zip",
+  "sandboxHostExitCode": 0,
+  "exitCodeEvidence": "Observed process completion from exec session 13526",
+  "sandboxClosed": true,
+  "deliveryArchivesLocalOnly": true,
+  "gitCommitCreated": false
+}

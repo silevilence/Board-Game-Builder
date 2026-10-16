@@ -1,0 +1,24 @@
+{
+  "date": "2026-10-16T13:46:46.4776185+08:00",
+  "inputCount": 392,
+  "postCollectionSourceChanges": [
+    {
+      "file": "docs/validation/flow-editor-review.md",
+      "collectedSha256": "e982d42118fd38fe8d94b20cabdbafc3504a5f5d127ffe9483878963398feb53",
+      "finalSha256": "922bd6f164f6f94c7a3e2511029d844c0955277d99c1bb115b512b0e44f5fb0c"
+    },
+    {
+      "file": "ROADMAP.md",
+      "collectedSha256": "0e1f471504f7d890b87f87627bd45f9bb225c7baeceec5ebefe7a39264d367f6",
+      "finalSha256": "61508c0e466cdf740f51d2968b627f71fc504b586e611f7d4c561cdb915ebfac"
+    }
+  ],
+  "productionFilesMatchingRound3": 212,
+  "freshCoverageCollection": false,
+  "freshExport": false,
+  "freshSandbox": false,
+  "validationExitCode": 0,
+  "exitCodeEvidence": "Observed process completion from exec session 75967",
+  "finalDocumentSnapshot": "final-documents.zip",
+  "gitCommitCreated": false
+}

@@ -1,0 +1,979 @@
+{
+  "coverageSha256": "7962e3541431e517b12a22467934b974166cfc1525efbc38c5a5769a5e144e9c",
+  "settingsSha256": "a11e9b3fc97a201b07c4c1c74aed18e3f5a35b3f27934c48f8a9b6e7b8d7d0bd",
+  "covered": 2161,
+  "total": 2334,
+  "lineRate": 0.9258783204798628,
+  "sourceCounting": "Distinct source line numbers per file; tool totals may count a line in multiple generated classes.",
+  "selection": "Only modules and source files matching the Include expressions in flow-coverage.config are measured.",
+  "explicitExcludes": [
+    "src/Editor/FlowVerification.cs"
+  ],
+  "otherHarnessesOutsideIncludes": [
+    "src/Editor/RuntimeDocumentVerification.cs",
+    "src/Editor/ExportVerification.cs"
+  ],
+  "sources": [
+    {
+      "path": "src/Authoring/FlowDesign.cs",
+      "covered": 39,
+      "total": 40,
+      "uncoveredLines": [
+        39
+      ]
+    },
+    {
+      "path": "src/Authoring/FlowOperations.cs",
+      "covered": 37,
+      "total": 39,
+      "uncoveredLines": [
+        12,
+        40
+      ]
+    },
+    {
+      "path": "src/Authoring/FlowReferences.cs",
+      "covered": 16,
+      "total": 16,
+      "uncoveredLines": []
+    },
+    {
+      "path": "src/Authoring/FlowScriptTemplates.cs",
+      "covered": 7,
+      "total": 8,
+      "uncoveredLines": [
+        12
+      ]
+    },
+    {
+      "path": "src/Authoring/RunOperations.cs",
+      "covered": 95,
+      "total": 98,
+      "uncoveredLines": [
+        11,
+        64,
+        98
+      ]
+    },
+    {
+      "path": "src/Authoring/ValidationOperations.cs",
+      "covered": 48,
+      "total": 49,
+      "uncoveredLines": [
+        10
+      ]
+    },
+    {
+      "path": "src/Editor.Core/AuthorWorkspace.cs",
+      "covered": 91,
+      "total": 110,
+      "uncoveredLines": [
+        59,
+        76,
+        77,
+        106,
+        134,
+        135,
+        136,
+        137,
+        138,
+        139,
+        140,
+        141,
+        142,
+        143,
+        144,
+        145,
+        146,
+        152,
+        153
+      ]
+    },
+    {
+      "path": "src/Editor.Core/DocumentWorkspace.cs",
+      "covered": 82,
+      "total": 105,
+      "uncoveredLines": [
+        63,
+        71,
+        72,
+        73,
+        74,
+        84,
+        97,
+        98,
+        99,
+        103,
+        104,
+        105,
+        110,
+        111,
+        112,
+        113,
+        114,
+        126,
+        143,
+        144,
+        155,
+        156,
+        157
+      ]
+    },
+    {
+      "path": "src/Editor.Core/EditorApplication.cs",
+      "covered": 154,
+      "total": 158,
+      "uncoveredLines": [
+        99,
+        104,
+        244,
+        245
+      ]
+    },
+    {
+      "path": "src/Editor.Core/FlowEditorWork.cs",
+      "covered": 29,
+      "total": 29,
+      "uncoveredLines": []
+    },
+    {
+      "path": "src/Editor.Core/FlowPlayback.cs",
+      "covered": 6,
+      "total": 6,
+      "uncoveredLines": []
+    },
+    {
+      "path": "src/Editor.Core/FlowWorkspace.cs",
+      "covered": 82,
+      "total": 82,
+      "uncoveredLines": []
+    },
+    {
+      "path": "src/Editor/EditorHost.cs",
+      "covered": 24,
+      "total": 29,
+      "uncoveredLines": [
+        26,
+        41,
+        43,
+        44,
+        45
+      ]
+    },
+    {
+      "path": "src/Editor/ExportPanel.cs",
+      "covered": 16,
+      "total": 16,
+      "uncoveredLines": []
+    },
+    {
+      "path": "src/Editor/ExportWorkflow.cs",
+      "covered": 31,
+      "total": 33,
+      "uncoveredLines": [
+        36,
+        42
+      ]
+    },
+    {
+      "path": "src/Editor/FlowCanvas.cs",
+      "covered": 107,
+      "total": 108,
+      "uncoveredLines": [
+        122
+      ]
+    },
+    {
+      "path": "src/Editor/FlowInspector.cs",
+      "covered": 85,
+      "total": 89,
+      "uncoveredLines": [
+        57,
+        77,
+        83,
+        103
+      ]
+    },
+    {
+      "path": "src/Editor/FlowPanel.cs",
+      "covered": 107,
+      "total": 116,
+      "uncoveredLines": [
+        53,
+        54,
+        55,
+        56,
+        81,
+        95,
+        132,
+        133,
+        134
+      ]
+    },
+    {
+      "path": "src/Editor/FormatPanel.cs",
+      "covered": 58,
+      "total": 59,
+      "uncoveredLines": [
+        45
+      ]
+    },
+    {
+      "path": "src/Editor/SessionController.cs",
+      "covered": 49,
+      "total": 66,
+      "uncoveredLines": [
+        67,
+        80,
+        81,
+        83,
+        85,
+        87,
+        89,
+        104,
+        105,
+        106,
+        107,
+        108,
+        111,
+        112,
+        113,
+        114,
+        120
+      ]
+    },
+    {
+      "path": "src/Kernel.Abstractions/FlowState.cs",
+      "covered": 13,
+      "total": 13,
+      "uncoveredLines": []
+    },
+    {
+      "path": "src/Kernel/FlowTransaction.cs",
+      "covered": 28,
+      "total": 29,
+      "uncoveredLines": [
+        18
+      ]
+    },
+    {
+      "path": "src/Kernel/GameEngine.cs",
+      "covered": 96,
+      "total": 109,
+      "uncoveredLines": [
+        12,
+        27,
+        39,
+        65,
+        67,
+        68,
+        69,
+        104,
+        105,
+        136,
+        137,
+        150,
+        165
+      ]
+    },
+    {
+      "path": "src/Kernel/Replay.cs",
+      "covered": 44,
+      "total": 47,
+      "uncoveredLines": [
+        41,
+        48,
+        65
+      ]
+    },
+    {
+      "path": "src/Runtime/DebugSession.cs",
+      "covered": 32,
+      "total": 40,
+      "uncoveredLines": [
+        43,
+        44,
+        45,
+        51,
+        52,
+        53,
+        54,
+        61
+      ]
+    },
+    {
+      "path": "src/Runtime/Flow/FlowConditions.cs",
+      "covered": 33,
+      "total": 36,
+      "uncoveredLines": [
+        30,
+        53,
+        54
+      ]
+    },
+    {
+      "path": "src/Runtime/Flow/FlowContent.cs",
+      "covered": 30,
+      "total": 31,
+      "uncoveredLines": [
+        39
+      ]
+    },
+    {
+      "path": "src/Runtime/Flow/FlowController.cs",
+      "covered": 117,
+      "total": 127,
+      "uncoveredLines": [
+        42,
+        76,
+        136,
+        145,
+        147,
+        148,
+        171,
+        177,
+        178,
+        179
+      ]
+    },
+    {
+      "path": "src/Runtime/Flow/FlowDefinition.cs",
+      "covered": 48,
+      "total": 49,
+      "uncoveredLines": [
+        71
+      ]
+    },
+    {
+      "path": "src/Runtime/Flow/FlowValidation.cs",
+      "covered": 81,
+      "total": 84,
+      "uncoveredLines": [
+        12,
+        54,
+        82
+      ]
+    },
+    {
+      "path": "src/Runtime/GameRuntime.cs",
+      "covered": 142,
+      "total": 147,
+      "uncoveredLines": [
+        98,
+        111,
+        120,
+        156,
+        202
+      ]
+    },
+    {
+      "path": "src/Runtime/PlaySession.cs",
+      "covered": 112,
+      "total": 125,
+      "uncoveredLines": [
+        22,
+        29,
+        61,
+        104,
+        106,
+        107,
+        108,
+        109,
+        110,
+        111,
+        164,
+        167,
+        170
+      ]
+    },
+    {
+      "path": "src/Runtime/RuntimeComposition.cs",
+      "covered": 35,
+      "total": 35,
+      "uncoveredLines": []
+    }
+  ],
+  "methodsBelow90": [
+    {
+      "path": "src/Editor.Core/AuthorWorkspace.cs",
+      "method": "BoardGame.Editor.DocumentWorkspace.ApplyAuthor",
+      "signature": "(BoardGame.Authoring.ProjectChanges)",
+      "lineRate": 0.8888888888888888,
+      "line": "72"
+    },
+    {
+      "path": "src/Editor.Core/DocumentWorkspace.cs",
+      "method": "BoardGame.Editor.DocumentWorkspace.ApplyAuthorForm",
+      "signature": "(string, System.Action)",
+      "lineRate": 0.8,
+      "line": "61"
+    },
+    {
+      "path": "src/Editor.Core/DocumentWorkspace.cs",
+      "method": "BoardGame.Editor.DocumentWorkspace.ApplyForm",
+      "signature": "(string, System.Action<BoardGame.Editor.ModuleDocument>)",
+      "lineRate": 0.0,
+      "line": "71"
+    },
+    {
+      "path": "src/Editor.Core/DocumentWorkspace.cs",
+      "method": "BoardGame.Editor.DocumentWorkspace.Undo",
+      "signature": "()",
+      "lineRate": 0.25,
+      "line": "96"
+    },
+    {
+      "path": "src/Editor.Core/DocumentWorkspace.cs",
+      "method": "BoardGame.Editor.DocumentWorkspace.Redo",
+      "signature": "()",
+      "lineRate": 0.25,
+      "line": "102"
+    },
+    {
+      "path": "src/Editor.Core/AuthorWorkspace.cs",
+      "method": "BoardGame.Editor.WorkspaceEditMode.Result",
+      "signature": "(string, System.Threading.CancellationToken)",
+      "lineRate": 0.0,
+      "line": "134"
+    },
+    {
+      "path": "src/Editor.Core/AuthorWorkspace.cs",
+      "method": "BoardGame.Editor.WorkspaceEditMode.Find",
+      "signature": "(string, string, System.Threading.CancellationToken)",
+      "lineRate": 0.0,
+      "line": "140"
+    },
+    {
+      "path": "src/Editor.Core/DocumentWorkspace.cs",
+      "method": "BoardGame.Editor.DocumentDraft.get_Yaml",
+      "signature": "()",
+      "lineRate": 0.0,
+      "line": "126"
+    },
+    {
+      "path": "src/Editor.Core/DocumentWorkspace.cs",
+      "method": "BoardGame.Editor.DocumentDraft.Undo",
+      "signature": "()",
+      "lineRate": 0.0,
+      "line": "143"
+    },
+    {
+      "path": "src/Editor.Core/DocumentWorkspace.cs",
+      "method": "BoardGame.Editor.DocumentDraft.Redo",
+      "signature": "()",
+      "lineRate": 0.0,
+      "line": "144"
+    },
+    {
+      "path": "src/Editor.Core/DocumentWorkspace.cs",
+      "method": "BoardGame.Editor.DocumentDraft.Reload",
+      "signature": "(string)",
+      "lineRate": 0.25,
+      "line": "154"
+    },
+    {
+      "path": "src/Editor.Core/EditorApplication.cs",
+      "method": "BoardGame.Editor.EditorApplication.Retain",
+      "signature": "(string, string)",
+      "lineRate": 0.0,
+      "line": "104"
+    },
+    {
+      "path": "src/Editor.Core/EditorApplication.cs",
+      "method": "BoardGame.Editor.EditorPluginScope.Emit",
+      "signature": "<T>(CordiSharp.Events.EventKey<T>, T)",
+      "lineRate": 0.0,
+      "line": "244"
+    },
+    {
+      "path": "src/Editor.Core/EditorApplication.cs",
+      "method": "BoardGame.Editor.EditorPluginScope.ForContext",
+      "signature": "(CordiSharp.Context, bool)",
+      "lineRate": 0.0,
+      "line": "245"
+    },
+    {
+      "path": "src/Editor.Core/DocumentWorkspace.cs",
+      "method": "BoardGame.Editor.DocumentWorkspace.<>c.<Undo>b__79_0",
+      "signature": "(BoardGame.Editor.DocumentDraft)",
+      "lineRate": 0.0,
+      "line": "97"
+    },
+    {
+      "path": "src/Editor.Core/DocumentWorkspace.cs",
+      "method": "BoardGame.Editor.DocumentWorkspace.<>c.<Redo>b__80_0",
+      "signature": "(BoardGame.Editor.DocumentDraft)",
+      "lineRate": 0.0,
+      "line": "103"
+    },
+    {
+      "path": "src/Editor.Core/AuthorWorkspace.cs",
+      "method": "BoardGame.Editor.DocumentWorkspace.<>c__DisplayClass23_0.<ApplyAuthor>b__2",
+      "signature": "(BoardGame.Editor.DocumentDraftTarget)",
+      "lineRate": 0.0,
+      "line": "96"
+    },
+    {
+      "path": "src/Editor.Core/DocumentWorkspace.cs",
+      "method": "BoardGame.Editor.DocumentWorkspace.<CanLeave>d__85.MoveNext",
+      "signature": "()",
+      "lineRate": 0.0,
+      "line": "110"
+    },
+    {
+      "path": "src/Editor.Core/AuthorWorkspace.cs",
+      "method": "BoardGame.Editor.WorkspaceEditMode.<>c__DisplayClass10_0.<Result>b__0",
+      "signature": "()",
+      "lineRate": 0.0,
+      "line": "136"
+    },
+    {
+      "path": "src/Editor.Core/AuthorWorkspace.cs",
+      "method": "BoardGame.Editor.WorkspaceEditMode.<>c__DisplayClass11_0.<Find>b__0",
+      "signature": "()",
+      "lineRate": 0.0,
+      "line": "142"
+    },
+    {
+      "path": "src/Editor.Core/AuthorWorkspace.cs",
+      "method": "BoardGame.Editor.WorkspaceEditMode.<>c__DisplayClass12_0.<Save>b__0",
+      "signature": "()",
+      "lineRate": 0.75,
+      "line": "149"
+    },
+    {
+      "path": "src/Editor.Core/EditorApplication.cs",
+      "method": "BoardGame.Editor.EditorApplication.<>c__DisplayClass36_0.<Retain>b__0",
+      "signature": "()",
+      "lineRate": 0.0,
+      "line": "104"
+    },
+    {
+      "path": "src/Editor.Core/FlowWorkspace.cs",
+      "method": "BoardGame.Editor.FlowWorkspace.<>c.<ApplyForm>b__17_1",
+      "signature": "(BoardGame.Authoring.AuthorDiagnostic)",
+      "lineRate": 0.0,
+      "line": "65"
+    },
+    {
+      "path": "src/Runtime/DebugSession.cs",
+      "method": "BoardGame.Runtime.DebugSession.Handle",
+      "signature": "(BoardGame.Runtime.DebugRequest)",
+      "lineRate": 0.7083333333333334,
+      "line": "26"
+    },
+    {
+      "path": "src/Runtime/DebugSession.cs",
+      "method": "BoardGame.Runtime.DebugSession.ReplayReply",
+      "signature": "(string)",
+      "lineRate": 0.0,
+      "line": "61"
+    },
+    {
+      "path": "src/Runtime/Flow/FlowConditions.cs",
+      "method": "BoardGame.Runtime.FlowConditions.Resolve",
+      "signature": "(System.Text.Json.JsonElement, string)",
+      "lineRate": 0.7142857142857143,
+      "line": "48"
+    },
+    {
+      "path": "src/Runtime/Flow/FlowController.cs",
+      "method": "BoardGame.Runtime.FlowController.CheckActions",
+      "signature": "(BoardGame.Kernel.FlowState)",
+      "lineRate": 0.6666666666666666,
+      "line": "75"
+    },
+    {
+      "path": "src/Runtime/Flow/FlowController.cs",
+      "method": "BoardGame.Runtime.FlowController.Actions",
+      "signature": "(string)",
+      "lineRate": 0.875,
+      "line": "130"
+    },
+    {
+      "path": "src/Runtime/Flow/FlowController.cs",
+      "method": "BoardGame.Runtime.FlowController.Submit",
+      "signature": "(string, BoardGame.Kernel.Command)",
+      "lineRate": 0.7894736842105263,
+      "line": "141"
+    },
+    {
+      "path": "src/Runtime/Flow/FlowController.cs",
+      "method": "BoardGame.Runtime.FlowController.Apply",
+      "signature": "(BoardGame.Kernel.IGameRules)",
+      "lineRate": 0.0,
+      "line": "177"
+    },
+    {
+      "path": "src/Runtime/Flow/FlowController.cs",
+      "method": "BoardGame.Runtime.FlowController.BoardGame.Kernel.IGameRules.Actions",
+      "signature": "(BoardGame.Kernel.SeatView)",
+      "lineRate": 0.0,
+      "line": "178"
+    },
+    {
+      "path": "src/Runtime/Flow/FlowController.cs",
+      "method": "BoardGame.Runtime.FlowController.Decide",
+      "signature": "(BoardGame.Kernel.SeatView, BoardGame.Kernel.Command)",
+      "lineRate": 0.0,
+      "line": "179"
+    },
+    {
+      "path": "src/Runtime/GameRuntime.cs",
+      "method": "BoardGame.Runtime.GameRuntime.ValidateImages",
+      "signature": "(BoardGame.Kernel.GameState, BoardGame.Kernel.ResourcePool)",
+      "lineRate": 0.8,
+      "line": "199"
+    },
+    {
+      "path": "src/Runtime/PlaySession.cs",
+      "method": "BoardGame.Runtime.PlaySession.get_SupportsCpu",
+      "signature": "()",
+      "lineRate": 0.0,
+      "line": "22"
+    },
+    {
+      "path": "src/Runtime/PlaySession.cs",
+      "method": "BoardGame.Runtime.PlaySession.SetController",
+      "signature": "(string, string)",
+      "lineRate": 0.0,
+      "line": "29"
+    },
+    {
+      "path": "src/Runtime/PlaySession.cs",
+      "method": "BoardGame.Runtime.LocalGameSession.get_SupportsCpu",
+      "signature": "()",
+      "lineRate": 0.0,
+      "line": "61"
+    },
+    {
+      "path": "src/Runtime/PlaySession.cs",
+      "method": "BoardGame.Runtime.LocalGameSession.SetController",
+      "signature": "(string, string)",
+      "lineRate": 0.0,
+      "line": "104"
+    },
+    {
+      "path": "src/Runtime/PlaySession.cs",
+      "method": "BoardGame.Runtime.LocalGameSession.ReloadScriptsCore",
+      "signature": "(BoardGame.Kernel.LoadedModule)",
+      "lineRate": 0.85,
+      "line": "157"
+    },
+    {
+      "path": "src/Runtime/GameRuntime.cs",
+      "method": "BoardGame.Runtime.GameRuntime.<>c__DisplayClass8_0.<ValidateSnapshot>b__0",
+      "signature": "(System.Collections.Generic.KeyValuePair<string, string>)",
+      "lineRate": 0.0,
+      "line": "97"
+    },
+    {
+      "path": "src/Kernel/GameEngine.cs",
+      "method": "BoardGame.Kernel.GameEngine.ReplaceRules",
+      "signature": "(BoardGame.Kernel.IGameRules)",
+      "lineRate": 0.0,
+      "line": "12"
+    },
+    {
+      "path": "src/Kernel/GameEngine.cs",
+      "method": "BoardGame.Kernel.GameEngine.Actions",
+      "signature": "(string)",
+      "lineRate": 0.875,
+      "line": "21"
+    },
+    {
+      "path": "src/Kernel/GameEngine.cs",
+      "method": "BoardGame.Kernel.GameEngine.ExportAuthoritySubmissions",
+      "signature": "()",
+      "lineRate": 0.0,
+      "line": "39"
+    },
+    {
+      "path": "src/Kernel/GameEngine.cs",
+      "method": "BoardGame.Kernel.GameEngine.Submit",
+      "signature": "(string, BoardGame.Kernel.Command)",
+      "lineRate": 0.8,
+      "line": "42"
+    },
+    {
+      "path": "src/Kernel/GameEngine.cs",
+      "method": "BoardGame.Kernel.GameEngine.Apply",
+      "signature": "(BoardGame.Kernel.GameState, string, BoardGame.Kernel.Command, System.Collections.Generic.List<string>, bool, System.Nullable<int>, bool, bool)",
+      "lineRate": 0.8983050847457628,
+      "line": "85"
+    },
+    {
+      "path": "src/Authoring/FlowOperations.cs",
+      "method": "BoardGame.Authoring.FlowAuthorModel.get_ExitCode",
+      "signature": "()",
+      "lineRate": 0.0,
+      "line": "12"
+    },
+    {
+      "path": "src/Authoring/FlowOperations.cs",
+      "method": "BoardGame.Authoring.FlowOperations.Read",
+      "signature": "(BoardGame.Authoring.ProjectView)",
+      "lineRate": 0.8888888888888888,
+      "line": "33"
+    },
+    {
+      "path": "src/Authoring/FlowScriptTemplates.cs",
+      "method": "BoardGame.Authoring.FlowScriptTemplates.Text",
+      "signature": "(string)",
+      "lineRate": 0.875,
+      "line": "6"
+    },
+    {
+      "path": "src/Authoring/RunOperations.cs",
+      "method": "BoardGame.Authoring.RunResult.get_ExitCode",
+      "signature": "()",
+      "lineRate": 0.0,
+      "line": "11"
+    },
+    {
+      "path": "src/Authoring/RunOperations.cs",
+      "method": "BoardGame.Authoring.RunOperations.Rebuild",
+      "signature": "(BoardGame.Authoring.DebugDocument, System.Threading.CancellationToken)",
+      "lineRate": 0.8888888888888888,
+      "line": "85"
+    },
+    {
+      "path": "src/Authoring/RunOperations.cs",
+      "method": "BoardGame.Authoring.RunOperations.<Cpu>g__Run|13_2",
+      "signature": "(uint, ref BoardGame.Authoring.RunOperations.<>c__DisplayClass13_0)",
+      "lineRate": 0.8,
+      "line": "58"
+    },
+    {
+      "path": "src/Authoring/ValidationOperations.cs",
+      "method": "BoardGame.Authoring.ValidationResult.get_ExitCode",
+      "signature": "()",
+      "lineRate": 0.0,
+      "line": "10"
+    },
+    {
+      "path": "src/Authoring/FlowReferences.cs",
+      "method": "BoardGame.Authoring.FlowReferences.<>c.<Validate>b__0_3",
+      "signature": "(BoardGame.Runtime.FlowAction)",
+      "lineRate": 0.0,
+      "line": "20"
+    },
+    {
+      "path": "src/Authoring/FlowReferences.cs",
+      "method": "BoardGame.Authoring.FlowReferences.<>c.<Validate>b__0_4",
+      "signature": "(BoardGame.Runtime.FlowAction)",
+      "lineRate": 0.0,
+      "line": "20"
+    },
+    {
+      "path": "src/Editor/SessionController.cs",
+      "method": "BoardGame.Editor.SessionController.get_Session",
+      "signature": "()",
+      "lineRate": 0.0,
+      "line": "120"
+    },
+    {
+      "path": "src/Editor/SessionController.cs",
+      "method": "BoardGame.Editor.SessionController.set_Session",
+      "signature": "(BoardGame.Runtime.IDebugSession)",
+      "lineRate": 0.0,
+      "line": "120"
+    },
+    {
+      "path": "src/Editor/EditorHost.cs",
+      "method": "BoardGame.Editor.EditorHost.<Start>d__13.MoveNext",
+      "signature": "()",
+      "lineRate": 0.6666666666666666,
+      "line": "34"
+    },
+    {
+      "path": "src/Editor/ExportPanel.cs",
+      "method": "BoardGame.Editor.ExportPanel.<<-ctor>b__5_2>d.MoveNext",
+      "signature": "()",
+      "lineRate": 0.0,
+      "line": "20"
+    },
+    {
+      "path": "src/Editor/ExportPanel.cs",
+      "method": "BoardGame.Editor.ExportPanel.<<-ctor>b__5_3>d.MoveNext",
+      "signature": "()",
+      "lineRate": 0.0,
+      "line": "20"
+    },
+    {
+      "path": "src/Editor/ExportWorkflow.cs",
+      "method": "BoardGame.Editor.ExportWorkflow.<>c__DisplayClass26_2.<Run>b__4",
+      "signature": "()",
+      "lineRate": 0.75,
+      "line": "33"
+    },
+    {
+      "path": "src/Editor/FlowInspector.cs",
+      "method": "BoardGame.Editor.FlowInspector.<>c__DisplayClass0_0.<.ctor>b__3",
+      "signature": "(object, Avalonia.Interactivity.RoutedEventArgs)",
+      "lineRate": 0.6666666666666666,
+      "line": "76"
+    },
+    {
+      "path": "src/Editor/FlowInspector.cs",
+      "method": "BoardGame.Editor.FlowInspector.<>c__DisplayClass0_0.<.ctor>b__4",
+      "signature": "(object, Avalonia.Interactivity.RoutedEventArgs)",
+      "lineRate": 0.0,
+      "line": "79"
+    },
+    {
+      "path": "src/Editor/FlowInspector.cs",
+      "method": "BoardGame.Editor.FlowInspector.<>c__DisplayClass0_0.<.ctor>b__5",
+      "signature": "(object, Avalonia.Interactivity.RoutedEventArgs)",
+      "lineRate": 0.6666666666666666,
+      "line": "82"
+    },
+    {
+      "path": "src/Editor/FlowInspector.cs",
+      "method": "BoardGame.Editor.FlowInspector.<>c__DisplayClass0_0.<.ctor>b__6",
+      "signature": "(object, Avalonia.Interactivity.RoutedEventArgs)",
+      "lineRate": 0.0,
+      "line": "85"
+    },
+    {
+      "path": "src/Editor/FlowInspector.cs",
+      "method": "BoardGame.Editor.FlowInspector.<>c__DisplayClass0_0.<.ctor>b__9",
+      "signature": "(object, Avalonia.Controls.SelectionChangedEventArgs)",
+      "lineRate": 0.0,
+      "line": "94"
+    },
+    {
+      "path": "src/Editor/FlowInspector.cs",
+      "method": "BoardGame.Editor.FlowInspector.<>c__DisplayClass0_0.<.ctor>b__10",
+      "signature": "(object, Avalonia.Interactivity.RoutedEventArgs)",
+      "lineRate": 0.0,
+      "line": "95"
+    },
+    {
+      "path": "src/Editor/FlowInspector.cs",
+      "method": "BoardGame.Editor.FlowInspector.<>c__DisplayClass0_0.<.ctor>b__11",
+      "signature": "(object, Avalonia.Interactivity.RoutedEventArgs)",
+      "lineRate": 0.8,
+      "line": "100"
+    },
+    {
+      "path": "src/Editor/FlowPanel.cs",
+      "method": "BoardGame.Editor.FlowPanel.<>c.<.ctor>b__3_22",
+      "signature": "(BoardGame.Runtime.FlowDiagnostic)",
+      "lineRate": 0.0,
+      "line": "90"
+    },
+    {
+      "path": "src/Editor/FlowPanel.cs",
+      "method": "BoardGame.Editor.FlowPanel.<>c__DisplayClass3_0.<.ctor>b__0",
+      "signature": "(string)",
+      "lineRate": 0.0,
+      "line": "17"
+    },
+    {
+      "path": "src/Editor/FlowPanel.cs",
+      "method": "BoardGame.Editor.FlowPanel.<>c__DisplayClass3_0.<.ctor>b__2",
+      "signature": "(object, Avalonia.Controls.SelectionChangedEventArgs)",
+      "lineRate": 0.0,
+      "line": "53"
+    },
+    {
+      "path": "src/Editor/FlowPanel.cs",
+      "method": "BoardGame.Editor.FlowPanel.<>c__DisplayClass3_0.<.ctor>b__4",
+      "signature": "(object, Avalonia.Controls.SelectionChangedEventArgs)",
+      "lineRate": 0.75,
+      "line": "78"
+    },
+    {
+      "path": "src/Editor/FlowPanel.cs",
+      "method": "BoardGame.Editor.FlowPanel.<>c__DisplayClass3_0.<.ctor>b__6",
+      "signature": "(object, Avalonia.Interactivity.RoutedEventArgs)",
+      "lineRate": 0.0,
+      "line": "98"
+    },
+    {
+      "path": "src/Editor/FlowPanel.cs",
+      "method": "BoardGame.Editor.FlowPanel.<>c__DisplayClass3_1.<.ctor>b__10",
+      "signature": "(object, Avalonia.Interactivity.RoutedEventArgs)",
+      "lineRate": 0.0,
+      "line": "27"
+    },
+    {
+      "path": "src/Editor/FlowPanel.cs",
+      "method": "BoardGame.Editor.FlowPanel.<>c__DisplayClass3_1.<.ctor>b__13",
+      "signature": "(System.Threading.CancellationToken)",
+      "lineRate": 0.0,
+      "line": "27"
+    },
+    {
+      "path": "src/Editor/FlowPanel.cs",
+      "method": "BoardGame.Editor.FlowEditorPlugin.<>c.<get_Definition>b__1_19",
+      "signature": "(BoardGame.Runtime.FlowDiagnostic)",
+      "lineRate": 0.0,
+      "line": "133"
+    },
+    {
+      "path": "src/Editor/FlowPanel.cs",
+      "method": "BoardGame.Editor.FlowEditorPlugin.<>c__DisplayClass1_0.<get_Definition>b__3",
+      "signature": "()",
+      "lineRate": 0.0,
+      "line": "119"
+    },
+    {
+      "path": "src/Editor/FlowPanel.cs",
+      "method": "BoardGame.Editor.FlowEditorPlugin.<>c__DisplayClass1_0.<get_Definition>b__13",
+      "signature": "()",
+      "lineRate": 0.0,
+      "line": "132"
+    },
+    {
+      "path": "src/Editor/FormatPanel.cs",
+      "method": "BoardGame.Editor.GameFilePanel.<>c__DisplayClass0_0.<.ctor>b__3",
+      "signature": "(object, Avalonia.Interactivity.RoutedEventArgs)",
+      "lineRate": 0.0,
+      "line": "85"
+    },
+    {
+      "path": "src/Editor/SessionController.cs",
+      "method": "BoardGame.Editor.SessionController.<<-ctor>b__71_0>d.MoveNext",
+      "signature": "()",
+      "lineRate": 0.0,
+      "line": "37"
+    },
+    {
+      "path": "src/Editor/SessionController.cs",
+      "method": "BoardGame.Editor.SessionController.<ReloadScripts>d__76.MoveNext",
+      "signature": "()",
+      "lineRate": 0.0,
+      "line": "104"
+    },
+    {
+      "path": "src/Editor/SessionController.cs",
+      "method": "BoardGame.Editor.SessionController.<SaveRecording>d__77.MoveNext",
+      "signature": "()",
+      "lineRate": 0.0,
+      "line": "111"
+    },
+    {
+      "path": "src/Editor/SessionController.cs",
+      "method": "BoardGame.Editor.SessionController.<Send>d__75.MoveNext",
+      "signature": "()",
+      "lineRate": 0.6470588235294118,
+      "line": "71"
+    },
+    {
+      "path": "src/Editor/EditorHost.cs",
+      "method": "BoardGame.Editor.EditorHost.<>c__DisplayClass12_0.<<-ctor>b__1>d.MoveNext",
+      "signature": "()",
+      "lineRate": 0.875,
+      "line": "21"
+    },
+    {
+      "path": "src/Editor/FlowPanel.cs",
+      "method": "BoardGame.Editor.FlowEditorPlugin.<>c__DisplayClass1_0.<<get_Definition>b__5>d.MoveNext",
+      "signature": "()",
+      "lineRate": 0.0,
+      "line": "120"
+    }
+  ]
+}

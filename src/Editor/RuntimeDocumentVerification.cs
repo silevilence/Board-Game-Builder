@@ -59,9 +59,14 @@ internal static class RuntimeDocumentVerification
             catch(Exception failure) {error=failure.ToString();}
             finally
             {
+                try
+                {
+                    host.Application.Root.Get<DocumentWorkspace>("documents")?.Set(null);
+                    await host.Application.DisposeAsync();
+                }
+                catch(Exception cleanup) {error=error==null?cleanup.ToString():error+"\nCleanup: "+cleanup;}
                 File.WriteAllText(output,Wire.Json(new {success=error==null,error}));
-                try {host.Application.Service<DocumentWorkspace>("documents").Set(null);} catch(ObjectDisposedException) { }
-                await host.Application.DisposeAsync();host.Window.Close();
+                host.Window.Close();
             }
         };
         return host.Window;

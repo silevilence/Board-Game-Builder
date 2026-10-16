@@ -1,0 +1,27 @@
+  正在确定要还原的项目…
+  已还原 C:\code\dotnet\Board-Game-Builder\src\Kernel\Kernel.csproj (用时 236 毫秒)。
+  已还原 C:\code\dotnet\Board-Game-Builder\src\Runtime\Runtime.csproj (用时 244 毫秒)。
+  已还原 C:\code\dotnet\Board-Game-Builder\src\Lua\Lua.csproj (用时 241 毫秒)。
+  已还原 C:\code\dotnet\Board-Game-Builder\src\View.Abstractions\View.Abstractions.csproj (用时 236 毫秒)。
+  已还原 C:\code\dotnet\Board-Game-Builder\src\Kernel.Abstractions\Kernel.Abstractions.csproj (用时 231 毫秒)。
+  已还原 C:\code\dotnet\Board-Game-Builder\src\Networking\Networking.csproj (用时 244 毫秒)。
+  已还原 C:\code\dotnet\Board-Game-Builder\src\Modules\Modules.csproj (用时 241 毫秒)。
+  已还原 C:\code\dotnet\Board-Game-Builder\src\View.MonoGame\View.MonoGame.csproj (用时 320 毫秒)。
+  已还原 C:\code\dotnet\Board-Game-Builder\src\Player\Player.csproj (用时 322 毫秒)。
+  Kernel.Abstractions -> C:\code\dotnet\Board-Game-Builder\src\Kernel.Abstractions\bin\Release\net10.0\Kernel.Abstractions.dll
+  Kernel -> C:\code\dotnet\Board-Game-Builder\src\Kernel\bin\Release\net10.0\Kernel.dll
+  View.Abstractions -> C:\code\dotnet\Board-Game-Builder\src\View.Abstractions\bin\Release\net10.0\View.Abstractions.dll
+  Modules -> C:\code\dotnet\Board-Game-Builder\src\Modules\bin\Release\net10.0\Modules.dll
+  View.MonoGame -> C:\code\dotnet\Board-Game-Builder\src\View.MonoGame\bin\Release\net10.0-windows\View.MonoGame.dll
+  Lua -> C:\code\dotnet\Board-Game-Builder\src\Lua\bin\Release\net10.0\win-x64\Lua.dll
+  Lua -> C:\code\dotnet\Board-Game-Builder\src\Lua\bin\Release\net10.0\Lua.dll
+  Runtime -> C:\code\dotnet\Board-Game-Builder\src\Runtime\bin\Release\net10.0\Runtime.dll
+  Networking -> C:\code\dotnet\Board-Game-Builder\src\Networking\bin\Release\net10.0\Networking.dll
+  Player -> C:\code\dotnet\Board-Game-Builder\src\Player\bin\Release\net10.0-windows\win-x64\Player.dll
+  Player -> C:\code\dotnet\Board-Game-Builder\artifacts\player-release-flow-third-review\
+  正在确定要还原的项目…
+  所有项目均是最新的，无法还原。
+  Kernel.Abstractions -> C:\code\dotnet\Board-Game-Builder\src\Kernel.Abstractions\bin\Release\net10.0\Kernel.Abstractions.dll
+  Lua -> C:\code\dotnet\Board-Game-Builder\src\Lua\bin\Release\net10.0\win-x64\Lua.dll
+  Lua -> C:\code\dotnet\Board-Game-Builder\artifacts\player-release-flow-third-review\worker\
+Precompiled Player: C:\code\dotnet\Board-Game-Builder\artifacts\player-release-flow-third-review

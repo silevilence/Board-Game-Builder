@@ -1,0 +1,19 @@
+{
+  "kind": "Observed host execution result",
+  "command": "pwsh -NoProfile -File scripts/validate-flow-sandbox.ps1 -ExportDirectory artifacts/flow-second-review/export-check/export -Output artifacts/flow-second-sandbox-final -SourceEvidence artifacts/flow-second-review/result.json",
+  "exitCode": 0,
+  "guestResult": "sandbox.json",
+  "timeoutMinutes": 10,
+  "postCollectionSourceChanges": [
+    {
+      "file": "scripts/validate-flow-sandbox.ps1",
+      "collectedSha256": "c796e44d268eaf2ce780e5c13c3f6b1cf0a384688bbc8b14c5339cbf40f4a29b",
+      "currentSha256": "d9dae5d5294a94792cf00b0529bce6c5cc2de9146786ca007705af38d15222cc"
+    }
+  ],
+  "initialAttempt": {
+    "output": "artifacts/flow-second-sandbox",
+    "hostExitCode": 1,
+    "reason": "Five-minute host timeout during cold startup. A later diagnostic duplicate guest invocation encountered existing C:\\Game. This attempt is not counted as a complete pass."
+  }
+}

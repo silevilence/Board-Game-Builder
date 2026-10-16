@@ -1,0 +1,37 @@
+Microsoft.CodeCoverage.Console v18.6.0.0 [x64 - .NET Framework 4.8.9325.0]
+
+SessionId: da68ebf4-d8d5-4563-b8c8-37b833855e27
+PASS cordi
+PASS cordi-dispatch
+PASS debug-play
+PASS documents
+PASS packages
+PASS replay
+PASS cpu
+PASS flow-editor-lifetime
+PASS flow-editor-model
+PASS flow-editor-canvas
+PASS flow-editor-properties
+PASS flow-editor-validation
+PASS flow-editor-playback
+PASS flow-editor-conflicts
+PASS flow-contract
+PASS flow-validation
+PASS flow-runtime
+PASS flow-systems
+PASS flow-players
+PASS flow-protection
+PASS flow-restoration
+PASS flow-delivery
+PASS flow-review
+PASS author-operations
+PASS author-validation
+PASS author-runs
+PASS author-workspace
+PASS author-external
+PASS runtime-host
+PASS startup
+PASS runtime-recording
+PASS runtime-entry
+Project boundaries passed.
+代码覆盖率结果: C:\code\dotnet\Board-Game-Builder\artifacts\flow-third-review\coverage.xml。

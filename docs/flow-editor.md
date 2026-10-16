@@ -20,6 +20,8 @@
 属性 JSON 使用 Runtime 的 `FlowNode`／`FlowEdge`，面板附带字段类型与简要契约。
 玩家节点 `seat` 可选择固定席位、当前席位或 Lua；静态 `actions` 或成对的
 `actionsScript`／`decideScript` 配置动作，`complete=false` 表示继续等待。
+等待结果也须声明在 `results` 中，但不需要后继边；静态完成动作的结果必须有潜在后继。
+Lua 的完成标志只能在运行时判断，无后继的结果会提示仅可用于等待；若实际完成时没有匹配边，事务拒绝并回滚。
 结束节点 `winners=[]` 表示平局。边配置命名结果、条件、优先级与默认出口。
 
 选择节点后，可按 execute、seat、actions、decide 创建最小 Lua 模板并同时关联。

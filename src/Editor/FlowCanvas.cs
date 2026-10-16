@@ -13,7 +13,7 @@ public sealed class FlowCanvas : Control
 {
     private readonly DocumentWorkspace documents;
     private readonly FlowWorkspace flow;
-    private readonly CancellationToken cancellation;
+    private readonly FlowEditorWork work;
     private readonly Action<string> report;
     public FlowGraphSnapshot? Snapshot { get; private set; }
     private FlowGraphSnapshot? gesture;
@@ -26,9 +26,9 @@ public sealed class FlowCanvas : Control
     public HashSet<string> TraceEdges { get; set; } = [];
     public HashSet<string> ProblemNodes { get; set; } = [];
     public HashSet<string> ProblemEdges { get; set; } = [];
-    public FlowCanvas(DocumentWorkspace documents, FlowWorkspace flow, CancellationToken cancellation, Action<string> report)
+    public FlowCanvas(DocumentWorkspace documents, FlowWorkspace flow, FlowEditorWork work, Action<string> report)
     {
-        this.documents = documents; this.flow = flow; this.cancellation = cancellation; this.report = report;
+        this.documents = documents; this.flow = flow; this.work = work; this.report = report;
         Focusable = true; ClipToBounds = true; MinHeight = 350;
     }
     public void Load(FlowGraphSnapshot? snapshot)
@@ -64,8 +64,8 @@ public sealed class FlowCanvas : Control
         var y = Math.Min(Box(from).Top, box.Top) - 30 * Design.Zoom;
         return [a, new(a.X + 25 * Design.Zoom, a.Y), new(a.X + 25 * Design.Zoom, y), new(b.X - 25 * Design.Zoom, y), new(b.X - 25 * Design.Zoom, b.Y), b];
     }
-    public static string KindTitle(string kind) => kind switch { "start" => "游戏开始", "system" => "系统操作", "player" => "玩家操作", "end" => "游戏结束", _ => "未知节点" };
-    private static IBrush Accent(string kind) => Brush.Parse(kind switch { "start" => "#59CFAC", "system" => "#88ADFF", "player" => "#EDC47C", "end" => "#D89CDC", _ => "#AAAAAA" });
+    public static string KindTitle(string kind) => kind switch { FlowNodeKinds.Start => "游戏开始", FlowNodeKinds.System => "系统操作", FlowNodeKinds.Player => "玩家操作", FlowNodeKinds.End => "游戏结束", _ => "未知节点" };
+    private static IBrush Accent(string kind) => Brush.Parse(kind switch { FlowNodeKinds.Start => "#59CFAC", FlowNodeKinds.System => "#88ADFF", FlowNodeKinds.Player => "#EDC47C", FlowNodeKinds.End => "#D89CDC", _ => "#AAAAAA" });
     public override void Render(DrawingContext context)
     {
         base.Render(context); context.FillRectangle(Brush.Parse("#151C29"), new Rect(Bounds.Size));
@@ -92,8 +92,8 @@ public sealed class FlowCanvas : Control
             Text(KindTitle(node.Kind), box.TopLeft + new Vector(12 * scale, 8 * scale), Accent(node.Kind));
             var name = Design.Names.GetValueOrDefault(node.Id, node.Id);
             Text(name.Length > 20 ? name[..20] + "…" : name, box.TopLeft + new Vector(12 * scale, 30 * scale), Brushes.White);
-            if (node.Kind != "start") context.DrawEllipse(Brushes.White, null, new(box.Left, box.Top + 34 * scale), 5 * scale, 5 * scale);
-            if (node.Kind != "end") foreach (var result in node.Results ?? [])
+            if (node.Kind != FlowNodeKinds.Start) context.DrawEllipse(Brushes.White, null, new(box.Left, box.Top + 34 * scale), 5 * scale, 5 * scale);
+            if (node.Kind != FlowNodeKinds.End) foreach (var result in node.Results ?? [])
             {
                 var at = Output(node, result);
                 context.DrawEllipse(port == (node.Id, result) ? Brushes.White : Accent(node.Kind), null, at, 5 * scale, 5 * scale);
@@ -108,11 +108,11 @@ public sealed class FlowCanvas : Control
         if (buttons.IsMiddleButtonPressed || buttons.IsRightButtonPressed) { Begin(null, true); return; }
         foreach (var node in Snapshot.Model.Definition.Nodes.AsEnumerable().Reverse())
         {
-            if (node.Kind != "end") foreach (var result in node.Results ?? [])
+            if (node.Kind != FlowNodeKinds.End) foreach (var result in node.Results ?? [])
                 if (Length(Output(node, result) - point) < 10) { port = (node.Id, result); report("点击目标节点左侧输入端口完成连接；Esc 取消。"); InvalidateVisual(); return; }
             var box = Box(node);
-            if (port is {} source && node.Kind != "start" && Length(new Point(box.Left, box.Top + 34 * Design.Zoom) - point) < 14)
-            { port = null; Run(() => flow.Connect(Snapshot!, source.Node, source.Result, node.Id, cancellation)); return; }
+            if (port is {} source && node.Kind != FlowNodeKinds.Start && Length(new Point(box.Left, box.Top + 34 * Design.Zoom) - point) < 14)
+            { port = null; var snapshot = Snapshot; work.Run(token => flow.Connect(snapshot, source.Node, source.Result, node.Id, token)); return; }
             if (box.Contains(point)) { documents.Select("flow.node", node.Id); Begin(node.Id, false); return; }
         }
         foreach (var edge in Snapshot.Model.Definition.Edges)
@@ -150,7 +150,7 @@ public sealed class FlowCanvas : Control
         base.OnPointerReleased(e); var source = gesture; var design = preview;
         var moved = Length(e.GetPosition(this) - origin) > 2;
         gesture = null; preview = null; dragged = null; panning = false; e.Pointer.Capture(null);
-        if (source != null && design != null && moved) Run(() => flow.Update(source, source.Model.Definition, design, cancellation));
+        if (source != null && design != null && moved) work.Run(token => flow.Update(source, source.Model.Definition, design, token));
         InvalidateVisual();
     }
     protected override void OnPointerWheelChanged(PointerWheelEventArgs e)
@@ -158,14 +158,14 @@ public sealed class FlowCanvas : Control
         base.OnPointerWheelChanged(e); if (Snapshot == null) return;
         var old = Snapshot.Design; var zoom = Math.Clamp(old.Zoom * (e.Delta.Y > 0 ? 1.1 : 1 / 1.1), .2, 3); var p = e.GetPosition(this);
         var design = old with { Zoom = zoom, PanX = p.X - (p.X - old.PanX) * zoom / old.Zoom, PanY = p.Y - (p.Y - old.PanY) * zoom / old.Zoom };
-        Run(() => flow.Update(Snapshot, Snapshot.Model.Definition, design, cancellation)); e.Handled = true;
+        var snapshot = Snapshot; work.Run(token => flow.Update(snapshot, snapshot.Model.Definition, design, token)); e.Handled = true;
     }
     protected override void OnKeyDown(KeyEventArgs e)
     {
         base.OnKeyDown(e);
         if (e.Key == Key.Escape) { port = null; InvalidateVisual(); e.Handled = true; }
         if (e.Key == Key.Delete && Snapshot != null && documents.Selection is {} selected && selected.Collection.StartsWith("flow."))
-        { Run(() => flow.Delete(Snapshot, selected.Collection, selected.Id, cancellation)); e.Handled = true; }
+        { var snapshot = Snapshot; work.Run(token => flow.Delete(snapshot, selected.Collection, selected.Id, token)); e.Handled = true; }
     }
     public void Locate(string collection, string id)
     {
@@ -175,10 +175,5 @@ public sealed class FlowCanvas : Control
         var point = Position(node); var design = Design with { PanX = 40 - point.X * Design.Zoom, PanY = 80 - point.Y * Design.Zoom };
         // Locating a diagnostic changes only the local viewport, never semantic content.
         preview = design; InvalidateVisual();
-    }
-    private async void Run(Func<Task> action)
-    {
-        try { cancellation.ThrowIfCancellationRequested(); await action(); }
-        catch (Exception error) { if (!cancellation.IsCancellationRequested) report(error.Message); }
     }
 }

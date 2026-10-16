@@ -1,0 +1,67 @@
+{
+  "date": "2026-10-16T13:46:46.5160616+08:00",
+  "baseCommit": "4ffb163a201f9db501fd72602b5bc9ffd451255b",
+  "kind": "Fourth-review script/test/document repair; fresh build, regression and two Editor probes; coverage rebuilt from round-three XML; no new export or Sandbox run",
+  "files": [
+    {
+      "file": "build.log",
+      "original": "artifacts/flow-fourth-review/build.log",
+      "sha256": "96e86edbae3f2203efa32acf1e5c0ab0a04a600c0a7fd619dba0f54ebde82711"
+    },
+    {
+      "file": "regression.log",
+      "original": "artifacts/flow-fourth-review/tests.log",
+      "sha256": "300c39a160d98603a45f74c5586d23fc592c60bf4a3bdeb34c253ada9eb0fd12"
+    },
+    {
+      "file": "boundaries.log",
+      "original": "artifacts/flow-fourth-review/boundaries.log",
+      "sha256": "66e566eaa63fa1e37a53b140273770204db80e98d598ad440d40276b95a78635"
+    },
+    {
+      "file": "summary-test.log",
+      "original": "artifacts/flow-fourth-review/summary-test.log",
+      "sha256": "5adf85a1eaabd937e430b1d870079ccdb235eec48bcba97ce682f1033ec4e481"
+    },
+    {
+      "file": "source.json",
+      "original": "artifacts/flow-fourth-review/result.json",
+      "sha256": "c0252aa1c296575dd92045474d76793d82e7fd998b512e2c9e59d2801432b42e"
+    },
+    {
+      "file": "ui.json",
+      "original": "artifacts/flow-fourth-review/ui.json",
+      "sha256": "dcac0f02180b42048270d9523d5efa5be6f73c2fa444ccc25e8785f3045f1890"
+    },
+    {
+      "file": "formats.json",
+      "original": "artifacts/flow-fourth-review/formats.json",
+      "sha256": "ff861acfd31046f6bb65cddfcf8687f52c50c0041ec0f1215e7536074c6af4c9"
+    },
+    {
+      "file": "coverage-summary.json",
+      "original": "Four-review summary rebuild, captured inputs or finalization",
+      "sha256": "34f07044dd4d6da9a12572681dd63bd35f0e9488f3bbe5f685134fccbc928d31"
+    },
+    {
+      "file": "summary-rebuild.json",
+      "original": "Four-review summary rebuild, captured inputs or finalization",
+      "sha256": "656c3db1897521cf400bce523f5e48b0701396b90c7c4457fcec31d57d24e202"
+    },
+    {
+      "file": "source-snapshot.zip",
+      "original": "Four-review summary rebuild, captured inputs or finalization",
+      "sha256": "c77b54d1689ed14469985ad93076499149b1d08456b39bfd8abc8ebde9f4de6b"
+    },
+    {
+      "file": "finalization.json",
+      "original": "Four-review summary rebuild, captured inputs or finalization",
+      "sha256": "b822c413cc61f177e790e53c5abf161a62b1f4112af1b2133a60177a2a2c90cd"
+    },
+    {
+      "file": "final-documents.zip",
+      "original": "Four-review summary rebuild, captured inputs or finalization",
+      "sha256": "83b79c324533eef9d4e2813ce10f2384c95d52af5709d21c2861f839b1ce9d94"
+    }
+  ]
+}

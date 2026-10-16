@@ -1,0 +1,101 @@
+{
+  "kind": "historical artifacts recovered on 2026-10-16; not a rerun of the patched source",
+  "files": [
+    {
+      "file": "coverage-finish-historical.ps1",
+      "original": "artifacts/flow-coverage-finish.ps1",
+      "originalModified": "2026-10-16T01:44:58.1508901Z",
+      "sha256": "37a5f32062111d612005ce29dddef9dd14c201298c3d10847611a814a43b875e"
+    },
+    {
+      "file": "coverage-historical.config",
+      "original": "artifacts/flow-coverage.xml",
+      "originalModified": "2026-10-16T01:41:22.0235529Z",
+      "sha256": "886d3c1d78c5948bbcade9752992e4c5576a0c30e1e494cb1c3f1d3bbc5ee755"
+    },
+    {
+      "file": "coverage-historical.ps1",
+      "original": "artifacts/flow-coverage.ps1",
+      "originalModified": "2026-10-16T01:44:21.3646596Z",
+      "sha256": "bf5945ae0b90deaf5f24f18cca1e030a4963fc5de69fe15648592b557c97d9cd"
+    },
+    {
+      "file": "coverage-historical.xml",
+      "original": "artifacts/flow-editor-coverage-complete.xml",
+      "originalModified": "2026-10-16T01:46:25.2648037Z",
+      "sha256": "11ca5485a6395d43b559f76e4ab3f3a49fc540cb809f38540d9f8c775f8402eb"
+    },
+    {
+      "file": "export-historical.json",
+      "original": "artifacts/flow-editor-export-final/result.json",
+      "originalModified": "2026-10-16T01:09:05.0401804Z",
+      "sha256": "e156c1de751f0fc41f3ce5edefd256d25e3bb7ff2db3f9f7a65a4ff7df4c3ddc"
+    },
+    {
+      "file": "format-hang-stack-historical.txt",
+      "original": "artifacts/format-hang-stack.txt",
+      "originalModified": "2026-10-16T01:38:19.9337131Z",
+      "sha256": "722d466366fa46cd5a44bee1d5169dc85f75666cc552ed7d7ece942b5c422c91"
+    },
+    {
+      "file": "formats-historical.json",
+      "original": "artifacts/flow-editor-format-complete.json",
+      "originalModified": "2026-10-16T01:46:08.1310945Z",
+      "sha256": "ff861acfd31046f6bb65cddfcf8687f52c50c0041ec0f1215e7536074c6af4c9"
+    },
+    {
+      "file": "player-historical.json",
+      "original": "artifacts/flow-editor-player.json",
+      "originalModified": "2026-10-16T01:09:25.9092098Z",
+      "sha256": "9efcf97a9447de494d93b9c372520fe719c4bf4a618d88a5bf103a7f46c6515a"
+    },
+    {
+      "file": "regression-historical.log",
+      "original": "artifacts/flow-editor-regression.log",
+      "originalModified": "2026-10-16T01:08:30.7523169Z",
+      "sha256": "577aa402543ab54dd6e98d6b5c59d2fcaccc35fb29d6fd2bed07fce86d69e88e"
+    },
+    {
+      "file": "sandbox-guest.ps1",
+      "original": "artifacts/flow-sandbox/guest.ps1",
+      "originalModified": "2026-10-16T01:09:09.9922617Z",
+      "sha256": "d49cefc7409f1bddda2f92a30fe1586e4a699b35d37582fbf1a5d94feb7278cf"
+    },
+    {
+      "file": "sandbox-historical.json",
+      "original": "artifacts/flow-sandbox/result.json",
+      "originalModified": "2026-10-16T01:12:34.0599745Z",
+      "sha256": "0e16e6305283759461d070eb8f248e31bef306f0e9bda0e1508fbde2a3e8e649"
+    },
+    {
+      "file": "sandbox-historical.wsb",
+      "original": "artifacts/flow-sandbox/verify.wsb",
+      "originalModified": "2026-10-16T01:08:42.5803533Z",
+      "sha256": "f44b9333c8963f1d739aafdf81e30cdc7ff3c8d8796e38c894cc6122d75d631b"
+    },
+    {
+      "file": "sandbox-player-historical.json",
+      "original": "artifacts/flow-sandbox/player.json",
+      "originalModified": "2026-10-16T01:12:32.7084815Z",
+      "sha256": "a288d1e4bc5d3043db8073adbfc89e07991db71e2ad1f0d0b0e1709e99a90a54"
+    },
+    {
+      "file": "ui-historical.json",
+      "original": "artifacts/flow-editor-coverage-accepted.json",
+      "originalModified": "2026-10-16T01:44:47.8675223Z",
+      "sha256": "ff861acfd31046f6bb65cddfcf8687f52c50c0041ec0f1215e7536074c6af4c9"
+    },
+    {
+      "file": "ui-historical.png",
+      "original": "artifacts/flow-editor-coverage-accepted.json.png",
+      "originalModified": "2026-10-16T01:44:39.5486134Z",
+      "sha256": "e89fc467aee139a033353d800fdd22f9a2eb1da75f57d495ca600b88b0766db0"
+    },
+    {
+      "file": "export-complete-historical.json",
+      "original": "artifacts/flow-editor-coverage-export-complete/result.json",
+      "originalModified": "2026-10-16T01:45:51.3173408Z",
+      "sha256": "e156c1de751f0fc41f3ce5edefd256d25e3bb7ff2db3f9f7a65a4ff7df4c3ddc"
+    }
+  ]
+}

@@ -1,0 +1,18 @@
+<Configuration>
+  <Networking>Disable</Networking>
+  <MappedFolders>
+    <MappedFolder>
+      <HostFolder>C:\code\dotnet\Board-Game-Builder\artifacts\flow-editor-export-final\export</HostFolder>
+      <SandboxFolder>C:\Game</SandboxFolder>
+      <ReadOnly>true</ReadOnly>
+    </MappedFolder>
+    <MappedFolder>
+      <HostFolder>C:\code\dotnet\Board-Game-Builder\artifacts\flow-sandbox</HostFolder>
+      <SandboxFolder>C:\FlowCheck</SandboxFolder>
+      <ReadOnly>false</ReadOnly>
+    </MappedFolder>
+  </MappedFolders>
+  <LogonCommand>
+    <Command>powershell.exe -NoProfile -ExecutionPolicy Bypass -File C:\FlowCheck\guest.ps1</Command>
+  </LogonCommand>
+</Configuration>

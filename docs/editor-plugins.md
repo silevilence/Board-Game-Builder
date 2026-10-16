@@ -40,7 +40,7 @@ TextBox 和原生视口有各自焦点边界，作者命令不得误触发。
 | exports | author.export | 导出进度、目录、步骤执行保护，可选 |
 
 可选功能：author.startup、author.files、author.resources、author.configuration、author.yaml、author.prototypes、author.media、
-author.turns、author.layout、author.scripts、play.controls、author.export。
+author.turns、author.layout、author.scripts、author.flow、play.controls、author.export。
 资源树与检视器使用 documents.Select/SelectionChanged 同步选择，文档 Changed 同步内容。
 脚本和调试通过 sessions 服务，不调用主窗口私有函数。视图释放只取消自身订阅、原生输入和图形资源。
 

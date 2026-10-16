@@ -1,0 +1,33 @@
+  正在确定要还原的项目…
+  所有项目均是最新的，无法还原。
+  Toolkit.Entry -> C:\code\dotnet\Board-Game-Builder\src\Toolkit.Entry\bin\Release\net10.0\Toolkit.Entry.dll
+  Kernel.Abstractions -> C:\code\dotnet\Board-Game-Builder\src\Kernel.Abstractions\bin\Release\net10.0\Kernel.Abstractions.dll
+  Launcher.Core -> C:\code\dotnet\Board-Game-Builder\src\Launcher.Core\bin\Release\net10.0\Launcher.Core.dll
+  Lua -> C:\code\dotnet\Board-Game-Builder\src\Lua\bin\Release\net10.0\Lua.dll
+  Modules -> C:\code\dotnet\Board-Game-Builder\src\Modules\bin\Release\net10.0\Modules.dll
+  View.Abstractions -> C:\code\dotnet\Board-Game-Builder\src\View.Abstractions\bin\Release\net10.0\View.Abstractions.dll
+  Kernel -> C:\code\dotnet\Board-Game-Builder\src\Kernel\bin\Release\net10.0\Kernel.dll
+  Runtime -> C:\code\dotnet\Board-Game-Builder\src\Runtime\bin\Release\net10.0\Runtime.dll
+  Launcher.Cli -> C:\code\dotnet\Board-Game-Builder\src\Launcher.Cli\bin\Release\net10.0\bgb-launcher.dll
+  Launcher.Tests -> C:\code\dotnet\Board-Game-Builder\tests\Launcher.Tests\bin\Release\net10.0\Launcher.Tests.dll
+  Launcher -> C:\code\dotnet\Board-Game-Builder\src\Launcher\bin\Release\net10.0\Launcher.dll
+  Authoring -> C:\code\dotnet\Board-Game-Builder\src\Authoring\bin\Release\net10.0\Authoring.dll
+  Networking -> C:\code\dotnet\Board-Game-Builder\src\Networking\bin\Release\net10.0\Networking.dll
+  NetworkClient -> C:\code\dotnet\Board-Game-Builder\src\NetworkClient\bin\Release\net10.0\NetworkClient.dll
+  View.MonoGame -> C:\code\dotnet\Board-Game-Builder\src\View.MonoGame\bin\Release\net10.0-windows\View.MonoGame.dll
+  Cli -> C:\code\dotnet\Board-Game-Builder\src\Cli\bin\Release\net10.0\bgb.dll
+  Editor.Core -> C:\code\dotnet\Board-Game-Builder\src\Editor.Core\bin\Release\net10.0\Editor.Core.dll
+  Editor.AsyncProbe -> C:\code\dotnet\Board-Game-Builder\tests\Editor.AsyncProbe\bin\Release\net10.0-windows\Editor.AsyncProbe.dll
+  Player -> C:\code\dotnet\Board-Game-Builder\src\Player\bin\Release\net10.0-windows\Player.dll
+  Editor -> C:\code\dotnet\Board-Game-Builder\src\Editor\bin\Release\net10.0-windows\Editor.dll
+  Author.SamplePlugin -> C:\code\dotnet\Board-Game-Builder\samples\Author.SamplePlugin\bin\Release\net10.0\Author.SamplePlugin.dll
+  Editor.Compatibility -> C:\code\dotnet\Board-Game-Builder\tests\Editor.Compatibility\bin\Release\net10.0-windows\Editor.Compatibility.dll
+  Editor.SamplePlugin -> C:\code\dotnet\Board-Game-Builder\samples\Editor.SamplePlugin\bin\Release\net10.0-windows\Editor.SamplePlugin.dll
+  Server -> C:\code\dotnet\Board-Game-Builder\src\Server\bin\Release\net10.0\Server.dll
+  Engine.Tests -> C:\code\dotnet\Board-Game-Builder\tests\Engine.Tests\bin\Release\net10.0\Engine.Tests.dll
+
+已成功生成。
+    0 个警告
+    0 个错误
+
+已用时间 00:00:18.24

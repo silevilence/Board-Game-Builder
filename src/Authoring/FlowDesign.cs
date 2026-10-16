@@ -44,7 +44,7 @@ public static class FlowDesign
         foreach (var p in plugins.Where(p => p!["id"]!.GetValue<string>() is "lua.rules" or "rules.commands").ToArray()) plugins.Remove(p);
         plugins.Add(new JsonObject { ["id"] = "flow", ["version"] = "1", ["api"] = 1,
             ["configuration"] = new JsonObject { ["path"] = path } });
-        var graph = new FlowDefinition(1, [new() { Id = "start", Kind = "start" }, new() { Id = "end", Kind = "end", Winners = [] }], [new("finish", "start", "end")]);
+        var graph = new FlowDefinition(1, [new() { Id = "start", Kind = FlowNodeKinds.Start }, new() { Id = "end", Kind = FlowNodeKinds.End, Winners = [] }], [new("finish", "start", "end")]);
         return view.Change(Guid.NewGuid().ToString("N"), new Dictionary<string, byte[]?> {
             [GameRuntime.Entry] = Encoding.UTF8.GetBytes(startup.ToJsonString()),
             [path] = Encoding.UTF8.GetBytes(FlowFile.Write(graph)),

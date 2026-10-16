@@ -64,6 +64,7 @@ public sealed partial class DocumentWorkspace : IDisposable
         finally { applyingAuthorForm = false; Notify(); }
     }
     public bool HasPendingForms=>forms.Values.Any(d=>d.Dirty);
+    private string PendingFormNames=>string.Join(", ",forms.Where(p=>p.Value.Dirty).Select(p=>p.Key).Order(StringComparer.Ordinal));
     public void DiscardForms() {forms.Clear();Changed?.Invoke();}
     public void ApplyForm(string name,Action<ModuleDocument> apply)
     {
@@ -74,7 +75,7 @@ public sealed partial class DocumentWorkspace : IDisposable
     public void ApplyDrafts()
     {
         if(Current==null) return;
-        if(forms.Values.Any(d=>d.Dirty)) throw new InvalidOperationException("存在未应用的字段草稿："+string.Join("、",forms.Where(p=>p.Value.Dirty).Select(p=>p.Key))+"。请回到对应面板应用或放弃，再保存或试玩。");
+        if(HasPendingForms) throw new InvalidOperationException("存在未应用的字段草稿："+PendingFormNames+"。请回到对应面板应用或放弃，再保存或试玩。");
         var dirty=drafts.Values.Where(d=>d.Dirty).ToArray();
         if(dirty.GroupBy(d=>d.Path).Any(g=>g.Count()>1)) throw new InvalidOperationException("JSON 与 YAML 草稿同时修改同一配置，请先选择保留一份并合并；草稿均已保留。");
         var edits=dirty.Select(d=>(Draft:d,Text:d.Serialize())).ToArray();

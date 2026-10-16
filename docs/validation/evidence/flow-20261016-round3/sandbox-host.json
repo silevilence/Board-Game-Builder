@@ -1,0 +1,6 @@
+{
+  "success": true,
+  "manifestSha256": "942d935d5b57b81b8924ac5e26f1272d898569990702be623a0e0a4a0412c56c",
+  "launcherScriptSha256": "6a313255e4faec83e51410d275d95e85106b27ff4fe1b9502425b03dd3cffbe8",
+  "timeoutMinutes": 10
+}

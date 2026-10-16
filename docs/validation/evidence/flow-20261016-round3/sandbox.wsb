@@ -1,0 +1,9 @@
+<Configuration>
+  <Networking>Disable</Networking>
+  <MappedFolders>
+    <MappedFolder><HostFolder>C:\code\dotnet\Board-Game-Builder\artifacts\flow-third-review\export-check\export</HostFolder><SandboxFolder>C:\Input</SandboxFolder><ReadOnly>true</ReadOnly></MappedFolder>
+    <MappedFolder><HostFolder>C:\code\dotnet\Board-Game-Builder\artifacts\flow-third-sandbox</HostFolder><SandboxFolder>C:\Evidence</SandboxFolder><ReadOnly>false</ReadOnly></MappedFolder>
+    <MappedFolder><HostFolder>C:\code\dotnet\Board-Game-Builder\artifacts\flow-third-sandbox\scripts</HostFolder><SandboxFolder>C:\Tools</SandboxFolder><ReadOnly>true</ReadOnly></MappedFolder>
+  </MappedFolders>
+  <LogonCommand><Command>powershell.exe -NoProfile -ExecutionPolicy Bypass -File C:\Tools\validate-standalone-windows.ps1 -ExpectedManifest C:\Evidence\export-manifest.json -Shutdown</Command></LogonCommand>
+</Configuration>
