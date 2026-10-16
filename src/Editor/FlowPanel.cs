@@ -1,5 +1,6 @@
 using Avalonia.Controls;
 using Avalonia.Media;
+using BoardGame.Authoring;
 
 namespace BoardGame.Editor;
 
@@ -10,12 +11,27 @@ public sealed class FlowPanel : UserControl
         var documents = scope.Service<DocumentWorkspace>("documents");
         var flow = scope.Service<FlowWorkspace>("flow.author");
         var status = new TextBlock { TextWrapping = TextWrapping.Wrap };
-        Content = status;
+        var canvas = new FlowCanvas(documents, flow, scope.Cancellation, message => status.Text = message);
+        var tools = new WrapPanel();
+        foreach (var kind in new[] { "start", "system", "player", "end" })
+        {
+            var button = new Button { Content = "+ " + FlowCanvas.KindTitle(kind) };
+            button.Click += async (_, _) =>
+            {
+                try { if (canvas.Snapshot is {} graph) await flow.Add(graph, kind, (60 - graph.Design.PanX) / graph.Design.Zoom, (80 - graph.Design.PanY) / graph.Design.Zoom, scope.Cancellation); }
+                catch (Exception error) { status.Text = error.Message; }
+            };
+            tools.Children.Add(button);
+        }
+        var help = new TextBlock { Text = "拖动节点移动 · 空白/中键平移 · 滚轮缩放 · 出口→输入连线 · Delete 删除 · 文档 Undo/Redo", TextWrapping = TextWrapping.Wrap };
+        var top = new StackPanel { Children = { tools, help, status } };
+        var root = new DockPanel(); DockPanel.SetDock(top, Dock.Top); root.Children.Add(top); root.Children.Add(canvas); Content = root;
         void Refresh()
         {
-            try { var model = flow.Read(); status.Text = $"流程 {model.Path} · {model.Definition.Nodes.Count} 节点 · {model.Diagnostics.Count} 个问题"; }
-            catch (Exception error) { status.Text = error.Message + "\n可使用“游戏文件”编辑；新建流程会显式切换运行控制模式。"; }
+            try { var graph = flow.Load(); canvas.Load(graph); tools.IsEnabled = true; var model = graph.Model; status.Text = $"流程 {model.Path} · {model.Definition.Nodes.Count} 节点 · {model.Diagnostics.Count} 个问题"; }
+            catch (Exception error) { canvas.Load(null); tools.IsEnabled = false; status.Text = error.Message + "\n可使用“游戏文件”编辑；新建流程会显式切换运行控制模式。"; }
         }
+        documents.SelectionChanged += canvas.InvalidateVisual; scope.Own(new Cleanup(() => documents.SelectionChanged -= canvas.InvalidateVisual));
         scope.OnDocumentChanged(Refresh); Refresh();
     }
 }
