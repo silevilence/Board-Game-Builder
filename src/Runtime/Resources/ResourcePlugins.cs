@@ -11,11 +11,13 @@ internal sealed class ResourcePoolBuilder
     private readonly Dictionary<string,ImageReference> images=new(StringComparer.Ordinal);
     private readonly Dictionary<string,string> binaries=new(StringComparer.Ordinal);
     private readonly HashSet<string> names=new(StringComparer.Ordinal);
+    private FontReference? font;
     private void Reserve(string name)
     {ResourceSource.CheckName(name);if(!names.Add(name))throw new InvalidDataException("duplicate/conflicting resource name: "+name);if(names.Count>16384)throw new InvalidDataException("Resource name budget exceeded");}
     public void Image(string name,ImageReference image) {Reserve(name);images.Add(name,image);}
     public void Binary(string name,string path) {Reserve(name);binaries.Add(name,path);}
-    public ResourcePool Freeze(ResourceInput input)=>new(input.Files,images,binaries);
+    public void Font(FontReference value) {if(font!=null)throw new InvalidDataException("resources.font: duplicate active font");font=value;}
+    public ResourcePool Freeze(ResourceInput input)=>new(input.Files,images,binaries,font);
 }
 internal sealed class ResourceRegistry(ResourcePool? existing=null)
 {
@@ -66,7 +68,7 @@ internal sealed class TexturePackerResourceLoader : IResourceLoader
 }
 internal static class ResourcePlugins
 {
-    internal static bool IsResource(string id)=>id is "resources" or "resources.images" or "resources.texturepacker";
+    internal static bool IsResource(string id)=>id is "resources" or "resources.images" or "resources.texturepacker" or "resources.font";
     public static IEnumerable<RuntimePluginDefinition> Catalog(Func<ResourcePool?> pool)
     {
         yield return new("resources","1",1,["resources"],[],scope=>
@@ -76,6 +78,11 @@ internal static class ResourcePlugins
         });
         yield return Loader("resources.images",new ImageResourceLoader());
         yield return Loader("resources.texturepacker",new TexturePackerResourceLoader());
+        yield return new("resources.font","1",1,["resources.font"],["resources"],scope=>
+        {
+            var font=FontResourceLoader.Read(scope.Configuration);
+            scope.Provide("resources.font",scope.Own(scope.Service<ResourceRegistry>("resources").Register(new FontResourceLoader(font),[new(font.Resource)])));
+        });
     }
     private static RuntimePluginDefinition Loader(string id,IResourceLoader loader)=>new(id,"1",1,[id],["resources"],scope=>
     {

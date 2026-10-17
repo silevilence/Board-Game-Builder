@@ -29,5 +29,6 @@
     <Project Path="tests/Editor.Compatibility/Editor.Compatibility.csproj" />
     <Project Path="tests/Engine.Tests/Engine.Tests.csproj" />
     <Project Path="tests/Launcher.Tests/Launcher.Tests.csproj" />
+    <Project Path="tests/View.Tests/View.Tests.csproj" />
   </Folder>
 </Solution>

@@ -1,0 +1,19 @@
+{
+  "ok": true,
+  "requestId": "46cd13ac1e0147fa99ccaea3f0a442fe",
+  "result": {
+    "source": {
+      "identity": {
+        "directory": "C:\\code\\dotnet\\Board-Game-Builder\\.scratch\\cursed-investigators\\font-probe",
+        "profile": "builtin",
+        "mode": "disk",
+        "workspace": null,
+        "generation": 0
+      },
+      "version": "10259D5BA168BD16F3CD1D7C3873ED823AD911D460011A53C484F2C53376FBB3"
+    },
+    "target": "C:\\code\\dotnet\\Board-Game-Builder\\artifacts\\cursed-investigators\\font-export",
+    "kind": "player-directory",
+    "fingerprint": "2C73787F1E44520ECB332B3FB4B52E50036F5FB76B8B3402FDB19634256E6A4B"
+  }
+}

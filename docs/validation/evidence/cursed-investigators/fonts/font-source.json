@@ -1,0 +1,73 @@
+{
+  "baseCommit": "15d019cb8143122d87ad311cdcf9b412aae72849",
+  "files": [
+    {
+      "sha256": "F2B1AB698F6D3BC76F52E80C336CBDDFAD8CD3254CA5EB58229BF6E9C6ADDAD7",
+      "path": "BoardGameBuilder.slnx"
+    },
+    {
+      "sha256": "357031F8C6595282F46F49E9ABD5A8C325DA5640B561925635BE011E5937F8E6",
+      "path": "src/Kernel.Abstractions/ResourcePool.cs"
+    },
+    {
+      "sha256": "0D5CA8677678E468AF8CC2E53AEC2DC3D80D08BED0E026BB321DF953474B18F4",
+      "path": "src/Player/LocalBoard.cs"
+    },
+    {
+      "sha256": "2121E3EC95B61916976A0C99206560EC96C9B43B859494A0A4F776E15C541854",
+      "path": "src/Player/PlayBoard.cs"
+    },
+    {
+      "sha256": "74B11D94828719903DB7B8A792EC6F0A81749365C521234D651ADED4BA6065CF",
+      "path": "src/Runtime/GameRuntime.cs"
+    },
+    {
+      "sha256": "606BE732427BEEF5ADB932E5356CD4B3816E4A7442A9252D7027DD2C992E6BFA",
+      "path": "src/Runtime/Resources/FontResourceLoader.cs"
+    },
+    {
+      "sha256": "99D1AD36F33A02A876257ABA8F0768408E7CAEF63539271895488CCC3AA89F31",
+      "path": "src/Runtime/Resources/ResourcePlugins.cs"
+    },
+    {
+      "sha256": "7D479F3D97BC4791D1F0E62E226BADDB93E6E8028D516868D21F030940F2260D",
+      "path": "src/View.MonoGame/PackagedControlFont.cs"
+    },
+    {
+      "sha256": "8A34D3E974909385949EC5FE2F8AB57F0F6AD5387DB4C64E3A772AF2AB7A9284",
+      "path": "src/View.MonoGame/PackagedTypeface.cs"
+    },
+    {
+      "sha256": "D7660A9868761CB9A2DF02E54EC1BE141CF0CFEE8C54BE87EA91677EEB927242",
+      "path": "src/View.MonoGame/ScenePainter.cs"
+    },
+    {
+      "sha256": "C358CA4D8EB26CF100BF272591224873F67B85F0D8BCE50BB0B5408A4784A7A9",
+      "path": "src/View.MonoGame/TableRenderer.cs"
+    },
+    {
+      "sha256": "22B1A6BD5EB38594B19B9A718750C4B77A61B13E471DC4465097027082D1B4F4",
+      "path": "src/View.MonoGame/View.MonoGame.csproj"
+    },
+    {
+      "sha256": "E9BF5B006C8FCDE61522D2A81A7BDA55DF0D4FF4EC8C9EDAAA097A79A448737C",
+      "path": "tests/Editor.Compatibility/packages.lock.json"
+    },
+    {
+      "sha256": "A3650A83CC6A00AD4A7DA9AEC7226D305C5E9F42DAF69FD28CA4695D90DB3C86",
+      "path": "tests/Engine.Tests/FontResourceTests.cs"
+    },
+    {
+      "sha256": "2348CF3178D1D7375DB8E8A6354542489EA2230F68C2E6F87684A92E50A03257",
+      "path": "tests/Engine.Tests/Program.cs"
+    },
+    {
+      "sha256": "CFD86005E4701D158F602575BC718F1659D4196539FB9E9219C758FEC12DC540",
+      "path": "tests/View.Tests/Program.cs"
+    },
+    {
+      "sha256": "72A1060DD506760C69333B9CDE3EAD01EF5F98C6886C6A049C9EE1C3D0EABF1F",
+      "path": "tests/View.Tests/View.Tests.csproj"
+    }
+  ]
+}

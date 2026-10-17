@@ -9,6 +9,7 @@ public sealed class LocalBoard : UserControl,IDisposable
 {
     private readonly LocalTableSession session;
     private readonly LoadedModule module;
+    private readonly PackagedControlFont controlFont;
     private readonly StackPanel header=new() {Spacing=8};
     private readonly Grid views=new();
     private readonly List<InteractiveTable> tables=[];
@@ -27,6 +28,7 @@ public sealed class LocalBoard : UserControl,IDisposable
     private LocalBoard(LoadedModule module,LocalTableSession session,bool showActions)
     {
         this.module=module;this.session=session;this.showActions=showActions;
+        controlFont=new(this,module.Resources);
         var root=new DockPanel();DockPanel.SetDock(header,Dock.Top);root.Children.Add(header);root.Children.Add(views);Content=root;
         Refresh();
     }
@@ -107,5 +109,5 @@ public sealed class LocalBoard : UserControl,IDisposable
             await Run(async ()=> {await session.SubmitAsync(frame.Revision,view.View.Seat,new("action",Action:view.Actions[0].Id));});
         }
     }
-    public void Dispose() {disposed=true;session.Dispose();Clear();}
+    public void Dispose() {disposed=true;session.Dispose();Clear();controlFont.Dispose();}
 }

@@ -12,6 +12,9 @@ public sealed class TableRenderer : IDisposable
     private readonly Dictionary<string, Texture2D> labels = [];
     private readonly Dictionary<string,Texture2D> images=[];
     private readonly Dictionary<string,Rectangle> imageContent=[];
+    private readonly PackagedTypeface packagedFont=new();
+    public string? FontFamily=>packagedFont.Family;
+    public void ConfigureResources(ResourcePool resources)=>packagedFont.Configure(resources);
     public int CachedImages=>images.Count;
     public int CachedLabels=>labels.Count;
     public int LabelTexturesCreated { get; private set; }
@@ -31,11 +34,17 @@ public sealed class TableRenderer : IDisposable
     public void Text(string text, int x, int y, Color color,int size=13)
     {
         text=text.Length>150 ? text[..150] : text;
-        var cacheKey=size+":"+text;
+        var cacheKey=packagedFont.Identity+":"+size+":"+text;
         if (!labels.TryGetValue(cacheKey, out var texture))
         {
             // Bound GPU memory even when labels contain arbitrary module text.
             if (labels.Count >= 256) return;
+            if(packagedFont.Family!=null)
+            {
+                using var png=new MemoryStream(packagedFont.Render(text,size));
+                texture=Texture2D.FromStream(device,png);LabelTexturesCreated++;labels[cacheKey]=texture;
+                batch.Draw(texture,new Vector2(x,y),color);return;
+            }
             using var font=new Drawing.Font("Microsoft YaHei UI", size, Drawing.FontStyle.Regular, Drawing.GraphicsUnit.Pixel);
             using var measure=new Drawing.Bitmap(1,1);
             using var measureGraphics=Drawing.Graphics.FromImage(measure);
@@ -83,5 +92,5 @@ public sealed class TableRenderer : IDisposable
                 Vector2.Zero,new Vector2(destination.Height/reference.Width,destination.Width/reference.Height),SpriteEffects.None,0);
         else batch.Draw(texture,new Rectangle((int)destination.X,(int)destination.Y,(int)destination.Width,(int)destination.Height),source,Color.White);
     }
-    public void Dispose() { foreach(var t in labels.Values.Concat(images.Values)) t.Dispose(); labels.Clear(); images.Clear(); imageContent.Clear(); pixel.Dispose(); batch.Dispose(); }
+    public void Dispose() { foreach(var t in labels.Values.Concat(images.Values)) t.Dispose(); labels.Clear(); images.Clear(); imageContent.Clear(); packagedFont.Dispose(); pixel.Dispose(); batch.Dispose(); }
 }

@@ -1,0 +1,18 @@
+[
+  {
+    "path": "artifacts/cursed-investigators/baseline/toolkit.json",
+    "sha256": "65FC177774E5F3131CE5EA482567D3C7A75F51D5A742664C7CFD49FA2808D060"
+  },
+  {
+    "path": "artifacts/cursed-investigators/font/toolkit.json",
+    "sha256": "6371E5C38755338D8D46968C5868AF1E8B11DD968A2CB046F8360B088CF65925"
+  },
+  {
+    "path": "artifacts/cursed-investigators/font-export/game.bgm",
+    "sha256": "BE8B96C576AE86371DEE509EAD11F8CDE20C9B53A32F32A4892481E6113E1E12"
+  },
+  {
+    "path": "artifacts/cursed-investigators/font-export/Play.exe",
+    "sha256": "34084E6A4F1ED64509B720D41D59F2007860499E95268C2BD519141100716855"
+  }
+]

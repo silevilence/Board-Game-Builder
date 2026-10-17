@@ -4,6 +4,7 @@ public static class ScenePainter
 {
     public static void Draw(TableRenderer renderer,TableScene scene,string? selected=null,string? target=null,string? peeked=null)
     {
+        renderer.ConfigureResources(scene.Resources);
         foreach(var cloth in scene.Items.Where(i=>i.Kind=="tablecloth"))
             if(cloth.Resource!=null) renderer.Image(cloth.Resource,scene.Resources,new((int)cloth.Bounds.X,(int)cloth.Bounds.Y,(int)cloth.Bounds.Width,(int)cloth.Bounds.Height));
         if(scene.ClassicCards) { DrawClassic(renderer,scene,selected,target,peeked); return; }

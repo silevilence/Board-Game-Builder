@@ -31,9 +31,10 @@ public static class GameRuntime
                 "definition.module"=>["path","presets"],"definition.state"=>["path"],"lua.rules" or "lua.cpu"=>["file"],"wasm"=>["extensions"],
                 "rules.commands"=>["actions"],"flow"=>["path","maxAutomaticSteps"],_=>[]
             };
-            if(ResourcePlugins.IsResource(selection.Id)) fields=["sources"];
+            if(ResourcePlugins.IsResource(selection.Id)) fields=selection.Id=="resources.font"?["path","license"]:["sources"];
             CheckObject(selection.Configuration,fields,selection.Id+".configuration");
-            if(ResourcePlugins.IsResource(selection.Id)) _=ResourceSource.Read(selection.Configuration,selection.Id);
+            if(selection.Id=="resources.font") _=FontResourceLoader.Read(selection.Configuration);
+            else if(ResourcePlugins.IsResource(selection.Id)) _=ResourceSource.Read(selection.Configuration,selection.Id);
             if(selection.Id=="rules.commands") _=new CommandRuleProvider(selection.Configuration);
             if(selection.Id=="flow")
             {

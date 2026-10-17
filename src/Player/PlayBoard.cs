@@ -18,6 +18,7 @@ public sealed class PlayBoard : UserControl,IDisposable
     private readonly bool classic;
     private readonly PlayerSession session;
     private readonly LoadedModule module;
+    private readonly PackagedControlFont controlFont;
     private bool disposed;
     private bool pumping;
     private string? hostError;
@@ -31,6 +32,7 @@ public sealed class PlayBoard : UserControl,IDisposable
     public PlayBoard(PlayerSession session,LoadedModule module,bool showActions=true)
     {
         this.session=session; this.module=module;
+        controlFont=new(this,module.Resources);
         classic=TableScene.From(session.Frame.View).ClassicCards;
         var panel=new DockPanel();
         if(classic)
@@ -146,5 +148,5 @@ public sealed class PlayBoard : UserControl,IDisposable
         }
         catch(Exception) { sound.IsChecked=false; sound.Content="音效不可用（已静音）"; }
     }
-    public void Dispose() { disposed=true; session.Stop(); table.Dispose(); tone?.Dispose(); }
+    public void Dispose() { disposed=true; session.Stop(); table.Dispose(); tone?.Dispose(); controlFont.Dispose(); }
 }

@@ -1,0 +1,32 @@
+{
+  "ok": false,
+  "requestId": "e786f0fe83f94ea1b1e71e8670a21e86",
+  "result": {
+    "source": {
+      "identity": {
+        "directory": "C:\\code\\dotnet\\Board-Game-Builder\\.scratch\\cursed-investigators\\font-probe",
+        "profile": "builtin",
+        "mode": "disk",
+        "workspace": null,
+        "generation": 0
+      },
+      "version": "55F9CB20FFF6E82A129CFC8F31E0F658A5FA5453B01ABA213A28BF23C4941B99"
+    },
+    "checks": [
+      "files",
+      "configuration"
+    ],
+    "diagnostics": [
+      {
+        "code": "validation.configuration",
+        "message": "resources.font: unknown or unapproved runtime implementation",
+        "path": null,
+        "line": null,
+        "column": null
+      }
+    ],
+    "currentAtCompletion": true,
+    "success": false,
+    "exitCode": 1
+  }
+}

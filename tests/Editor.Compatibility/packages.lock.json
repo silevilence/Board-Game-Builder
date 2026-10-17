@@ -377,7 +377,7 @@
       "view.abstractions": {
         "type": "Project",
         "dependencies": {
-          "Kernel.Abstractions": "[1.0.0, )"
+          "Kernel.Abstractions": "[0.2.1, )"
         }
       },
       "view.monogame": {
@@ -386,8 +386,9 @@
           "Avalonia.Desktop": "[12.1.1, )",
           "Avalonia.Themes.Fluent": "[12.1.1, )",
           "MonoGame.Framework.WindowsDX": "[3.8.4.1, )",
+          "SkiaSharp": "[3.119.4, )",
           "System.Drawing.Common": "[10.0.0, )",
-          "View.Abstractions": "[1.0.0, )"
+          "View.Abstractions": "[0.2.1, )"
         }
       }
     }
