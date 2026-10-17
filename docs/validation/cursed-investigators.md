@@ -22,3 +22,9 @@
 发布 CLI 实际执行 `animation.create/read/replace/validate`；新 CLI 复验 [版本冲突](evidence/cursed-investigators/animations/animation-v3-stale.json) 返回退出码 3。既有 CLI 曾将领域冲突错误返回 1，已修复，`author-cli` 回归覆盖配置和模板冲突；未增加 CLI 命令／协议。动画领域操作沿用作者插件发现。
 
 发布 Editor 的 [实测结果](evidence/cursed-investigators/animations/animation-v3-editor.json) 覆盖编辑、字段草稿、应用、Undo／Redo、保存重开、预览、两次插件停启、失败预览及切换文档释放。真实视口截图见 [预览](evidence/cursed-investigators/animations/animation-v3-editor.json.preview-0.png)。作者测试覆盖文件草稿冲突及磁盘模式，错误引用与时序格式由共享校验定位。
+
+## 动画运行能力（2026-10-17）
+
+共享资源库支持目录、包与快照加载，校验触发属性、对象、来源及背面图片。播放只消费已投影场景：隐藏对象不生成动画物体；同序号刷新不重播，序号回退、换库、关闭及重开清空旧播放。结束回归权威位置／牌面；动画期间 Player 阻止重复操作。相关逻辑不包含游戏名称或发牌规则。
+
+发布 CLI [校验](evidence/cursed-investigators/animations/animation-v3-validate.json) 和 [独立导出](evidence/cursed-investigators/animations/animation-v3-export.json) 通过。导出的正式 `Play.exe` 从临时目录启动，[连续两局完成](evidence/cursed-investigators/animations/animation-v3-player.json)，验收自动化等待真实播放结束后才操作；结束牌面与位置正确。`animation-runtime` 测试覆盖中间帧／完成／取消／序号回退、隐藏目标、包和快照一致性，`animation-author` 及既有资源／图集回归通过。本机测试不宣称另做了干净 Windows 验收。
