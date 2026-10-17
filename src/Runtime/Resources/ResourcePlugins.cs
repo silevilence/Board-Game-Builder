@@ -12,12 +12,14 @@ internal sealed class ResourcePoolBuilder
     private readonly Dictionary<string,string> binaries=new(StringComparer.Ordinal);
     private readonly HashSet<string> names=new(StringComparer.Ordinal);
     private FontReference? font;
+    private AnimationLibrary? animations;
     private void Reserve(string name)
     {ResourceSource.CheckName(name);if(!names.Add(name))throw new InvalidDataException("duplicate/conflicting resource name: "+name);if(names.Count>16384)throw new InvalidDataException("Resource name budget exceeded");}
     public void Image(string name,ImageReference image) {Reserve(name);images.Add(name,image);}
     public void Binary(string name,string path) {Reserve(name);binaries.Add(name,path);}
     public void Font(FontReference value) {if(font!=null)throw new InvalidDataException("resources.font: duplicate active font");font=value;}
-    public ResourcePool Freeze(ResourceInput input)=>new(input.Files,images,binaries,font);
+    public void Animations(AnimationLibrary value) {if(animations!=null)throw new InvalidDataException("resources.animations: duplicate library");animations=value;}
+    public ResourcePool Freeze(ResourceInput input)=>new(input.Files,images,binaries,font,animations);
 }
 internal sealed class ResourceRegistry(ResourcePool? existing=null)
 {
@@ -68,7 +70,7 @@ internal sealed class TexturePackerResourceLoader : IResourceLoader
 }
 internal static class ResourcePlugins
 {
-    internal static bool IsResource(string id)=>id is "resources" or "resources.images" or "resources.texturepacker" or "resources.font";
+    internal static bool IsResource(string id)=>id is "resources" or "resources.images" or "resources.texturepacker" or "resources.font" or "resources.animations";
     public static IEnumerable<RuntimePluginDefinition> Catalog(Func<ResourcePool?> pool)
     {
         yield return new("resources","1",1,["resources"],[],scope=>
@@ -78,6 +80,11 @@ internal static class ResourcePlugins
         });
         yield return Loader("resources.images",new ImageResourceLoader());
         yield return Loader("resources.texturepacker",new TexturePackerResourceLoader());
+        yield return new("resources.animations","1",1,["resources.animations"],["resources"],scope=>
+        {
+            var path=scope.Configuration.GetProperty("path").GetString()!;ResourceSource.CheckPath(path);
+            scope.Provide("resources.animations",scope.Own(scope.Service<ResourceRegistry>("resources").Register(new AnimationResourceLoader(),[new(path)])));
+        });
         yield return new("resources.font","1",1,["resources.font"],["resources"],scope=>
         {
             var font=FontResourceLoader.Read(scope.Configuration);

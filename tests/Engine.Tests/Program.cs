@@ -5,6 +5,8 @@ var tests = new Dictionary<string, Action> { ["cordi"] = CordiTests.Run, ["cordi
 try
 {
     tests.Add("resource-font",FontResourceTests.Run);
+    tests.Add("animation-runtime",AnimationTests.Runtime);
+    tests.Add("animation-author",AnimationTests.Author);
     tests.Add("flow-editor-lifetime",FlowEditorTests.Lifetime);
     tests.Add("flow-editor-model",FlowEditorTests.Model);
     tests.Add("flow-editor-canvas",FlowEditorTests.Canvas);

@@ -31,9 +31,10 @@ public static class GameRuntime
                 "definition.module"=>["path","presets"],"definition.state"=>["path"],"lua.rules" or "lua.cpu"=>["file"],"wasm"=>["extensions"],
                 "rules.commands"=>["actions"],"flow"=>["path","maxAutomaticSteps"],_=>[]
             };
-            if(ResourcePlugins.IsResource(selection.Id)) fields=selection.Id=="resources.font"?["path","license"]:["sources"];
+            if(ResourcePlugins.IsResource(selection.Id)) fields=selection.Id switch {"resources.font"=>["path","license"],"resources.animations"=>["path"],_=>["sources"]};
             CheckObject(selection.Configuration,fields,selection.Id+".configuration");
-            if(selection.Id=="resources.font") _=FontResourceLoader.Read(selection.Configuration);
+            if(selection.Id=="resources.animations") ModulePackage.ValidatePath(selection.Configuration.GetProperty("path").GetString()!);
+            else if(selection.Id=="resources.font") _=FontResourceLoader.Read(selection.Configuration);
             else if(ResourcePlugins.IsResource(selection.Id)) _=ResourceSource.Read(selection.Configuration,selection.Id);
             if(selection.Id=="rules.commands") _=new CommandRuleProvider(selection.Configuration);
             if(selection.Id=="flow")
@@ -197,6 +198,7 @@ public static class GameRuntime
     }
     private static void ValidateImages(GameState state,ResourcePool resources)
     {
+        if(resources.Animations is {} animations)AnimationFile.ValidateReferences(animations,state,resources);
         foreach(var entity in state.Entities.Values)
             foreach(var name in entity.FaceResources)
                 try {var image=resources.GetImage(name);_=resources.GetFile(image.Resource);}

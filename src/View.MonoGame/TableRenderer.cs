@@ -62,7 +62,7 @@ public sealed class TableRenderer : IDisposable
         batch.Draw(texture,new Vector2(x,y),color);
     }
     public void End() => batch.End();
-    public void Image(string id,ResourcePool resources,Rectangle bounds,bool trimTransparent=false)
+    public void Image(string id,ResourcePool resources,Rectangle bounds,bool trimTransparent=false,float rotation=0)
     {
         var reference=resources.GetImage(id);var bytes=resources.GetFile(reference.Resource);
         var key=Convert.ToHexString(System.Security.Cryptography.SHA256.HashData(bytes.Span));
@@ -87,10 +87,10 @@ public sealed class TableRenderer : IDisposable
             source=content;
         }
         var destination=reference.Destination(bounds.X,bounds.Y,bounds.Width,bounds.Height);
-        if(reference.Rotated)
-            batch.Draw(texture,new Vector2(destination.X,destination.Y+destination.Height),source,Color.White,-MathHelper.PiOver2,
-                Vector2.Zero,new Vector2(destination.Height/reference.Width,destination.Width/reference.Height),SpriteEffects.None,0);
-        else batch.Draw(texture,new Rectangle((int)destination.X,(int)destination.Y,(int)destination.Width,(int)destination.Height),source,Color.White);
+        var sw=source?.Width ?? texture.Width;var sh=source?.Height ?? texture.Height;
+        batch.Draw(texture,new Vector2(destination.X+destination.Width/2,destination.Y+destination.Height/2),source,Color.White,
+            MathHelper.ToRadians(rotation)-(reference.Rotated?MathHelper.PiOver2:0),new Vector2(sw/2f,sh/2f),
+            reference.Rotated?new Vector2(destination.Height/sw,destination.Width/sh):new Vector2(destination.Width/sw,destination.Height/sh),SpriteEffects.None,0);
     }
     public void Dispose() { foreach(var t in labels.Values.Concat(images.Values)) t.Dispose(); labels.Clear(); images.Clear(); imageContent.Clear(); packagedFont.Dispose(); pixel.Dispose(); batch.Dispose(); }
 }

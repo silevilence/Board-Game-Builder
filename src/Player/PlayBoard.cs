@@ -27,6 +27,7 @@ public sealed class PlayBoard : UserControl,IDisposable
     internal bool ActionsVisible=>side.IsVisible;
     internal int RenderedFrames=>table.RenderedFrames;
     internal int CachedImages=>table.CachedImages;
+    internal bool PresentationBusy=>table.AnimationBusy;
     internal void SaveImage(string path)=>table.SaveImage(path);
     public event Action<string>? HostShortcut;
     public PlayBoard(PlayerSession session,LoadedModule module,bool showActions=true)
@@ -50,6 +51,7 @@ public sealed class PlayBoard : UserControl,IDisposable
         DockPanel.SetDock(side,Dock.Right); panel.Children.Add(side); panel.Children.Add(table); Content=panel;
         table.Gesture+=g=> { _=Act(new(g.Kind,g.Entity,g.Target,g.X,g.Y),session.Frame.Revision); };
         table.SelectionChanged+=RefreshActions;
+        table.AnimationChanged+=RefreshActions;
         table.Shortcut+=key=>
         {
             if(key is "new-game" or "restart" or "choose-seed") { HostShortcut?.Invoke(key); return; }
@@ -88,7 +90,7 @@ public sealed class PlayBoard : UserControl,IDisposable
         if(classic && hostError==null && !frame.View.Ended && frame.Fault==null)
             foreach(var offer in frame.Actions.Where(a=>a.Shortcuts?.Contains("confirm")==true))
             {
-                var revision=frame.Revision; var button=new Button {Content=offer.Label,Padding=new Thickness(12,4)};
+                var revision=frame.Revision; var button=new Button {Content=offer.Label,Padding=new Thickness(12,4),IsEnabled=!table.AnimationBusy};
                 button.Click+=async (_,_)=>await Act(new("action",Action:offer.Id),revision); quickActions.Children.Add(button);
             }
         var dragOffers=frame.Actions.Where(a=>a.Gesture=="drag").ToArray();
@@ -102,7 +104,7 @@ public sealed class PlayBoard : UserControl,IDisposable
     }
     private void Add(string label,Func<Task> action)
     {
-        var button=new Button { Content=new TextBlock {Text=label,TextWrapping=TextWrapping.Wrap}, HorizontalAlignment=Avalonia.Layout.HorizontalAlignment.Stretch };
+        var button=new Button { Content=new TextBlock {Text=label,TextWrapping=TextWrapping.Wrap}, HorizontalAlignment=Avalonia.Layout.HorizontalAlignment.Stretch,IsEnabled=!table.AnimationBusy };
         button.Click+=async (_,_)=>await action(); actions.Children.Add(button);
     }
     public void HandleShortcut(string key)=>table.HandleShortcut(key);
@@ -111,7 +113,7 @@ public sealed class PlayBoard : UserControl,IDisposable
     public void ToggleSound()=>sound.IsChecked=sound.IsChecked!=true;
     public async Task Act(InteractionIntent intent,long revision)
     {
-        if(disposed || session.Busy) return;
+        if(disposed || session.Busy || table.AnimationBusy) return;
         SetBusy("正在提交操作…");
         try
         {

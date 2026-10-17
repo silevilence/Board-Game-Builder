@@ -86,5 +86,6 @@ catch (Exception error)
 {
     Write(new { ok = false, code = error is AuthorOperationException operation ? operation.Code : error is ArgumentException or JsonException ? "arguments.invalid" : "author.failure",
         message = error.Message, path = (error as AuthorOperationException)?.Path });
+    if(error is AuthorOperationException conflict && conflict.Code.EndsWith(".conflict",StringComparison.Ordinal))return 3;
     return error is ArgumentException or JsonException || error is AuthorOperationException e && e.Code.StartsWith("arguments.") ? 2 : 1;
 }

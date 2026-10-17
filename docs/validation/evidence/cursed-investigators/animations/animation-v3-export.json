@@ -1,0 +1,19 @@
+{
+  "ok": true,
+  "requestId": "85d93d9fc5f94012817f6dd4138d8e35",
+  "result": {
+    "source": {
+      "identity": {
+        "directory": "C:\\code\\dotnet\\Board-Game-Builder\\.scratch\\cursed-investigators\\animation-probe",
+        "profile": "builtin",
+        "mode": "disk",
+        "workspace": null,
+        "generation": 0
+      },
+      "version": "EA9AC5EC2DBB1959B260D1251357B5A9A8243AD840B69287143F3E432CA91741"
+    },
+    "target": "C:\\code\\dotnet\\Board-Game-Builder\\artifacts\\cursed-investigators\\animation-v3-export",
+    "kind": "player-directory",
+    "fingerprint": "EC992C4DDDBF581899D0DBE8E7BF32AA290D60138E1843B3BB1CC9819673C19C"
+  }
+}

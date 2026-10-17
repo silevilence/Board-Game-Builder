@@ -43,7 +43,7 @@ public static class ScenePainter
                 }
                 else
                 {
-                    if(item.Resource!=null) renderer.Image(item.Resource,scene.Resources,rect);
+                    if(item.Resource!=null) renderer.Image(item.Resource,scene.Resources,rect,rotation:item.Rotation);
                     if(rect.Width<=44) renderer.Box(new(rect.X,rect.Bottom-3,rect.Width,3),tint);
                     if(item.Label.Length>0)
                     {
@@ -57,10 +57,10 @@ public static class ScenePainter
             var color=item.Kind switch { "region"=>new Color(27,66,72),"back"=>new Color(63,89,114),"piece"=>new Color(34,49,60),_=>new Color(234,209,157) };
             if(item.Entity!=null && item.Entity==target) color=new Color(47,114,97);
             if(item.Entity!=null && item.Entity==selected) renderer.Box(new((int)b.X-3,(int)b.Y-3,(int)b.Width+6,(int)b.Height+6),new Color(255,196,74));
-            renderer.Box(new((int)b.X,(int)b.Y,(int)b.Width,(int)b.Height),color);
+            if(item.Resource==null || item.Kind is not ("card" or "back"))renderer.Box(new((int)b.X,(int)b.Y,(int)b.Width,(int)b.Height),color);
             if(item.Resource!=null) renderer.Image(item.Resource,scene.Resources,item.Kind is "card" or "back"
                 ?new((int)b.X,(int)b.Y,(int)b.Width,(int)b.Height)
-                :new((int)b.X+3,(int)b.Y+25,(int)b.Width-6,(int)b.Height-28),trimTransparent:item.Kind=="card");
+                :new((int)b.X+3,(int)b.Y+25,(int)b.Width-6,(int)b.Height-28),rotation:item.Rotation);
             if(item.Kind is not ("card" or "back") || item.Resource==null) renderer.Text(item.Label,(int)b.X+5,(int)b.Y+5,item.Kind=="card"?new Color(25,40,46):Color.White);
             if(item.Detail!=null) renderer.Text(item.Detail,(int)b.X+3,(int)b.Y+25,new Color(186,211,221));
         }
@@ -104,7 +104,7 @@ public static class ScenePainter
         var b=item.Bounds; var rect=new Rectangle((int)b.X,(int)b.Y,(int)b.Width,(int)b.Height);
         r.Box(new(rect.X+2,rect.Y+3,rect.Width,rect.Height),new Color(0,45,14,100));
         r.Box(rect,new Color(251,250,241));
-        if(item.Resource!=null) r.Image(item.Resource,scene.Resources,rect,trimTransparent:true);
+        if(item.Resource!=null) r.Image(item.Resource,scene.Resources,rect,trimTransparent:true,rotation:item.Rotation);
         else r.Text(item.Label,rect.X+4,rect.Y+4,Color.Black);
         if(selected) Outline(r,new(rect.X-2,rect.Y-2,rect.Width+4,rect.Height+4),new Color(255,223,91),2);
     }

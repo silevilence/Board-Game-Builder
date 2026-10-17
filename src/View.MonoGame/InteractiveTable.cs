@@ -6,9 +6,15 @@ public sealed class InteractiveTable : UserControl, IDisposable
     private readonly DesktopViewport viewport=new();
     private readonly TableInteraction input=new();
     private TableScene scene=new([],BoardGame.Kernel.ResourcePool.Empty);
+    private readonly SceneAnimationPlayer animation=new();
+    private readonly System.Diagnostics.Stopwatch clock=System.Diagnostics.Stopwatch.StartNew();
+    private bool requestedInput=true;
+    public bool AnimationBusy=>animation.Busy;
+    public event Action? AnimationChanged;
     private readonly StackPanel controls=new() {Orientation=Avalonia.Layout.Orientation.Horizontal,Spacing=6};
     public string? Selected=>input.Selected;
-    public bool InputEnabled { get=>input.Enabled; set { if(value!=input.Enabled) viewport.ResetClickSequence(); input.Enabled=value; } }
+    public bool InputEnabled { get=>input.Enabled; set { requestedInput=value; UpdateInput(); } }
+    private void UpdateInput() {var value=requestedInput && !animation.Busy;if(value!=input.Enabled)viewport.ResetClickSequence();input.Enabled=value;}
     public int RenderedFrames=>viewport.Frames;
     public int CachedImages=>viewport.CachedImages;
     public event Action<TableGesture>? Gesture;
@@ -25,7 +31,10 @@ public sealed class InteractiveTable : UserControl, IDisposable
         viewport.CanPeek=(x,y)=>InputEnabled && input.CanPeek(x,y);
         viewport.Paint=r=>
         {
-            ScenePainter.Draw(r,scene,Selected,input.Target,input.Peeked);
+            var wasAnimating=animation.Busy;
+            var frame=animation.Frame(clock.Elapsed.TotalMilliseconds);
+            ScenePainter.Draw(r,frame,Selected,input.Target,input.Peeked);
+            if(wasAnimating!=animation.Busy) {UpdateInput();AnimationChanged?.Invoke();}
             if(input.Dragging is {} dragging && scene.Items.FirstOrDefault(i=>i.Entity==dragging) is {} item)
             {
                 var b=item.Bounds;
@@ -59,6 +68,6 @@ public sealed class InteractiveTable : UserControl, IDisposable
     public void SaveImage(string path)=>viewport.SaveImage(path);
     public void ChangeZoom(float factor)=>viewport.ChangeZoom(factor);
     public void CancelInput()=>viewport.CancelInput();
-    public void Show(TableScene value) { scene=value; input.Show(value); viewport.Canvas(value); controls.IsVisible=!value.ClassicCards; }
-    public void Dispose() { viewport.Dispose(); Gesture=null; SelectionChanged=null; Shortcut=null; RenderingError=null; }
+    public void Show(TableScene value) {var busy=animation.Busy;scene=value;animation.Show(value,clock.Elapsed.TotalMilliseconds);input.Show(value);UpdateInput();viewport.Canvas(value);controls.IsVisible=!value.ClassicCards;if(busy!=animation.Busy)AnimationChanged?.Invoke();}
+    public void Dispose() {animation.Reset();viewport.Dispose();Gesture=null;SelectionChanged=null;Shortcut=null;RenderingError=null;AnimationChanged=null;}
 }

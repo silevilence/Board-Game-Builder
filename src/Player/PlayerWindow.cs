@@ -139,6 +139,8 @@ public sealed partial class PlayerWindow : Window
                 for(var i=0;i<(commands?.Count ?? 40) && board!=null && !board.Frame.View.Ended && board.Frame.Fault==null;i++)
                 {
                     await Task.Delay(120);
+                    for(var waiting=0;board.PresentationBusy && waiting<400;waiting++)await Task.Delay(30);
+                    if(board.PresentationBusy)throw new InvalidDataException("Presentation did not complete");
                     if(board.Frame.Cpu) await board.PumpCpu();
                     else if(board.Frame.Actions.Count>0)
                     {

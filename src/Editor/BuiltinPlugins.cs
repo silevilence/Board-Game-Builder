@@ -56,6 +56,7 @@ public static class BuiltinPlugins
         app.Install(new("author.scripts",1,[],["documents","sessions","panels"],scope=>
             scope.Service<PanelContributions>("panels").Register(scope,"author.scripts","Lua 脚本",()=>new ScriptPanel(scope))));
         app.Install(FlowEditorPlugin.Definition);
+        app.Install(AnimationEditorPlugin.Definition);
         app.Install(new("author.configuration",1,[],["documents","panels"],scope=>
             scope.Service<PanelContributions>("panels").Register(scope,"author.configuration","模块配置",()=>new FormatPanel(scope,s=>new ConfigurationPanel(s)))));
         app.Install(new("author.startup",1,[],["documents","panels"],scope=>

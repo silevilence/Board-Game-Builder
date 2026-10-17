@@ -14,22 +14,26 @@ public sealed class ResourcePool
     public IReadOnlyDictionary<string,string> Binaries {get;}
     [JsonIgnore(Condition=JsonIgnoreCondition.WhenWritingNull)]
     public FontReference? Font {get;}
+    [JsonIgnore(Condition=JsonIgnoreCondition.WhenWritingNull)]
+    public AnimationLibrary? Animations {get;}
     [JsonConstructor]
-    public ResourcePool(IReadOnlyDictionary<string,ReadOnlyMemory<byte>> files,IReadOnlyDictionary<string,ImageReference> images,IReadOnlyDictionary<string,string> binaries,FontReference? font=null)
+    public ResourcePool(IReadOnlyDictionary<string,ReadOnlyMemory<byte>> files,IReadOnlyDictionary<string,ImageReference> images,IReadOnlyDictionary<string,string> binaries,FontReference? font=null,AnimationLibrary? animations=null)
     {
         Files=new ReadOnlyDictionary<string,ReadOnlyMemory<byte>>(new SortedDictionary<string,ReadOnlyMemory<byte>>(files.ToDictionary(p=>p.Key,p=>(ReadOnlyMemory<byte>)p.Value.ToArray()),StringComparer.Ordinal));
         Images=new ReadOnlyDictionary<string,ImageReference>(new SortedDictionary<string,ImageReference>(images.ToDictionary(p=>p.Key,p=>p.Value),StringComparer.Ordinal));
         Binaries=new ReadOnlyDictionary<string,string>(new SortedDictionary<string,string>(binaries.ToDictionary(p=>p.Key,p=>p.Value),StringComparer.Ordinal));
         Font=font;
+        Animations=animations==null?null:animations with {Clips=Array.AsReadOnly(animations.Clips.Select(c=>c with {
+            Tracks=Array.AsReadOnly(c.Tracks.Select(t=>t with {Keys=Array.AsReadOnly(t.Keys.ToArray())}).ToArray())}).ToArray())};
     }
     public ImageReference GetImage(string name)=>Images.TryGetValue(name,out var image)?image:throw new InvalidDataException("unknown image resource: "+name);
     public ReadOnlyMemory<byte> GetFile(string path)=>Files.TryGetValue(path,out var bytes)?bytes:throw new InvalidDataException("unknown resource file: "+path);
     public ReadOnlyMemory<byte> GetBinary(string name)=>Binaries.TryGetValue(name,out var path)?GetFile(path):throw new InvalidDataException("unknown binary resource: "+name);
     public ResourcePool Select(IEnumerable<string> names)
     {
-        var selected=names.Distinct(StringComparer.Ordinal).ToDictionary(n=>n,GetImage,StringComparer.Ordinal);
+        var selected=names.Concat(Animations?.Clips.SelectMany(c=>c.Tracks).Select(t=>t.BackResource).OfType<string>() ?? []).Distinct(StringComparer.Ordinal).ToDictionary(n=>n,GetImage,StringComparer.Ordinal);
         var files=selected.Values.Select(v=>v.Resource).Distinct(StringComparer.Ordinal).ToDictionary(p=>p,GetFile,StringComparer.Ordinal);
         if(Font is {} font) {files[font.Resource]=GetFile(font.Resource);files[font.License]=GetFile(font.License);}
-        return new(files,selected,new Dictionary<string,string>(),Font);
+        return new(files,selected,new Dictionary<string,string>(),Font,Animations);
     }
 }

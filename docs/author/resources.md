@@ -17,3 +17,9 @@ source 可为文件或目录；pattern 支持 `*`、`?`、`**`。目录省略 pa
 `resources.move` 只自动移动单个显式声明的资源文件，更新源路径并保留资源名称。移动图集 JSON 跨目录时复制配套图片，旧图片保留以免影响其他声明；可检查引用后自行删除。目录、通配符发现或动态脚本路径不做猜测改写，操作会拒绝无法保持资源名集合的移动。
 
 导入先验证隔离候选资源池，成功后通过所选编辑模式提交。相同请求 ID 重试不增加重复声明。图片文件默认单项最多 16 MiB；运行时另检查总预算、尺寸和图集区域。
+
+## 随包字体和动画
+
+`resources.font`（version `1`、api `1`）依赖 `resources`，configuration 为 `{"path":"assets/font.otf","license":"assets/OFL.txt"}`。选择一个静态 OpenType TTF／CFF OTF 作为游戏桌面及 Player 操作控件字体，字体和非空许可证都随包收集，不需要安装系统字体。缺件、格式错误或渲染缺字会报告诊断；切换／关闭视口释放字体缓存。配置使用现有 `files.write`，再运行 `project.validate` 和正式打包／导出。
+
+`resources.animations` 的配置、作者操作和预览见 `bgb.exe docs animation`。字体／动画声明不能使用图片的自动移动命令；调整路径时需同步修改显式配置并重新校验。

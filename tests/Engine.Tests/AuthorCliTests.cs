@@ -45,6 +45,11 @@ public static class AuthorCliTests
             var repeated = await Cli(0, "call", "project.create.module", "--project", project, "--request", "create-once");
             Check.That(created.GetProperty("result").GetRawText()==repeated.GetProperty("result").GetRawText());
             await Cli(0, "validate", "--project", project);
+            var beforeConflict=File.ReadAllBytes(Path.Combine(project,"module.json"));
+            var conflict=await Cli(3,"call","configuration.replace","--project",project,"--args","{\"version\":\"stale\",\"configuration\":{}}");
+            Check.That(conflict.GetProperty("code").GetString()=="project.conflict" && beforeConflict.SequenceEqual(File.ReadAllBytes(Path.Combine(project,"module.json"))));
+            var duplicate=await Cli(3,"create-module","--project",project);
+            Check.That(duplicate.GetProperty("code").GetString()=="template.conflict");
             var plugins = Path.Combine(product, "plugins", "author");Directory.CreateDirectory(plugins);
             File.Copy($"samples/Author.SamplePlugin/bin/{configuration}/net10.0/Author.SamplePlugin.dll", Path.Combine(plugins, "Author.SamplePlugin.dll"));
             var operations = await Cli(0, "operations", "--project", project);

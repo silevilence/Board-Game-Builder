@@ -13,7 +13,8 @@ public static class AuthorDocuments
             ("definition-module","author.module","组件定义格式"),("definition-state","author.state","状态定义格式"),
             ("resources","author.resources","图片与图集"),("lua","author.run","Lua 规则和 CPU API"),
             ("debugging","author.run","校验与调试"),("export","author.export","打包和 Player 导出"),
-            ("flow","author.configuration","流程图、节点脚本与诊断")
+            ("flow","author.configuration","流程图、节点脚本与诊断"),
+            ("animation","author.configuration","动画配置、编辑与预览")
         };
         var result = mapping.Where(m => plugins.Any(p => p.Id == m.Plugin)).Select(m => new AuthorDocument(m.Topic,m.Plugin,m.Title,Read(m.Topic))).ToList();
         result.AddRange(plugins.SelectMany(p => p.Documents));

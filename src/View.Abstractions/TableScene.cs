@@ -5,7 +5,7 @@ public sealed record TableRect(float X,float Y,float Width,float Height)
 {
     public bool Contains(float x,float y) => x>=X && y>=Y && x<X+Width && y<Y+Height;
 }
-public sealed record TableItem(string? Entity, string Kind, string Label, TableRect Bounds, string? Resource=null,double PositionX=0,double PositionY=0,BoardLayout? Layout=null,string? Detail=null,string? Container=null,int Hotkey=0,int Mark=0,float SlotHeight=0,int Color=0xE3C887,int Layer=0,int LineX=0,int LineY=0,int LabelY=0)
+public sealed record TableItem(string? Entity, string Kind, string Label, TableRect Bounds, string? Resource=null,double PositionX=0,double PositionY=0,BoardLayout? Layout=null,string? Detail=null,string? Container=null,int Hotkey=0,int Mark=0,float SlotHeight=0,int Color=0xE3C887,int Layer=0,int LineX=0,int LineY=0,int LabelY=0,float Rotation=0)
 {
     public (double X,double Y) MoveBy(float dx,float dy)
     {
@@ -13,7 +13,7 @@ public sealed record TableItem(string? Entity, string Kind, string Label, TableR
         var world=Layout.World(PositionX,PositionY); var logical=Layout.Logical(world.X+dx,world.Y+dy); return Layout.Snap(logical.X,logical.Y);
     }
 }
-public sealed record TableScene(IReadOnlyList<TableItem> Items, ResourcePool Resources,BoardLayout? Layout=null,bool ClassicCards=false)
+public sealed record TableScene(IReadOnlyList<TableItem> Items, ResourcePool Resources,BoardLayout? Layout=null,bool ClassicCards=false,IReadOnlyDictionary<string,int>? AnimationCues=null)
 {
     public TableItem? Hit(float x,float y) => Items.LastOrDefault(i=>i.Entity!=null && i.Bounds.Contains(x,y));
     public TableItem? Region(float x,float y) => Items.FirstOrDefault(i=>i.Kind=="region" && i.Bounds.Contains(x,y));
@@ -86,6 +86,7 @@ public sealed record TableScene(IReadOnlyList<TableItem> Items, ResourcePool Res
             var bounds=point==null?new TableRect((float)e.X+30,(float)e.Y+40+(regions.Length+1)/2*235+loose++*48,360,40):new TableRect((float)point.Value.X-36,(float)point.Value.Y-24,76,48);
             items.Add(new(e.Id,"piece",label,bounds,e.Resource,e.X,e.Y,projection.Layout,projection.Layout==null?null:detail));
         }
-        return new(items.OrderBy(i=>i.Layer).ToArray(),resources?.Select(used) ?? ResourcePool.Empty,projection.Layout,classic);
+        var cues=resources?.Animations?.Clips.ToDictionary(c=>c.Id,c=>projection.Entities.FirstOrDefault(e=>e.Id==c.Trigger.Entity)?.Properties.GetValueOrDefault(c.Trigger.Property) ?? 0);
+        return new(items.OrderBy(i=>i.Layer).ToArray(),resources?.Select(used) ?? ResourcePool.Empty,projection.Layout,classic,cues);
     }
 }
