@@ -1,0 +1,3 @@
+# Preserve the downloaded files byte-for-byte so recorded hashes survive checkout.
+icons/kenney-board-game-icons/svg/*.svg -text
+fonts/noto-sans-cjk-sc/LICENSE.txt -text

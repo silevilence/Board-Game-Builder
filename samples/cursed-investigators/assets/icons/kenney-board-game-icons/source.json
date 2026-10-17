@@ -1,0 +1,80 @@
+{
+  "name": "Kenney Board Game Icons",
+  "version": "1.1",
+  "sourceUrl": "https://kenney.nl/assets/board-game-icons",
+  "license": "CC0-1.0",
+  "archiveName": "kenney_board-game-icons.zip",
+  "archiveSha256": "05f4358381d8b16b303b2f056393b76ce3f6a58228599e88caa2eab11d4c2946",
+  "assets": [
+    {
+      "path": "icons/kenney-board-game-icons/png/dice_1.png",
+      "archiveEntry": "PNG/Double (128px)/dice_1.png",
+      "sha256": "ad016b76f8a7b212adf7b9b67756cd2d9a026c9e0fc756407bf52cdcb8be8b03"
+    },
+    {
+      "path": "icons/kenney-board-game-icons/png/dice_2.png",
+      "archiveEntry": "PNG/Double (128px)/dice_2.png",
+      "sha256": "e301d55118fe3c729a3150a5ddfeb290a2278a0ad6a5362d45f64ebf6384789f"
+    },
+    {
+      "path": "icons/kenney-board-game-icons/png/dice_3.png",
+      "archiveEntry": "PNG/Double (128px)/dice_3.png",
+      "sha256": "32504b41e7f51f24f9f45a4dbe4cdc15712c8bf82cdd61b7cc1655067dd256db"
+    },
+    {
+      "path": "icons/kenney-board-game-icons/png/dice_4.png",
+      "archiveEntry": "PNG/Double (128px)/dice_4.png",
+      "sha256": "ff516810084634863ab2087fe206570019903dd3b1f614f38913c98e818eed84"
+    },
+    {
+      "path": "icons/kenney-board-game-icons/png/dice_5.png",
+      "archiveEntry": "PNG/Double (128px)/dice_5.png",
+      "sha256": "743a368ff09a27e0cb905fba5472358006a061c05c67fcb632eb6e3b69a9e0cf"
+    },
+    {
+      "path": "icons/kenney-board-game-icons/png/dice_6.png",
+      "archiveEntry": "PNG/Double (128px)/dice_6.png",
+      "sha256": "3d7b9057d094802e7c243ad728628a5b16c1eff380b0e4e1f9421aff72b97f92"
+    },
+    {
+      "path": "icons/kenney-board-game-icons/png/d6.png",
+      "archiveEntry": "PNG/Double (128px)/d6.png",
+      "sha256": "c93bc966f81e6562133c42602bbc37c0e2784462e12d6bb29efa5ad77aac8b49"
+    },
+    {
+      "path": "icons/kenney-board-game-icons/svg/dice_1.svg",
+      "archiveEntry": "Vector/Icons/dice_1.svg",
+      "sha256": "d8948a811f1ea4d5c422dd6fdbe4c04fd8edaaf0c5cdbec4ed893906d720d76e"
+    },
+    {
+      "path": "icons/kenney-board-game-icons/svg/dice_2.svg",
+      "archiveEntry": "Vector/Icons/dice_2.svg",
+      "sha256": "375ce3988f4b1e4d658fb3a752569e99704a332fc316b6f3b1ba0ebfe24d2f87"
+    },
+    {
+      "path": "icons/kenney-board-game-icons/svg/dice_3.svg",
+      "archiveEntry": "Vector/Icons/dice_3.svg",
+      "sha256": "42741aba9012626c9ccf5691f73b97defeb13b9eb7c759de783a3413d599f2ea"
+    },
+    {
+      "path": "icons/kenney-board-game-icons/svg/dice_4.svg",
+      "archiveEntry": "Vector/Icons/dice_4.svg",
+      "sha256": "ef9c9c47c3691f0db6151b2a4e1844f1a18b3ad24f435c176e66058e5e32e5e4"
+    },
+    {
+      "path": "icons/kenney-board-game-icons/svg/dice_5.svg",
+      "archiveEntry": "Vector/Icons/dice_5.svg",
+      "sha256": "d6b58542d99d008ce6b0a27b607ac298c9902e2d3fdde3fc264f12966bd2fb57"
+    },
+    {
+      "path": "icons/kenney-board-game-icons/svg/dice_6.svg",
+      "archiveEntry": "Vector/Icons/dice_6.svg",
+      "sha256": "cb2e627b95e088fa6cd7970288a68adc542054f4797b75376d16a618113ba709"
+    },
+    {
+      "path": "icons/kenney-board-game-icons/svg/d6.svg",
+      "archiveEntry": "Vector/Icons/d6.svg",
+      "sha256": "91bd81c56068b8abc6af919352055ab0cd14120c80670cbf1e3274c78b0b047f"
+    }
+  ]
+}

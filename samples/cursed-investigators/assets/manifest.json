@@ -1,5 +1,5 @@
 {
-  "schemaVersion": 1,
+  "schemaVersion": 2,
   "purpose": "扫描资料资产清单；不是引擎运行或作者格式",
   "source": {
     "filename": "咒物调查员.pdf",
@@ -8,8 +8,8 @@
     "sha256": "5e2de1a57dc200ce37a6131552330ce983763f2dd2711e31e50b18e91ad2fd0a"
   },
   "processing": {
-    "method": "提取 PDF 内嵌原始扫描图，按卡片轮廓外接矩形校正轻微倾斜并裁剪，旋转至可读方向；帮助牌手工定界。PNG 保存，不作文字重绘、去网纹或生成式修复。",
-    "coordinates": "sourceQuad 为原始 2480×3507 扫描图的四角像素坐标，左上为原点。将四角依次映射至输出矩形左上、右上、右下、左下，再逆时针旋转 rotationCounterClockwise；帮助牌的阅读朝向已包含在四角顺序中。",
+    "method": "原 PDF 提取、裁正后的扫描图，经用户指定的确定性像素处理去除外侧白底；卡片内部白色保持不透明。咒灵缺失黑边取自本牌现有黑边纹理，未使用生成式重绘。输出 RGBA PNG。",
+    "coordinates": "sourceQuad 为原始 2480×3507 扫描图的四角像素坐标，左上为原点。将四角依次映射至输出矩形左上、右上、右下、左下，再逆时针旋转 rotationCounterClockwise；帮助牌的阅读朝向已包含在四角顺序中。 这些坐标描述初始扫描裁剪，后续透明蒙版／补边见每项 pixelEditing；wraith 在初始输出顶部增加 22 像素。",
     "backMapping": "各类牌背按扫描的相邻页顺序和图案归类。扫描仅提供每类一张背面，无逐张翻面对照；因此记录共用背面，不伪造独立背面。",
     "englishIds": "英文 ID 仅为本 sample 的文件定位符，不声称是原版官方英文名称。"
   },
@@ -48,8 +48,14 @@
         1332,
         2157
       ],
-      "sha256": "52ee775b554cf8abacb949e051b7ff6ba9a2950a602479c8c9cce27e4aefac65",
-      "backAssetId": "journal-observations"
+      "sha256": "08ea6cfc676d74702d7f2aaafcee96b2b82e4673aaa0526439f2612be6f03d94",
+      "backAssetId": "journal-observations",
+      "scanSha256": "52ee775b554cf8abacb949e051b7ff6ba9a2950a602479c8c9cce27e4aefac65",
+      "pixelEditing": {
+        "method": "外轮廓内保留不透明，内缩 2 像素清除扫描白晕，圆角外透明；仅最外侧抗锯齿过渡取邻近牌内颜色。",
+        "paddingTop": 0,
+        "interiorUnchanged": true
+      }
     },
     {
       "id": "journal-observations",
@@ -85,7 +91,13 @@
         1330,
         2158
       ],
-      "sha256": "35473883ebef4917ceeaa052e5c8c3886b224a0d37814c4b9a9b472d866e2016"
+      "sha256": "442b8efc262184ccc4d69d0ba0b246ccd919c7c8aa4aad4666266c349b420748",
+      "scanSha256": "35473883ebef4917ceeaa052e5c8c3886b224a0d37814c4b9a9b472d866e2016",
+      "pixelEditing": {
+        "method": "外轮廓内保留不透明，内缩 2 像素清除扫描白晕，圆角外透明；仅最外侧抗锯齿过渡取邻近牌内颜色。",
+        "paddingTop": 0,
+        "interiorUnchanged": true
+      }
     },
     {
       "id": "reference-turn",
@@ -121,8 +133,14 @@
         865,
         1443
       ],
-      "sha256": "9ea827d60993d933b094d1bf01639db0c0fa3bd5161ef34d8d546eb98792fdba",
-      "backAssetId": "reference-back"
+      "sha256": "ec3a6a7ef15fcd05d7228c299672b9c703fc91b31169ca84833a099f5d2294e6",
+      "backAssetId": "reference-back",
+      "scanSha256": "9ea827d60993d933b094d1bf01639db0c0fa3bd5161ef34d8d546eb98792fdba",
+      "pixelEditing": {
+        "method": "按白色帮助牌实际外框建立圆角透明蒙版；保留纸面、全部黑色文字及边框。",
+        "paddingTop": 0,
+        "interiorUnchanged": true
+      }
     },
     {
       "id": "reference-back",
@@ -158,7 +176,13 @@
         846,
         1439
       ],
-      "sha256": "43e904ba76e6a82afb8bfcf51da094f8ec75d5346699ee0f40d6b2e0b43f20e6"
+      "sha256": "6ec531b311461ea36592f9af60ecda4725d0e34fde98e6f4a9e333acd3879d6b",
+      "scanSha256": "43e904ba76e6a82afb8bfcf51da094f8ec75d5346699ee0f40d6b2e0b43f20e6",
+      "pixelEditing": {
+        "method": "外轮廓内保留不透明，内缩 2 像素清除扫描白晕，圆角外透明；仅最外侧抗锯齿过渡取邻近牌内颜色。",
+        "paddingTop": 0,
+        "interiorUnchanged": true
+      }
     },
     {
       "id": "character-celeste",
@@ -194,8 +218,14 @@
         1449,
         843
       ],
-      "sha256": "0e306be28fecc030ba98fe529f2aa66e2580f6f1e8325d425f3736901ec91a9b",
-      "backAssetId": "character-back"
+      "sha256": "d006ba1df26d50203ad45fd4f2f19d30ff8495ec465667579508045f0fb84ea7",
+      "backAssetId": "character-back",
+      "scanSha256": "0e306be28fecc030ba98fe529f2aa66e2580f6f1e8325d425f3736901ec91a9b",
+      "pixelEditing": {
+        "method": "外轮廓内保留不透明，内缩 2 像素清除扫描白晕，圆角外透明；仅最外侧抗锯齿过渡取邻近牌内颜色。",
+        "paddingTop": 0,
+        "interiorUnchanged": true
+      }
     },
     {
       "id": "character-eleanor",
@@ -231,8 +261,14 @@
         1447,
         840
       ],
-      "sha256": "b47469903773ede7e876999cbdd0c5b9ee53358fb87a5e11b7cf0412ccf9fa1c",
-      "backAssetId": "character-back"
+      "sha256": "f85af828d586f7fbab3969968154606261fa9213df9227f1ea824abc2054d27b",
+      "backAssetId": "character-back",
+      "scanSha256": "b47469903773ede7e876999cbdd0c5b9ee53358fb87a5e11b7cf0412ccf9fa1c",
+      "pixelEditing": {
+        "method": "外轮廓内保留不透明，内缩 2 像素清除扫描白晕，圆角外透明；仅最外侧抗锯齿过渡取邻近牌内颜色。",
+        "paddingTop": 0,
+        "interiorUnchanged": true
+      }
     },
     {
       "id": "character-leland",
@@ -268,8 +304,14 @@
         1447,
         840
       ],
-      "sha256": "67cc438d0b12a5aa19f6c87d39363a5ed3c0f5aaf45266cd12615d9907641e66",
-      "backAssetId": "character-back"
+      "sha256": "2d7e955baa6e0d92549d247abe5c80bc6516beecafb277e1fd2c4784d842d69e",
+      "backAssetId": "character-back",
+      "scanSha256": "67cc438d0b12a5aa19f6c87d39363a5ed3c0f5aaf45266cd12615d9907641e66",
+      "pixelEditing": {
+        "method": "外轮廓内保留不透明，内缩 2 像素清除扫描白晕，圆角外透明；仅最外侧抗锯齿过渡取邻近牌内颜色。",
+        "paddingTop": 0,
+        "interiorUnchanged": true
+      }
     },
     {
       "id": "character-back",
@@ -305,7 +347,13 @@
         841,
         1450
       ],
-      "sha256": "4aedb9ce2aa05b43669cea39c8043a2ec75abe56936c9afd73ecf9c99ffc9979"
+      "sha256": "34aca460ef37e4a1d34d971600dba09c3ba1977f7c0c7cf3d70f0f11b2507470",
+      "scanSha256": "4aedb9ce2aa05b43669cea39c8043a2ec75abe56936c9afd73ecf9c99ffc9979",
+      "pixelEditing": {
+        "method": "外轮廓内保留不透明，内缩 2 像素清除扫描白晕，圆角外透明；仅最外侧抗锯齿过渡取邻近牌内颜色。",
+        "paddingTop": 0,
+        "interiorUnchanged": true
+      }
     },
     {
       "id": "profession-reluctant-medium",
@@ -341,8 +389,14 @@
         1438,
         848
       ],
-      "sha256": "e244da2136d03e392cc4b1d3ff33808fdf6fdd2cad39ce9d0d8053d5431122a0",
-      "backAssetId": "profession-back"
+      "sha256": "5b355ea0e0706a2457aae119cd6ad167cae22bb92891412f89dc4f08d6bd5941",
+      "backAssetId": "profession-back",
+      "scanSha256": "e244da2136d03e392cc4b1d3ff33808fdf6fdd2cad39ce9d0d8053d5431122a0",
+      "pixelEditing": {
+        "method": "外轮廓内保留不透明，内缩 2 像素清除扫描白晕，圆角外透明；仅最外侧抗锯齿过渡取邻近牌内颜色。",
+        "paddingTop": 0,
+        "interiorUnchanged": true
+      }
     },
     {
       "id": "profession-former-detective",
@@ -378,8 +432,14 @@
         1444,
         848
       ],
-      "sha256": "609db0aa9d017fef71d3158621d50e172f07cd3693e8936a256797dfc49c1fb5",
-      "backAssetId": "profession-back"
+      "sha256": "7299d8e428c6439049d553c9eb27f0112aa2f1bcf1aa129aba1ff4eaa8453b65",
+      "backAssetId": "profession-back",
+      "scanSha256": "609db0aa9d017fef71d3158621d50e172f07cd3693e8936a256797dfc49c1fb5",
+      "pixelEditing": {
+        "method": "外轮廓内保留不透明，内缩 2 像素清除扫描白晕，圆角外透明；仅最外侧抗锯齿过渡取邻近牌内颜色。",
+        "paddingTop": 0,
+        "interiorUnchanged": true
+      }
     },
     {
       "id": "profession-paranormal-investigator",
@@ -415,8 +475,14 @@
         1439,
         845
       ],
-      "sha256": "b0e1db398e3e482440494ca9b46aeb9f5dae185327e547e9cc187554adc85feb",
-      "backAssetId": "profession-back"
+      "sha256": "efd51fd410b6e779d3afe8dcd5cce482f7e674e481936da156d522076e5175a9",
+      "backAssetId": "profession-back",
+      "scanSha256": "b0e1db398e3e482440494ca9b46aeb9f5dae185327e547e9cc187554adc85feb",
+      "pixelEditing": {
+        "method": "外轮廓内保留不透明，内缩 2 像素清除扫描白晕，圆角外透明；仅最外侧抗锯齿过渡取邻近牌内颜色。",
+        "paddingTop": 0,
+        "interiorUnchanged": true
+      }
     },
     {
       "id": "profession-back",
@@ -452,7 +518,13 @@
         846,
         1440
       ],
-      "sha256": "773949b0ae20193497ddfa7b06d996218117af9a4b2d2faf9186a87a325499bf"
+      "sha256": "92c53d7f2cf30b3779d9a066908de9bc24ea56b0b86e0c12d6beddbd76ca8786",
+      "scanSha256": "773949b0ae20193497ddfa7b06d996218117af9a4b2d2faf9186a87a325499bf",
+      "pixelEditing": {
+        "method": "外轮廓内保留不透明，内缩 2 像素清除扫描白晕，圆角外透明；仅最外侧抗锯齿过渡取邻近牌内颜色。",
+        "paddingTop": 0,
+        "interiorUnchanged": true
+      }
     },
     {
       "id": "object-001",
@@ -488,8 +560,14 @@
         861,
         1454
       ],
-      "sha256": "ccd9a996a9428ceea5f7fb2300e22339879396f75a41ce7b75797d8fe8ab96dc",
-      "backAssetId": "object-back"
+      "sha256": "ff09a46c53187814dc36d10d6a4893f1f2f6a6237a72bf0c6c086e7fa14f56a9",
+      "backAssetId": "object-back",
+      "scanSha256": "ccd9a996a9428ceea5f7fb2300e22339879396f75a41ce7b75797d8fe8ab96dc",
+      "pixelEditing": {
+        "method": "外轮廓内保留不透明，内缩 2 像素清除扫描白晕，圆角外透明；仅最外侧抗锯齿过渡取邻近牌内颜色。",
+        "paddingTop": 0,
+        "interiorUnchanged": true
+      }
     },
     {
       "id": "object-002",
@@ -525,8 +603,14 @@
         838,
         1448
       ],
-      "sha256": "ba1c6e2d595a203b87852b571d4d36633560c0bfd0253c4f4d4f6baa5230006d",
-      "backAssetId": "object-back"
+      "sha256": "a56bf8fa4fe52442a0b30dc1cef290895ca5fb0bab620d31e63d6d3bcdbde4b8",
+      "backAssetId": "object-back",
+      "scanSha256": "ba1c6e2d595a203b87852b571d4d36633560c0bfd0253c4f4d4f6baa5230006d",
+      "pixelEditing": {
+        "method": "外轮廓内保留不透明，内缩 2 像素清除扫描白晕，圆角外透明；仅最外侧抗锯齿过渡取邻近牌内颜色。",
+        "paddingTop": 0,
+        "interiorUnchanged": true
+      }
     },
     {
       "id": "object-003",
@@ -562,8 +646,14 @@
         848,
         1439
       ],
-      "sha256": "f4cd1a1a2d33d392692320622fe112efd3770f0ac8513973f3951eacda8c1e6e",
-      "backAssetId": "object-back"
+      "sha256": "76ebcd1e02eb61d1aa227a5d4032d69b32c4c6adb86a30f55a995826455f8d60",
+      "backAssetId": "object-back",
+      "scanSha256": "f4cd1a1a2d33d392692320622fe112efd3770f0ac8513973f3951eacda8c1e6e",
+      "pixelEditing": {
+        "method": "外轮廓内保留不透明，内缩 2 像素清除扫描白晕，圆角外透明；仅最外侧抗锯齿过渡取邻近牌内颜色。",
+        "paddingTop": 0,
+        "interiorUnchanged": true
+      }
     },
     {
       "id": "object-004",
@@ -599,8 +689,14 @@
         850,
         1440
       ],
-      "sha256": "b1407bd76c456c719aaa12df1d025be3f7c15b8c6a5c9f0a373274a3fc8d7956",
-      "backAssetId": "object-back"
+      "sha256": "7b8f1e1d386a53fb6481e968ada39f41ef28f9ad814b810ddc1c65a680043f06",
+      "backAssetId": "object-back",
+      "scanSha256": "b1407bd76c456c719aaa12df1d025be3f7c15b8c6a5c9f0a373274a3fc8d7956",
+      "pixelEditing": {
+        "method": "外轮廓内保留不透明，内缩 2 像素清除扫描白晕，圆角外透明；仅最外侧抗锯齿过渡取邻近牌内颜色。",
+        "paddingTop": 0,
+        "interiorUnchanged": true
+      }
     },
     {
       "id": "object-005",
@@ -636,8 +732,14 @@
         847,
         1439
       ],
-      "sha256": "91bf49fb0970471a0012bf17787d41fbb4ee04b9a8879b27e3e6af8200c9faf8",
-      "backAssetId": "object-back"
+      "sha256": "422e47b23a9a29811e538031dd8cd8d57693e5dcf5f1671565396b3c0035422a",
+      "backAssetId": "object-back",
+      "scanSha256": "91bf49fb0970471a0012bf17787d41fbb4ee04b9a8879b27e3e6af8200c9faf8",
+      "pixelEditing": {
+        "method": "外轮廓内保留不透明，内缩 2 像素清除扫描白晕，圆角外透明；仅最外侧抗锯齿过渡取邻近牌内颜色。",
+        "paddingTop": 0,
+        "interiorUnchanged": true
+      }
     },
     {
       "id": "object-006",
@@ -673,8 +775,14 @@
         846,
         1438
       ],
-      "sha256": "8eb52dda47e069344cffee05dac548357ee66750d315ca442c6e1718133fb16e",
-      "backAssetId": "object-back"
+      "sha256": "898e0dc1b33a59a8e5f969d8ea93a19f44a2b9822b305b720c2583501b67f598",
+      "backAssetId": "object-back",
+      "scanSha256": "8eb52dda47e069344cffee05dac548357ee66750d315ca442c6e1718133fb16e",
+      "pixelEditing": {
+        "method": "外轮廓内保留不透明，内缩 2 像素清除扫描白晕，圆角外透明；仅最外侧抗锯齿过渡取邻近牌内颜色。",
+        "paddingTop": 0,
+        "interiorUnchanged": true
+      }
     },
     {
       "id": "object-007",
@@ -710,8 +818,14 @@
         845,
         1439
       ],
-      "sha256": "1b1e971cabd3b93863baf3f2046fc68a49540a22c50fda10f14978e833e435f7",
-      "backAssetId": "object-back"
+      "sha256": "936ae67a1700f0abd78150a8c7a0c8caca57f575ed84c56cd82c054911930338",
+      "backAssetId": "object-back",
+      "scanSha256": "1b1e971cabd3b93863baf3f2046fc68a49540a22c50fda10f14978e833e435f7",
+      "pixelEditing": {
+        "method": "外轮廓内保留不透明，内缩 2 像素清除扫描白晕，圆角外透明；仅最外侧抗锯齿过渡取邻近牌内颜色。",
+        "paddingTop": 0,
+        "interiorUnchanged": true
+      }
     },
     {
       "id": "object-008",
@@ -747,8 +861,14 @@
         845,
         1438
       ],
-      "sha256": "2f4c53bb8d3dba9c457a3dd6566ce86853fcf6e2ecd7d94883f707afed396272",
-      "backAssetId": "object-back"
+      "sha256": "1a117a5b4b5c4bf8acc850e5bcac49541a034aac306e6081b2f03ee11e59d7ce",
+      "backAssetId": "object-back",
+      "scanSha256": "2f4c53bb8d3dba9c457a3dd6566ce86853fcf6e2ecd7d94883f707afed396272",
+      "pixelEditing": {
+        "method": "外轮廓内保留不透明，内缩 2 像素清除扫描白晕，圆角外透明；仅最外侧抗锯齿过渡取邻近牌内颜色。",
+        "paddingTop": 0,
+        "interiorUnchanged": true
+      }
     },
     {
       "id": "object-009",
@@ -784,8 +904,14 @@
         845,
         1440
       ],
-      "sha256": "9e0f67ebe4a628807f79d96ea471fb7151cbdf6b64be7f90a5708203e0d07639",
-      "backAssetId": "object-back"
+      "sha256": "069714d52f066a12f19c5adf777c583584517176c22753e554d1d602413cb0ab",
+      "backAssetId": "object-back",
+      "scanSha256": "9e0f67ebe4a628807f79d96ea471fb7151cbdf6b64be7f90a5708203e0d07639",
+      "pixelEditing": {
+        "method": "外轮廓内保留不透明，内缩 2 像素清除扫描白晕，圆角外透明；仅最外侧抗锯齿过渡取邻近牌内颜色。",
+        "paddingTop": 0,
+        "interiorUnchanged": true
+      }
     },
     {
       "id": "object-010",
@@ -821,8 +947,14 @@
         847,
         1440
       ],
-      "sha256": "80a54dbba758cd562dc82d5eda18294fcdc9b49557889772cdcd560a7ad9d500",
-      "backAssetId": "object-back"
+      "sha256": "06ab4e2457f9b1617666af0c151c57b4b2189788931e9891bf89ef48c3404365",
+      "backAssetId": "object-back",
+      "scanSha256": "80a54dbba758cd562dc82d5eda18294fcdc9b49557889772cdcd560a7ad9d500",
+      "pixelEditing": {
+        "method": "外轮廓内保留不透明，内缩 2 像素清除扫描白晕，圆角外透明；仅最外侧抗锯齿过渡取邻近牌内颜色。",
+        "paddingTop": 0,
+        "interiorUnchanged": true
+      }
     },
     {
       "id": "object-011",
@@ -858,8 +990,14 @@
         847,
         1438
       ],
-      "sha256": "e111fcbf6d729f90bc949661486317f13368afc9fd7e60a63530975b1aa7dab2",
-      "backAssetId": "object-back"
+      "sha256": "0625f34bfc3eb1b3d82f51fd78b7dedbf0843d36a2c5600c32779dea25b49033",
+      "backAssetId": "object-back",
+      "scanSha256": "e111fcbf6d729f90bc949661486317f13368afc9fd7e60a63530975b1aa7dab2",
+      "pixelEditing": {
+        "method": "外轮廓内保留不透明，内缩 2 像素清除扫描白晕，圆角外透明；仅最外侧抗锯齿过渡取邻近牌内颜色。",
+        "paddingTop": 0,
+        "interiorUnchanged": true
+      }
     },
     {
       "id": "object-012",
@@ -895,8 +1033,14 @@
         843,
         1439
       ],
-      "sha256": "9538f482853b36703dd986de0ff74327563f139c8371300ed5dc25b2029e650e",
-      "backAssetId": "object-back"
+      "sha256": "3a54047ca4dee20de89a4db3db81c13f0c5811c1b53887295e45ba24ce418d8d",
+      "backAssetId": "object-back",
+      "scanSha256": "9538f482853b36703dd986de0ff74327563f139c8371300ed5dc25b2029e650e",
+      "pixelEditing": {
+        "method": "外轮廓内保留不透明，内缩 2 像素清除扫描白晕，圆角外透明；仅最外侧抗锯齿过渡取邻近牌内颜色。",
+        "paddingTop": 0,
+        "interiorUnchanged": true
+      }
     },
     {
       "id": "object-013",
@@ -932,8 +1076,14 @@
         847,
         1439
       ],
-      "sha256": "161db978700b1e0bca1031960c3eab70d0337e4076e83ce543b19586e6918637",
-      "backAssetId": "object-back"
+      "sha256": "89d441a2e8a5fb86f2f424bdef143a2eb4c9706394f6a7075dbffba18b23ae6b",
+      "backAssetId": "object-back",
+      "scanSha256": "161db978700b1e0bca1031960c3eab70d0337e4076e83ce543b19586e6918637",
+      "pixelEditing": {
+        "method": "外轮廓内保留不透明，内缩 2 像素清除扫描白晕，圆角外透明；仅最外侧抗锯齿过渡取邻近牌内颜色。",
+        "paddingTop": 0,
+        "interiorUnchanged": true
+      }
     },
     {
       "id": "object-014",
@@ -969,8 +1119,14 @@
         844,
         1439
       ],
-      "sha256": "980c1fd1d93ece4fc7210067554100161db5326f91ae5a3de52baa56f370208b",
-      "backAssetId": "object-back"
+      "sha256": "d16cc26f50c0f7697aaacdc588547e30e8b3f81a0877a656f8b15141237d6cf1",
+      "backAssetId": "object-back",
+      "scanSha256": "980c1fd1d93ece4fc7210067554100161db5326f91ae5a3de52baa56f370208b",
+      "pixelEditing": {
+        "method": "外轮廓内保留不透明，内缩 2 像素清除扫描白晕，圆角外透明；仅最外侧抗锯齿过渡取邻近牌内颜色。",
+        "paddingTop": 0,
+        "interiorUnchanged": true
+      }
     },
     {
       "id": "object-back",
@@ -1006,7 +1162,13 @@
         845,
         1440
       ],
-      "sha256": "7a2564f2ca23dda90cbb2db79a3d15f1a394fa7b23c7a9d0dd67b58a69e126ae"
+      "sha256": "1381548bdd6c5bce53eee1970df33cecab4754c8300bf472622d41369705ce9e",
+      "scanSha256": "7a2564f2ca23dda90cbb2db79a3d15f1a394fa7b23c7a9d0dd67b58a69e126ae",
+      "pixelEditing": {
+        "method": "外轮廓内保留不透明，内缩 2 像素清除扫描白晕，圆角外透明；仅最外侧抗锯齿过渡取邻近牌内颜色。",
+        "paddingTop": 0,
+        "interiorUnchanged": true
+      }
     },
     {
       "id": "spirit-poltergeist",
@@ -1042,8 +1204,14 @@
         846,
         1442
       ],
-      "sha256": "ed08d7833327daa873f46038761e7ca01a87e05d4b5d5c47078bb0cef1886a91",
-      "backAssetId": "spirit-back"
+      "sha256": "93e848bab4df1fee3b9a9659c7b34cd6921c738631876cc2ae46d29664cb6b97",
+      "backAssetId": "spirit-back",
+      "scanSha256": "ed08d7833327daa873f46038761e7ca01a87e05d4b5d5c47078bb0cef1886a91",
+      "pixelEditing": {
+        "method": "按同类卡牌圆角轮廓去白底，外缘不足处仅用本牌底部黑边纹理补齐；图案与文字区域不重绘。",
+        "paddingTop": 0,
+        "interiorUnchanged": true
+      }
     },
     {
       "id": "spirit-revenant",
@@ -1079,8 +1247,14 @@
         837,
         1447
       ],
-      "sha256": "95cfa2a6a1078ef43169cc68fdfb50efd626a8422c2ea5672ae0fb5e4b2aa13f",
-      "backAssetId": "spirit-back"
+      "sha256": "d41646e50e716ece377ff858736638c1db7bbc44f4a33d937e0419aabbb0a2d1",
+      "backAssetId": "spirit-back",
+      "scanSha256": "95cfa2a6a1078ef43169cc68fdfb50efd626a8422c2ea5672ae0fb5e4b2aa13f",
+      "pixelEditing": {
+        "method": "按同类卡牌圆角轮廓去白底，外缘不足处仅用本牌底部黑边纹理补齐；图案与文字区域不重绘。",
+        "paddingTop": 0,
+        "interiorUnchanged": true
+      }
     },
     {
       "id": "spirit-phantasm",
@@ -1116,9 +1290,15 @@
         849,
         1447
       ],
-      "sha256": "3b667a18053a8f63a7166084c73d02826193d06c0fd077b1d876a61fa416a928",
+      "sha256": "1b297655709d211ff3f2092c66abff7309666f53aa6e2e6cbb289c355a267f10",
       "backAssetId": "spirit-back",
-      "sourceNote": "原扫描触及右侧页边，卡缘可能轻微缺失；未生成补边或补绘。"
+      "sourceNote": "原扫描左上黑边被页边截为斜线；已用本牌黑边纹理补齐，文字与图案保持原像素。",
+      "scanSha256": "3b667a18053a8f63a7166084c73d02826193d06c0fd077b1d876a61fa416a928",
+      "pixelEditing": {
+        "method": "按同类卡牌圆角轮廓去白底，外缘不足处仅用本牌底部黑边纹理补齐；图案与文字区域不重绘。修复左上角被截成斜线的黑边。",
+        "paddingTop": 0,
+        "interiorUnchanged": true
+      }
     },
     {
       "id": "spirit-apparition",
@@ -1154,8 +1334,14 @@
         844,
         1439
       ],
-      "sha256": "dc34ee346ebaf9cf670999fe371ba412370c2267ec8955145d0eab2275256173",
-      "backAssetId": "spirit-back"
+      "sha256": "a483cddc46c2a07cd8db08646c3bcb60d9512cb87420b0e7d31afdaa88714878",
+      "backAssetId": "spirit-back",
+      "scanSha256": "dc34ee346ebaf9cf670999fe371ba412370c2267ec8955145d0eab2275256173",
+      "pixelEditing": {
+        "method": "按同类卡牌圆角轮廓去白底，外缘不足处仅用本牌底部黑边纹理补齐；图案与文字区域不重绘。",
+        "paddingTop": 0,
+        "interiorUnchanged": true
+      }
     },
     {
       "id": "spirit-wraith",
@@ -1189,11 +1375,17 @@
       "rotationCounterClockwise": 90,
       "pixelSize": [
         847,
-        1427
+        1449
       ],
-      "sha256": "379f19c219eb617dcde94b5848f3658ffc3e2ca01ae654a89d681c1f4131d5dd",
+      "sha256": "887fcf2ba602af1697e663fb8909ab9e0b5bedd14f9b640cd393e0e89cc823df",
       "backAssetId": "spirit-back",
-      "sourceNote": "原扫描触及右侧页边，卡缘可能轻微缺失；未生成补边或补绘。"
+      "sourceNote": "原扫描上方黑边被页边截断；顶部补 22 像素黑边，原内容未缩放或重绘。",
+      "scanSha256": "379f19c219eb617dcde94b5848f3658ffc3e2ca01ae654a89d681c1f4131d5dd",
+      "pixelEditing": {
+        "method": "按同类卡牌圆角轮廓去白底，外缘不足处仅用本牌底部黑边纹理补齐；图案与文字区域不重绘。顶部扩展 22 像素补齐被扫描截断的黑边，原内容整体下移 22 像素。",
+        "paddingTop": 22,
+        "interiorUnchanged": true
+      }
     },
     {
       "id": "spirit-banshee",
@@ -1229,8 +1421,14 @@
         837,
         1448
       ],
-      "sha256": "cecee41824ff6ff44695059fb795fb6c2cb838ebd0df1b0ff4b57bf00983240f",
-      "backAssetId": "spirit-back"
+      "sha256": "7dce59a94d1b8f828d8e00b7c2fa13ab4c5b49d7f9fdb260f8c510684e6d3f03",
+      "backAssetId": "spirit-back",
+      "scanSha256": "cecee41824ff6ff44695059fb795fb6c2cb838ebd0df1b0ff4b57bf00983240f",
+      "pixelEditing": {
+        "method": "按同类卡牌圆角轮廓去白底，外缘不足处仅用本牌底部黑边纹理补齐；图案与文字区域不重绘。",
+        "paddingTop": 0,
+        "interiorUnchanged": true
+      }
     },
     {
       "id": "spirit-specter",
@@ -1266,8 +1464,14 @@
         846,
         1448
       ],
-      "sha256": "7873bd594e3164d74d007a57807c26e040b1ed2edd767118b870b85aa06d509c",
-      "backAssetId": "spirit-back"
+      "sha256": "541ff8e2818d887eae8a99ebf8746e9e2327b0e6100d0912f0b10f73960c2ceb",
+      "backAssetId": "spirit-back",
+      "scanSha256": "7873bd594e3164d74d007a57807c26e040b1ed2edd767118b870b85aa06d509c",
+      "pixelEditing": {
+        "method": "按同类卡牌圆角轮廓去白底，外缘不足处仅用本牌底部黑边纹理补齐；图案与文字区域不重绘。",
+        "paddingTop": 0,
+        "interiorUnchanged": true
+      }
     },
     {
       "id": "spirit-drowned",
@@ -1303,8 +1507,14 @@
         845,
         1438
       ],
-      "sha256": "6a3bbab24b9ff24198563ba13fde1e8e0043a30e8b2329747e054723acbe7ba3",
-      "backAssetId": "spirit-back"
+      "sha256": "5f8083ae3d10c427dc808a88d7145d46801dd81c470c615a1bee9710b59c0629",
+      "backAssetId": "spirit-back",
+      "scanSha256": "6a3bbab24b9ff24198563ba13fde1e8e0043a30e8b2329747e054723acbe7ba3",
+      "pixelEditing": {
+        "method": "按同类卡牌圆角轮廓去白底，外缘不足处仅用本牌底部黑边纹理补齐；图案与文字区域不重绘。",
+        "paddingTop": 0,
+        "interiorUnchanged": true
+      }
     },
     {
       "id": "spirit-ghost",
@@ -1340,9 +1550,15 @@
         847,
         1446
       ],
-      "sha256": "57fcfb9f474e8ac9d2628c7bd69c84531b1a6d2715c28957cead551b66de4540",
+      "sha256": "627ad70f0c8c1afe5c8b5b7ddb2f0f27ef96b8e9c1a35784b816861d2c02cf08",
       "backAssetId": "spirit-back",
-      "sourceNote": "原扫描触及右侧页边，卡缘可能轻微缺失；未生成补边或补绘。"
+      "sourceNote": "原扫描贴近页边；已检查并整理外侧圆角黑边，文字与图案完整。",
+      "scanSha256": "57fcfb9f474e8ac9d2628c7bd69c84531b1a6d2715c28957cead551b66de4540",
+      "pixelEditing": {
+        "method": "按同类卡牌圆角轮廓去白底，外缘不足处仅用本牌底部黑边纹理补齐；图案与文字区域不重绘。",
+        "paddingTop": 0,
+        "interiorUnchanged": true
+      }
     },
     {
       "id": "spirit-shade",
@@ -1378,8 +1594,14 @@
         840,
         1448
       ],
-      "sha256": "bf9aeb7af28f7101ab85ffd47d281414a9317c58724c3bf5d5dcc45ac8afea1b",
-      "backAssetId": "spirit-back"
+      "sha256": "69a08524bc61815644fd94f535d280bf401d9379b3994e58e43290898cadec2f",
+      "backAssetId": "spirit-back",
+      "scanSha256": "bf9aeb7af28f7101ab85ffd47d281414a9317c58724c3bf5d5dcc45ac8afea1b",
+      "pixelEditing": {
+        "method": "按同类卡牌圆角轮廓去白底，外缘不足处仅用本牌底部黑边纹理补齐；图案与文字区域不重绘。",
+        "paddingTop": 0,
+        "interiorUnchanged": true
+      }
     },
     {
       "id": "spirit-ghoul",
@@ -1415,8 +1637,14 @@
         847,
         1439
       ],
-      "sha256": "fb03458d3d6b177cc40a8166408fc9845e3d9ecb4339b9a0e33a9a43647efcc6",
-      "backAssetId": "spirit-back"
+      "sha256": "0aee735035bebde8112613b76080168825cd60fdc6af9c70936d98c76763bbeb",
+      "backAssetId": "spirit-back",
+      "scanSha256": "fb03458d3d6b177cc40a8166408fc9845e3d9ecb4339b9a0e33a9a43647efcc6",
+      "pixelEditing": {
+        "method": "按同类卡牌圆角轮廓去白底，外缘不足处仅用本牌底部黑边纹理补齐；图案与文字区域不重绘。",
+        "paddingTop": 0,
+        "interiorUnchanged": true
+      }
     },
     {
       "id": "spirit-evil-spirit",
@@ -1452,8 +1680,14 @@
         845,
         1438
       ],
-      "sha256": "aa01ee17904a74c1de28191ab635eea98d226878641a9812e5ebd0c67e082823",
-      "backAssetId": "spirit-back"
+      "sha256": "a0492836dc5cfa3d2720349a024a43b9450e684f3cf129cbca4636d6758c8bd1",
+      "backAssetId": "spirit-back",
+      "scanSha256": "aa01ee17904a74c1de28191ab635eea98d226878641a9812e5ebd0c67e082823",
+      "pixelEditing": {
+        "method": "按同类卡牌圆角轮廓去白底，外缘不足处仅用本牌底部黑边纹理补齐；图案与文字区域不重绘。",
+        "paddingTop": 0,
+        "interiorUnchanged": true
+      }
     },
     {
       "id": "spirit-back",
@@ -1489,7 +1723,13 @@
         845,
         1440
       ],
-      "sha256": "3749d7b43b28927471d83480f0d5e20e5860a1098d01d3c4e55c3293b86784c3"
+      "sha256": "7de62af688291e85afc730e0568d1b7fe62f53b39931e14fbe9b31c208b61ab4",
+      "scanSha256": "3749d7b43b28927471d83480f0d5e20e5860a1098d01d3c4e55c3293b86784c3",
+      "pixelEditing": {
+        "method": "外轮廓内保留不透明，内缩 2 像素清除扫描白晕，圆角外透明；仅最外侧抗锯齿过渡取邻近牌内颜色。",
+        "paddingTop": 0,
+        "interiorUnchanged": true
+      }
     }
   ]
 }
