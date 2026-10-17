@@ -84,10 +84,11 @@ for i in range(1,15):
 for i in range(1,13):entity('observation'+str(i),props={'count':0,'viewHidden':1})
 for i in range(1,4):
     sprite('mark'+str(i),['marker'],['完成'],750+(i-1)*50,415,16,16,viewHidden=1,viewLayer=10)
+    sprite('challenge-area'+str(i),None,['挑战'],844+(i-1)*59,428,46,52,viewHidden=1)
 for name,x in [('luck',85),('resolve',115),('knowledge',145),('health',175)]:
     sprite('track-'+name,['marker'],[name],x,575,12,12,viewLayer=10)
 entity('status',['第 {game} 局　声望 {score}　健康 {health}\n幸运 {luck}　决心 {resolve}　知识 {knowledge}'],x=490,y=55,props=dict(viewStyle=1,viewWidth=650,viewHeight=60,viewLabel=1,viewLabelY=-20,viewPassive=1,game=1,score=0,health=0,luck=0,resolve=0,knowledge=0))
-hints=['选择角色、职业和玩法，然后开始调查。','处理完本层才能向上一层：选择一件咒物。','新能力已揭露：选择支付方式。','初始掷骰修正：选择是否抵抗。','保留骰子：双击选中要重掷的骰子，或全部保持。','双击骰子选择；可完成下方列出的挑战，或调整、保留、使用奖励。','挑战完成：立即选择一项属性奖励。','回合结束：选择能力的扣除方式。','首局完成，进入第二局继续战役。','全部遭遇结算，调查成功！可翻阅日志，再点击下方返回标题。','健康耗尽，调查结束。可翻阅日志，再点击下方返回标题。','本回合挑战已完成：可以安排剩余骰子、使用奖励，然后结束回合。','命运机器：先双击选择一颗初始骰子，锁定本回合的惩罚点数。','骰池已空：可以使用尚未用的捕获奖励，或结束回合。','遭遇已结算：安排剩余骰子，结束回合后选择下一件咒物。']
+hints=['选择角色、职业和玩法，然后开始调查。','处理完本层才能向上一层：选择一件咒物。','新能力已揭露：选择支付方式。','初始掷骰修正：选择是否抵抗。','保留骰子：点击选中要重掷的骰子，或全部保持。','点击骰子选择；可点击牌面亮起的挑战项，或调整、保留、使用奖励。','挑战完成：立即选择一项属性奖励。','回合结束：选择能力的扣除方式。','首局完成，进入第二局继续战役。','全部遭遇结算，调查成功！可翻阅日志，再点击牌桌上的返回标题。','健康耗尽，调查结束。可翻阅日志，再点击牌桌上的返回标题。','本回合挑战已完成：可以安排剩余骰子、使用奖励，然后结束回合。','命运机器：先点击选择一颗初始骰子，锁定本回合的惩罚点数。','骰池已空：可以使用尚未用的捕获奖励，或结束回合。','遭遇已结算：安排剩余骰子，结束回合后选择下一件咒物。']
 entity('hint',hints,x=520,y=820,props=dict(viewStyle=1,viewWidth=900,viewHeight=35,viewLabel=1,viewLabelY=-12,viewPassive=1))
 container('objectDeck',['object'+str(i) for i in range(1,15)])
 container('discard',[])
@@ -112,7 +113,7 @@ for i in range(1,4):
     entities['mark'+str(i)].update(x=850+(i-1)*52,y=465)
     entities['mark'+str(i)]['properties'].update(viewWidth=8,viewHeight=8)
 for i in range(1,15):sprite('captured'+str(i),['object-%03d'%i],[objects[i-1][0]],65+(i-1)%4*65,555+(i-1)//4*76,36,62,viewHidden=1)
-for id,text,x,y,w in [('heading','咒物调查员  /  THE INVESTIGATOR’S DESK',60,48,970),('personal','调查员档案',50,130,240),('tiers','遭遇目录  ·  由下至上调查',340,130,370),('active','当前遭遇',760,130,290),('captures','封存物件  /  已结算',50,510,240),('pool','骰子池  ·  双击选择，下方执行动作',340,698,690)]:
+for id,text,x,y,w in [('heading','咒物调查员  /  THE INVESTIGATOR’S DESK',60,48,970),('personal','调查员档案',50,130,240),('tiers','遭遇目录  ·  由下至上调查',340,130,370),('active','当前遭遇',760,130,290),('captures','咒物奖励  ·  点击使用',50,510,240),('pool','骰子池  ·  点击骰子，再选择职业格或挑战项',340,698,690)]:
     entity('label-'+id,[text],x=x+w/2,y=y,props=dict(viewStyle=1,viewWidth=w,viewHeight=25,viewLabel=1,viewLabelY=-10,viewPassive=1,viewColor=0xCDBB92))
 entities['status'].update(x=550,y=83)
 entities['hint'].update(x=550,y=840)
@@ -159,7 +160,25 @@ tracks.append(dict(entity='deck',keys=[dict(timeMs=0,x=0,y=0,rotation=0),dict(ti
 animations={'format':1,'clips':[dict(id='deal',trigger={'entity':'match','property':'dealSerial'},tracks=tracks)]}
 files={name:json.dumps(value,ensure_ascii=False,indent=2)+'\n' for name,value in {'position.json':state,'game.start.json':startup,'flow.json':flow,'animations.json':animations,'presentation.json':dict(title='咒物调查员 · 调查档案',help='标准单人：从下层开始，捕获全部六个咒物并击败对应咒灵。\n战役：首局后保留日志和未用奖励，第二局七个遭遇。\n每回合至多完成一项挑战，立即获得幸运／决心／知识之一（初学者可选健康）。\n掷骰数量＝知识－保留骰子。每回合一次免费重掷；幸运重掷，决心改点。\n职业格每格一骰，立即获得二选一效果，留到下回合。\n未完成挑战的回合结束失去健康，另结算已揭露能力。\n咒物三项完成后奖励可用、咒物效果停止；击败咒灵才记录捕获与声望。\n属性按格移动，知识有重复数值。健康到骷髅即失败。\n点骰选中后调整／花费；未选择骰子时挑战自动选一组合法骰子。\n所有缺失边界采用本 sample 的 RULINGS.md，不声称官方补充规则。',showActions=True)}.items()}
 files.update({'game.lua':data+logic,'rules.lua':None,'cpu.lua':None})
-presentation=json.loads(files['presentation.json']);presentation.update(width=1820,height=1000,statusEntity='hint',showActions=False,actionTray=True,endActionLabel='返回标题')
+presentation=json.loads(files['presentation.json']);presentation.update(width=1820,height=1000,statusEntity='hint',showActions=False,actionTray=False,endActionLabel='返回标题')
+def region(kind,label,x,y,w,h,**opts):return dict(kind=kind,label=label,x=x,y=y,width=w,height=h,**opts)
+regions=[
+    region('target','调查',0,0,0,0,anchor='{entity}',direct=True,outline=True),
+    region('select','',0,0,0,0,anchor='{entity}',direct=True,outline=True),
+    region('adjust','−',0,48,20,22,anchor='{entity}',value=-1,direct=True),
+    region('adjust','+',24,48,20,22,anchor='{entity}',value=1,direct=True),
+    region('reroll','重掷所选骰子',785,700,250,32),
+    region('clear','取消选择',785,740,110,30,direct=True),
+    region('end','结束回合',785,782,250,32,direct=True),
+    region('ready','确认保留骰子',390,705,330,40,direct=True),
+    region('machine','锁定点数',785,660,250,32,direct=True),
+    region('reward','奖励',0,0,0,0,anchor='captured{value}',outline=True),
+]
+for i in range(1,5):regions.append(region('store','保留',48+43*((i-1)%2),325+42*((i-1)//2),40,40,target=str(i),outline=True))
+regions.append(region('challenge','',0,0,0,0,anchor='challenge-area{value}',direct=True,outline=True))
+for kind,label in [('choice','选择能力的支付方式'),('initial','初始掷骰：抵抗能力'),('attribute','选择挑战奖励'),('nextGame','首局完成：继续战役')]:
+    regions.append(region(kind,label,350,340,400,50,autoOpen=True))
+presentation['boardActions']=dict(width=1100,height=870,regions=regions,endRegion=dict(x=785,y=782,width=250,height=32))
 presentation['setup']=dict(entity='match',property='stage',value=1,steps=[
     dict(title='咒物调查员',text='CURSED INVESTIGATORS\n一张书桌，一份档案，六件等待封存的咒物。\n揭露隐藏的咒灵，运用骰子与职业能力，完成你的调查。',nextLabel='开始调查',actionKinds=[]),
     dict(title='选择模式',text='标准单人：完成六个遭遇。\n两局战役：保留调查日志与未用奖励，继续第二局的七个遭遇。\n初学者选项可与任一模式组合，挑战奖励增加恢复健康。',nextLabel='选择人物 →',actionKinds=['campaign','beginner']),

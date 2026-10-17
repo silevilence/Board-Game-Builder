@@ -5,7 +5,7 @@ public sealed record TableRect(float X,float Y,float Width,float Height)
 {
     public bool Contains(float x,float y) => x>=X && y>=Y && x<X+Width && y<Y+Height;
 }
-public sealed record TableItem(string? Entity, string Kind, string Label, TableRect Bounds, string? Resource=null,double PositionX=0,double PositionY=0,BoardLayout? Layout=null,string? Detail=null,string? Container=null,int Hotkey=0,int Mark=0,float SlotHeight=0,int Color=0xE3C887,int Layer=0,int LineX=0,int LineY=0,int LabelY=0,float Rotation=0)
+public sealed record TableItem(string? Entity, string Kind, string Label, TableRect Bounds, string? Resource=null,double PositionX=0,double PositionY=0,BoardLayout? Layout=null,string? Detail=null,string? Container=null,int Hotkey=0,int Mark=0,float SlotHeight=0,int Color=0xE3C887,int Layer=0,int LineX=0,int LineY=0,int LabelY=0,float Rotation=0,string? Action=null,IReadOnlyList<string>? ActionIds=null)
 {
     public (double X,double Y) MoveBy(float dx,float dy)
     {
@@ -15,7 +15,7 @@ public sealed record TableItem(string? Entity, string Kind, string Label, TableR
 }
 public sealed record TableScene(IReadOnlyList<TableItem> Items, ResourcePool Resources,BoardLayout? Layout=null,bool ClassicCards=false,IReadOnlyDictionary<string,int>? AnimationCues=null)
 {
-    public TableItem? Hit(float x,float y) => Items.LastOrDefault(i=>i.Entity!=null && i.Bounds.Contains(x,y));
+    public TableItem? Hit(float x,float y) => Items.LastOrDefault(i=>(i.Entity!=null || i.Action!=null) && i.Bounds.Contains(x,y));
     public TableItem? Region(float x,float y) => Items.FirstOrDefault(i=>i.Kind=="region" && i.Bounds.Contains(x,y));
     public static TableScene From(SeatView projection,ResourcePool? resources=null)
     {

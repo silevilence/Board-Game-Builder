@@ -23,7 +23,7 @@
 命令在前，`--project` 等选项在后。以下从仓库根目录执行；导出目标必须不存在：
 
 ```powershell
-$bgb = './artifacts/cursed-investigators/title-v11/bgb.exe'
+$bgb = './artifacts/cursed-investigators/board-v13/bgb.exe'
 & $bgb operations --project samples/cursed-investigators
 & $bgb describe files.write --project samples/cursed-investigators
 python samples/cursed-investigators/tools/build-project.py .scratch/cursed-edits.json
@@ -48,7 +48,15 @@ python samples/cursed-investigators/tools/build-project.py .scratch/cursed-edits
 独立运行验证使用既有 Player 入口，自动执行同一套合法真人动作并重开一次：
 
 ```powershell
-./artifacts/cursed-investigators/player-title-v11/Play.exe gui --smoke .scratch/investigator-player-check.json --actions docs/validation/evidence/cursed-investigators/sample/winning-actions.json
+./artifacts/cursed-investigators/player-board-v13/Play.exe gui --smoke .scratch/investigator-player-check.json --actions docs/validation/evidence/cursed-investigators/sample/winning-actions.json
 ```
 
 它会完成两局后关闭窗口并写入结果；正常游玩直接双击 `Play.exe`。标题版包的运行指纹为 `D266D5E4C7496A93F491A1EE42383E9D98C10884B5F5C4CF02E82EF8A96FBDFE`；上一版 v9 的证据仍保留为历史验收。
+
+## 牌桌直接操作追加
+
+本次重新编译完整 `artifacts/cursed-investigators/board-v13`，通过其 `bgb.exe call files.write` 应用牌桌区域、规则展示和提示文字；执行 `validate` 后，以 `export-player` 导出到 `artifacts/cursed-investigators/player-board-v13`。通用区域和局部菜单由内置 Player 实现，sample 只提供布局与合法动作绑定。没有新增 CLI 功能。
+
+既有独立 Player `--smoke` 验证入口在配置牌桌区域的模块中改为通过真实桌面坐标点击，包括菜单展开及翻页；开局选项仍经当前合法动作提交。详细结果见 [牌桌操作验收](../../docs/validation/cursed-investigators-board.md)。
+
+牌桌版 v13 的最终运行指纹为 `6F7BF5F1052DB8444399BF855CF1AE47A7EFFBA19AC4FF0A037E413952BB16EA`；独立正式 Player 连续两局获胜，1116 次牌桌点击和 4 次开局动作，最终状态一致。

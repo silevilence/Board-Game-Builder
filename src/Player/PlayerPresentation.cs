@@ -1,12 +1,13 @@
 using System.Text;
 using BoardGame.Kernel;
+using BoardGame.View;
 namespace BoardGame.Player;
 
 // Player-only metadata travels as a normal hashed module resource, outside rule state.
 public sealed record PlayerSetupStep(string Title,string Text,string NextLabel,string[] ActionKinds,string? PreviewEntity=null,string? SubmitKind=null);
 public sealed record PlayerSetup(string Entity,string Property,int Value,PlayerSetupStep[] Steps);
 public sealed record PlayerPresentation(string? Title=null,string? Help=null,bool ShowActions=true,int? Width=null,int? Height=null,string? StatusEntity=null,
-    bool ActionTray=false,PlayerSetup? Setup=null,string? EndActionLabel=null)
+    bool ActionTray=false,PlayerSetup? Setup=null,string? EndActionLabel=null,BoardActionMap? BoardActions=null)
 {
     public static PlayerPresentation Read(LoadedModule module)
     {
@@ -18,6 +19,7 @@ public sealed record PlayerPresentation(string? Title=null,string? Help=null,boo
         if(value.Width is <800 or >3840 || value.Height is <600 or >2160)throw new InvalidDataException("player.presentation: width 800..3840, height 600..2160 required");
         if(value.StatusEntity!=null && !module.Initial.Entities.ContainsKey(value.StatusEntity))throw new InvalidDataException("player.presentation: unknown statusEntity "+value.StatusEntity);
         if(value.EndActionLabel?.Length>120)throw new InvalidDataException("player.presentation: endActionLabel too long");
+        if(value.BoardActions is {} map)BoardGame.View.BoardActions.Validate(map,module);
         if(value.Setup is {} setup)
         {
             if(!module.Initial.Entities.TryGetValue(setup.Entity,out var entity) || !entity.Properties.ContainsKey(setup.Property)

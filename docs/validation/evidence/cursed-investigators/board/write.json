@@ -1,0 +1,32 @@
+{
+  "ok": true,
+  "requestId": "7b6d174fd226452e9995d519b4113eef",
+  "result": {
+    "requestId": "7b6d174fd226452e9995d519b4113eef",
+    "state": 0,
+    "saved": true,
+    "source": {
+      "identity": {
+        "directory": "C:\\code\\dotnet\\Board-Game-Builder\\samples\\cursed-investigators",
+        "profile": "builtin",
+        "mode": "disk",
+        "workspace": null,
+        "generation": 0
+      },
+      "version": "5D00B6911B88AABC337D38858107DE4FCF6ACA5DA281825F02951902A9B2EB4F"
+    },
+    "resultVersion": "5D00B6911B88AABC337D38858107DE4FCF6ACA5DA281825F02951902A9B2EB4F",
+    "diagnostics": [],
+    "appliedPaths": [
+      "position.json",
+      "game.start.json",
+      "flow.json",
+      "animations.json",
+      "presentation.json",
+      "game.lua",
+      "rules.lua",
+      "cpu.lua",
+      "documents.json"
+    ]
+  }
+}

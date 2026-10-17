@@ -1,0 +1,22 @@
+{
+  "productionFiles": 229,
+  "productionSourcesMatchRelease": true,
+  "files": [
+    {
+      "path": "artifacts/cursed-investigators/player-board-v13/Play.exe",
+      "sha256": "D73811D44905C1B13D1E89B98B489E5EE976734B17C7E40AF2ADF2C46142D0F9"
+    },
+    {
+      "path": "artifacts/cursed-investigators/player-board-v13/game.bgm",
+      "sha256": "6B8E0076400171E48F5D1AA980AC3FFE1858FA4CF458A5ED4C41C99DEB3D3CA9"
+    },
+    {
+      "path": "artifacts/cursed-investigators/player-board-v13/View.MonoGame.dll",
+      "sha256": "C9970176CCC65660840EAD1AD0F1479864104DC52BE430CF9CBDE598C6D0CC78"
+    },
+    {
+      "path": "artifacts/cursed-investigators/player-board-v13/View.Abstractions.dll",
+      "sha256": "B16F16741541B519B39D76FF36F7632CE0BBFD4352927AFFD420020BD80017A0"
+    }
+  ]
+}

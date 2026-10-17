@@ -1,12 +1,13 @@
 namespace BoardGame.View;
 
-public sealed record TableGesture(string Kind,string? Entity,string? Target,double X=0,double Y=0);
+public sealed record TableGesture(string Kind,string? Entity,string? Target,double X=0,double Y=0,string? Action=null);
 
 // Pure pointer state shared by all hosts. No game rules and no access to authority data.
 public sealed class TableInteraction
 {
     private TableScene scene=new([],BoardGame.Kernel.ResourcePool.Empty);
     private string? pressed, selectionAtDown;
+    private string? pressedAction;
     private bool down, moved, enabled=true;
     private float startX,startY;
     public string? Selected { get; private set; }
@@ -26,7 +27,7 @@ public sealed class TableInteraction
     public bool CanPeek(float x,float y)=>scene.Hit(x,y) is {Kind:"card",Entity:not null};
     public void Cancel(bool clearSelection=false)
     {
-        down=false; moved=false; pressed=null; selectionAtDown=null; Peeked=null; Target=null;
+        down=false; moved=false; pressed=null;pressedAction=null; selectionAtDown=null; Peeked=null; Target=null;
         if(clearSelection) Select(null);
     }
     public void Select(string? entity,string? target=null) { Selected=entity; Target=target; SelectionChanged?.Invoke(); }
@@ -40,23 +41,31 @@ public sealed class TableInteraction
         if(kind=="double-click")
         {
             Cancel(true);
+            if(hit?.Action!=null)return;
             if(hit is {Kind:not "region",Entity:not null}) Gesture?.Invoke(new("double-click",hit.Entity,null));
             return;
         }
         if(Peeked!=null) return;
         if(kind=="down")
         {
+            if(hit?.Action is {} action){Cancel();pressedAction=action;down=true;startX=x;startY=y;return;}
             Cancel(); selectionAtDown=Selected; pressed=hit?.Entity; down=true; startX=x; startY=y;
             if(Selected==null && hit is {Kind:not "region"}) Select(pressed);
         }
         if(kind=="move" && down)
         {
+            if(pressedAction!=null){moved|=Math.Abs(x-startX)+Math.Abs(y-startY)>8;return;}
             DeltaX=x-startX; DeltaY=y-startY;
             moved |= Math.Abs(DeltaX)+Math.Abs(DeltaY)>8;
             if(moved) { if(Selected!=pressed) Select(pressed); Target=scene.Region(x,y)?.Entity; }
         }
         if(kind=="up" && down)
         {
+            if(pressedAction is {} action)
+            {
+                var accepted=!moved && hit?.Action==action && Math.Abs(x-startX)+Math.Abs(y-startY)<=8;
+                Cancel();if(accepted)Gesture?.Invoke(new("action",null,null,Action:action));return;
+            }
             var entity=pressed; var previous=selectionAtDown;
             var wasMoved=moved || Math.Abs(x-startX)+Math.Abs(y-startY)>8;
             Cancel();

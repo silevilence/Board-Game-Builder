@@ -5,8 +5,205 @@
   "width": 1820,
   "height": 1000,
   "statusEntity": "hint",
-  "actionTray": true,
+  "actionTray": false,
   "endActionLabel": "返回标题",
+  "boardActions": {
+    "width": 1100,
+    "height": 870,
+    "regions": [
+      {
+        "kind": "target",
+        "label": "调查",
+        "x": 0,
+        "y": 0,
+        "width": 0,
+        "height": 0,
+        "anchor": "{entity}",
+        "direct": true,
+        "outline": true
+      },
+      {
+        "kind": "select",
+        "label": "",
+        "x": 0,
+        "y": 0,
+        "width": 0,
+        "height": 0,
+        "anchor": "{entity}",
+        "direct": true,
+        "outline": true
+      },
+      {
+        "kind": "adjust",
+        "label": "−",
+        "x": 0,
+        "y": 48,
+        "width": 20,
+        "height": 22,
+        "anchor": "{entity}",
+        "value": -1,
+        "direct": true
+      },
+      {
+        "kind": "adjust",
+        "label": "+",
+        "x": 24,
+        "y": 48,
+        "width": 20,
+        "height": 22,
+        "anchor": "{entity}",
+        "value": 1,
+        "direct": true
+      },
+      {
+        "kind": "reroll",
+        "label": "重掷所选骰子",
+        "x": 785,
+        "y": 700,
+        "width": 250,
+        "height": 32
+      },
+      {
+        "kind": "clear",
+        "label": "取消选择",
+        "x": 785,
+        "y": 740,
+        "width": 110,
+        "height": 30,
+        "direct": true
+      },
+      {
+        "kind": "end",
+        "label": "结束回合",
+        "x": 785,
+        "y": 782,
+        "width": 250,
+        "height": 32,
+        "direct": true
+      },
+      {
+        "kind": "ready",
+        "label": "确认保留骰子",
+        "x": 390,
+        "y": 705,
+        "width": 330,
+        "height": 40,
+        "direct": true
+      },
+      {
+        "kind": "machine",
+        "label": "锁定点数",
+        "x": 785,
+        "y": 660,
+        "width": 250,
+        "height": 32,
+        "direct": true
+      },
+      {
+        "kind": "reward",
+        "label": "奖励",
+        "x": 0,
+        "y": 0,
+        "width": 0,
+        "height": 0,
+        "anchor": "captured{value}",
+        "outline": true
+      },
+      {
+        "kind": "store",
+        "label": "保留",
+        "x": 48,
+        "y": 325,
+        "width": 40,
+        "height": 40,
+        "target": "1",
+        "outline": true
+      },
+      {
+        "kind": "store",
+        "label": "保留",
+        "x": 91,
+        "y": 325,
+        "width": 40,
+        "height": 40,
+        "target": "2",
+        "outline": true
+      },
+      {
+        "kind": "store",
+        "label": "保留",
+        "x": 48,
+        "y": 367,
+        "width": 40,
+        "height": 40,
+        "target": "3",
+        "outline": true
+      },
+      {
+        "kind": "store",
+        "label": "保留",
+        "x": 91,
+        "y": 367,
+        "width": 40,
+        "height": 40,
+        "target": "4",
+        "outline": true
+      },
+      {
+        "kind": "challenge",
+        "label": "",
+        "x": 0,
+        "y": 0,
+        "width": 0,
+        "height": 0,
+        "anchor": "challenge-area{value}",
+        "direct": true,
+        "outline": true
+      },
+      {
+        "kind": "choice",
+        "label": "选择能力的支付方式",
+        "x": 350,
+        "y": 340,
+        "width": 400,
+        "height": 50,
+        "autoOpen": true
+      },
+      {
+        "kind": "initial",
+        "label": "初始掷骰：抵抗能力",
+        "x": 350,
+        "y": 340,
+        "width": 400,
+        "height": 50,
+        "autoOpen": true
+      },
+      {
+        "kind": "attribute",
+        "label": "选择挑战奖励",
+        "x": 350,
+        "y": 340,
+        "width": 400,
+        "height": 50,
+        "autoOpen": true
+      },
+      {
+        "kind": "nextGame",
+        "label": "首局完成：继续战役",
+        "x": 350,
+        "y": 340,
+        "width": 400,
+        "height": 50,
+        "autoOpen": true
+      }
+    ],
+    "endRegion": {
+      "x": 785,
+      "y": 782,
+      "width": 250,
+      "height": 32
+    }
+  },
   "setup": {
     "entity": "match",
     "property": "stage",

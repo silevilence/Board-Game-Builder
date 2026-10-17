@@ -29,8 +29,38 @@ return ViewportApp.Run("Sample presentation verification",[],()=>
             {
                 for(var wait=0;table.AnimationBusy && wait<100;wait++)await Task.Delay(30);
                 var action=board.Frame.Actions.First(a=>a.Command.Kind==kind);
-                await board.Act(new("action",Action:action.Id),board.Frame.Revision);
+                await BoardClick(action.Id);
                 if(board.Frame.Fault!=null)throw new Exception(Wire.Json(board.Frame.Fault));
+            }
+            async Task BoardClick(string id)
+            {
+                var revision=board.Frame.Revision;
+                var scene=table.CurrentScene;
+                var mapped=scene.Items.SelectMany(i=>i.ActionIds??[]).ToHashSet();
+                if(board.Frame.Actions.Any(a=>!mapped.Contains(a.Id)))throw new Exception("Unmapped legal action: "+string.Join(",",board.Frame.Actions.Where(a=>!mapped.Contains(a.Id)).Select(a=>a.Label)));
+                for(var attempt=0;attempt<100;attempt++)
+                {
+                    scene=table.CurrentScene;
+                    bool Visible(TableItem i)=>scene.Hit(i.Bounds.X+i.Bounds.Width/2,i.Bounds.Y+i.Bounds.Height/2)==i;
+                    var item=scene.Items.LastOrDefault(i=>i.Action=="offer:"+id && Visible(i))
+                        ?? scene.Items.LastOrDefault(i=>i.Action?.StartsWith("menu:")==true && i.ActionIds?.Contains(id)==true && Visible(i))
+                        ?? scene.Items.LastOrDefault(i=>i.Action=="next" && Visible(i));
+                    if(item==null)throw new Exception("Unreachable board offer: "+id);
+                    Pointer(item);
+                    if(item.Action=="offer:"+id)
+                    {
+                        for(var wait=0;board.Frame.Revision==revision && board.Frame.Fault==null && wait<600;wait++)await Task.Delay(20);
+                        if(board.Frame.Revision!=revision+1 || board.Frame.Fault!=null)throw new Exception("Board click failed: "+Wire.Json(board.Frame.Fault));
+                        return;
+                    }
+                    if(board.Frame.Revision!=revision)throw new Exception("Opening menu changed authority");
+                }
+                throw new Exception("Board menu page limit");
+            }
+            void Pointer(TableItem item)
+            {
+                var x=item.Bounds.X+item.Bounds.Width/2;var y=item.Bounds.Y+item.Bounds.Height/2;
+                table.Pointer("down",x,y);table.Pointer("up",x,y);
             }
             void Capture(Control control,string name)
             {
@@ -78,7 +108,8 @@ return ViewportApp.Run("Sample presentation verification",[],()=>
                     var offer=board.Frame.Actions.SingleOrDefault(a=>Wire.Json(a.Command)==Wire.Json(command))
                         ?? throw new Exception("Unavailable recorded command: "+Wire.Json(command));
                     if(command.Kind=="start")await Click(setup,"开始游戏");
-                    else await board.Act(new("action",Action:offer.Id),board.Frame.Revision);
+                    else if(setup.IsVisible)await board.Act(new("action",Action:offer.Id),board.Frame.Revision);
+                    else await BoardClick(offer.Id);
                     if(board.Frame.Fault!=null)throw new Exception(Wire.Json(board.Frame.Fault));
                 }
                 if(!board.Frame.View.Ended || !board.Frame.View.Winners.Contains("p1"))throw new Exception("Recorded game did not win");
@@ -90,6 +121,13 @@ return ViewportApp.Run("Sample presentation verification",[],()=>
                 for(var wait=0;table.RenderedFrames==0 && renderError==null && wait<150;wait++)await Task.Delay(50);
                 if(table.RenderedFrames==0)throw new Exception("No game frame: "+renderError);
                 table.SaveImage(Path.Combine(output,"deal-moving.png"));
+                if(table.AnimationBusy)
+                {
+                    var during=board.Frame.Revision;
+                    Pointer(table.CurrentScene.Items.First(i=>i.Action?.StartsWith("offer:")==true));
+                    if(table.InputEnabled || board.Frame.Revision!=during)throw new Exception("Animation accepted input");
+                    checks.Add("board-click-blocked-during-deal");
+                }
                 await Task.Delay(1600);table.SaveImage(Path.Combine(output,"dealt.png"));
                 await Act("target");await Act("ready");await Task.Delay(250);table.SaveImage(Path.Combine(output,"encounter.png"));
                 var settings=board.Frame.View.Entities.Single(e=>e.Id=="match").Properties;
@@ -99,20 +137,28 @@ return ViewportApp.Run("Sample presentation verification",[],()=>
             if(board.GetLogicalDescendants().OfType<DockPanel>().Any(p=>p.Width==250 && p.IsVisible))throw new Exception("Right action sidebar still visible");
             if(!scripted)
             {
-                var tray=board.GetLogicalDescendants().OfType<WrapPanel>().Single(p=>p.IsEffectivelyVisible && p.Children.OfType<Button>().Any(b=>b.Content?.ToString()==board.Frame.Actions.First().Label));
-                var labels=tray.Children.OfType<Button>().Select(b=>b.Content?.ToString()).ToHashSet();
-                if(board.Frame.Actions.Any(a=>!labels.Contains(a.Label)))throw new Exception("Legal actions missing from bottom tray");
+                if(board.GetLogicalDescendants().OfType<WrapPanel>().Any(p=>p.IsEffectivelyVisible && p.Children.OfType<Button>().Any(b=>board.Frame.Actions.Any(a=>a.Label==b.Content?.ToString()))))throw new Exception("Operation tray still visible");
                 var stableBounds=table.Bounds;var changedBounds=false;
                 void BoundsChanged(object? sender,AvaloniaPropertyChangedEventArgs e){if(e.Property==Control.BoundsProperty && table.Bounds!=stableBounds)changedBounds=true;}
                 table.PropertyChanged+=BoundsChanged;
-                var revision=board.Frame.Revision;await Click(tray,board.Frame.Actions.First().Label);
+                var revision=board.Frame.Revision;await BoardClick(board.Frame.Actions.First().Id);
                 for(var wait=0;board.Frame.Revision==revision && wait<150;wait++)await Task.Delay(50);
                 table.PropertyChanged-=BoundsChanged;
-                if(board.Frame.Revision!=revision+1 || board.Frame.Fault!=null)throw new Exception("Bottom tray did not submit exactly one action");
+                if(board.Frame.Revision!=revision+1 || board.Frame.Fault!=null)throw new Exception("Board click did not submit exactly one action");
                 if(changedBounds)throw new Exception("Submitting an action resized the native viewport");
                 checks.Add("stable-viewport-during-action-submission");
+                await Task.Delay(100);table.SaveImage(Path.Combine(output,"selected-die.png"));
+                var menu=table.CurrentScene.Items.FirstOrDefault(i=>i.Action?.StartsWith("menu:")==true && i.ActionIds?.Any(id=>board.Frame.Actions.Any(a=>a.Id==id && a.Command.Kind=="store"))==true);
+                if(menu!=null)
+                {
+                    var beforeMenu=Wire.Json(board.Frame.View);Pointer(menu);await Task.Delay(100);
+                    table.SaveImage(Path.Combine(output,"profession-menu.png"));
+                    table.HandleShortcut("cancel");
+                    if(Wire.Json(board.Frame.View)!=beforeMenu || table.CurrentScene.Items.Any(i=>i.Kind=="ui-shade"))throw new Exception("Cancel menu changed state or failed to close");
+                    checks.Add("local-profession-menu-and-escape-without-authority-change");
+                }
             }
-            Capture(window,"game-window");checks.Add("hidden-right-actions-and-visible-bottom-tray");
+            Capture(window,"game-window");checks.Add("board-only-actions-without-side-or-bottom-tray");
             if(TableScene.From(board.Frame.View).Items.Any(i=>i.Kind=="region"))throw new Exception("Internal storage regions leaked onto table");
             if(table.RenderedFrames==0 || table.CachedImages<8)throw new Exception("Table did not render assets");
             checks.Add("real-player-deal-and-encounter-rendering");
@@ -126,7 +172,7 @@ return ViewportApp.Run("Sample presentation verification",[],()=>
             checks.Add("resized-window-rendering");
             if(scripted)
             {
-                Capture(window,"result");await Click(board,"返回标题");
+                Capture(window,"result");Pointer(table.CurrentScene.Items.Single(i=>i.Action=="host:new-game"));
                 PlayBoard? next=null;
                 for(var wait=0;wait<400 && (next==null || ReferenceEquals(next,board));wait++)
                 {await Task.Delay(50);next=window.GetLogicalDescendants().OfType<PlayBoard>().FirstOrDefault();}

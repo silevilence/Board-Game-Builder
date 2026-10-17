@@ -7,7 +7,7 @@ public static class ScenePainter
         renderer.ConfigureResources(scene.Resources);
         foreach(var cloth in scene.Items.Where(i=>i.Kind=="tablecloth"))
             if(cloth.Resource!=null) renderer.Image(cloth.Resource,scene.Resources,new((int)cloth.Bounds.X,(int)cloth.Bounds.Y,(int)cloth.Bounds.Width,(int)cloth.Bounds.Height));
-        if(scene.ClassicCards) { DrawClassic(renderer,scene,selected,target,peeked); return; }
+        if(scene.ClassicCards) { DrawClassic(renderer,scene,selected,target,peeked);DrawControls(renderer,scene); return; }
         if(scene.Layout is {Kind:not "free"} grid)
             for(var q=-2;q<10;q++) for(var r=-2;r<8;r++)
             {
@@ -20,7 +20,7 @@ public static class ScenePainter
                 }
             }
         var peek=scene.Items.FirstOrDefault(i=>i.Entity==peeked && i.Kind=="card");
-        foreach(var item in (peek==null?scene.Items:scene.Items.Append(peek)).Where(i=>i.Kind!="tablecloth"))
+        foreach(var item in (peek==null?scene.Items:scene.Items.Append(peek)).Where(i=>i.Kind!="tablecloth" && !i.Kind.StartsWith("ui-",StringComparison.Ordinal)))
         {
             var b=item.Bounds;
             if(item.Kind is "sprite" or "line" or "panel")
@@ -64,6 +64,29 @@ public static class ScenePainter
             if(item.Kind is not ("card" or "back") || item.Resource==null) renderer.Text(item.Label,(int)b.X+5,(int)b.Y+5,item.Kind=="card"?new Color(25,40,46):Color.White);
             if(item.Detail!=null) renderer.Text(item.Detail,(int)b.X+3,(int)b.Y+25,new Color(186,211,221));
         }
+        DrawControls(renderer,scene);
+    }
+    private static void DrawControls(TableRenderer r,TableScene scene)
+    {
+        var gold=new Color(226,196,130);var paper=new Color(245,232,196);
+        foreach(var item in scene.Items.Where(i=>i.Kind.StartsWith("ui-",StringComparison.Ordinal)))
+        {
+            var b=item.Bounds;var rect=new Rectangle((int)b.X,(int)b.Y,(int)b.Width,(int)b.Height);
+            if(item.Kind=="ui-shade"){r.Box(rect,new Color(3,13,16,175));continue;}
+            if(item.Kind=="ui-hotspot")
+            {
+                Outline(r,rect,gold,2);
+                if(item.Label.Length>0)
+                {r.Box(new(rect.X,rect.Bottom-20,rect.Width,20),new Color(18,40,38,235));r.Text(item.Label,rect.X+4,rect.Bottom-18,paper,12);}
+                continue;
+            }
+            if(item.Kind!="ui-caption")
+            {
+                r.Box(new(rect.X+3,rect.Y+4,rect.Width,rect.Height),new Color(0,0,0,100));
+                r.Box(rect,new Color(24,48,44));Outline(r,rect,gold,1);
+            }
+            r.Text(item.Label,rect.X+8,rect.Y+(item.Kind=="ui-panel"?12:Math.Max(3,(rect.Height-(item.Label.Contains('\n')?34:18))/2)),paper,13);
+        }
     }
     private static void DrawClassic(TableRenderer r,TableScene scene,string? selected,string? target,string? peeked)
     {
@@ -95,7 +118,7 @@ public static class ScenePainter
             if(slot.Hotkey>0) r.Text(slot.Hotkey.ToString(),x+w/2-5,y-24,new Color(92,170,110),12);
             if(slot.Entity==target) Outline(r,new(x-3,y-3,w+6,h+6),new Color(237,213,104),2);
         }
-        var cards=scene.Items.Where(i=>i.Kind is not ("region" or "tablecloth"));
+        var cards=scene.Items.Where(i=>i.Kind is not ("region" or "tablecloth") && !i.Kind.StartsWith("ui-",StringComparison.Ordinal));
         var peek=cards.FirstOrDefault(i=>i.Entity==peeked && i.Kind=="card");
         foreach(var item in peek==null?cards:cards.Append(peek)) DrawCard(r,scene,item,item.Entity==selected);
     }

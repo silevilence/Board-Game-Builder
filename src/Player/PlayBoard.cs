@@ -28,6 +28,10 @@ public sealed class PlayBoard : UserControl,IDisposable
     private readonly PlayerSetupView? setupView;
     private readonly Button returnButton=new(){Name="ReturnToTitle",Margin=new Thickness(8)};
     private readonly bool useTray;
+    private readonly BoardActions? boardActions;
+    private readonly string? endLabel;
+    private TableScene? baseScene;
+    internal bool UsesBoardActions=>boardActions!=null && panel.IsVisible;
     private bool disposed;
     private bool pumping;
     private string? hostError;
@@ -44,9 +48,11 @@ public sealed class PlayBoard : UserControl,IDisposable
         this.session=session; this.module=module;
         controlFont=new(this,module.Resources);
         documents=new(module.Resources ?? ResourcePool.Empty);
-        var presentation=PlayerPresentation.Read(module);statusEntity=presentation.StatusEntity;useTray=presentation.ActionTray;
+        var presentation=PlayerPresentation.Read(module);statusEntity=presentation.StatusEntity;
+        boardActions=presentation.BoardActions is {} map?new(map):null;endLabel=presentation.EndActionLabel;
+        useTray=boardActions==null && presentation.ActionTray;
         classic=TableScene.From(session.Frame.View).ClassicCards;
-        if(useTray || presentation.EndActionLabel!=null)
+        if(boardActions==null && (useTray || presentation.EndActionLabel!=null))
         {
             // Keep the native table's bounds stable while actions clear/reflow during a submission.
             // Resizing the native viewport recreates its graphics device and uploaded textures.
@@ -69,17 +75,28 @@ public sealed class PlayBoard : UserControl,IDisposable
         }
         else
         { DockPanel.SetDock(status,Dock.Top); side.Children.Add(status); DockPanel.SetDock(sound,Dock.Bottom); side.Children.Add(sound); side.Children.Add(new ScrollViewer {Content=actions}); }
-        side.IsVisible=showActions;
+        side.IsVisible=boardActions==null && showActions;
         DockPanel.SetDock(side,Dock.Right); panel.Children.Add(side);
         DockPanel.SetDock(documents,Dock.Right);panel.Children.Add(documents);panel.Children.Add(table);
         var root=new Grid();root.Children.Add(panel);
         if(presentation.Setup is {} setup){setupView=new(setup,module.Resources ?? ResourcePool.Empty,Act);root.Children.Add(setupView);}
         Content=root;
-        table.Gesture+=g=> { _=Act(new(g.Kind,g.Entity,g.Target,g.X,g.Y),session.Frame.Revision); };
+        table.Gesture+=g=>
+        {
+            if(g.Action is {} token && boardActions!=null)
+            {
+                if(session.Busy || table.AnimationBusy || hostError!=null || Frame.Fault!=null)return;
+                if(token=="host:new-game" && Frame.View.Ended){HostShortcut?.Invoke("new-game");return;}
+                if(boardActions.Activate(token) is {} id)_=Act(new("action",Action:id),Frame.Revision);
+                else ShowBoard();
+            }
+            else if(boardActions==null)_=Act(new(g.Kind,g.Entity,g.Target,g.X,g.Y),session.Frame.Revision);
+        };
         table.SelectionChanged+=RefreshActions;
         table.AnimationChanged+=RefreshActions;
         table.Shortcut+=key=>
         {
+            if(key=="cancel"){if(boardActions!=null){boardActions.Activate("close");ShowBoard();}return;}
             if(key is "new-game" or "restart" or "choose-seed") { HostShortcut?.Invoke(key); return; }
             if(key=="hint")
             {
@@ -98,7 +115,8 @@ public sealed class PlayBoard : UserControl,IDisposable
         var frame=session.Frame; var v=frame.View;
         panel.IsVisible=setupView?.Show(frame)!=true;
         documents.Show(v);
-        table.Show(TableScene.From(v,module.Resources)); table.InputEnabled=hostError==null && !session.Busy && !v.Ended && frame.Fault==null && !frame.Cpu;
+        baseScene=TableScene.From(v,module.Resources);boardActions?.Update(baseScene,frame.Actions);ShowBoard();
+        table.InputEnabled=hostError==null && !session.Busy && (!v.Ended || boardActions!=null) && frame.Fault==null && !frame.Cpu;
         status.Text=hostError ?? $"席位 {v.Seat} · 当前 {v.CurrentSeat}\n阶段 {v.Phase} · 行动 {v.Turn}\n"+
             (frame.Fault!=null?$"对局故障：{frame.Fault.Code}\n{frame.Fault.Detail}":v.Ended?$"对局结束\n胜者：{string.Join(", ",v.Winners)}":session.LastMessage);
         if(hostError==null && frame.Fault==null && statusEntity!=null)
@@ -120,6 +138,7 @@ public sealed class PlayBoard : UserControl,IDisposable
     }
     private void RefreshActions()
     {
+        if(boardActions!=null)return;
         var frame=session.Frame;
         actions.Children.Clear();
         quickActions.Children.Clear();
@@ -152,7 +171,39 @@ public sealed class PlayBoard : UserControl,IDisposable
     }
     public void HandleShortcut(string key)=>table.HandleShortcut(key);
     public void Fit()=>table.Fit();
-    public void ToggleActions()=>side.IsVisible=!side.IsVisible;
+    public void ToggleActions(){if(boardActions==null)side.IsVisible=!side.IsVisible;}
+    private void ShowBoard()
+    {
+        if(baseScene==null)return;
+        var scene=boardActions?.Present(baseScene,Frame.View.Ended,endLabel) ?? baseScene;
+        if(boardActions!=null && (hostError!=null || Frame.Fault!=null))
+            scene=scene with {Items=scene.Items.Append(new TableItem(null,"ui-panel",hostError ?? $"对局故障：{Frame.Fault!.Code}",new(160,250,740,180),Action:"noop")).ToArray()};
+        table.Show(scene);
+    }
+    // Drives the same pointer path as native input, used by the packaged smoke runner.
+    internal async Task ClickBoardAction(string id)
+    {
+        if(boardActions==null || Frame.Actions.Any(a=>!boardActions.MappedActions.Contains(a.Id)))throw new InvalidDataException("Unmapped board action");
+        var revision=Frame.Revision;
+        for(var attempt=0;attempt<100;attempt++)
+        {
+            var scene=table.CurrentScene;
+            bool Visible(TableItem item)=>scene.Hit(item.Bounds.X+item.Bounds.Width/2,item.Bounds.Y+item.Bounds.Height/2)==item;
+            var item=scene.Items.LastOrDefault(i=>i.Action=="offer:"+id && Visible(i))
+                ?? scene.Items.LastOrDefault(i=>i.Action?.StartsWith("menu:")==true && i.ActionIds?.Contains(id)==true && Visible(i))
+                ?? scene.Items.LastOrDefault(i=>i.Action=="next" && Visible(i));
+            if(item==null)throw new InvalidDataException("Board action not reachable: "+id);
+            var x=item.Bounds.X+item.Bounds.Width/2;var y=item.Bounds.Y+item.Bounds.Height/2;
+            table.Pointer("down",x,y);table.Pointer("up",x,y);
+            if(item.Action=="offer:"+id)
+            {
+                for(var wait=0;wait<600 && Frame.Revision==revision && Frame.Fault==null;wait++)await Task.Delay(20);
+                if(Frame.Revision!=revision+1 || Frame.Fault!=null)throw new InvalidDataException("Board click did not submit exactly once");
+                return;
+            }
+        }
+        throw new InvalidDataException("Board menu exceeded page limit");
+    }
     public void ToggleSound()=>sound.IsChecked=sound.IsChecked!=true;
     public async Task Act(InteractionIntent intent,long revision)
     {

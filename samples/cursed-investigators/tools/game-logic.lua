@@ -90,6 +90,13 @@ local function syncVisual()
     end
   end
   for i=1,3 do show('mark'..i,bit(M.objectDone==7 and M.spiritDone or M.objectDone,i)) end
+  for i=1,3 do
+    local spirit=M.objectDone==7 and M.spirit>0
+    local n=spirit and #SPIRITS[M.spirit].challenges or 3
+    local id='challenge-area'..i
+    show(id,M.stage==6 and i<=n)
+    move(id,spirit and (n==1 and 960 or 872+i*44) or 844+(i-1)*59,spirit and 302 or 428)
+  end
   for i,k in ipairs({'luck','resolve','knowledge','health'}) do
     local v=M[k];local x=({173,208,238,270})[i];local y=0
     if k=='health' then
@@ -392,7 +399,7 @@ local function afterReward(x)
   local completed=count(M.objectDone)
   for i=1,math.min(3,completed+1) do if M['cap'..i]==0 then disclose(i,SPIRITS[spirit].caps[i]) end end
   if M.objectDone==7 then
-    set('log'..M.object,'available',1);put('spirit',spirit)
+    set('log'..M.object,'available',1);show('captured'..M.object,true);put('spirit',spirit)
     show('encounter',false);face('manifestation',spirit-1);show('manifestation',true)
     if M.spiritDone==2^#SPIRITS[spirit].challenges-1 then
       set('log'..M.object,'captured',1);set('observation'..spirit,'count',E['observation'..spirit].properties.count+1)

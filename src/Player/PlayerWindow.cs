@@ -153,8 +153,10 @@ public sealed partial class PlayerWindow : Window
                             :commands!=null && offer.Gesture=="drag"
                                 ?new InteractionIntent("click",offer.Command.Entity,offer.Target)
                                 :new InteractionIntent("action",Action:offer.Id);
-                        inputCounts[intent.Kind]=inputCounts.GetValueOrDefault(intent.Kind)+1;
-                        await board.Act(intent,board.Frame.Revision);
+                        var inputKind=board.UsesBoardActions?"table-click":intent.Kind;
+                        inputCounts[inputKind]=inputCounts.GetValueOrDefault(inputKind)+1;
+                        if(board.UsesBoardActions)await board.ClickBoardAction(offer.Id);
+                        else await board.Act(intent,board.Frame.Revision);
                         interactionMs.Add(clock.Elapsed.TotalMilliseconds);
                     }
                     else break;

@@ -10,6 +10,7 @@ public sealed class InteractiveTable : UserControl, IDisposable
     private readonly System.Diagnostics.Stopwatch clock=System.Diagnostics.Stopwatch.StartNew();
     private bool requestedInput=true;
     public bool AnimationBusy=>animation.Busy;
+    public TableScene CurrentScene=>scene;
     public event Action? AnimationChanged;
     private readonly StackPanel controls=new() {Orientation=Avalonia.Layout.Orientation.Horizontal,Spacing=6};
     public string? Selected=>input.Selected;
@@ -51,19 +52,20 @@ public sealed class InteractiveTable : UserControl, IDisposable
         viewport.Input+=(kind,x,y)=>
         {
             if(kind=="error") { InputEnabled=false; RenderingError?.Invoke(viewport.Error ?? "Unknown graphics device error"); return; }
-            input.Pointer(kind,x,y);
+            Pointer(kind,x,y);
         };
         viewport.KeyPressed+=HandleShortcut;
     }
     public void HandleShortcut(string key)
     {
-        if(key=="cancel") { input.Cancel(true); return; }
+        if(key=="cancel") { input.Cancel(true);if(scene.Items.Any(i=>i.Action!=null))Shortcut?.Invoke(key); return; }
         if(key is "new-game" or "restart" or "choose-seed") { Shortcut?.Invoke(key); return; }
         if(!InputEnabled) return;
         if(int.TryParse(key,out var number) && number is >=1 and <=8) input.RegionKey(number);
         else Shortcut?.Invoke(key);
     }
     public void Hint(string? entity,string? target)=>input.Select(entity,target);
+    public void Pointer(string kind,float x,float y)=>input.Pointer(kind,x,y);
     public void Fit()=>viewport.Fit();
     public void SaveImage(string path)=>viewport.SaveImage(path);
     public void ChangeZoom(float factor)=>viewport.ChangeZoom(factor);
