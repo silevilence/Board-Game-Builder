@@ -1,0 +1,28 @@
+{
+  "success": true,
+  "release": "final-v9",
+  "productionSourcesChecked": 227,
+  "productionSourceMismatches": [],
+  "artifacts": [
+    {
+      "path": "artifacts/cursed-investigators/player/game.bgm",
+      "sha256": "f1b621bd4c9e301faeda6339c9524632239eedf8378d6a338a807debe292c42c",
+      "bytes": 89796257
+    },
+    {
+      "path": "artifacts/cursed-investigators/final-v9/bgb.exe",
+      "sha256": "defcba716ba8e3414baf836b3597c06038fc80436e4bb1be50dbb57ff9136b29",
+      "bytes": 162304
+    },
+    {
+      "path": "artifacts/cursed-investigators/player/Player.dll",
+      "sha256": "225b22a91ed039498a4bc3873b1ee3bd03bf95e93781ba1a69720dd9d56216dd",
+      "bytes": 159232
+    },
+    {
+      "path": "artifacts/cursed-investigators/player/Runtime.dll",
+      "sha256": "8a27f4909650f6cd2da009b865327e7bc0961a59a1dbcd81e23e96edb5bf6bae",
+      "bytes": 292352
+    }
+  ]
+}

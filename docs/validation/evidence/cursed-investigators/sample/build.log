@@ -1,0 +1,34 @@
+  Kernel.Abstractions -> C:\code\dotnet\Board-Game-Builder\src\Kernel.Abstractions\bin\Release\net10.0\Kernel.Abstractions.dll
+  Launcher.Core -> C:\code\dotnet\Board-Game-Builder\src\Launcher.Core\bin\Release\net10.0\Launcher.Core.dll
+  Modules -> C:\code\dotnet\Board-Game-Builder\src\Modules\bin\Release\net10.0\Modules.dll
+  Kernel -> C:\code\dotnet\Board-Game-Builder\src\Kernel\bin\Release\net10.0\Kernel.dll
+  Lua -> C:\code\dotnet\Board-Game-Builder\src\Lua\bin\Release\net10.0\Lua.dll
+  Toolkit.Entry -> C:\code\dotnet\Board-Game-Builder\src\Toolkit.Entry\bin\Release\net10.0\Toolkit.Entry.dll
+  Launcher.Cli -> C:\code\dotnet\Board-Game-Builder\src\Launcher.Cli\bin\Release\net10.0\bgb-launcher.dll
+  View.Abstractions -> C:\code\dotnet\Board-Game-Builder\src\View.Abstractions\bin\Release\net10.0\View.Abstractions.dll
+  Launcher.Tests -> C:\code\dotnet\Board-Game-Builder\tests\Launcher.Tests\bin\Release\net10.0\Launcher.Tests.dll
+  Runtime -> C:\code\dotnet\Board-Game-Builder\src\Runtime\bin\Release\net10.0\Runtime.dll
+  Networking -> C:\code\dotnet\Board-Game-Builder\src\Networking\bin\Release\net10.0\Networking.dll
+  View.MonoGame -> C:\code\dotnet\Board-Game-Builder\src\View.MonoGame\bin\Release\net10.0-windows\View.MonoGame.dll
+  Launcher -> C:\code\dotnet\Board-Game-Builder\src\Launcher\bin\Release\net10.0\Launcher.dll
+  View.Tests -> C:\code\dotnet\Board-Game-Builder\tests\View.Tests\bin\Release\net10.0-windows\View.Tests.dll
+  Editor.Compatibility -> C:\code\dotnet\Board-Game-Builder\tests\Editor.Compatibility\bin\Release\net10.0-windows\Editor.Compatibility.dll
+  Server -> C:\code\dotnet\Board-Game-Builder\src\Server\bin\Release\net10.0\Server.dll
+  Authoring -> C:\code\dotnet\Board-Game-Builder\src\Authoring\bin\Release\net10.0\Authoring.dll
+  CursedInvestigators.Tests -> C:\code\dotnet\Board-Game-Builder\tests\CursedInvestigators.Tests\bin\Release\net10.0\CursedInvestigators.Tests.dll
+  Player -> C:\code\dotnet\Board-Game-Builder\src\Player\bin\Release\net10.0-windows\Player.dll
+  NetworkClient -> C:\code\dotnet\Board-Game-Builder\src\NetworkClient\bin\Release\net10.0\NetworkClient.dll
+  Author.SamplePlugin -> C:\code\dotnet\Board-Game-Builder\samples\Author.SamplePlugin\bin\Release\net10.0\Author.SamplePlugin.dll
+  Cli -> C:\code\dotnet\Board-Game-Builder\src\Cli\bin\Release\net10.0\bgb.dll
+  CursedInvestigators.ViewTests -> C:\code\dotnet\Board-Game-Builder\tests\CursedInvestigators.ViewTests\bin\Release\net10.0-windows\CursedInvestigators.ViewTests.dll
+  Editor.Core -> C:\code\dotnet\Board-Game-Builder\src\Editor.Core\bin\Release\net10.0\Editor.Core.dll
+  Engine.Tests -> C:\code\dotnet\Board-Game-Builder\tests\Engine.Tests\bin\Release\net10.0\Engine.Tests.dll
+  Editor.AsyncProbe -> C:\code\dotnet\Board-Game-Builder\tests\Editor.AsyncProbe\bin\Release\net10.0-windows\Editor.AsyncProbe.dll
+  Editor -> C:\code\dotnet\Board-Game-Builder\src\Editor\bin\Release\net10.0-windows\Editor.dll
+  Editor.SamplePlugin -> C:\code\dotnet\Board-Game-Builder\samples\Editor.SamplePlugin\bin\Release\net10.0-windows\Editor.SamplePlugin.dll
+
+已成功生成。
+    0 个警告
+    0 个错误
+
+已用时间 00:00:34.00

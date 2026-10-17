@@ -1,0 +1,20 @@
+[
+  {
+    "seed": 1,
+    "steps": 369,
+    "ended": true,
+    "repeatMatches": true,
+    "replayMatches": true,
+    "fault": null,
+    "stateHash": "29B25FFAD88348EB37FB6044A0C8A35261C1457D250DF7A31407F77E020124FD"
+  },
+  {
+    "seed": 2,
+    "steps": 448,
+    "ended": true,
+    "repeatMatches": true,
+    "replayMatches": true,
+    "fault": null,
+    "stateHash": "F843AF667E4A1F1DE7739E7CE59DFD2BC731FAD07AF85ADFE93B093EB7E7796F"
+  }
+]

@@ -1,0 +1,2246 @@
+{
+  "ok": true,
+  "requestId": "8b923bb4eb5647f2844e95ceafb31633",
+  "result": {
+    "source": {
+      "identity": {
+        "directory": "C:\\code\\dotnet\\Board-Game-Builder\\samples\\cursed-investigators",
+        "profile": "builtin",
+        "mode": "disk",
+        "workspace": null,
+        "generation": 0
+      },
+      "version": "72BE55D28766F248CA6C6AFF41FF73EDED4BB50D12148071ED77463939095877"
+    },
+    "runs": [
+      {
+        "seed": 1,
+        "steps": 369,
+        "ended": true,
+        "reason": "ended",
+        "stateHash": "E8D6ACEFE9F4EB1C0B47C7184E6F18CB3FCE33CC0CCD9CAF84BFBD989B2FA206",
+        "repeatMatches": true,
+        "replayMatches": true,
+        "fault": null,
+        "diagnostics": [
+          {
+            "sequence": 3,
+            "actor": "p1",
+            "entry": "game.lua:decide",
+            "message": "{\u0022flowRevision\u0022:2,\u0022kind\u0022:\u0022start\u0022,\u0022entity\u0022:null,\u0022target\u0022:null,\u0022property\u0022:null,\u0022value\u0022:0,\u0022x\u0022:0,\u0022y\u0022:0,\u0022seat\u0022:null,\u0022phase\u0022:null,\u0022visibility\u0022:null,\u0022winners\u0022:null}"
+          },
+          {
+            "sequence": 7,
+            "actor": "p1",
+            "entry": "game.lua:decide",
+            "message": "{\u0022flowRevision\u0022:6,\u0022kind\u0022:\u0022target\u0022,\u0022entity\u0022:\u0022slot1\u0022,\u0022target\u0022:null,\u0022property\u0022:null,\u0022value\u0022:1,\u0022x\u0022:0,\u0022y\u0022:0,\u0022seat\u0022:null,\u0022phase\u0022:null,\u0022visibility\u0022:null,\u0022winners\u0022:null}"
+          },
+          {
+            "sequence": 16,
+            "actor": "p1",
+            "entry": "game.lua:decide",
+            "message": "{\u0022flowRevision\u0022:15,\u0022kind\u0022:\u0022ready\u0022,\u0022entity\u0022:null,\u0022target\u0022:null,\u0022property\u0022:null,\u0022value\u0022:0,\u0022x\u0022:0,\u0022y\u0022:0,\u0022seat\u0022:null,\u0022phase\u0022:null,\u0022visibility\u0022:null,\u0022winners\u0022:null}"
+          },
+          {
+            "sequence": 19,
+            "actor": "p1",
+            "entry": "game.lua:decide",
+            "message": "{\u0022flowRevision\u0022:18,\u0022kind\u0022:\u0022select\u0022,\u0022entity\u0022:\u0022die3\u0022,\u0022target\u0022:null,\u0022property\u0022:null,\u0022value\u0022:0,\u0022x\u0022:0,\u0022y\u0022:0,\u0022seat\u0022:null,\u0022phase\u0022:null,\u0022visibility\u0022:null,\u0022winners\u0022:null}"
+          },
+          {
+            "sequence": 20,
+            "actor": "p1",
+            "entry": "game.lua:decide",
+            "message": "{\u0022flowRevision\u0022:19,\u0022kind\u0022:\u0022adjust\u0022,\u0022entity\u0022:\u0022die3\u0022,\u0022target\u0022:null,\u0022property\u0022:null,\u0022value\u0022:1,\u0022x\u0022:0,\u0022y\u0022:0,\u0022seat\u0022:null,\u0022phase\u0022:null,\u0022visibility\u0022:null,\u0022winners\u0022:null}"
+          },
+          {
+            "sequence": 21,
+            "actor": "p1",
+            "entry": "game.lua:decide",
+            "message": "{\u0022flowRevision\u0022:20,\u0022kind\u0022:\u0022clear\u0022,\u0022entity\u0022:null,\u0022target\u0022:null,\u0022property\u0022:null,\u0022value\u0022:0,\u0022x\u0022:0,\u0022y\u0022:0,\u0022seat\u0022:null,\u0022phase\u0022:null,\u0022visibility\u0022:null,\u0022winners\u0022:null}"
+          },
+          {
+            "sequence": 22,
+            "actor": "p1",
+            "entry": "game.lua:decide",
+            "message": "{\u0022flowRevision\u0022:21,\u0022kind\u0022:\u0022challenge\u0022,\u0022entity\u0022:null,\u0022target\u0022:null,\u0022property\u0022:null,\u0022value\u0022:2,\u0022x\u0022:0,\u0022y\u0022:0,\u0022seat\u0022:null,\u0022phase\u0022:null,\u0022visibility\u0022:null,\u0022winners\u0022:null}"
+          },
+          {
+            "sequence": 24,
+            "actor": "p1",
+            "entry": "game.lua:decide",
+            "message": "{\u0022flowRevision\u0022:23,\u0022kind\u0022:\u0022attribute\u0022,\u0022entity\u0022:null,\u0022target\u0022:null,\u0022property\u0022:\u0022knowledge\u0022,\u0022value\u0022:0,\u0022x\u0022:0,\u0022y\u0022:0,\u0022seat\u0022:null,\u0022phase\u0022:null,\u0022visibility\u0022:null,\u0022winners\u0022:null}"
+          },
+          {
+            "sequence": 27,
+            "actor": "p1",
+            "entry": "game.lua:decide",
+            "message": "{\u0022flowRevision\u0022:26,\u0022kind\u0022:\u0022select\u0022,\u0022entity\u0022:\u0022die2\u0022,\u0022target\u0022:null,\u0022property\u0022:null,\u0022value\u0022:0,\u0022x\u0022:0,\u0022y\u0022:0,\u0022seat\u0022:null,\u0022phase\u0022:null,\u0022visibility\u0022:null,\u0022winners\u0022:null}"
+          },
+          {
+            "sequence": 28,
+            "actor": "p1",
+            "entry": "game.lua:decide",
+            "message": "{\u0022flowRevision\u0022:27,\u0022kind\u0022:\u0022store\u0022,\u0022entity\u0022:\u0022die2\u0022,\u0022target\u0022:\u00223\u0022,\u0022property\u0022:\u0022flip\u0022,\u0022value\u0022:0,\u0022x\u0022:0,\u0022y\u0022:0,\u0022seat\u0022:null,\u0022phase\u0022:null,\u0022visibility\u0022:null,\u0022winners\u0022:null}"
+          },
+          {
+            "sequence": 29,
+            "actor": "p1",
+            "entry": "game.lua:decide",
+            "message": "{\u0022flowRevision\u0022:28,\u0022kind\u0022:\u0022end\u0022,\u0022entity\u0022:null,\u0022target\u0022:null,\u0022property\u0022:null,\u0022value\u0022:0,\u0022x\u0022:0,\u0022y\u0022:0,\u0022seat\u0022:null,\u0022phase\u0022:null,\u0022visibility\u0022:null,\u0022winners\u0022:null}"
+          },
+          {
+            "sequence": 43,
+            "actor": "p1",
+            "entry": "game.lua:decide",
+            "message": "{\u0022flowRevision\u0022:42,\u0022kind\u0022:\u0022ready\u0022,\u0022entity\u0022:null,\u0022target\u0022:null,\u0022property\u0022:null,\u0022value\u0022:0,\u0022x\u0022:0,\u0022y\u0022:0,\u0022seat\u0022:null,\u0022phase\u0022:null,\u0022visibility\u0022:null,\u0022winners\u0022:null}"
+          },
+          {
+            "sequence": 46,
+            "actor": "p1",
+            "entry": "game.lua:decide",
+            "message": "{\u0022flowRevision\u0022:45,\u0022kind\u0022:\u0022select\u0022,\u0022entity\u0022:\u0022die1\u0022,\u0022target\u0022:null,\u0022property\u0022:null,\u0022value\u0022:0,\u0022x\u0022:0,\u0022y\u0022:0,\u0022seat\u0022:null,\u0022phase\u0022:null,\u0022visibility\u0022:null,\u0022winners\u0022:null}"
+          },
+          {
+            "sequence": 47,
+            "actor": "p1",
+            "entry": "game.lua:decide",
+            "message": "{\u0022flowRevision\u0022:46,\u0022kind\u0022:\u0022select\u0022,\u0022entity\u0022:\u0022die5\u0022,\u0022target\u0022:null,\u0022property\u0022:null,\u0022value\u0022:0,\u0022x\u0022:0,\u0022y\u0022:0,\u0022seat\u0022:null,\u0022phase\u0022:null,\u0022visibility\u0022:null,\u0022winners\u0022:null}"
+          },
+          {
+            "sequence": 48,
+            "actor": "p1",
+            "entry": "game.lua:decide",
+            "message": "{\u0022flowRevision\u0022:47,\u0022kind\u0022:\u0022reroll\u0022,\u0022entity\u0022:null,\u0022target\u0022:null,\u0022property\u0022:null,\u0022value\u0022:0,\u0022x\u0022:0,\u0022y\u0022:0,\u0022seat\u0022:null,\u0022phase\u0022:null,\u0022visibility\u0022:null,\u0022winners\u0022:null}"
+          },
+          {
+            "sequence": 51,
+            "actor": "p1",
+            "entry": "game.lua:decide",
+            "message": "{\u0022flowRevision\u0022:50,\u0022kind\u0022:\u0022select\u0022,\u0022entity\u0022:\u0022die1\u0022,\u0022target\u0022:null,\u0022property\u0022:null,\u0022value\u0022:0,\u0022x\u0022:0,\u0022y\u0022:0,\u0022seat\u0022:null,\u0022phase\u0022:null,\u0022visibility\u0022:null,\u0022winners\u0022:null}"
+          },
+          {
+            "sequence": 52,
+            "actor": "p1",
+            "entry": "game.lua:decide",
+            "message": "{\u0022flowRevision\u0022:51,\u0022kind\u0022:\u0022select\u0022,\u0022entity\u0022:\u0022die5\u0022,\u0022target\u0022:null,\u0022property\u0022:null,\u0022value\u0022:0,\u0022x\u0022:0,\u0022y\u0022:0,\u0022seat\u0022:null,\u0022phase\u0022:null,\u0022visibility\u0022:null,\u0022winners\u0022:null}"
+          },
+          {
+            "sequence": 53,
+            "actor": "p1",
+            "entry": "game.lua:decide",
+            "message": "{\u0022flowRevision\u0022:52,\u0022kind\u0022:\u0022reroll\u0022,\u0022entity\u0022:null,\u0022target\u0022:null,\u0022property\u0022:null,\u0022value\u0022:1,\u0022x\u0022:0,\u0022y\u0022:0,\u0022seat\u0022:null,\u0022phase\u0022:null,\u0022visibility\u0022:null,\u0022winners\u0022:null}"
+          },
+          {
+            "sequence": 56,
+            "actor": "p1",
+            "entry": "game.lua:decide",
+            "message": "{\u0022flowRevision\u0022:55,\u0022kind\u0022:\u0022select\u0022,\u0022entity\u0022:\u0022die1\u0022,\u0022target\u0022:null,\u0022property\u0022:null,\u0022value\u0022:0,\u0022x\u0022:0,\u0022y\u0022:0,\u0022seat\u0022:null,\u0022phase\u0022:null,\u0022visibility\u0022:null,\u0022winners\u0022:null}"
+          },
+          {
+            "sequence": 57,
+            "actor": "p1",
+            "entry": "game.lua:decide",
+            "message": "{\u0022flowRevision\u0022:56,\u0022kind\u0022:\u0022adjust\u0022,\u0022entity\u0022:\u0022die1\u0022,\u0022target\u0022:null,\u0022property\u0022:null,\u0022value\u0022:-1,\u0022x\u0022:0,\u0022y\u0022:0,\u0022seat\u0022:null,\u0022phase\u0022:null,\u0022visibility\u0022:null,\u0022winners\u0022:null}"
+          },
+          {
+            "sequence": 58,
+            "actor": "p1",
+            "entry": "game.lua:decide",
+            "message": "{\u0022flowRevision\u0022:57,\u0022kind\u0022:\u0022clear\u0022,\u0022entity\u0022:null,\u0022target\u0022:null,\u0022property\u0022:null,\u0022value\u0022:0,\u0022x\u0022:0,\u0022y\u0022:0,\u0022seat\u0022:null,\u0022phase\u0022:null,\u0022visibility\u0022:null,\u0022winners\u0022:null}"
+          },
+          {
+            "sequence": 59,
+            "actor": "p1",
+            "entry": "game.lua:decide",
+            "message": "{\u0022flowRevision\u0022:58,\u0022kind\u0022:\u0022challenge\u0022,\u0022entity\u0022:null,\u0022target\u0022:null,\u0022property\u0022:null,\u0022value\u0022:1,\u0022x\u0022:0,\u0022y\u0022:0,\u0022seat\u0022:null,\u0022phase\u0022:null,\u0022visibility\u0022:null,\u0022winners\u0022:null}"
+          },
+          {
+            "sequence": 61,
+            "actor": "p1",
+            "entry": "game.lua:decide",
+            "message": "{\u0022flowRevision\u0022:60,\u0022kind\u0022:\u0022attribute\u0022,\u0022entity\u0022:null,\u0022target\u0022:null,\u0022property\u0022:\u0022knowledge\u0022,\u0022value\u0022:0,\u0022x\u0022:0,\u0022y\u0022:0,\u0022seat\u0022:null,\u0022phase\u0022:null,\u0022visibility\u0022:null,\u0022winners\u0022:null}"
+          },
+          {
+            "sequence": 64,
+            "actor": "p1",
+            "entry": "game.lua:decide",
+            "message": "{\u0022flowRevision\u0022:63,\u0022kind\u0022:\u0022select\u0022,\u0022entity\u0022:\u0022die4\u0022,\u0022target\u0022:null,\u0022property\u0022:null,\u0022value\u0022:0,\u0022x\u0022:0,\u0022y\u0022:0,\u0022seat\u0022:null,\u0022phase\u0022:null,\u0022visibility\u0022:null,\u0022winners\u0022:null}"
+          },
+          {
+            "sequence": 65,
+            "actor": "p1",
+            "entry": "game.lua:decide",
+            "message": "{\u0022flowRevision\u0022:64,\u0022kind\u0022:\u0022store\u0022,\u0022entity\u0022:\u0022die4\u0022,\u0022target\u0022:\u00223\u0022,\u0022property\u0022:\u0022flip\u0022,\u0022value\u0022:0,\u0022x\u0022:0,\u0022y\u0022:0,\u0022seat\u0022:null,\u0022phase\u0022:null,\u0022visibility\u0022:null,\u0022winners\u0022:null}"
+          },
+          {
+            "sequence": 66,
+            "actor": "p1",
+            "entry": "game.lua:decide",
+            "message": "{\u0022flowRevision\u0022:65,\u0022kind\u0022:\u0022end\u0022,\u0022entity\u0022:null,\u0022target\u0022:null,\u0022property\u0022:null,\u0022value\u0022:0,\u0022x\u0022:0,\u0022y\u0022:0,\u0022seat\u0022:null,\u0022phase\u0022:null,\u0022visibility\u0022:null,\u0022winners\u0022:null}"
+          },
+          {
+            "sequence": 80,
+            "actor": "p1",
+            "entry": "game.lua:decide",
+            "message": "{\u0022flowRevision\u0022:79,\u0022kind\u0022:\u0022ready\u0022,\u0022entity\u0022:null,\u0022target\u0022:null,\u0022property\u0022:null,\u0022value\u0022:0,\u0022x\u0022:0,\u0022y\u0022:0,\u0022seat\u0022:null,\u0022phase\u0022:null,\u0022visibility\u0022:null,\u0022winners\u0022:null}"
+          },
+          {
+            "sequence": 83,
+            "actor": "p1",
+            "entry": "game.lua:decide",
+            "message": "{\u0022flowRevision\u0022:82,\u0022kind\u0022:\u0022select\u0022,\u0022entity\u0022:\u0022die1\u0022,\u0022target\u0022:null,\u0022property\u0022:null,\u0022value\u0022:0,\u0022x\u0022:0,\u0022y\u0022:0,\u0022seat\u0022:null,\u0022phase\u0022:null,\u0022visibility\u0022:null,\u0022winners\u0022:null}"
+          },
+          {
+            "sequence": 84,
+            "actor": "p1",
+            "entry": "game.lua:decide",
+            "message": "{\u0022flowRevision\u0022:83,\u0022kind\u0022:\u0022select\u0022,\u0022entity\u0022:\u0022die2\u0022,\u0022target\u0022:null,\u0022property\u0022:null,\u0022value\u0022:0,\u0022x\u0022:0,\u0022y\u0022:0,\u0022seat\u0022:null,\u0022phase\u0022:null,\u0022visibility\u0022:null,\u0022winners\u0022:null}"
+          },
+          {
+            "sequence": 85,
+            "actor": "p1",
+            "entry": "game.lua:decide",
+            "message": "{\u0022flowRevision\u0022:84,\u0022kind\u0022:\u0022select\u0022,\u0022entity\u0022:\u0022die3\u0022,\u0022target\u0022:null,\u0022property\u0022:null,\u0022value\u0022:0,\u0022x\u0022:0,\u0022y\u0022:0,\u0022seat\u0022:null,\u0022phase\u0022:null,\u0022visibility\u0022:null,\u0022winners\u0022:null}"
+          },
+          {
+            "sequence": 86,
+            "actor": "p1",
+            "entry": "game.lua:decide",
+            "message": "{\u0022flowRevision\u0022:85,\u0022kind\u0022:\u0022select\u0022,\u0022entity\u0022:\u0022die4\u0022,\u0022target\u0022:null,\u0022property\u0022:null,\u0022value\u0022:0,\u0022x\u0022:0,\u0022y\u0022:0,\u0022seat\u0022:null,\u0022phase\u0022:null,\u0022visibility\u0022:null,\u0022winners\u0022:null}"
+          },
+          {
+            "sequence": 87,
+            "actor": "p1",
+            "entry": "game.lua:decide",
+            "message": "{\u0022flowRevision\u0022:86,\u0022kind\u0022:\u0022reroll\u0022,\u0022entity\u0022:null,\u0022target\u0022:null,\u0022property\u0022:null,\u0022value\u0022:0,\u0022x\u0022:0,\u0022y\u0022:0,\u0022seat\u0022:null,\u0022phase\u0022:null,\u0022visibility\u0022:null,\u0022winners\u0022:null}"
+          },
+          {
+            "sequence": 90,
+            "actor": "p1",
+            "entry": "game.lua:decide",
+            "message": "{\u0022flowRevision\u0022:89,\u0022kind\u0022:\u0022select\u0022,\u0022entity\u0022:\u0022die1\u0022,\u0022target\u0022:null,\u0022property\u0022:null,\u0022value\u0022:0,\u0022x\u0022:0,\u0022y\u0022:0,\u0022seat\u0022:null,\u0022phase\u0022:null,\u0022visibility\u0022:null,\u0022winners\u0022:null}"
+          },
+          {
+            "sequence": 91,
+            "actor": "p1",
+            "entry": "game.lua:decide",
+            "message": "{\u0022flowRevision\u0022:90,\u0022kind\u0022:\u0022select\u0022,\u0022entity\u0022:\u0022die2\u0022,\u0022target\u0022:null,\u0022property\u0022:null,\u0022value\u0022:0,\u0022x\u0022:0,\u0022y\u0022:0,\u0022seat\u0022:null,\u0022phase\u0022:null,\u0022visibility\u0022:null,\u0022winners\u0022:null}"
+          },
+          {
+            "sequence": 92,
+            "actor": "p1",
+            "entry": "game.lua:decide",
+            "message": "{\u0022flowRevision\u0022:91,\u0022kind\u0022:\u0022select\u0022,\u0022entity\u0022:\u0022die4\u0022,\u0022target\u0022:null,\u0022property\u0022:null,\u0022value\u0022:0,\u0022x\u0022:0,\u0022y\u0022:0,\u0022seat\u0022:null,\u0022phase\u0022:null,\u0022visibility\u0022:null,\u0022winners\u0022:null}"
+          },
+          {
+            "sequence": 93,
+            "actor": "p1",
+            "entry": "game.lua:decide",
+            "message": "{\u0022flowRevision\u0022:92,\u0022kind\u0022:\u0022reroll\u0022,\u0022entity\u0022:null,\u0022target\u0022:null,\u0022property\u0022:null,\u0022value\u0022:1,\u0022x\u0022:0,\u0022y\u0022:0,\u0022seat\u0022:null,\u0022phase\u0022:null,\u0022visibility\u0022:null,\u0022winners\u0022:null}"
+          },
+          {
+            "sequence": 96,
+            "actor": "p1",
+            "entry": "game.lua:decide",
+            "message": "{\u0022flowRevision\u0022:95,\u0022kind\u0022:\u0022select\u0022,\u0022entity\u0022:\u0022die1\u0022,\u0022target\u0022:null,\u0022property\u0022:null,\u0022value\u0022:0,\u0022x\u0022:0,\u0022y\u0022:0,\u0022seat\u0022:null,\u0022phase\u0022:null,\u0022visibility\u0022:null,\u0022winners\u0022:null}"
+          },
+          {
+            "sequence": 97,
+            "actor": "p1",
+            "entry": "game.lua:decide",
+            "message": "{\u0022flowRevision\u0022:96,\u0022kind\u0022:\u0022store\u0022,\u0022entity\u0022:\u0022die1\u0022,\u0022target\u0022:\u00221\u0022,\u0022property\u0022:\u0022knowledge\u0022,\u0022value\u0022:2,\u0022x\u0022:0,\u0022y\u0022:0,\u0022seat\u0022:null,\u0022phase\u0022:null,\u0022visibility\u0022:null,\u0022winners\u0022:null}"
+          },
+          {
+            "sequence": 98,
+            "actor": "p1",
+            "entry": "game.lua:decide",
+            "message": "{\u0022flowRevision\u0022:97,\u0022kind\u0022:\u0022select\u0022,\u0022entity\u0022:\u0022die3\u0022,\u0022target\u0022:null,\u0022property\u0022:null,\u0022value\u0022:0,\u0022x\u0022:0,\u0022y\u0022:0,\u0022seat\u0022:null,\u0022phase\u0022:null,\u0022visibility\u0022:null,\u0022winners\u0022:null}"
+          },
+          {
+            "sequence": 99,
+            "actor": "p1",
+            "entry": "game.lua:decide",
+            "message": "{\u0022flowRevision\u0022:98,\u0022kind\u0022:\u0022store\u0022,\u0022entity\u0022:\u0022die3\u0022,\u0022target\u0022:\u00222\u0022,\u0022property\u0022:\u0022resolve\u0022,\u0022value\u0022:0,\u0022x\u0022:0,\u0022y\u0022:0,\u0022seat\u0022:null,\u0022phase\u0022:null,\u0022visibility\u0022:null,\u0022winners\u0022:null}"
+          },
+          {
+            "sequence": 100,
+            "actor": "p1",
+            "entry": "game.lua:decide",
+            "message": "{\u0022flowRevision\u0022:99,\u0022kind\u0022:\u0022select\u0022,\u0022entity\u0022:\u0022die4\u0022,\u0022target\u0022:null,\u0022property\u0022:null,\u0022value\u0022:0,\u0022x\u0022:0,\u0022y\u0022:0,\u0022seat\u0022:null,\u0022phase\u0022:null,\u0022visibility\u0022:null,\u0022winners\u0022:null}"
+          },
+          {
+            "sequence": 101,
+            "actor": "p1",
+            "entry": "game.lua:decide",
+            "message": "{\u0022flowRevision\u0022:100,\u0022kind\u0022:\u0022store\u0022,\u0022entity\u0022:\u0022die4\u0022,\u0022target\u0022:\u00224\u0022,\u0022property\u0022:\u0022resolve\u0022,\u0022value\u0022:0,\u0022x\u0022:0,\u0022y\u0022:0,\u0022seat\u0022:null,\u0022phase\u0022:null,\u0022visibility\u0022:null,\u0022winners\u0022:null}"
+          },
+          {
+            "sequence": 102,
+            "actor": "p1",
+            "entry": "game.lua:decide",
+            "message": "{\u0022flowRevision\u0022:101,\u0022kind\u0022:\u0022select\u0022,\u0022entity\u0022:\u0022die5\u0022,\u0022target\u0022:null,\u0022property\u0022:null,\u0022value\u0022:0,\u0022x\u0022:0,\u0022y\u0022:0,\u0022seat\u0022:null,\u0022phase\u0022:null,\u0022visibility\u0022:null,\u0022winners\u0022:null}"
+          },
+          {
+            "sequence": 103,
+            "actor": "p1",
+            "entry": "game.lua:decide",
+            "message": "{\u0022flowRevision\u0022:102,\u0022kind\u0022:\u0022store\u0022,\u0022entity\u0022:\u0022die5\u0022,\u0022target\u0022:\u00223\u0022,\u0022property\u0022:\u0022luck\u0022,\u0022value\u0022:0,\u0022x\u0022:0,\u0022y\u0022:0,\u0022seat\u0022:null,\u0022phase\u0022:null,\u0022visibility\u0022:null,\u0022winners\u0022:null}"
+          },
+          {
+            "sequence": 104,
+            "actor": "p1",
+            "entry": "game.lua:decide",
+            "message": "{\u0022flowRevision\u0022:103,\u0022kind\u0022:\u0022end\u0022,\u0022entity\u0022:null,\u0022target\u0022:null,\u0022property\u0022:null,\u0022value\u0022:0,\u0022x\u0022:0,\u0022y\u0022:0,\u0022seat\u0022:null,\u0022phase\u0022:null,\u0022visibility\u0022:null,\u0022winners\u0022:null}"
+          },
+          {
+            "sequence": 118,
+            "actor": "p1",
+            "entry": "game.lua:decide",
+            "message": "{\u0022flowRevision\u0022:117,\u0022kind\u0022:\u0022ready\u0022,\u0022entity\u0022:null,\u0022target\u0022:null,\u0022property\u0022:null,\u0022value\u0022:0,\u0022x\u0022:0,\u0022y\u0022:0,\u0022seat\u0022:null,\u0022phase\u0022:null,\u0022visibility\u0022:null,\u0022winners\u0022:null}"
+          },
+          {
+            "sequence": 121,
+            "actor": "p1",
+            "entry": "game.lua:decide",
+            "message": "{\u0022flowRevision\u0022:120,\u0022kind\u0022:\u0022select\u0022,\u0022entity\u0022:\u0022die1\u0022,\u0022target\u0022:null,\u0022property\u0022:null,\u0022value\u0022:0,\u0022x\u0022:0,\u0022y\u0022:0,\u0022seat\u0022:null,\u0022phase\u0022:null,\u0022visibility\u0022:null,\u0022winners\u0022:null}"
+          },
+          {
+            "sequence": 122,
+            "actor": "p1",
+            "entry": "game.lua:decide",
+            "message": "{\u0022flowRevision\u0022:121,\u0022kind\u0022:\u0022adjust\u0022,\u0022entity\u0022:\u0022die1\u0022,\u0022target\u0022:null,\u0022property\u0022:null,\u0022value\u0022:-1,\u0022x\u0022:0,\u0022y\u0022:0,\u0022seat\u0022:null,\u0022phase\u0022:null,\u0022visibility\u0022:null,\u0022winners\u0022:null}"
+          },
+          {
+            "sequence": 123,
+            "actor": "p1",
+            "entry": "game.lua:decide",
+            "message": "{\u0022flowRevision\u0022:122,\u0022kind\u0022:\u0022clear\u0022,\u0022entity\u0022:null,\u0022target\u0022:null,\u0022property\u0022:null,\u0022value\u0022:0,\u0022x\u0022:0,\u0022y\u0022:0,\u0022seat\u0022:null,\u0022phase\u0022:null,\u0022visibility\u0022:null,\u0022winners\u0022:null}"
+          },
+          {
+            "sequence": 124,
+            "actor": "p1",
+            "entry": "game.lua:decide",
+            "message": "{\u0022flowRevision\u0022:123,\u0022kind\u0022:\u0022select\u0022,\u0022entity\u0022:\u0022die2\u0022,\u0022target\u0022:null,\u0022property\u0022:null,\u0022value\u0022:0,\u0022x\u0022:0,\u0022y\u0022:0,\u0022seat\u0022:null,\u0022phase\u0022:null,\u0022visibility\u0022:null,\u0022winners\u0022:null}"
+          },
+          {
+            "sequence": 125,
+            "actor": "p1",
+            "entry": "game.lua:decide",
+            "message": "{\u0022flowRevision\u0022:124,\u0022kind\u0022:\u0022adjust\u0022,\u0022entity\u0022:\u0022die2\u0022,\u0022target\u0022:null,\u0022property\u0022:null,\u0022value\u0022:-1,\u0022x\u0022:0,\u0022y\u0022:0,\u0022seat\u0022:null,\u0022phase\u0022:null,\u0022visibility\u0022:null,\u0022winners\u0022:null}"
+          },
+          {
+            "sequence": 126,
+            "actor": "p1",
+            "entry": "game.lua:decide",
+            "message": "{\u0022flowRevision\u0022:125,\u0022kind\u0022:\u0022clear\u0022,\u0022entity\u0022:null,\u0022target\u0022:null,\u0022property\u0022:null,\u0022value\u0022:0,\u0022x\u0022:0,\u0022y\u0022:0,\u0022seat\u0022:null,\u0022phase\u0022:null,\u0022visibility\u0022:null,\u0022winners\u0022:null}"
+          },
+          {
+            "sequence": 127,
+            "actor": "p1",
+            "entry": "game.lua:decide",
+            "message": "{\u0022flowRevision\u0022:126,\u0022kind\u0022:\u0022challenge\u0022,\u0022entity\u0022:null,\u0022target\u0022:null,\u0022property\u0022:null,\u0022value\u0022:3,\u0022x\u0022:0,\u0022y\u0022:0,\u0022seat\u0022:null,\u0022phase\u0022:null,\u0022visibility\u0022:null,\u0022winners\u0022:null}"
+          },
+          {
+            "sequence": 129,
+            "actor": "p1",
+            "entry": "game.lua:decide",
+            "message": "{\u0022flowRevision\u0022:128,\u0022kind\u0022:\u0022attribute\u0022,\u0022entity\u0022:null,\u0022target\u0022:null,\u0022property\u0022:\u0022resolve\u0022,\u0022value\u0022:0,\u0022x\u0022:0,\u0022y\u0022:0,\u0022seat\u0022:null,\u0022phase\u0022:null,\u0022visibility\u0022:null,\u0022winners\u0022:null}"
+          },
+          {
+            "sequence": 132,
+            "actor": "p1",
+            "entry": "game.lua:decide",
+            "message": "{\u0022flowRevision\u0022:131,\u0022kind\u0022:\u0022reward\u0022,\u0022entity\u0022:null,\u0022target\u0022:null,\u0022property\u0022:null,\u0022value\u0022:7,\u0022x\u0022:0,\u0022y\u0022:0,\u0022seat\u0022:null,\u0022phase\u0022:null,\u0022visibility\u0022:null,\u0022winners\u0022:null}"
+          },
+          {
+            "sequence": 133,
+            "actor": "p1",
+            "entry": "game.lua:decide",
+            "message": "{\u0022flowRevision\u0022:132,\u0022kind\u0022:\u0022select\u0022,\u0022entity\u0022:\u0022die4\u0022,\u0022target\u0022:null,\u0022property\u0022:null,\u0022value\u0022:0,\u0022x\u0022:0,\u0022y\u0022:0,\u0022seat\u0022:null,\u0022phase\u0022:null,\u0022visibility\u0022:null,\u0022winners\u0022:null}"
+          },
+          {
+            "sequence": 134,
+            "actor": "p1",
+            "entry": "game.lua:decide",
+            "message": "{\u0022flowRevision\u0022:133,\u0022kind\u0022:\u0022store\u0022,\u0022entity\u0022:\u0022die4\u0022,\u0022target\u0022:\u00222\u0022,\u0022property\u0022:\u0022resolve\u0022,\u0022value\u0022:0,\u0022x\u0022:0,\u0022y\u0022:0,\u0022seat\u0022:null,\u0022phase\u0022:null,\u0022visibility\u0022:null,\u0022winners\u0022:null}"
+          },
+          {
+            "sequence": 135,
+            "actor": "p1",
+            "entry": "game.lua:decide",
+            "message": "{\u0022flowRevision\u0022:134,\u0022kind\u0022:\u0022end\u0022,\u0022entity\u0022:null,\u0022target\u0022:null,\u0022property\u0022:null,\u0022value\u0022:0,\u0022x\u0022:0,\u0022y\u0022:0,\u0022seat\u0022:null,\u0022phase\u0022:null,\u0022visibility\u0022:null,\u0022winners\u0022:null}"
+          },
+          {
+            "sequence": 149,
+            "actor": "p1",
+            "entry": "game.lua:decide",
+            "message": "{\u0022flowRevision\u0022:148,\u0022kind\u0022:\u0022ready\u0022,\u0022entity\u0022:null,\u0022target\u0022:null,\u0022property\u0022:null,\u0022value\u0022:0,\u0022x\u0022:0,\u0022y\u0022:0,\u0022seat\u0022:null,\u0022phase\u0022:null,\u0022visibility\u0022:null,\u0022winners\u0022:null}"
+          },
+          {
+            "sequence": 152,
+            "actor": "p1",
+            "entry": "game.lua:decide",
+            "message": "{\u0022flowRevision\u0022:151,\u0022kind\u0022:\u0022challenge\u0022,\u0022entity\u0022:null,\u0022target\u0022:null,\u0022property\u0022:null,\u0022value\u0022:1,\u0022x\u0022:0,\u0022y\u0022:0,\u0022seat\u0022:null,\u0022phase\u0022:null,\u0022visibility\u0022:null,\u0022winners\u0022:null}"
+          },
+          {
+            "sequence": 154,
+            "actor": "p1",
+            "entry": "game.lua:decide",
+            "message": "{\u0022flowRevision\u0022:153,\u0022kind\u0022:\u0022attribute\u0022,\u0022entity\u0022:null,\u0022target\u0022:null,\u0022property\u0022:\u0022luck\u0022,\u0022value\u0022:0,\u0022x\u0022:0,\u0022y\u0022:0,\u0022seat\u0022:null,\u0022phase\u0022:null,\u0022visibility\u0022:null,\u0022winners\u0022:null}"
+          },
+          {
+            "sequence": 157,
+            "actor": "p1",
+            "entry": "game.lua:decide",
+            "message": "{\u0022flowRevision\u0022:156,\u0022kind\u0022:\u0022select\u0022,\u0022entity\u0022:\u0022die6\u0022,\u0022target\u0022:null,\u0022property\u0022:null,\u0022value\u0022:0,\u0022x\u0022:0,\u0022y\u0022:0,\u0022seat\u0022:null,\u0022phase\u0022:null,\u0022visibility\u0022:null,\u0022winners\u0022:null}"
+          },
+          {
+            "sequence": 158,
+            "actor": "p1",
+            "entry": "game.lua:decide",
+            "message": "{\u0022flowRevision\u0022:157,\u0022kind\u0022:\u0022store\u0022,\u0022entity\u0022:\u0022die6\u0022,\u0022target\u0022:\u00221\u0022,\u0022property\u0022:\u0022knowledge\u0022,\u0022value\u0022:0,\u0022x\u0022:0,\u0022y\u0022:0,\u0022seat\u0022:null,\u0022phase\u0022:null,\u0022visibility\u0022:null,\u0022winners\u0022:null}"
+          },
+          {
+            "sequence": 159,
+            "actor": "p1",
+            "entry": "game.lua:decide",
+            "message": "{\u0022flowRevision\u0022:158,\u0022kind\u0022:\u0022end\u0022,\u0022entity\u0022:null,\u0022target\u0022:null,\u0022property\u0022:null,\u0022value\u0022:0,\u0022x\u0022:0,\u0022y\u0022:0,\u0022seat\u0022:null,\u0022phase\u0022:null,\u0022visibility\u0022:null,\u0022winners\u0022:null}"
+          },
+          {
+            "sequence": 167,
+            "actor": "p1",
+            "entry": "game.lua:decide",
+            "message": "{\u0022flowRevision\u0022:166,\u0022kind\u0022:\u0022target\u0022,\u0022entity\u0022:\u0022slot2\u0022,\u0022target\u0022:null,\u0022property\u0022:null,\u0022value\u0022:2,\u0022x\u0022:0,\u0022y\u0022:0,\u0022seat\u0022:null,\u0022phase\u0022:null,\u0022visibility\u0022:null,\u0022winners\u0022:null}"
+          },
+          {
+            "sequence": 176,
+            "actor": "p1",
+            "entry": "game.lua:decide",
+            "message": "{\u0022flowRevision\u0022:175,\u0022kind\u0022:\u0022ready\u0022,\u0022entity\u0022:null,\u0022target\u0022:null,\u0022property\u0022:null,\u0022value\u0022:0,\u0022x\u0022:0,\u0022y\u0022:0,\u0022seat\u0022:null,\u0022phase\u0022:null,\u0022visibility\u0022:null,\u0022winners\u0022:null}"
+          },
+          {
+            "sequence": 179,
+            "actor": "p1",
+            "entry": "game.lua:decide",
+            "message": "{\u0022flowRevision\u0022:178,\u0022kind\u0022:\u0022select\u0022,\u0022entity\u0022:\u0022die1\u0022,\u0022target\u0022:null,\u0022property\u0022:null,\u0022value\u0022:0,\u0022x\u0022:0,\u0022y\u0022:0,\u0022seat\u0022:null,\u0022phase\u0022:null,\u0022visibility\u0022:null,\u0022winners\u0022:null}"
+          },
+          {
+            "sequence": 180,
+            "actor": "p1",
+            "entry": "game.lua:decide",
+            "message": "{\u0022flowRevision\u0022:179,\u0022kind\u0022:\u0022adjust\u0022,\u0022entity\u0022:\u0022die1\u0022,\u0022target\u0022:null,\u0022property\u0022:null,\u0022value\u0022:-1,\u0022x\u0022:0,\u0022y\u0022:0,\u0022seat\u0022:null,\u0022phase\u0022:null,\u0022visibility\u0022:null,\u0022winners\u0022:null}"
+          },
+          {
+            "sequence": 181,
+            "actor": "p1",
+            "entry": "game.lua:decide",
+            "message": "{\u0022flowRevision\u0022:180,\u0022kind\u0022:\u0022clear\u0022,\u0022entity\u0022:null,\u0022target\u0022:null,\u0022property\u0022:null,\u0022value\u0022:0,\u0022x\u0022:0,\u0022y\u0022:0,\u0022seat\u0022:null,\u0022phase\u0022:null,\u0022visibility\u0022:null,\u0022winners\u0022:null}"
+          },
+          {
+            "sequence": 182,
+            "actor": "p1",
+            "entry": "game.lua:decide",
+            "message": "{\u0022flowRevision\u0022:181,\u0022kind\u0022:\u0022challenge\u0022,\u0022entity\u0022:null,\u0022target\u0022:null,\u0022property\u0022:null,\u0022value\u0022:1,\u0022x\u0022:0,\u0022y\u0022:0,\u0022seat\u0022:null,\u0022phase\u0022:null,\u0022visibility\u0022:null,\u0022winners\u0022:null}"
+          },
+          {
+            "sequence": 184,
+            "actor": "p1",
+            "entry": "game.lua:decide",
+            "message": "{\u0022flowRevision\u0022:183,\u0022kind\u0022:\u0022attribute\u0022,\u0022entity\u0022:null,\u0022target\u0022:null,\u0022property\u0022:\u0022knowledge\u0022,\u0022value\u0022:0,\u0022x\u0022:0,\u0022y\u0022:0,\u0022seat\u0022:null,\u0022phase\u0022:null,\u0022visibility\u0022:null,\u0022winners\u0022:null}"
+          },
+          {
+            "sequence": 187,
+            "actor": "p1",
+            "entry": "game.lua:decide",
+            "message": "{\u0022flowRevision\u0022:186,\u0022kind\u0022:\u0022select\u0022,\u0022entity\u0022:\u0022die3\u0022,\u0022target\u0022:null,\u0022property\u0022:null,\u0022value\u0022:0,\u0022x\u0022:0,\u0022y\u0022:0,\u0022seat\u0022:null,\u0022phase\u0022:null,\u0022visibility\u0022:null,\u0022winners\u0022:null}"
+          },
+          {
+            "sequence": 188,
+            "actor": "p1",
+            "entry": "game.lua:decide",
+            "message": "{\u0022flowRevision\u0022:187,\u0022kind\u0022:\u0022store\u0022,\u0022entity\u0022:\u0022die3\u0022,\u0022target\u0022:\u00221\u0022,\u0022property\u0022:\u0022knowledge\u0022,\u0022value\u0022:0,\u0022x\u0022:0,\u0022y\u0022:0,\u0022seat\u0022:null,\u0022phase\u0022:null,\u0022visibility\u0022:null,\u0022winners\u0022:null}"
+          },
+          {
+            "sequence": 189,
+            "actor": "p1",
+            "entry": "game.lua:decide",
+            "message": "{\u0022flowRevision\u0022:188,\u0022kind\u0022:\u0022select\u0022,\u0022entity\u0022:\u0022die4\u0022,\u0022target\u0022:null,\u0022property\u0022:null,\u0022value\u0022:0,\u0022x\u0022:0,\u0022y\u0022:0,\u0022seat\u0022:null,\u0022phase\u0022:null,\u0022visibility\u0022:null,\u0022winners\u0022:null}"
+          },
+          {
+            "sequence": 190,
+            "actor": "p1",
+            "entry": "game.lua:decide",
+            "message": "{\u0022flowRevision\u0022:189,\u0022kind\u0022:\u0022store\u0022,\u0022entity\u0022:\u0022die4\u0022,\u0022target\u0022:\u00222\u0022,\u0022property\u0022:\u0022resolve\u0022,\u0022value\u0022:0,\u0022x\u0022:0,\u0022y\u0022:0,\u0022seat\u0022:null,\u0022phase\u0022:null,\u0022visibility\u0022:null,\u0022winners\u0022:null}"
+          },
+          {
+            "sequence": 191,
+            "actor": "p1",
+            "entry": "game.lua:decide",
+            "message": "{\u0022flowRevision\u0022:190,\u0022kind\u0022:\u0022end\u0022,\u0022entity\u0022:null,\u0022target\u0022:null,\u0022property\u0022:null,\u0022value\u0022:0,\u0022x\u0022:0,\u0022y\u0022:0,\u0022seat\u0022:null,\u0022phase\u0022:null,\u0022visibility\u0022:null,\u0022winners\u0022:null}"
+          },
+          {
+            "sequence": 205,
+            "actor": "p1",
+            "entry": "game.lua:decide",
+            "message": "{\u0022flowRevision\u0022:204,\u0022kind\u0022:\u0022ready\u0022,\u0022entity\u0022:null,\u0022target\u0022:null,\u0022property\u0022:null,\u0022value\u0022:0,\u0022x\u0022:0,\u0022y\u0022:0,\u0022seat\u0022:null,\u0022phase\u0022:null,\u0022visibility\u0022:null,\u0022winners\u0022:null}"
+          },
+          {
+            "sequence": 208,
+            "actor": "p1",
+            "entry": "game.lua:decide",
+            "message": "{\u0022flowRevision\u0022:207,\u0022kind\u0022:\u0022select\u0022,\u0022entity\u0022:\u0022die5\u0022,\u0022target\u0022:null,\u0022property\u0022:null,\u0022value\u0022:0,\u0022x\u0022:0,\u0022y\u0022:0,\u0022seat\u0022:null,\u0022phase\u0022:null,\u0022visibility\u0022:null,\u0022winners\u0022:null}"
+          },
+          {
+            "sequence": 209,
+            "actor": "p1",
+            "entry": "game.lua:decide",
+            "message": "{\u0022flowRevision\u0022:208,\u0022kind\u0022:\u0022adjust\u0022,\u0022entity\u0022:\u0022die5\u0022,\u0022target\u0022:null,\u0022property\u0022:null,\u0022value\u0022:1,\u0022x\u0022:0,\u0022y\u0022:0,\u0022seat\u0022:null,\u0022phase\u0022:null,\u0022visibility\u0022:null,\u0022winners\u0022:null}"
+          },
+          {
+            "sequence": 210,
+            "actor": "p1",
+            "entry": "game.lua:decide",
+            "message": "{\u0022flowRevision\u0022:209,\u0022kind\u0022:\u0022clear\u0022,\u0022entity\u0022:null,\u0022target\u0022:null,\u0022property\u0022:null,\u0022value\u0022:0,\u0022x\u0022:0,\u0022y\u0022:0,\u0022seat\u0022:null,\u0022phase\u0022:null,\u0022visibility\u0022:null,\u0022winners\u0022:null}"
+          },
+          {
+            "sequence": 211,
+            "actor": "p1",
+            "entry": "game.lua:decide",
+            "message": "{\u0022flowRevision\u0022:210,\u0022kind\u0022:\u0022challenge\u0022,\u0022entity\u0022:null,\u0022target\u0022:null,\u0022property\u0022:null,\u0022value\u0022:2,\u0022x\u0022:0,\u0022y\u0022:0,\u0022seat\u0022:null,\u0022phase\u0022:null,\u0022visibility\u0022:null,\u0022winners\u0022:null}"
+          },
+          {
+            "sequence": 213,
+            "actor": "p1",
+            "entry": "game.lua:decide",
+            "message": "{\u0022flowRevision\u0022:212,\u0022kind\u0022:\u0022attribute\u0022,\u0022entity\u0022:null,\u0022target\u0022:null,\u0022property\u0022:\u0022resolve\u0022,\u0022value\u0022:0,\u0022x\u0022:0,\u0022y\u0022:0,\u0022seat\u0022:null,\u0022phase\u0022:null,\u0022visibility\u0022:null,\u0022winners\u0022:null}"
+          },
+          {
+            "sequence": 216,
+            "actor": "p1",
+            "entry": "game.lua:decide",
+            "message": "{\u0022flowRevision\u0022:215,\u0022kind\u0022:\u0022select\u0022,\u0022entity\u0022:\u0022die1\u0022,\u0022target\u0022:null,\u0022property\u0022:null,\u0022value\u0022:0,\u0022x\u0022:0,\u0022y\u0022:0,\u0022seat\u0022:null,\u0022phase\u0022:null,\u0022visibility\u0022:null,\u0022winners\u0022:null}"
+          },
+          {
+            "sequence": 217,
+            "actor": "p1",
+            "entry": "game.lua:decide",
+            "message": "{\u0022flowRevision\u0022:216,\u0022kind\u0022:\u0022store\u0022,\u0022entity\u0022:\u0022die1\u0022,\u0022target\u0022:\u00222\u0022,\u0022property\u0022:\u0022resolve\u0022,\u0022value\u0022:0,\u0022x\u0022:0,\u0022y\u0022:0,\u0022seat\u0022:null,\u0022phase\u0022:null,\u0022visibility\u0022:null,\u0022winners\u0022:null}"
+          },
+          {
+            "sequence": 218,
+            "actor": "p1",
+            "entry": "game.lua:decide",
+            "message": "{\u0022flowRevision\u0022:217,\u0022kind\u0022:\u0022select\u0022,\u0022entity\u0022:\u0022die2\u0022,\u0022target\u0022:null,\u0022property\u0022:null,\u0022value\u0022:0,\u0022x\u0022:0,\u0022y\u0022:0,\u0022seat\u0022:null,\u0022phase\u0022:null,\u0022visibility\u0022:null,\u0022winners\u0022:null}"
+          },
+          {
+            "sequence": 219,
+            "actor": "p1",
+            "entry": "game.lua:decide",
+            "message": "{\u0022flowRevision\u0022:218,\u0022kind\u0022:\u0022store\u0022,\u0022entity\u0022:\u0022die2\u0022,\u0022target\u0022:\u00224\u0022,\u0022property\u0022:\u0022resolve\u0022,\u0022value\u0022:0,\u0022x\u0022:0,\u0022y\u0022:0,\u0022seat\u0022:null,\u0022phase\u0022:null,\u0022visibility\u0022:null,\u0022winners\u0022:null}"
+          },
+          {
+            "sequence": 220,
+            "actor": "p1",
+            "entry": "game.lua:decide",
+            "message": "{\u0022flowRevision\u0022:219,\u0022kind\u0022:\u0022end\u0022,\u0022entity\u0022:null,\u0022target\u0022:null,\u0022property\u0022:null,\u0022value\u0022:0,\u0022x\u0022:0,\u0022y\u0022:0,\u0022seat\u0022:null,\u0022phase\u0022:null,\u0022visibility\u0022:null,\u0022winners\u0022:null}"
+          },
+          {
+            "sequence": 234,
+            "actor": "p1",
+            "entry": "game.lua:decide",
+            "message": "{\u0022flowRevision\u0022:233,\u0022kind\u0022:\u0022ready\u0022,\u0022entity\u0022:null,\u0022target\u0022:null,\u0022property\u0022:null,\u0022value\u0022:0,\u0022x\u0022:0,\u0022y\u0022:0,\u0022seat\u0022:null,\u0022phase\u0022:null,\u0022visibility\u0022:null,\u0022winners\u0022:null}"
+          },
+          {
+            "sequence": 237,
+            "actor": "p1",
+            "entry": "game.lua:decide",
+            "message": "{\u0022flowRevision\u0022:236,\u0022kind\u0022:\u0022select\u0022,\u0022entity\u0022:\u0022die4\u0022,\u0022target\u0022:null,\u0022property\u0022:null,\u0022value\u0022:0,\u0022x\u0022:0,\u0022y\u0022:0,\u0022seat\u0022:null,\u0022phase\u0022:null,\u0022visibility\u0022:null,\u0022winners\u0022:null}"
+          },
+          {
+            "sequence": 238,
+            "actor": "p1",
+            "entry": "game.lua:decide",
+            "message": "{\u0022flowRevision\u0022:237,\u0022kind\u0022:\u0022select\u0022,\u0022entity\u0022:\u0022die5\u0022,\u0022target\u0022:null,\u0022property\u0022:null,\u0022value\u0022:0,\u0022x\u0022:0,\u0022y\u0022:0,\u0022seat\u0022:null,\u0022phase\u0022:null,\u0022visibility\u0022:null,\u0022winners\u0022:null}"
+          },
+          {
+            "sequence": 239,
+            "actor": "p1",
+            "entry": "game.lua:decide",
+            "message": "{\u0022flowRevision\u0022:238,\u0022kind\u0022:\u0022reroll\u0022,\u0022entity\u0022:null,\u0022target\u0022:null,\u0022property\u0022:null,\u0022value\u0022:0,\u0022x\u0022:0,\u0022y\u0022:0,\u0022seat\u0022:null,\u0022phase\u0022:null,\u0022visibility\u0022:null,\u0022winners\u0022:null}"
+          },
+          {
+            "sequence": 242,
+            "actor": "p1",
+            "entry": "game.lua:decide",
+            "message": "{\u0022flowRevision\u0022:241,\u0022kind\u0022:\u0022select\u0022,\u0022entity\u0022:\u0022die4\u0022,\u0022target\u0022:null,\u0022property\u0022:null,\u0022value\u0022:0,\u0022x\u0022:0,\u0022y\u0022:0,\u0022seat\u0022:null,\u0022phase\u0022:null,\u0022visibility\u0022:null,\u0022winners\u0022:null}"
+          },
+          {
+            "sequence": 243,
+            "actor": "p1",
+            "entry": "game.lua:decide",
+            "message": "{\u0022flowRevision\u0022:242,\u0022kind\u0022:\u0022adjust\u0022,\u0022entity\u0022:\u0022die4\u0022,\u0022target\u0022:null,\u0022property\u0022:null,\u0022value\u0022:1,\u0022x\u0022:0,\u0022y\u0022:0,\u0022seat\u0022:null,\u0022phase\u0022:null,\u0022visibility\u0022:null,\u0022winners\u0022:null}"
+          },
+          {
+            "sequence": 244,
+            "actor": "p1",
+            "entry": "game.lua:decide",
+            "message": "{\u0022flowRevision\u0022:243,\u0022kind\u0022:\u0022adjust\u0022,\u0022entity\u0022:\u0022die4\u0022,\u0022target\u0022:null,\u0022property\u0022:null,\u0022value\u0022:1,\u0022x\u0022:0,\u0022y\u0022:0,\u0022seat\u0022:null,\u0022phase\u0022:null,\u0022visibility\u0022:null,\u0022winners\u0022:null}"
+          },
+          {
+            "sequence": 245,
+            "actor": "p1",
+            "entry": "game.lua:decide",
+            "message": "{\u0022flowRevision\u0022:244,\u0022kind\u0022:\u0022adjust\u0022,\u0022entity\u0022:\u0022die4\u0022,\u0022target\u0022:null,\u0022property\u0022:null,\u0022value\u0022:1,\u0022x\u0022:0,\u0022y\u0022:0,\u0022seat\u0022:null,\u0022phase\u0022:null,\u0022visibility\u0022:null,\u0022winners\u0022:null}"
+          },
+          {
+            "sequence": 246,
+            "actor": "p1",
+            "entry": "game.lua:decide",
+            "message": "{\u0022flowRevision\u0022:245,\u0022kind\u0022:\u0022clear\u0022,\u0022entity\u0022:null,\u0022target\u0022:null,\u0022property\u0022:null,\u0022value\u0022:0,\u0022x\u0022:0,\u0022y\u0022:0,\u0022seat\u0022:null,\u0022phase\u0022:null,\u0022visibility\u0022:null,\u0022winners\u0022:null}"
+          },
+          {
+            "sequence": 247,
+            "actor": "p1",
+            "entry": "game.lua:decide",
+            "message": "{\u0022flowRevision\u0022:246,\u0022kind\u0022:\u0022challenge\u0022,\u0022entity\u0022:null,\u0022target\u0022:null,\u0022property\u0022:null,\u0022value\u0022:3,\u0022x\u0022:0,\u0022y\u0022:0,\u0022seat\u0022:null,\u0022phase\u0022:null,\u0022visibility\u0022:null,\u0022winners\u0022:null}"
+          },
+          {
+            "sequence": 249,
+            "actor": "p1",
+            "entry": "game.lua:decide",
+            "message": "{\u0022flowRevision\u0022:248,\u0022kind\u0022:\u0022attribute\u0022,\u0022entity\u0022:null,\u0022target\u0022:null,\u0022property\u0022:\u0022resolve\u0022,\u0022value\u0022:0,\u0022x\u0022:0,\u0022y\u0022:0,\u0022seat\u0022:null,\u0022phase\u0022:null,\u0022visibility\u0022:null,\u0022winners\u0022:null}"
+          },
+          {
+            "sequence": 252,
+            "actor": "p1",
+            "entry": "game.lua:decide",
+            "message": "{\u0022flowRevision\u0022:251,\u0022kind\u0022:\u0022select\u0022,\u0022entity\u0022:\u0022die6\u0022,\u0022target\u0022:null,\u0022property\u0022:null,\u0022value\u0022:0,\u0022x\u0022:0,\u0022y\u0022:0,\u0022seat\u0022:null,\u0022phase\u0022:null,\u0022visibility\u0022:null,\u0022winners\u0022:null}"
+          },
+          {
+            "sequence": 253,
+            "actor": "p1",
+            "entry": "game.lua:decide",
+            "message": "{\u0022flowRevision\u0022:252,\u0022kind\u0022:\u0022store\u0022,\u0022entity\u0022:\u0022die6\u0022,\u0022target\u0022:\u00222\u0022,\u0022property\u0022:\u0022resolve\u0022,\u0022value\u0022:0,\u0022x\u0022:0,\u0022y\u0022:0,\u0022seat\u0022:null,\u0022phase\u0022:null,\u0022visibility\u0022:null,\u0022winners\u0022:null}"
+          },
+          {
+            "sequence": 254,
+            "actor": "p1",
+            "entry": "game.lua:decide",
+            "message": "{\u0022flowRevision\u0022:253,\u0022kind\u0022:\u0022end\u0022,\u0022entity\u0022:null,\u0022target\u0022:null,\u0022property\u0022:null,\u0022value\u0022:0,\u0022x\u0022:0,\u0022y\u0022:0,\u0022seat\u0022:null,\u0022phase\u0022:null,\u0022visibility\u0022:null,\u0022winners\u0022:null}"
+          },
+          {
+            "sequence": 268,
+            "actor": "p1",
+            "entry": "game.lua:decide",
+            "message": "{\u0022flowRevision\u0022:267,\u0022kind\u0022:\u0022ready\u0022,\u0022entity\u0022:null,\u0022target\u0022:null,\u0022property\u0022:null,\u0022value\u0022:0,\u0022x\u0022:0,\u0022y\u0022:0,\u0022seat\u0022:null,\u0022phase\u0022:null,\u0022visibility\u0022:null,\u0022winners\u0022:null}"
+          },
+          {
+            "sequence": 271,
+            "actor": "p1",
+            "entry": "game.lua:decide",
+            "message": "{\u0022flowRevision\u0022:270,\u0022kind\u0022:\u0022reward\u0022,\u0022entity\u0022:null,\u0022target\u0022:null,\u0022property\u0022:null,\u0022value\u0022:1,\u0022x\u0022:0,\u0022y\u0022:0,\u0022seat\u0022:null,\u0022phase\u0022:null,\u0022visibility\u0022:null,\u0022winners\u0022:null}"
+          },
+          {
+            "sequence": 272,
+            "actor": "p1",
+            "entry": "game.lua:decide",
+            "message": "{\u0022flowRevision\u0022:271,\u0022kind\u0022:\u0022select\u0022,\u0022entity\u0022:\u0022die1\u0022,\u0022target\u0022:null,\u0022property\u0022:null,\u0022value\u0022:0,\u0022x\u0022:0,\u0022y\u0022:0,\u0022seat\u0022:null,\u0022phase\u0022:null,\u0022visibility\u0022:null,\u0022winners\u0022:null}"
+          },
+          {
+            "sequence": 273,
+            "actor": "p1",
+            "entry": "game.lua:decide",
+            "message": "{\u0022flowRevision\u0022:272,\u0022kind\u0022:\u0022select\u0022,\u0022entity\u0022:\u0022die2\u0022,\u0022target\u0022:null,\u0022property\u0022:null,\u0022value\u0022:0,\u0022x\u0022:0,\u0022y\u0022:0,\u0022seat\u0022:null,\u0022phase\u0022:null,\u0022visibility\u0022:null,\u0022winners\u0022:null}"
+          },
+          {
+            "sequence": 274,
+            "actor": "p1",
+            "entry": "game.lua:decide",
+            "message": "{\u0022flowRevision\u0022:273,\u0022kind\u0022:\u0022select\u0022,\u0022entity\u0022:\u0022die3\u0022,\u0022target\u0022:null,\u0022property\u0022:null,\u0022value\u0022:0,\u0022x\u0022:0,\u0022y\u0022:0,\u0022seat\u0022:null,\u0022phase\u0022:null,\u0022visibility\u0022:null,\u0022winners\u0022:null}"
+          },
+          {
+            "sequence": 275,
+            "actor": "p1",
+            "entry": "game.lua:decide",
+            "message": "{\u0022flowRevision\u0022:274,\u0022kind\u0022:\u0022select\u0022,\u0022entity\u0022:\u0022die4\u0022,\u0022target\u0022:null,\u0022property\u0022:null,\u0022value\u0022:0,\u0022x\u0022:0,\u0022y\u0022:0,\u0022seat\u0022:null,\u0022phase\u0022:null,\u0022visibility\u0022:null,\u0022winners\u0022:null}"
+          },
+          {
+            "sequence": 276,
+            "actor": "p1",
+            "entry": "game.lua:decide",
+            "message": "{\u0022flowRevision\u0022:275,\u0022kind\u0022:\u0022select\u0022,\u0022entity\u0022:\u0022die5\u0022,\u0022target\u0022:null,\u0022property\u0022:null,\u0022value\u0022:0,\u0022x\u0022:0,\u0022y\u0022:0,\u0022seat\u0022:null,\u0022phase\u0022:null,\u0022visibility\u0022:null,\u0022winners\u0022:null}"
+          },
+          {
+            "sequence": 277,
+            "actor": "p1",
+            "entry": "game.lua:decide",
+            "message": "{\u0022flowRevision\u0022:276,\u0022kind\u0022:\u0022reroll\u0022,\u0022entity\u0022:null,\u0022target\u0022:null,\u0022property\u0022:null,\u0022value\u0022:0,\u0022x\u0022:0,\u0022y\u0022:0,\u0022seat\u0022:null,\u0022phase\u0022:null,\u0022visibility\u0022:null,\u0022winners\u0022:null}"
+          },
+          {
+            "sequence": 280,
+            "actor": "p1",
+            "entry": "game.lua:decide",
+            "message": "{\u0022flowRevision\u0022:279,\u0022kind\u0022:\u0022challenge\u0022,\u0022entity\u0022:null,\u0022target\u0022:null,\u0022property\u0022:null,\u0022value\u0022:1,\u0022x\u0022:0,\u0022y\u0022:0,\u0022seat\u0022:null,\u0022phase\u0022:null,\u0022visibility\u0022:null,\u0022winners\u0022:null}"
+          },
+          {
+            "sequence": 282,
+            "actor": "p1",
+            "entry": "game.lua:decide",
+            "message": "{\u0022flowRevision\u0022:281,\u0022kind\u0022:\u0022attribute\u0022,\u0022entity\u0022:null,\u0022target\u0022:null,\u0022property\u0022:\u0022luck\u0022,\u0022value\u0022:0,\u0022x\u0022:0,\u0022y\u0022:0,\u0022seat\u0022:null,\u0022phase\u0022:null,\u0022visibility\u0022:null,\u0022winners\u0022:null}"
+          },
+          {
+            "sequence": 285,
+            "actor": "p1",
+            "entry": "game.lua:decide",
+            "message": "{\u0022flowRevision\u0022:284,\u0022kind\u0022:\u0022select\u0022,\u0022entity\u0022:\u0022die6\u0022,\u0022target\u0022:null,\u0022property\u0022:null,\u0022value\u0022:0,\u0022x\u0022:0,\u0022y\u0022:0,\u0022seat\u0022:null,\u0022phase\u0022:null,\u0022visibility\u0022:null,\u0022winners\u0022:null}"
+          },
+          {
+            "sequence": 286,
+            "actor": "p1",
+            "entry": "game.lua:decide",
+            "message": "{\u0022flowRevision\u0022:285,\u0022kind\u0022:\u0022store\u0022,\u0022entity\u0022:\u0022die6\u0022,\u0022target\u0022:\u00221\u0022,\u0022property\u0022:\u0022knowledge\u0022,\u0022value\u0022:0,\u0022x\u0022:0,\u0022y\u0022:0,\u0022seat\u0022:null,\u0022phase\u0022:null,\u0022visibility\u0022:null,\u0022winners\u0022:null}"
+          },
+          {
+            "sequence": 287,
+            "actor": "p1",
+            "entry": "game.lua:decide",
+            "message": "{\u0022flowRevision\u0022:286,\u0022kind\u0022:\u0022end\u0022,\u0022entity\u0022:null,\u0022target\u0022:null,\u0022property\u0022:null,\u0022value\u0022:0,\u0022x\u0022:0,\u0022y\u0022:0,\u0022seat\u0022:null,\u0022phase\u0022:null,\u0022visibility\u0022:null,\u0022winners\u0022:null}"
+          },
+          {
+            "sequence": 295,
+            "actor": "p1",
+            "entry": "game.lua:decide",
+            "message": "{\u0022flowRevision\u0022:294,\u0022kind\u0022:\u0022target\u0022,\u0022entity\u0022:\u0022slot3\u0022,\u0022target\u0022:null,\u0022property\u0022:null,\u0022value\u0022:3,\u0022x\u0022:0,\u0022y\u0022:0,\u0022seat\u0022:null,\u0022phase\u0022:null,\u0022visibility\u0022:null,\u0022winners\u0022:null}"
+          },
+          {
+            "sequence": 304,
+            "actor": "p1",
+            "entry": "game.lua:decide",
+            "message": "{\u0022flowRevision\u0022:303,\u0022kind\u0022:\u0022ready\u0022,\u0022entity\u0022:null,\u0022target\u0022:null,\u0022property\u0022:null,\u0022value\u0022:0,\u0022x\u0022:0,\u0022y\u0022:0,\u0022seat\u0022:null,\u0022phase\u0022:null,\u0022visibility\u0022:null,\u0022winners\u0022:null}"
+          },
+          {
+            "sequence": 307,
+            "actor": "p1",
+            "entry": "game.lua:decide",
+            "message": "{\u0022flowRevision\u0022:306,\u0022kind\u0022:\u0022select\u0022,\u0022entity\u0022:\u0022die2\u0022,\u0022target\u0022:null,\u0022property\u0022:null,\u0022value\u0022:0,\u0022x\u0022:0,\u0022y\u0022:0,\u0022seat\u0022:null,\u0022phase\u0022:null,\u0022visibility\u0022:null,\u0022winners\u0022:null}"
+          },
+          {
+            "sequence": 308,
+            "actor": "p1",
+            "entry": "game.lua:decide",
+            "message": "{\u0022flowRevision\u0022:307,\u0022kind\u0022:\u0022adjust\u0022,\u0022entity\u0022:\u0022die2\u0022,\u0022target\u0022:null,\u0022property\u0022:null,\u0022value\u0022:1,\u0022x\u0022:0,\u0022y\u0022:0,\u0022seat\u0022:null,\u0022phase\u0022:null,\u0022visibility\u0022:null,\u0022winners\u0022:null}"
+          },
+          {
+            "sequence": 309,
+            "actor": "p1",
+            "entry": "game.lua:decide",
+            "message": "{\u0022flowRevision\u0022:308,\u0022kind\u0022:\u0022clear\u0022,\u0022entity\u0022:null,\u0022target\u0022:null,\u0022property\u0022:null,\u0022value\u0022:0,\u0022x\u0022:0,\u0022y\u0022:0,\u0022seat\u0022:null,\u0022phase\u0022:null,\u0022visibility\u0022:null,\u0022winners\u0022:null}"
+          },
+          {
+            "sequence": 310,
+            "actor": "p1",
+            "entry": "game.lua:decide",
+            "message": "{\u0022flowRevision\u0022:309,\u0022kind\u0022:\u0022challenge\u0022,\u0022entity\u0022:null,\u0022target\u0022:null,\u0022property\u0022:null,\u0022value\u0022:1,\u0022x\u0022:0,\u0022y\u0022:0,\u0022seat\u0022:null,\u0022phase\u0022:null,\u0022visibility\u0022:null,\u0022winners\u0022:null}"
+          },
+          {
+            "sequence": 312,
+            "actor": "p1",
+            "entry": "game.lua:decide",
+            "message": "{\u0022flowRevision\u0022:311,\u0022kind\u0022:\u0022attribute\u0022,\u0022entity\u0022:null,\u0022target\u0022:null,\u0022property\u0022:\u0022knowledge\u0022,\u0022value\u0022:0,\u0022x\u0022:0,\u0022y\u0022:0,\u0022seat\u0022:null,\u0022phase\u0022:null,\u0022visibility\u0022:null,\u0022winners\u0022:null}"
+          },
+          {
+            "sequence": 315,
+            "actor": "p1",
+            "entry": "game.lua:decide",
+            "message": "{\u0022flowRevision\u0022:314,\u0022kind\u0022:\u0022select\u0022,\u0022entity\u0022:\u0022die6\u0022,\u0022target\u0022:null,\u0022property\u0022:null,\u0022value\u0022:0,\u0022x\u0022:0,\u0022y\u0022:0,\u0022seat\u0022:null,\u0022phase\u0022:null,\u0022visibility\u0022:null,\u0022winners\u0022:null}"
+          },
+          {
+            "sequence": 316,
+            "actor": "p1",
+            "entry": "game.lua:decide",
+            "message": "{\u0022flowRevision\u0022:315,\u0022kind\u0022:\u0022store\u0022,\u0022entity\u0022:\u0022die6\u0022,\u0022target\u0022:\u00221\u0022,\u0022property\u0022:\u0022knowledge\u0022,\u0022value\u0022:0,\u0022x\u0022:0,\u0022y\u0022:0,\u0022seat\u0022:null,\u0022phase\u0022:null,\u0022visibility\u0022:null,\u0022winners\u0022:null}"
+          },
+          {
+            "sequence": 317,
+            "actor": "p1",
+            "entry": "game.lua:decide",
+            "message": "{\u0022flowRevision\u0022:316,\u0022kind\u0022:\u0022end\u0022,\u0022entity\u0022:null,\u0022target\u0022:null,\u0022property\u0022:null,\u0022value\u0022:0,\u0022x\u0022:0,\u0022y\u0022:0,\u0022seat\u0022:null,\u0022phase\u0022:null,\u0022visibility\u0022:null,\u0022winners\u0022:null}"
+          },
+          {
+            "sequence": 331,
+            "actor": "p1",
+            "entry": "game.lua:decide",
+            "message": "{\u0022flowRevision\u0022:330,\u0022kind\u0022:\u0022ready\u0022,\u0022entity\u0022:null,\u0022target\u0022:null,\u0022property\u0022:null,\u0022value\u0022:0,\u0022x\u0022:0,\u0022y\u0022:0,\u0022seat\u0022:null,\u0022phase\u0022:null,\u0022visibility\u0022:null,\u0022winners\u0022:null}"
+          },
+          {
+            "sequence": 334,
+            "actor": "p1",
+            "entry": "game.lua:decide",
+            "message": "{\u0022flowRevision\u0022:333,\u0022kind\u0022:\u0022select\u0022,\u0022entity\u0022:\u0022die1\u0022,\u0022target\u0022:null,\u0022property\u0022:null,\u0022value\u0022:0,\u0022x\u0022:0,\u0022y\u0022:0,\u0022seat\u0022:null,\u0022phase\u0022:null,\u0022visibility\u0022:null,\u0022winners\u0022:null}"
+          },
+          {
+            "sequence": 335,
+            "actor": "p1",
+            "entry": "game.lua:decide",
+            "message": "{\u0022flowRevision\u0022:334,\u0022kind\u0022:\u0022adjust\u0022,\u0022entity\u0022:\u0022die1\u0022,\u0022target\u0022:null,\u0022property\u0022:null,\u0022value\u0022:-1,\u0022x\u0022:0,\u0022y\u0022:0,\u0022seat\u0022:null,\u0022phase\u0022:null,\u0022visibility\u0022:null,\u0022winners\u0022:null}"
+          },
+          {
+            "sequence": 336,
+            "actor": "p1",
+            "entry": "game.lua:decide",
+            "message": "{\u0022flowRevision\u0022:335,\u0022kind\u0022:\u0022adjust\u0022,\u0022entity\u0022:\u0022die1\u0022,\u0022target\u0022:null,\u0022property\u0022:null,\u0022value\u0022:-1,\u0022x\u0022:0,\u0022y\u0022:0,\u0022seat\u0022:null,\u0022phase\u0022:null,\u0022visibility\u0022:null,\u0022winners\u0022:null}"
+          },
+          {
+            "sequence": 337,
+            "actor": "p1",
+            "entry": "game.lua:decide",
+            "message": "{\u0022flowRevision\u0022:336,\u0022kind\u0022:\u0022clear\u0022,\u0022entity\u0022:null,\u0022target\u0022:null,\u0022property\u0022:null,\u0022value\u0022:0,\u0022x\u0022:0,\u0022y\u0022:0,\u0022seat\u0022:null,\u0022phase\u0022:null,\u0022visibility\u0022:null,\u0022winners\u0022:null}"
+          },
+          {
+            "sequence": 338,
+            "actor": "p1",
+            "entry": "game.lua:decide",
+            "message": "{\u0022flowRevision\u0022:337,\u0022kind\u0022:\u0022challenge\u0022,\u0022entity\u0022:null,\u0022target\u0022:null,\u0022property\u0022:null,\u0022value\u0022:2,\u0022x\u0022:0,\u0022y\u0022:0,\u0022seat\u0022:null,\u0022phase\u0022:null,\u0022visibility\u0022:null,\u0022winners\u0022:null}"
+          },
+          {
+            "sequence": 340,
+            "actor": "p1",
+            "entry": "game.lua:decide",
+            "message": "{\u0022flowRevision\u0022:339,\u0022kind\u0022:\u0022attribute\u0022,\u0022entity\u0022:null,\u0022target\u0022:null,\u0022property\u0022:\u0022resolve\u0022,\u0022value\u0022:0,\u0022x\u0022:0,\u0022y\u0022:0,\u0022seat\u0022:null,\u0022phase\u0022:null,\u0022visibility\u0022:null,\u0022winners\u0022:null}"
+          },
+          {
+            "sequence": 343,
+            "actor": "p1",
+            "entry": "game.lua:decide",
+            "message": "{\u0022flowRevision\u0022:342,\u0022kind\u0022:\u0022select\u0022,\u0022entity\u0022:\u0022die4\u0022,\u0022target\u0022:null,\u0022property\u0022:null,\u0022value\u0022:0,\u0022x\u0022:0,\u0022y\u0022:0,\u0022seat\u0022:null,\u0022phase\u0022:null,\u0022visibility\u0022:null,\u0022winners\u0022:null}"
+          },
+          {
+            "sequence": 344,
+            "actor": "p1",
+            "entry": "game.lua:decide",
+            "message": "{\u0022flowRevision\u0022:343,\u0022kind\u0022:\u0022store\u0022,\u0022entity\u0022:\u0022die4\u0022,\u0022target\u0022:\u00222\u0022,\u0022property\u0022:\u0022resolve\u0022,\u0022value\u0022:0,\u0022x\u0022:0,\u0022y\u0022:0,\u0022seat\u0022:null,\u0022phase\u0022:null,\u0022visibility\u0022:null,\u0022winners\u0022:null}"
+          },
+          {
+            "sequence": 345,
+            "actor": "p1",
+            "entry": "game.lua:decide",
+            "message": "{\u0022flowRevision\u0022:344,\u0022kind\u0022:\u0022select\u0022,\u0022entity\u0022:\u0022die5\u0022,\u0022target\u0022:null,\u0022property\u0022:null,\u0022value\u0022:0,\u0022x\u0022:0,\u0022y\u0022:0,\u0022seat\u0022:null,\u0022phase\u0022:null,\u0022visibility\u0022:null,\u0022winners\u0022:null}"
+          },
+          {
+            "sequence": 346,
+            "actor": "p1",
+            "entry": "game.lua:decide",
+            "message": "{\u0022flowRevision\u0022:345,\u0022kind\u0022:\u0022store\u0022,\u0022entity\u0022:\u0022die5\u0022,\u0022target\u0022:\u00224\u0022,\u0022property\u0022:\u0022resolve\u0022,\u0022value\u0022:0,\u0022x\u0022:0,\u0022y\u0022:0,\u0022seat\u0022:null,\u0022phase\u0022:null,\u0022visibility\u0022:null,\u0022winners\u0022:null}"
+          },
+          {
+            "sequence": 347,
+            "actor": "p1",
+            "entry": "game.lua:decide",
+            "message": "{\u0022flowRevision\u0022:346,\u0022kind\u0022:\u0022end\u0022,\u0022entity\u0022:null,\u0022target\u0022:null,\u0022property\u0022:null,\u0022value\u0022:0,\u0022x\u0022:0,\u0022y\u0022:0,\u0022seat\u0022:null,\u0022phase\u0022:null,\u0022visibility\u0022:null,\u0022winners\u0022:null}"
+          },
+          {
+            "sequence": 361,
+            "actor": "p1",
+            "entry": "game.lua:decide",
+            "message": "{\u0022flowRevision\u0022:360,\u0022kind\u0022:\u0022ready\u0022,\u0022entity\u0022:null,\u0022target\u0022:null,\u0022property\u0022:null,\u0022value\u0022:0,\u0022x\u0022:0,\u0022y\u0022:0,\u0022seat\u0022:null,\u0022phase\u0022:null,\u0022visibility\u0022:null,\u0022winners\u0022:null}"
+          },
+          {
+            "sequence": 364,
+            "actor": "p1",
+            "entry": "game.lua:decide",
+            "message": "{\u0022flowRevision\u0022:363,\u0022kind\u0022:\u0022select\u0022,\u0022entity\u0022:\u0022die2\u0022,\u0022target\u0022:null,\u0022property\u0022:null,\u0022value\u0022:0,\u0022x\u0022:0,\u0022y\u0022:0,\u0022seat\u0022:null,\u0022phase\u0022:null,\u0022visibility\u0022:null,\u0022winners\u0022:null}"
+          },
+          {
+            "sequence": 365,
+            "actor": "p1",
+            "entry": "game.lua:decide",
+            "message": "{\u0022flowRevision\u0022:364,\u0022kind\u0022:\u0022adjust\u0022,\u0022entity\u0022:\u0022die2\u0022,\u0022target\u0022:null,\u0022property\u0022:null,\u0022value\u0022:-1,\u0022x\u0022:0,\u0022y\u0022:0,\u0022seat\u0022:null,\u0022phase\u0022:null,\u0022visibility\u0022:null,\u0022winners\u0022:null}"
+          },
+          {
+            "sequence": 366,
+            "actor": "p1",
+            "entry": "game.lua:decide",
+            "message": "{\u0022flowRevision\u0022:365,\u0022kind\u0022:\u0022clear\u0022,\u0022entity\u0022:null,\u0022target\u0022:null,\u0022property\u0022:null,\u0022value\u0022:0,\u0022x\u0022:0,\u0022y\u0022:0,\u0022seat\u0022:null,\u0022phase\u0022:null,\u0022visibility\u0022:null,\u0022winners\u0022:null}"
+          },
+          {
+            "sequence": 367,
+            "actor": "p1",
+            "entry": "game.lua:decide",
+            "message": "{\u0022flowRevision\u0022:366,\u0022kind\u0022:\u0022select\u0022,\u0022entity\u0022:\u0022die4\u0022,\u0022target\u0022:null,\u0022property\u0022:null,\u0022value\u0022:0,\u0022x\u0022:0,\u0022y\u0022:0,\u0022seat\u0022:null,\u0022phase\u0022:null,\u0022visibility\u0022:null,\u0022winners\u0022:null}"
+          },
+          {
+            "sequence": 368,
+            "actor": "p1",
+            "entry": "game.lua:decide",
+            "message": "{\u0022flowRevision\u0022:367,\u0022kind\u0022:\u0022adjust\u0022,\u0022entity\u0022:\u0022die4\u0022,\u0022target\u0022:null,\u0022property\u0022:null,\u0022value\u0022:-1,\u0022x\u0022:0,\u0022y\u0022:0,\u0022seat\u0022:null,\u0022phase\u0022:null,\u0022visibility\u0022:null,\u0022winners\u0022:null}"
+          },
+          {
+            "sequence": 369,
+            "actor": "p1",
+            "entry": "game.lua:decide",
+            "message": "{\u0022flowRevision\u0022:368,\u0022kind\u0022:\u0022store\u0022,\u0022entity\u0022:\u0022die4\u0022,\u0022target\u0022:\u00222\u0022,\u0022property\u0022:\u0022resolve\u0022,\u0022value\u0022:0,\u0022x\u0022:0,\u0022y\u0022:0,\u0022seat\u0022:null,\u0022phase\u0022:null,\u0022visibility\u0022:null,\u0022winners\u0022:null}"
+          },
+          {
+            "sequence": 370,
+            "actor": "p1",
+            "entry": "game.lua:decide",
+            "message": "{\u0022flowRevision\u0022:369,\u0022kind\u0022:\u0022select\u0022,\u0022entity\u0022:\u0022die6\u0022,\u0022target\u0022:null,\u0022property\u0022:null,\u0022value\u0022:0,\u0022x\u0022:0,\u0022y\u0022:0,\u0022seat\u0022:null,\u0022phase\u0022:null,\u0022visibility\u0022:null,\u0022winners\u0022:null}"
+          },
+          {
+            "sequence": 371,
+            "actor": "p1",
+            "entry": "game.lua:decide",
+            "message": "{\u0022flowRevision\u0022:370,\u0022kind\u0022:\u0022reroll\u0022,\u0022entity\u0022:null,\u0022target\u0022:null,\u0022property\u0022:null,\u0022value\u0022:0,\u0022x\u0022:0,\u0022y\u0022:0,\u0022seat\u0022:null,\u0022phase\u0022:null,\u0022visibility\u0022:null,\u0022winners\u0022:null}"
+          },
+          {
+            "sequence": 374,
+            "actor": "p1",
+            "entry": "game.lua:decide",
+            "message": "{\u0022flowRevision\u0022:373,\u0022kind\u0022:\u0022select\u0022,\u0022entity\u0022:\u0022die6\u0022,\u0022target\u0022:null,\u0022property\u0022:null,\u0022value\u0022:0,\u0022x\u0022:0,\u0022y\u0022:0,\u0022seat\u0022:null,\u0022phase\u0022:null,\u0022visibility\u0022:null,\u0022winners\u0022:null}"
+          },
+          {
+            "sequence": 375,
+            "actor": "p1",
+            "entry": "game.lua:decide",
+            "message": "{\u0022flowRevision\u0022:374,\u0022kind\u0022:\u0022adjust\u0022,\u0022entity\u0022:\u0022die6\u0022,\u0022target\u0022:null,\u0022property\u0022:null,\u0022value\u0022:-1,\u0022x\u0022:0,\u0022y\u0022:0,\u0022seat\u0022:null,\u0022phase\u0022:null,\u0022visibility\u0022:null,\u0022winners\u0022:null}"
+          },
+          {
+            "sequence": 376,
+            "actor": "p1",
+            "entry": "game.lua:decide",
+            "message": "{\u0022flowRevision\u0022:375,\u0022kind\u0022:\u0022store\u0022,\u0022entity\u0022:\u0022die6\u0022,\u0022target\u0022:\u00224\u0022,\u0022property\u0022:\u0022resolve\u0022,\u0022value\u0022:0,\u0022x\u0022:0,\u0022y\u0022:0,\u0022seat\u0022:null,\u0022phase\u0022:null,\u0022visibility\u0022:null,\u0022winners\u0022:null}"
+          },
+          {
+            "sequence": 377,
+            "actor": "p1",
+            "entry": "game.lua:decide",
+            "message": "{\u0022flowRevision\u0022:376,\u0022kind\u0022:\u0022select\u0022,\u0022entity\u0022:\u0022die1\u0022,\u0022target\u0022:null,\u0022property\u0022:null,\u0022value\u0022:0,\u0022x\u0022:0,\u0022y\u0022:0,\u0022seat\u0022:null,\u0022phase\u0022:null,\u0022visibility\u0022:null,\u0022winners\u0022:null}"
+          },
+          {
+            "sequence": 378,
+            "actor": "p1",
+            "entry": "game.lua:decide",
+            "message": "{\u0022flowRevision\u0022:377,\u0022kind\u0022:\u0022store\u0022,\u0022entity\u0022:\u0022die1\u0022,\u0022target\u0022:\u00221\u0022,\u0022property\u0022:\u0022luck\u0022,\u0022value\u0022:0,\u0022x\u0022:0,\u0022y\u0022:0,\u0022seat\u0022:null,\u0022phase\u0022:null,\u0022visibility\u0022:null,\u0022winners\u0022:null}"
+          },
+          {
+            "sequence": 379,
+            "actor": "p1",
+            "entry": "game.lua:decide",
+            "message": "{\u0022flowRevision\u0022:378,\u0022kind\u0022:\u0022select\u0022,\u0022entity\u0022:\u0022die2\u0022,\u0022target\u0022:null,\u0022property\u0022:null,\u0022value\u0022:0,\u0022x\u0022:0,\u0022y\u0022:0,\u0022seat\u0022:null,\u0022phase\u0022:null,\u0022visibility\u0022:null,\u0022winners\u0022:null}"
+          },
+          {
+            "sequence": 380,
+            "actor": "p1",
+            "entry": "game.lua:decide",
+            "message": "{\u0022flowRevision\u0022:379,\u0022kind\u0022:\u0022store\u0022,\u0022entity\u0022:\u0022die2\u0022,\u0022target\u0022:\u00223\u0022,\u0022property\u0022:\u0022luck\u0022,\u0022value\u0022:0,\u0022x\u0022:0,\u0022y\u0022:0,\u0022seat\u0022:null,\u0022phase\u0022:null,\u0022visibility\u0022:null,\u0022winners\u0022:null}"
+          },
+          {
+            "sequence": 381,
+            "actor": "p1",
+            "entry": "game.lua:decide",
+            "message": "{\u0022flowRevision\u0022:380,\u0022kind\u0022:\u0022select\u0022,\u0022entity\u0022:\u0022die3\u0022,\u0022target\u0022:null,\u0022property\u0022:null,\u0022value\u0022:0,\u0022x\u0022:0,\u0022y\u0022:0,\u0022seat\u0022:null,\u0022phase\u0022:null,\u0022visibility\u0022:null,\u0022winners\u0022:null}"
+          },
+          {
+            "sequence": 382,
+            "actor": "p1",
+            "entry": "game.lua:decide",
+            "message": "{\u0022flowRevision\u0022:381,\u0022kind\u0022:\u0022end\u0022,\u0022entity\u0022:null,\u0022target\u0022:null,\u0022property\u0022:null,\u0022value\u0022:0,\u0022x\u0022:0,\u0022y\u0022:0,\u0022seat\u0022:null,\u0022phase\u0022:null,\u0022visibility\u0022:null,\u0022winners\u0022:null}"
+          },
+          {
+            "sequence": 396,
+            "actor": "p1",
+            "entry": "game.lua:decide",
+            "message": "{\u0022flowRevision\u0022:395,\u0022kind\u0022:\u0022ready\u0022,\u0022entity\u0022:null,\u0022target\u0022:null,\u0022property\u0022:null,\u0022value\u0022:0,\u0022x\u0022:0,\u0022y\u0022:0,\u0022seat\u0022:null,\u0022phase\u0022:null,\u0022visibility\u0022:null,\u0022winners\u0022:null}"
+          },
+          {
+            "sequence": 399,
+            "actor": "p1",
+            "entry": "game.lua:decide",
+            "message": "{\u0022flowRevision\u0022:398,\u0022kind\u0022:\u0022select\u0022,\u0022entity\u0022:\u0022die5\u0022,\u0022target\u0022:null,\u0022property\u0022:null,\u0022value\u0022:0,\u0022x\u0022:0,\u0022y\u0022:0,\u0022seat\u0022:null,\u0022phase\u0022:null,\u0022visibility\u0022:null,\u0022winners\u0022:null}"
+          },
+          {
+            "sequence": 400,
+            "actor": "p1",
+            "entry": "game.lua:decide",
+            "message": "{\u0022flowRevision\u0022:399,\u0022kind\u0022:\u0022adjust\u0022,\u0022entity\u0022:\u0022die5\u0022,\u0022target\u0022:null,\u0022property\u0022:null,\u0022value\u0022:-1,\u0022x\u0022:0,\u0022y\u0022:0,\u0022seat\u0022:null,\u0022phase\u0022:null,\u0022visibility\u0022:null,\u0022winners\u0022:null}"
+          },
+          {
+            "sequence": 401,
+            "actor": "p1",
+            "entry": "game.lua:decide",
+            "message": "{\u0022flowRevision\u0022:400,\u0022kind\u0022:\u0022store\u0022,\u0022entity\u0022:\u0022die5\u0022,\u0022target\u0022:\u00222\u0022,\u0022property\u0022:\u0022resolve\u0022,\u0022value\u0022:0,\u0022x\u0022:0,\u0022y\u0022:0,\u0022seat\u0022:null,\u0022phase\u0022:null,\u0022visibility\u0022:null,\u0022winners\u0022:null}"
+          },
+          {
+            "sequence": 402,
+            "actor": "p1",
+            "entry": "game.lua:decide",
+            "message": "{\u0022flowRevision\u0022:401,\u0022kind\u0022:\u0022select\u0022,\u0022entity\u0022:\u0022die3\u0022,\u0022target\u0022:null,\u0022property\u0022:null,\u0022value\u0022:0,\u0022x\u0022:0,\u0022y\u0022:0,\u0022seat\u0022:null,\u0022phase\u0022:null,\u0022visibility\u0022:null,\u0022winners\u0022:null}"
+          },
+          {
+            "sequence": 403,
+            "actor": "p1",
+            "entry": "game.lua:decide",
+            "message": "{\u0022flowRevision\u0022:402,\u0022kind\u0022:\u0022select\u0022,\u0022entity\u0022:\u0022die6\u0022,\u0022target\u0022:null,\u0022property\u0022:null,\u0022value\u0022:0,\u0022x\u0022:0,\u0022y\u0022:0,\u0022seat\u0022:null,\u0022phase\u0022:null,\u0022visibility\u0022:null,\u0022winners\u0022:null}"
+          },
+          {
+            "sequence": 404,
+            "actor": "p1",
+            "entry": "game.lua:decide",
+            "message": "{\u0022flowRevision\u0022:403,\u0022kind\u0022:\u0022reroll\u0022,\u0022entity\u0022:null,\u0022target\u0022:null,\u0022property\u0022:null,\u0022value\u0022:0,\u0022x\u0022:0,\u0022y\u0022:0,\u0022seat\u0022:null,\u0022phase\u0022:null,\u0022visibility\u0022:null,\u0022winners\u0022:null}"
+          },
+          {
+            "sequence": 407,
+            "actor": "p1",
+            "entry": "game.lua:decide",
+            "message": "{\u0022flowRevision\u0022:406,\u0022kind\u0022:\u0022select\u0022,\u0022entity\u0022:\u0022die4\u0022,\u0022target\u0022:null,\u0022property\u0022:null,\u0022value\u0022:0,\u0022x\u0022:0,\u0022y\u0022:0,\u0022seat\u0022:null,\u0022phase\u0022:null,\u0022visibility\u0022:null,\u0022winners\u0022:null}"
+          },
+          {
+            "sequence": 408,
+            "actor": "p1",
+            "entry": "game.lua:decide",
+            "message": "{\u0022flowRevision\u0022:407,\u0022kind\u0022:\u0022reroll\u0022,\u0022entity\u0022:null,\u0022target\u0022:null,\u0022property\u0022:null,\u0022value\u0022:1,\u0022x\u0022:0,\u0022y\u0022:0,\u0022seat\u0022:null,\u0022phase\u0022:null,\u0022visibility\u0022:null,\u0022winners\u0022:null}"
+          },
+          {
+            "sequence": 411,
+            "actor": "p1",
+            "entry": "game.lua:decide",
+            "message": "{\u0022flowRevision\u0022:410,\u0022kind\u0022:\u0022challenge\u0022,\u0022entity\u0022:null,\u0022target\u0022:null,\u0022property\u0022:null,\u0022value\u0022:3,\u0022x\u0022:0,\u0022y\u0022:0,\u0022seat\u0022:null,\u0022phase\u0022:null,\u0022visibility\u0022:null,\u0022winners\u0022:null}"
+          },
+          {
+            "sequence": 413,
+            "actor": "p1",
+            "entry": "game.lua:decide",
+            "message": "{\u0022flowRevision\u0022:412,\u0022kind\u0022:\u0022attribute\u0022,\u0022entity\u0022:null,\u0022target\u0022:null,\u0022property\u0022:\u0022resolve\u0022,\u0022value\u0022:0,\u0022x\u0022:0,\u0022y\u0022:0,\u0022seat\u0022:null,\u0022phase\u0022:null,\u0022visibility\u0022:null,\u0022winners\u0022:null}"
+          },
+          {
+            "sequence": 416,
+            "actor": "p1",
+            "entry": "game.lua:decide",
+            "message": "{\u0022flowRevision\u0022:415,\u0022kind\u0022:\u0022end\u0022,\u0022entity\u0022:null,\u0022target\u0022:null,\u0022property\u0022:null,\u0022value\u0022:0,\u0022x\u0022:0,\u0022y\u0022:0,\u0022seat\u0022:null,\u0022phase\u0022:null,\u0022visibility\u0022:null,\u0022winners\u0022:null}"
+          },
+          {
+            "sequence": 430,
+            "actor": "p1",
+            "entry": "game.lua:decide",
+            "message": "{\u0022flowRevision\u0022:429,\u0022kind\u0022:\u0022ready\u0022,\u0022entity\u0022:null,\u0022target\u0022:null,\u0022property\u0022:null,\u0022value\u0022:0,\u0022x\u0022:0,\u0022y\u0022:0,\u0022seat\u0022:null,\u0022phase\u0022:null,\u0022visibility\u0022:null,\u0022winners\u0022:null}"
+          },
+          {
+            "sequence": 433,
+            "actor": "p1",
+            "entry": "game.lua:decide",
+            "message": "{\u0022flowRevision\u0022:432,\u0022kind\u0022:\u0022reward\u0022,\u0022entity\u0022:null,\u0022target\u0022:null,\u0022property\u0022:null,\u0022value\u0022:5,\u0022x\u0022:0,\u0022y\u0022:0,\u0022seat\u0022:null,\u0022phase\u0022:null,\u0022visibility\u0022:null,\u0022winners\u0022:null}"
+          },
+          {
+            "sequence": 434,
+            "actor": "p1",
+            "entry": "game.lua:decide",
+            "message": "{\u0022flowRevision\u0022:433,\u0022kind\u0022:\u0022select\u0022,\u0022entity\u0022:\u0022die1\u0022,\u0022target\u0022:null,\u0022property\u0022:null,\u0022value\u0022:0,\u0022x\u0022:0,\u0022y\u0022:0,\u0022seat\u0022:null,\u0022phase\u0022:null,\u0022visibility\u0022:null,\u0022winners\u0022:null}"
+          },
+          {
+            "sequence": 435,
+            "actor": "p1",
+            "entry": "game.lua:decide",
+            "message": "{\u0022flowRevision\u0022:434,\u0022kind\u0022:\u0022select\u0022,\u0022entity\u0022:\u0022die2\u0022,\u0022target\u0022:null,\u0022property\u0022:null,\u0022value\u0022:0,\u0022x\u0022:0,\u0022y\u0022:0,\u0022seat\u0022:null,\u0022phase\u0022:null,\u0022visibility\u0022:null,\u0022winners\u0022:null}"
+          },
+          {
+            "sequence": 436,
+            "actor": "p1",
+            "entry": "game.lua:decide",
+            "message": "{\u0022flowRevision\u0022:435,\u0022kind\u0022:\u0022select\u0022,\u0022entity\u0022:\u0022die3\u0022,\u0022target\u0022:null,\u0022property\u0022:null,\u0022value\u0022:0,\u0022x\u0022:0,\u0022y\u0022:0,\u0022seat\u0022:null,\u0022phase\u0022:null,\u0022visibility\u0022:null,\u0022winners\u0022:null}"
+          },
+          {
+            "sequence": 437,
+            "actor": "p1",
+            "entry": "game.lua:decide",
+            "message": "{\u0022flowRevision\u0022:436,\u0022kind\u0022:\u0022reroll\u0022,\u0022entity\u0022:null,\u0022target\u0022:null,\u0022property\u0022:null,\u0022value\u0022:0,\u0022x\u0022:0,\u0022y\u0022:0,\u0022seat\u0022:null,\u0022phase\u0022:null,\u0022visibility\u0022:null,\u0022winners\u0022:null}"
+          },
+          {
+            "sequence": 440,
+            "actor": "p1",
+            "entry": "game.lua:decide",
+            "message": "{\u0022flowRevision\u0022:439,\u0022kind\u0022:\u0022select\u0022,\u0022entity\u0022:\u0022die1\u0022,\u0022target\u0022:null,\u0022property\u0022:null,\u0022value\u0022:0,\u0022x\u0022:0,\u0022y\u0022:0,\u0022seat\u0022:null,\u0022phase\u0022:null,\u0022visibility\u0022:null,\u0022winners\u0022:null}"
+          },
+          {
+            "sequence": 441,
+            "actor": "p1",
+            "entry": "game.lua:decide",
+            "message": "{\u0022flowRevision\u0022:440,\u0022kind\u0022:\u0022select\u0022,\u0022entity\u0022:\u0022die2\u0022,\u0022target\u0022:null,\u0022property\u0022:null,\u0022value\u0022:0,\u0022x\u0022:0,\u0022y\u0022:0,\u0022seat\u0022:null,\u0022phase\u0022:null,\u0022visibility\u0022:null,\u0022winners\u0022:null}"
+          },
+          {
+            "sequence": 442,
+            "actor": "p1",
+            "entry": "game.lua:decide",
+            "message": "{\u0022flowRevision\u0022:441,\u0022kind\u0022:\u0022select\u0022,\u0022entity\u0022:\u0022die3\u0022,\u0022target\u0022:null,\u0022property\u0022:null,\u0022value\u0022:0,\u0022x\u0022:0,\u0022y\u0022:0,\u0022seat\u0022:null,\u0022phase\u0022:null,\u0022visibility\u0022:null,\u0022winners\u0022:null}"
+          },
+          {
+            "sequence": 443,
+            "actor": "p1",
+            "entry": "game.lua:decide",
+            "message": "{\u0022flowRevision\u0022:442,\u0022kind\u0022:\u0022reroll\u0022,\u0022entity\u0022:null,\u0022target\u0022:null,\u0022property\u0022:null,\u0022value\u0022:1,\u0022x\u0022:0,\u0022y\u0022:0,\u0022seat\u0022:null,\u0022phase\u0022:null,\u0022visibility\u0022:null,\u0022winners\u0022:null}"
+          },
+          {
+            "sequence": 446,
+            "actor": "p1",
+            "entry": "game.lua:decide",
+            "message": "{\u0022flowRevision\u0022:445,\u0022kind\u0022:\u0022select\u0022,\u0022entity\u0022:\u0022die2\u0022,\u0022target\u0022:null,\u0022property\u0022:null,\u0022value\u0022:0,\u0022x\u0022:0,\u0022y\u0022:0,\u0022seat\u0022:null,\u0022phase\u0022:null,\u0022visibility\u0022:null,\u0022winners\u0022:null}"
+          },
+          {
+            "sequence": 447,
+            "actor": "p1",
+            "entry": "game.lua:decide",
+            "message": "{\u0022flowRevision\u0022:446,\u0022kind\u0022:\u0022select\u0022,\u0022entity\u0022:\u0022die3\u0022,\u0022target\u0022:null,\u0022property\u0022:null,\u0022value\u0022:0,\u0022x\u0022:0,\u0022y\u0022:0,\u0022seat\u0022:null,\u0022phase\u0022:null,\u0022visibility\u0022:null,\u0022winners\u0022:null}"
+          },
+          {
+            "sequence": 448,
+            "actor": "p1",
+            "entry": "game.lua:decide",
+            "message": "{\u0022flowRevision\u0022:447,\u0022kind\u0022:\u0022reroll\u0022,\u0022entity\u0022:null,\u0022target\u0022:null,\u0022property\u0022:null,\u0022value\u0022:1,\u0022x\u0022:0,\u0022y\u0022:0,\u0022seat\u0022:null,\u0022phase\u0022:null,\u0022visibility\u0022:null,\u0022winners\u0022:null}"
+          },
+          {
+            "sequence": 451,
+            "actor": "p1",
+            "entry": "game.lua:decide",
+            "message": "{\u0022flowRevision\u0022:450,\u0022kind\u0022:\u0022select\u0022,\u0022entity\u0022:\u0022die1\u0022,\u0022target\u0022:null,\u0022property\u0022:null,\u0022value\u0022:0,\u0022x\u0022:0,\u0022y\u0022:0,\u0022seat\u0022:null,\u0022phase\u0022:null,\u0022visibility\u0022:null,\u0022winners\u0022:null}"
+          },
+          {
+            "sequence": 452,
+            "actor": "p1",
+            "entry": "game.lua:decide",
+            "message": "{\u0022flowRevision\u0022:451,\u0022kind\u0022:\u0022store\u0022,\u0022entity\u0022:\u0022die1\u0022,\u0022target\u0022:\u00222\u0022,\u0022property\u0022:\u0022resolve\u0022,\u0022value\u0022:0,\u0022x\u0022:0,\u0022y\u0022:0,\u0022seat\u0022:null,\u0022phase\u0022:null,\u0022visibility\u0022:null,\u0022winners\u0022:null}"
+          },
+          {
+            "sequence": 453,
+            "actor": "p1",
+            "entry": "game.lua:decide",
+            "message": "{\u0022flowRevision\u0022:452,\u0022kind\u0022:\u0022select\u0022,\u0022entity\u0022:\u0022die2\u0022,\u0022target\u0022:null,\u0022property\u0022:null,\u0022value\u0022:0,\u0022x\u0022:0,\u0022y\u0022:0,\u0022seat\u0022:null,\u0022phase\u0022:null,\u0022visibility\u0022:null,\u0022winners\u0022:null}"
+          },
+          {
+            "sequence": 454,
+            "actor": "p1",
+            "entry": "game.lua:decide",
+            "message": "{\u0022flowRevision\u0022:453,\u0022kind\u0022:\u0022store\u0022,\u0022entity\u0022:\u0022die2\u0022,\u0022target\u0022:\u00224\u0022,\u0022property\u0022:\u0022resolve\u0022,\u0022value\u0022:0,\u0022x\u0022:0,\u0022y\u0022:0,\u0022seat\u0022:null,\u0022phase\u0022:null,\u0022visibility\u0022:null,\u0022winners\u0022:null}"
+          },
+          {
+            "sequence": 455,
+            "actor": "p1",
+            "entry": "game.lua:decide",
+            "message": "{\u0022flowRevision\u0022:454,\u0022kind\u0022:\u0022select\u0022,\u0022entity\u0022:\u0022die3\u0022,\u0022target\u0022:null,\u0022property\u0022:null,\u0022value\u0022:0,\u0022x\u0022:0,\u0022y\u0022:0,\u0022seat\u0022:null,\u0022phase\u0022:null,\u0022visibility\u0022:null,\u0022winners\u0022:null}"
+          },
+          {
+            "sequence": 456,
+            "actor": "p1",
+            "entry": "game.lua:decide",
+            "message": "{\u0022flowRevision\u0022:455,\u0022kind\u0022:\u0022store\u0022,\u0022entity\u0022:\u0022die3\u0022,\u0022target\u0022:\u00221\u0022,\u0022property\u0022:\u0022luck\u0022,\u0022value\u0022:0,\u0022x\u0022:0,\u0022y\u0022:0,\u0022seat\u0022:null,\u0022phase\u0022:null,\u0022visibility\u0022:null,\u0022winners\u0022:null}"
+          },
+          {
+            "sequence": 457,
+            "actor": "p1",
+            "entry": "game.lua:decide",
+            "message": "{\u0022flowRevision\u0022:456,\u0022kind\u0022:\u0022select\u0022,\u0022entity\u0022:\u0022die4\u0022,\u0022target\u0022:null,\u0022property\u0022:null,\u0022value\u0022:0,\u0022x\u0022:0,\u0022y\u0022:0,\u0022seat\u0022:null,\u0022phase\u0022:null,\u0022visibility\u0022:null,\u0022winners\u0022:null}"
+          },
+          {
+            "sequence": 458,
+            "actor": "p1",
+            "entry": "game.lua:decide",
+            "message": "{\u0022flowRevision\u0022:457,\u0022kind\u0022:\u0022store\u0022,\u0022entity\u0022:\u0022die4\u0022,\u0022target\u0022:\u00223\u0022,\u0022property\u0022:\u0022luck\u0022,\u0022value\u0022:0,\u0022x\u0022:0,\u0022y\u0022:0,\u0022seat\u0022:null,\u0022phase\u0022:null,\u0022visibility\u0022:null,\u0022winners\u0022:null}"
+          },
+          {
+            "sequence": 459,
+            "actor": "p1",
+            "entry": "game.lua:decide",
+            "message": "{\u0022flowRevision\u0022:458,\u0022kind\u0022:\u0022select\u0022,\u0022entity\u0022:\u0022die5\u0022,\u0022target\u0022:null,\u0022property\u0022:null,\u0022value\u0022:0,\u0022x\u0022:0,\u0022y\u0022:0,\u0022seat\u0022:null,\u0022phase\u0022:null,\u0022visibility\u0022:null,\u0022winners\u0022:null}"
+          },
+          {
+            "sequence": 460,
+            "actor": "p1",
+            "entry": "game.lua:decide",
+            "message": "{\u0022flowRevision\u0022:459,\u0022kind\u0022:\u0022end\u0022,\u0022entity\u0022:null,\u0022target\u0022:null,\u0022property\u0022:null,\u0022value\u0022:0,\u0022x\u0022:0,\u0022y\u0022:0,\u0022seat\u0022:null,\u0022phase\u0022:null,\u0022visibility\u0022:null,\u0022winners\u0022:null}"
+          },
+          {
+            "sequence": 474,
+            "actor": "p1",
+            "entry": "game.lua:decide",
+            "message": "{\u0022flowRevision\u0022:473,\u0022kind\u0022:\u0022ready\u0022,\u0022entity\u0022:null,\u0022target\u0022:null,\u0022property\u0022:null,\u0022value\u0022:0,\u0022x\u0022:0,\u0022y\u0022:0,\u0022seat\u0022:null,\u0022phase\u0022:null,\u0022visibility\u0022:null,\u0022winners\u0022:null}"
+          },
+          {
+            "sequence": 477,
+            "actor": "p1",
+            "entry": "game.lua:decide",
+            "message": "{\u0022flowRevision\u0022:476,\u0022kind\u0022:\u0022select\u0022,\u0022entity\u0022:\u0022die2\u0022,\u0022target\u0022:null,\u0022property\u0022:null,\u0022value\u0022:0,\u0022x\u0022:0,\u0022y\u0022:0,\u0022seat\u0022:null,\u0022phase\u0022:null,\u0022visibility\u0022:null,\u0022winners\u0022:null}"
+          },
+          {
+            "sequence": 478,
+            "actor": "p1",
+            "entry": "game.lua:decide",
+            "message": "{\u0022flowRevision\u0022:477,\u0022kind\u0022:\u0022select\u0022,\u0022entity\u0022:\u0022die3\u0022,\u0022target\u0022:null,\u0022property\u0022:null,\u0022value\u0022:0,\u0022x\u0022:0,\u0022y\u0022:0,\u0022seat\u0022:null,\u0022phase\u0022:null,\u0022visibility\u0022:null,\u0022winners\u0022:null}"
+          },
+          {
+            "sequence": 479,
+            "actor": "p1",
+            "entry": "game.lua:decide",
+            "message": "{\u0022flowRevision\u0022:478,\u0022kind\u0022:\u0022reroll\u0022,\u0022entity\u0022:null,\u0022target\u0022:null,\u0022property\u0022:null,\u0022value\u0022:0,\u0022x\u0022:0,\u0022y\u0022:0,\u0022seat\u0022:null,\u0022phase\u0022:null,\u0022visibility\u0022:null,\u0022winners\u0022:null}"
+          },
+          {
+            "sequence": 482,
+            "actor": "p1",
+            "entry": "game.lua:decide",
+            "message": "{\u0022flowRevision\u0022:481,\u0022kind\u0022:\u0022select\u0022,\u0022entity\u0022:\u0022die3\u0022,\u0022target\u0022:null,\u0022property\u0022:null,\u0022value\u0022:0,\u0022x\u0022:0,\u0022y\u0022:0,\u0022seat\u0022:null,\u0022phase\u0022:null,\u0022visibility\u0022:null,\u0022winners\u0022:null}"
+          },
+          {
+            "sequence": 483,
+            "actor": "p1",
+            "entry": "game.lua:decide",
+            "message": "{\u0022flowRevision\u0022:482,\u0022kind\u0022:\u0022select\u0022,\u0022entity\u0022:\u0022die5\u0022,\u0022target\u0022:null,\u0022property\u0022:null,\u0022value\u0022:0,\u0022x\u0022:0,\u0022y\u0022:0,\u0022seat\u0022:null,\u0022phase\u0022:null,\u0022visibility\u0022:null,\u0022winners\u0022:null}"
+          },
+          {
+            "sequence": 484,
+            "actor": "p1",
+            "entry": "game.lua:decide",
+            "message": "{\u0022flowRevision\u0022:483,\u0022kind\u0022:\u0022reroll\u0022,\u0022entity\u0022:null,\u0022target\u0022:null,\u0022property\u0022:null,\u0022value\u0022:1,\u0022x\u0022:0,\u0022y\u0022:0,\u0022seat\u0022:null,\u0022phase\u0022:null,\u0022visibility\u0022:null,\u0022winners\u0022:null}"
+          },
+          {
+            "sequence": 487,
+            "actor": "p1",
+            "entry": "game.lua:decide",
+            "message": "{\u0022flowRevision\u0022:486,\u0022kind\u0022:\u0022select\u0022,\u0022entity\u0022:\u0022die2\u0022,\u0022target\u0022:null,\u0022property\u0022:null,\u0022value\u0022:0,\u0022x\u0022:0,\u0022y\u0022:0,\u0022seat\u0022:null,\u0022phase\u0022:null,\u0022visibility\u0022:null,\u0022winners\u0022:null}"
+          },
+          {
+            "sequence": 488,
+            "actor": "p1",
+            "entry": "game.lua:decide",
+            "message": "{\u0022flowRevision\u0022:487,\u0022kind\u0022:\u0022adjust\u0022,\u0022entity\u0022:\u0022die2\u0022,\u0022target\u0022:null,\u0022property\u0022:null,\u0022value\u0022:-1,\u0022x\u0022:0,\u0022y\u0022:0,\u0022seat\u0022:null,\u0022phase\u0022:null,\u0022visibility\u0022:null,\u0022winners\u0022:null}"
+          },
+          {
+            "sequence": 489,
+            "actor": "p1",
+            "entry": "game.lua:decide",
+            "message": "{\u0022flowRevision\u0022:488,\u0022kind\u0022:\u0022store\u0022,\u0022entity\u0022:\u0022die2\u0022,\u0022target\u0022:\u00222\u0022,\u0022property\u0022:\u0022resolve\u0022,\u0022value\u0022:0,\u0022x\u0022:0,\u0022y\u0022:0,\u0022seat\u0022:null,\u0022phase\u0022:null,\u0022visibility\u0022:null,\u0022winners\u0022:null}"
+          },
+          {
+            "sequence": 490,
+            "actor": "p1",
+            "entry": "game.lua:decide",
+            "message": "{\u0022flowRevision\u0022:489,\u0022kind\u0022:\u0022select\u0022,\u0022entity\u0022:\u0022die1\u0022,\u0022target\u0022:null,\u0022property\u0022:null,\u0022value\u0022:0,\u0022x\u0022:0,\u0022y\u0022:0,\u0022seat\u0022:null,\u0022phase\u0022:null,\u0022visibility\u0022:null,\u0022winners\u0022:null}"
+          },
+          {
+            "sequence": 491,
+            "actor": "p1",
+            "entry": "game.lua:decide",
+            "message": "{\u0022flowRevision\u0022:490,\u0022kind\u0022:\u0022store\u0022,\u0022entity\u0022:\u0022die1\u0022,\u0022target\u0022:\u00224\u0022,\u0022property\u0022:\u0022resolve\u0022,\u0022value\u0022:0,\u0022x\u0022:0,\u0022y\u0022:0,\u0022seat\u0022:null,\u0022phase\u0022:null,\u0022visibility\u0022:null,\u0022winners\u0022:null}"
+          },
+          {
+            "sequence": 492,
+            "actor": "p1",
+            "entry": "game.lua:decide",
+            "message": "{\u0022flowRevision\u0022:491,\u0022kind\u0022:\u0022select\u0022,\u0022entity\u0022:\u0022die3\u0022,\u0022target\u0022:null,\u0022property\u0022:null,\u0022value\u0022:0,\u0022x\u0022:0,\u0022y\u0022:0,\u0022seat\u0022:null,\u0022phase\u0022:null,\u0022visibility\u0022:null,\u0022winners\u0022:null}"
+          },
+          {
+            "sequence": 493,
+            "actor": "p1",
+            "entry": "game.lua:decide",
+            "message": "{\u0022flowRevision\u0022:492,\u0022kind\u0022:\u0022store\u0022,\u0022entity\u0022:\u0022die3\u0022,\u0022target\u0022:\u00221\u0022,\u0022property\u0022:\u0022luck\u0022,\u0022value\u0022:0,\u0022x\u0022:0,\u0022y\u0022:0,\u0022seat\u0022:null,\u0022phase\u0022:null,\u0022visibility\u0022:null,\u0022winners\u0022:null}"
+          },
+          {
+            "sequence": 494,
+            "actor": "p1",
+            "entry": "game.lua:decide",
+            "message": "{\u0022flowRevision\u0022:493,\u0022kind\u0022:\u0022select\u0022,\u0022entity\u0022:\u0022die4\u0022,\u0022target\u0022:null,\u0022property\u0022:null,\u0022value\u0022:0,\u0022x\u0022:0,\u0022y\u0022:0,\u0022seat\u0022:null,\u0022phase\u0022:null,\u0022visibility\u0022:null,\u0022winners\u0022:null}"
+          },
+          {
+            "sequence": 495,
+            "actor": "p1",
+            "entry": "game.lua:decide",
+            "message": "{\u0022flowRevision\u0022:494,\u0022kind\u0022:\u0022store\u0022,\u0022entity\u0022:\u0022die4\u0022,\u0022target\u0022:\u00223\u0022,\u0022property\u0022:\u0022luck\u0022,\u0022value\u0022:0,\u0022x\u0022:0,\u0022y\u0022:0,\u0022seat\u0022:null,\u0022phase\u0022:null,\u0022visibility\u0022:null,\u0022winners\u0022:null}"
+          },
+          {
+            "sequence": 496,
+            "actor": "p1",
+            "entry": "game.lua:decide",
+            "message": "{\u0022flowRevision\u0022:495,\u0022kind\u0022:\u0022select\u0022,\u0022entity\u0022:\u0022die5\u0022,\u0022target\u0022:null,\u0022property\u0022:null,\u0022value\u0022:0,\u0022x\u0022:0,\u0022y\u0022:0,\u0022seat\u0022:null,\u0022phase\u0022:null,\u0022visibility\u0022:null,\u0022winners\u0022:null}"
+          },
+          {
+            "sequence": 497,
+            "actor": "p1",
+            "entry": "game.lua:decide",
+            "message": "{\u0022flowRevision\u0022:496,\u0022kind\u0022:\u0022end\u0022,\u0022entity\u0022:null,\u0022target\u0022:null,\u0022property\u0022:null,\u0022value\u0022:0,\u0022x\u0022:0,\u0022y\u0022:0,\u0022seat\u0022:null,\u0022phase\u0022:null,\u0022visibility\u0022:null,\u0022winners\u0022:null}"
+          },
+          {
+            "sequence": 511,
+            "actor": "p1",
+            "entry": "game.lua:decide",
+            "message": "{\u0022flowRevision\u0022:510,\u0022kind\u0022:\u0022ready\u0022,\u0022entity\u0022:null,\u0022target\u0022:null,\u0022property\u0022:null,\u0022value\u0022:0,\u0022x\u0022:0,\u0022y\u0022:0,\u0022seat\u0022:null,\u0022phase\u0022:null,\u0022visibility\u0022:null,\u0022winners\u0022:null}"
+          },
+          {
+            "sequence": 514,
+            "actor": "p1",
+            "entry": "game.lua:decide",
+            "message": "{\u0022flowRevision\u0022:513,\u0022kind\u0022:\u0022select\u0022,\u0022entity\u0022:\u0022die5\u0022,\u0022target\u0022:null,\u0022property\u0022:null,\u0022value\u0022:0,\u0022x\u0022:0,\u0022y\u0022:0,\u0022seat\u0022:null,\u0022phase\u0022:null,\u0022visibility\u0022:null,\u0022winners\u0022:null}"
+          },
+          {
+            "sequence": 515,
+            "actor": "p1",
+            "entry": "game.lua:decide",
+            "message": "{\u0022flowRevision\u0022:514,\u0022kind\u0022:\u0022adjust\u0022,\u0022entity\u0022:\u0022die5\u0022,\u0022target\u0022:null,\u0022property\u0022:null,\u0022value\u0022:1,\u0022x\u0022:0,\u0022y\u0022:0,\u0022seat\u0022:null,\u0022phase\u0022:null,\u0022visibility\u0022:null,\u0022winners\u0022:null}"
+          },
+          {
+            "sequence": 516,
+            "actor": "p1",
+            "entry": "game.lua:decide",
+            "message": "{\u0022flowRevision\u0022:515,\u0022kind\u0022:\u0022clear\u0022,\u0022entity\u0022:null,\u0022target\u0022:null,\u0022property\u0022:null,\u0022value\u0022:0,\u0022x\u0022:0,\u0022y\u0022:0,\u0022seat\u0022:null,\u0022phase\u0022:null,\u0022visibility\u0022:null,\u0022winners\u0022:null}"
+          },
+          {
+            "sequence": 517,
+            "actor": "p1",
+            "entry": "game.lua:decide",
+            "message": "{\u0022flowRevision\u0022:516,\u0022kind\u0022:\u0022challenge\u0022,\u0022entity\u0022:null,\u0022target\u0022:null,\u0022property\u0022:null,\u0022value\u0022:1,\u0022x\u0022:0,\u0022y\u0022:0,\u0022seat\u0022:null,\u0022phase\u0022:null,\u0022visibility\u0022:null,\u0022winners\u0022:null}"
+          },
+          {
+            "sequence": 519,
+            "actor": "p1",
+            "entry": "game.lua:decide",
+            "message": "{\u0022flowRevision\u0022:518,\u0022kind\u0022:\u0022attribute\u0022,\u0022entity\u0022:null,\u0022target\u0022:null,\u0022property\u0022:\u0022luck\u0022,\u0022value\u0022:0,\u0022x\u0022:0,\u0022y\u0022:0,\u0022seat\u0022:null,\u0022phase\u0022:null,\u0022visibility\u0022:null,\u0022winners\u0022:null}"
+          },
+          {
+            "sequence": 522,
+            "actor": "p1",
+            "entry": "game.lua:decide",
+            "message": "{\u0022flowRevision\u0022:521,\u0022kind\u0022:\u0022select\u0022,\u0022entity\u0022:\u0022die2\u0022,\u0022target\u0022:null,\u0022property\u0022:null,\u0022value\u0022:0,\u0022x\u0022:0,\u0022y\u0022:0,\u0022seat\u0022:null,\u0022phase\u0022:null,\u0022visibility\u0022:null,\u0022winners\u0022:null}"
+          },
+          {
+            "sequence": 523,
+            "actor": "p1",
+            "entry": "game.lua:decide",
+            "message": "{\u0022flowRevision\u0022:522,\u0022kind\u0022:\u0022store\u0022,\u0022entity\u0022:\u0022die2\u0022,\u0022target\u0022:\u00221\u0022,\u0022property\u0022:\u0022knowledge\u0022,\u0022value\u0022:0,\u0022x\u0022:0,\u0022y\u0022:0,\u0022seat\u0022:null,\u0022phase\u0022:null,\u0022visibility\u0022:null,\u0022winners\u0022:null}"
+          },
+          {
+            "sequence": 524,
+            "actor": "p1",
+            "entry": "game.lua:decide",
+            "message": "{\u0022flowRevision\u0022:523,\u0022kind\u0022:\u0022select\u0022,\u0022entity\u0022:\u0022die6\u0022,\u0022target\u0022:null,\u0022property\u0022:null,\u0022value\u0022:0,\u0022x\u0022:0,\u0022y\u0022:0,\u0022seat\u0022:null,\u0022phase\u0022:null,\u0022visibility\u0022:null,\u0022winners\u0022:null}"
+          },
+          {
+            "sequence": 525,
+            "actor": "p1",
+            "entry": "game.lua:decide",
+            "message": "{\u0022flowRevision\u0022:524,\u0022kind\u0022:\u0022store\u0022,\u0022entity\u0022:\u0022die6\u0022,\u0022target\u0022:\u00222\u0022,\u0022property\u0022:\u0022knowledge\u0022,\u0022value\u0022:0,\u0022x\u0022:0,\u0022y\u0022:0,\u0022seat\u0022:null,\u0022phase\u0022:null,\u0022visibility\u0022:null,\u0022winners\u0022:null}"
+          },
+          {
+            "sequence": 526,
+            "actor": "p1",
+            "entry": "game.lua:decide",
+            "message": "{\u0022flowRevision\u0022:525,\u0022kind\u0022:\u0022end\u0022,\u0022entity\u0022:null,\u0022target\u0022:null,\u0022property\u0022:null,\u0022value\u0022:0,\u0022x\u0022:0,\u0022y\u0022:0,\u0022seat\u0022:null,\u0022phase\u0022:null,\u0022visibility\u0022:null,\u0022winners\u0022:null}"
+          },
+          {
+            "sequence": 534,
+            "actor": "p1",
+            "entry": "game.lua:decide",
+            "message": "{\u0022flowRevision\u0022:533,\u0022kind\u0022:\u0022target\u0022,\u0022entity\u0022:\u0022slot4\u0022,\u0022target\u0022:null,\u0022property\u0022:null,\u0022value\u0022:4,\u0022x\u0022:0,\u0022y\u0022:0,\u0022seat\u0022:null,\u0022phase\u0022:null,\u0022visibility\u0022:null,\u0022winners\u0022:null}"
+          },
+          {
+            "sequence": 543,
+            "actor": "p1",
+            "entry": "game.lua:decide",
+            "message": "{\u0022flowRevision\u0022:542,\u0022kind\u0022:\u0022ready\u0022,\u0022entity\u0022:null,\u0022target\u0022:null,\u0022property\u0022:null,\u0022value\u0022:0,\u0022x\u0022:0,\u0022y\u0022:0,\u0022seat\u0022:null,\u0022phase\u0022:null,\u0022visibility\u0022:null,\u0022winners\u0022:null}"
+          },
+          {
+            "sequence": 546,
+            "actor": "p1",
+            "entry": "game.lua:decide",
+            "message": "{\u0022flowRevision\u0022:545,\u0022kind\u0022:\u0022select\u0022,\u0022entity\u0022:\u0022die2\u0022,\u0022target\u0022:null,\u0022property\u0022:null,\u0022value\u0022:0,\u0022x\u0022:0,\u0022y\u0022:0,\u0022seat\u0022:null,\u0022phase\u0022:null,\u0022visibility\u0022:null,\u0022winners\u0022:null}"
+          },
+          {
+            "sequence": 547,
+            "actor": "p1",
+            "entry": "game.lua:decide",
+            "message": "{\u0022flowRevision\u0022:546,\u0022kind\u0022:\u0022select\u0022,\u0022entity\u0022:\u0022die4\u0022,\u0022target\u0022:null,\u0022property\u0022:null,\u0022value\u0022:0,\u0022x\u0022:0,\u0022y\u0022:0,\u0022seat\u0022:null,\u0022phase\u0022:null,\u0022visibility\u0022:null,\u0022winners\u0022:null}"
+          },
+          {
+            "sequence": 548,
+            "actor": "p1",
+            "entry": "game.lua:decide",
+            "message": "{\u0022flowRevision\u0022:547,\u0022kind\u0022:\u0022reroll\u0022,\u0022entity\u0022:null,\u0022target\u0022:null,\u0022property\u0022:null,\u0022value\u0022:0,\u0022x\u0022:0,\u0022y\u0022:0,\u0022seat\u0022:null,\u0022phase\u0022:null,\u0022visibility\u0022:null,\u0022winners\u0022:null}"
+          },
+          {
+            "sequence": 551,
+            "actor": "p1",
+            "entry": "game.lua:decide",
+            "message": "{\u0022flowRevision\u0022:550,\u0022kind\u0022:\u0022select\u0022,\u0022entity\u0022:\u0022die4\u0022,\u0022target\u0022:null,\u0022property\u0022:null,\u0022value\u0022:0,\u0022x\u0022:0,\u0022y\u0022:0,\u0022seat\u0022:null,\u0022phase\u0022:null,\u0022visibility\u0022:null,\u0022winners\u0022:null}"
+          },
+          {
+            "sequence": 552,
+            "actor": "p1",
+            "entry": "game.lua:decide",
+            "message": "{\u0022flowRevision\u0022:551,\u0022kind\u0022:\u0022adjust\u0022,\u0022entity\u0022:\u0022die4\u0022,\u0022target\u0022:null,\u0022property\u0022:null,\u0022value\u0022:-1,\u0022x\u0022:0,\u0022y\u0022:0,\u0022seat\u0022:null,\u0022phase\u0022:null,\u0022visibility\u0022:null,\u0022winners\u0022:null}"
+          },
+          {
+            "sequence": 553,
+            "actor": "p1",
+            "entry": "game.lua:decide",
+            "message": "{\u0022flowRevision\u0022:552,\u0022kind\u0022:\u0022adjust\u0022,\u0022entity\u0022:\u0022die4\u0022,\u0022target\u0022:null,\u0022property\u0022:null,\u0022value\u0022:-1,\u0022x\u0022:0,\u0022y\u0022:0,\u0022seat\u0022:null,\u0022phase\u0022:null,\u0022visibility\u0022:null,\u0022winners\u0022:null}"
+          },
+          {
+            "sequence": 554,
+            "actor": "p1",
+            "entry": "game.lua:decide",
+            "message": "{\u0022flowRevision\u0022:553,\u0022kind\u0022:\u0022clear\u0022,\u0022entity\u0022:null,\u0022target\u0022:null,\u0022property\u0022:null,\u0022value\u0022:0,\u0022x\u0022:0,\u0022y\u0022:0,\u0022seat\u0022:null,\u0022phase\u0022:null,\u0022visibility\u0022:null,\u0022winners\u0022:null}"
+          },
+          {
+            "sequence": 555,
+            "actor": "p1",
+            "entry": "game.lua:decide",
+            "message": "{\u0022flowRevision\u0022:554,\u0022kind\u0022:\u0022challenge\u0022,\u0022entity\u0022:null,\u0022target\u0022:null,\u0022property\u0022:null,\u0022value\u0022:1,\u0022x\u0022:0,\u0022y\u0022:0,\u0022seat\u0022:null,\u0022phase\u0022:null,\u0022visibility\u0022:null,\u0022winners\u0022:null}"
+          },
+          {
+            "sequence": 557,
+            "actor": "p1",
+            "entry": "game.lua:decide",
+            "message": "{\u0022flowRevision\u0022:556,\u0022kind\u0022:\u0022attribute\u0022,\u0022entity\u0022:null,\u0022target\u0022:null,\u0022property\u0022:\u0022knowledge\u0022,\u0022value\u0022:0,\u0022x\u0022:0,\u0022y\u0022:0,\u0022seat\u0022:null,\u0022phase\u0022:null,\u0022visibility\u0022:null,\u0022winners\u0022:null}"
+          },
+          {
+            "sequence": 560,
+            "actor": "p1",
+            "entry": "game.lua:decide",
+            "message": "{\u0022flowRevision\u0022:559,\u0022kind\u0022:\u0022select\u0022,\u0022entity\u0022:\u0022die6\u0022,\u0022target\u0022:null,\u0022property\u0022:null,\u0022value\u0022:0,\u0022x\u0022:0,\u0022y\u0022:0,\u0022seat\u0022:null,\u0022phase\u0022:null,\u0022visibility\u0022:null,\u0022winners\u0022:null}"
+          },
+          {
+            "sequence": 561,
+            "actor": "p1",
+            "entry": "game.lua:decide",
+            "message": "{\u0022flowRevision\u0022:560,\u0022kind\u0022:\u0022store\u0022,\u0022entity\u0022:\u0022die6\u0022,\u0022target\u0022:\u00222\u0022,\u0022property\u0022:\u0022resolve\u0022,\u0022value\u0022:0,\u0022x\u0022:0,\u0022y\u0022:0,\u0022seat\u0022:null,\u0022phase\u0022:null,\u0022visibility\u0022:null,\u0022winners\u0022:null}"
+          },
+          {
+            "sequence": 562,
+            "actor": "p1",
+            "entry": "game.lua:decide",
+            "message": "{\u0022flowRevision\u0022:561,\u0022kind\u0022:\u0022end\u0022,\u0022entity\u0022:null,\u0022target\u0022:null,\u0022property\u0022:null,\u0022value\u0022:0,\u0022x\u0022:0,\u0022y\u0022:0,\u0022seat\u0022:null,\u0022phase\u0022:null,\u0022visibility\u0022:null,\u0022winners\u0022:null}"
+          },
+          {
+            "sequence": 576,
+            "actor": "p1",
+            "entry": "game.lua:decide",
+            "message": "{\u0022flowRevision\u0022:575,\u0022kind\u0022:\u0022ready\u0022,\u0022entity\u0022:null,\u0022target\u0022:null,\u0022property\u0022:null,\u0022value\u0022:0,\u0022x\u0022:0,\u0022y\u0022:0,\u0022seat\u0022:null,\u0022phase\u0022:null,\u0022visibility\u0022:null,\u0022winners\u0022:null}"
+          },
+          {
+            "sequence": 579,
+            "actor": "p1",
+            "entry": "game.lua:decide",
+            "message": "{\u0022flowRevision\u0022:578,\u0022kind\u0022:\u0022select\u0022,\u0022entity\u0022:\u0022die2\u0022,\u0022target\u0022:null,\u0022property\u0022:null,\u0022value\u0022:0,\u0022x\u0022:0,\u0022y\u0022:0,\u0022seat\u0022:null,\u0022phase\u0022:null,\u0022visibility\u0022:null,\u0022winners\u0022:null}"
+          },
+          {
+            "sequence": 580,
+            "actor": "p1",
+            "entry": "game.lua:decide",
+            "message": "{\u0022flowRevision\u0022:579,\u0022kind\u0022:\u0022select\u0022,\u0022entity\u0022:\u0022die4\u0022,\u0022target\u0022:null,\u0022property\u0022:null,\u0022value\u0022:0,\u0022x\u0022:0,\u0022y\u0022:0,\u0022seat\u0022:null,\u0022phase\u0022:null,\u0022visibility\u0022:null,\u0022winners\u0022:null}"
+          },
+          {
+            "sequence": 581,
+            "actor": "p1",
+            "entry": "game.lua:decide",
+            "message": "{\u0022flowRevision\u0022:580,\u0022kind\u0022:\u0022reroll\u0022,\u0022entity\u0022:null,\u0022target\u0022:null,\u0022property\u0022:null,\u0022value\u0022:0,\u0022x\u0022:0,\u0022y\u0022:0,\u0022seat\u0022:null,\u0022phase\u0022:null,\u0022visibility\u0022:null,\u0022winners\u0022:null}"
+          },
+          {
+            "sequence": 584,
+            "actor": "p1",
+            "entry": "game.lua:decide",
+            "message": "{\u0022flowRevision\u0022:583,\u0022kind\u0022:\u0022select\u0022,\u0022entity\u0022:\u0022die4\u0022,\u0022target\u0022:null,\u0022property\u0022:null,\u0022value\u0022:0,\u0022x\u0022:0,\u0022y\u0022:0,\u0022seat\u0022:null,\u0022phase\u0022:null,\u0022visibility\u0022:null,\u0022winners\u0022:null}"
+          },
+          {
+            "sequence": 585,
+            "actor": "p1",
+            "entry": "game.lua:decide",
+            "message": "{\u0022flowRevision\u0022:584,\u0022kind\u0022:\u0022reroll\u0022,\u0022entity\u0022:null,\u0022target\u0022:null,\u0022property\u0022:null,\u0022value\u0022:1,\u0022x\u0022:0,\u0022y\u0022:0,\u0022seat\u0022:null,\u0022phase\u0022:null,\u0022visibility\u0022:null,\u0022winners\u0022:null}"
+          },
+          {
+            "sequence": 588,
+            "actor": "p1",
+            "entry": "game.lua:decide",
+            "message": "{\u0022flowRevision\u0022:587,\u0022kind\u0022:\u0022select\u0022,\u0022entity\u0022:\u0022die1\u0022,\u0022target\u0022:null,\u0022property\u0022:null,\u0022value\u0022:0,\u0022x\u0022:0,\u0022y\u0022:0,\u0022seat\u0022:null,\u0022phase\u0022:null,\u0022visibility\u0022:null,\u0022winners\u0022:null}"
+          },
+          {
+            "sequence": 589,
+            "actor": "p1",
+            "entry": "game.lua:decide",
+            "message": "{\u0022flowRevision\u0022:588,\u0022kind\u0022:\u0022store\u0022,\u0022entity\u0022:\u0022die1\u0022,\u0022target\u0022:\u00222\u0022,\u0022property\u0022:\u0022resolve\u0022,\u0022value\u0022:0,\u0022x\u0022:0,\u0022y\u0022:0,\u0022seat\u0022:null,\u0022phase\u0022:null,\u0022visibility\u0022:null,\u0022winners\u0022:null}"
+          },
+          {
+            "sequence": 590,
+            "actor": "p1",
+            "entry": "game.lua:decide",
+            "message": "{\u0022flowRevision\u0022:589,\u0022kind\u0022:\u0022select\u0022,\u0022entity\u0022:\u0022die2\u0022,\u0022target\u0022:null,\u0022property\u0022:null,\u0022value\u0022:0,\u0022x\u0022:0,\u0022y\u0022:0,\u0022seat\u0022:null,\u0022phase\u0022:null,\u0022visibility\u0022:null,\u0022winners\u0022:null}"
+          },
+          {
+            "sequence": 591,
+            "actor": "p1",
+            "entry": "game.lua:decide",
+            "message": "{\u0022flowRevision\u0022:590,\u0022kind\u0022:\u0022store\u0022,\u0022entity\u0022:\u0022die2\u0022,\u0022target\u0022:\u00224\u0022,\u0022property\u0022:\u0022resolve\u0022,\u0022value\u0022:0,\u0022x\u0022:0,\u0022y\u0022:0,\u0022seat\u0022:null,\u0022phase\u0022:null,\u0022visibility\u0022:null,\u0022winners\u0022:null}"
+          },
+          {
+            "sequence": 592,
+            "actor": "p1",
+            "entry": "game.lua:decide",
+            "message": "{\u0022flowRevision\u0022:591,\u0022kind\u0022:\u0022select\u0022,\u0022entity\u0022:\u0022die3\u0022,\u0022target\u0022:null,\u0022property\u0022:null,\u0022value\u0022:0,\u0022x\u0022:0,\u0022y\u0022:0,\u0022seat\u0022:null,\u0022phase\u0022:null,\u0022visibility\u0022:null,\u0022winners\u0022:null}"
+          },
+          {
+            "sequence": 593,
+            "actor": "p1",
+            "entry": "game.lua:decide",
+            "message": "{\u0022flowRevision\u0022:592,\u0022kind\u0022:\u0022store\u0022,\u0022entity\u0022:\u0022die3\u0022,\u0022target\u0022:\u00221\u0022,\u0022property\u0022:\u0022luck\u0022,\u0022value\u0022:0,\u0022x\u0022:0,\u0022y\u0022:0,\u0022seat\u0022:null,\u0022phase\u0022:null,\u0022visibility\u0022:null,\u0022winners\u0022:null}"
+          },
+          {
+            "sequence": 594,
+            "actor": "p1",
+            "entry": "game.lua:decide",
+            "message": "{\u0022flowRevision\u0022:593,\u0022kind\u0022:\u0022select\u0022,\u0022entity\u0022:\u0022die4\u0022,\u0022target\u0022:null,\u0022property\u0022:null,\u0022value\u0022:0,\u0022x\u0022:0,\u0022y\u0022:0,\u0022seat\u0022:null,\u0022phase\u0022:null,\u0022visibility\u0022:null,\u0022winners\u0022:null}"
+          },
+          {
+            "sequence": 595,
+            "actor": "p1",
+            "entry": "game.lua:decide",
+            "message": "{\u0022flowRevision\u0022:594,\u0022kind\u0022:\u0022store\u0022,\u0022entity\u0022:\u0022die4\u0022,\u0022target\u0022:\u00223\u0022,\u0022property\u0022:\u0022luck\u0022,\u0022value\u0022:0,\u0022x\u0022:0,\u0022y\u0022:0,\u0022seat\u0022:null,\u0022phase\u0022:null,\u0022visibility\u0022:null,\u0022winners\u0022:null}"
+          },
+          {
+            "sequence": 596,
+            "actor": "p1",
+            "entry": "game.lua:decide",
+            "message": "{\u0022flowRevision\u0022:595,\u0022kind\u0022:\u0022select\u0022,\u0022entity\u0022:\u0022die5\u0022,\u0022target\u0022:null,\u0022property\u0022:null,\u0022value\u0022:0,\u0022x\u0022:0,\u0022y\u0022:0,\u0022seat\u0022:null,\u0022phase\u0022:null,\u0022visibility\u0022:null,\u0022winners\u0022:null}"
+          },
+          {
+            "sequence": 597,
+            "actor": "p1",
+            "entry": "game.lua:decide",
+            "message": "{\u0022flowRevision\u0022:596,\u0022kind\u0022:\u0022end\u0022,\u0022entity\u0022:null,\u0022target\u0022:null,\u0022property\u0022:null,\u0022value\u0022:0,\u0022x\u0022:0,\u0022y\u0022:0,\u0022seat\u0022:null,\u0022phase\u0022:null,\u0022visibility\u0022:null,\u0022winners\u0022:null}"
+          },
+          {
+            "sequence": 611,
+            "actor": "p1",
+            "entry": "game.lua:decide",
+            "message": "{\u0022flowRevision\u0022:610,\u0022kind\u0022:\u0022ready\u0022,\u0022entity\u0022:null,\u0022target\u0022:null,\u0022property\u0022:null,\u0022value\u0022:0,\u0022x\u0022:0,\u0022y\u0022:0,\u0022seat\u0022:null,\u0022phase\u0022:null,\u0022visibility\u0022:null,\u0022winners\u0022:null}"
+          },
+          {
+            "sequence": 614,
+            "actor": "p1",
+            "entry": "game.lua:decide",
+            "message": "{\u0022flowRevision\u0022:613,\u0022kind\u0022:\u0022challenge\u0022,\u0022entity\u0022:null,\u0022target\u0022:null,\u0022property\u0022:null,\u0022value\u0022:2,\u0022x\u0022:0,\u0022y\u0022:0,\u0022seat\u0022:null,\u0022phase\u0022:null,\u0022visibility\u0022:null,\u0022winners\u0022:null}"
+          },
+          {
+            "sequence": 616,
+            "actor": "p1",
+            "entry": "game.lua:decide",
+            "message": "{\u0022flowRevision\u0022:615,\u0022kind\u0022:\u0022attribute\u0022,\u0022entity\u0022:null,\u0022target\u0022:null,\u0022property\u0022:\u0022resolve\u0022,\u0022value\u0022:0,\u0022x\u0022:0,\u0022y\u0022:0,\u0022seat\u0022:null,\u0022phase\u0022:null,\u0022visibility\u0022:null,\u0022winners\u0022:null}"
+          },
+          {
+            "sequence": 619,
+            "actor": "p1",
+            "entry": "game.lua:decide",
+            "message": "{\u0022flowRevision\u0022:618,\u0022kind\u0022:\u0022select\u0022,\u0022entity\u0022:\u0022die4\u0022,\u0022target\u0022:null,\u0022property\u0022:null,\u0022value\u0022:0,\u0022x\u0022:0,\u0022y\u0022:0,\u0022seat\u0022:null,\u0022phase\u0022:null,\u0022visibility\u0022:null,\u0022winners\u0022:null}"
+          },
+          {
+            "sequence": 620,
+            "actor": "p1",
+            "entry": "game.lua:decide",
+            "message": "{\u0022flowRevision\u0022:619,\u0022kind\u0022:\u0022store\u0022,\u0022entity\u0022:\u0022die4\u0022,\u0022target\u0022:\u00222\u0022,\u0022property\u0022:\u0022resolve\u0022,\u0022value\u0022:0,\u0022x\u0022:0,\u0022y\u0022:0,\u0022seat\u0022:null,\u0022phase\u0022:null,\u0022visibility\u0022:null,\u0022winners\u0022:null}"
+          },
+          {
+            "sequence": 621,
+            "actor": "p1",
+            "entry": "game.lua:decide",
+            "message": "{\u0022flowRevision\u0022:620,\u0022kind\u0022:\u0022select\u0022,\u0022entity\u0022:\u0022die6\u0022,\u0022target\u0022:null,\u0022property\u0022:null,\u0022value\u0022:0,\u0022x\u0022:0,\u0022y\u0022:0,\u0022seat\u0022:null,\u0022phase\u0022:null,\u0022visibility\u0022:null,\u0022winners\u0022:null}"
+          },
+          {
+            "sequence": 622,
+            "actor": "p1",
+            "entry": "game.lua:decide",
+            "message": "{\u0022flowRevision\u0022:621,\u0022kind\u0022:\u0022store\u0022,\u0022entity\u0022:\u0022die6\u0022,\u0022target\u0022:\u00224\u0022,\u0022property\u0022:\u0022resolve\u0022,\u0022value\u0022:0,\u0022x\u0022:0,\u0022y\u0022:0,\u0022seat\u0022:null,\u0022phase\u0022:null,\u0022visibility\u0022:null,\u0022winners\u0022:null}"
+          },
+          {
+            "sequence": 623,
+            "actor": "p1",
+            "entry": "game.lua:decide",
+            "message": "{\u0022flowRevision\u0022:622,\u0022kind\u0022:\u0022end\u0022,\u0022entity\u0022:null,\u0022target\u0022:null,\u0022property\u0022:null,\u0022value\u0022:0,\u0022x\u0022:0,\u0022y\u0022:0,\u0022seat\u0022:null,\u0022phase\u0022:null,\u0022visibility\u0022:null,\u0022winners\u0022:null}"
+          },
+          {
+            "sequence": 637,
+            "actor": "p1",
+            "entry": "game.lua:decide",
+            "message": "{\u0022flowRevision\u0022:636,\u0022kind\u0022:\u0022ready\u0022,\u0022entity\u0022:null,\u0022target\u0022:null,\u0022property\u0022:null,\u0022value\u0022:0,\u0022x\u0022:0,\u0022y\u0022:0,\u0022seat\u0022:null,\u0022phase\u0022:null,\u0022visibility\u0022:null,\u0022winners\u0022:null}"
+          },
+          {
+            "sequence": 640,
+            "actor": "p1",
+            "entry": "game.lua:decide",
+            "message": "{\u0022flowRevision\u0022:639,\u0022kind\u0022:\u0022select\u0022,\u0022entity\u0022:\u0022die1\u0022,\u0022target\u0022:null,\u0022property\u0022:null,\u0022value\u0022:0,\u0022x\u0022:0,\u0022y\u0022:0,\u0022seat\u0022:null,\u0022phase\u0022:null,\u0022visibility\u0022:null,\u0022winners\u0022:null}"
+          },
+          {
+            "sequence": 641,
+            "actor": "p1",
+            "entry": "game.lua:decide",
+            "message": "{\u0022flowRevision\u0022:640,\u0022kind\u0022:\u0022select\u0022,\u0022entity\u0022:\u0022die2\u0022,\u0022target\u0022:null,\u0022property\u0022:null,\u0022value\u0022:0,\u0022x\u0022:0,\u0022y\u0022:0,\u0022seat\u0022:null,\u0022phase\u0022:null,\u0022visibility\u0022:null,\u0022winners\u0022:null}"
+          },
+          {
+            "sequence": 642,
+            "actor": "p1",
+            "entry": "game.lua:decide",
+            "message": "{\u0022flowRevision\u0022:641,\u0022kind\u0022:\u0022select\u0022,\u0022entity\u0022:\u0022die4\u0022,\u0022target\u0022:null,\u0022property\u0022:null,\u0022value\u0022:0,\u0022x\u0022:0,\u0022y\u0022:0,\u0022seat\u0022:null,\u0022phase\u0022:null,\u0022visibility\u0022:null,\u0022winners\u0022:null}"
+          },
+          {
+            "sequence": 643,
+            "actor": "p1",
+            "entry": "game.lua:decide",
+            "message": "{\u0022flowRevision\u0022:642,\u0022kind\u0022:\u0022select\u0022,\u0022entity\u0022:\u0022die5\u0022,\u0022target\u0022:null,\u0022property\u0022:null,\u0022value\u0022:0,\u0022x\u0022:0,\u0022y\u0022:0,\u0022seat\u0022:null,\u0022phase\u0022:null,\u0022visibility\u0022:null,\u0022winners\u0022:null}"
+          },
+          {
+            "sequence": 644,
+            "actor": "p1",
+            "entry": "game.lua:decide",
+            "message": "{\u0022flowRevision\u0022:643,\u0022kind\u0022:\u0022reroll\u0022,\u0022entity\u0022:null,\u0022target\u0022:null,\u0022property\u0022:null,\u0022value\u0022:0,\u0022x\u0022:0,\u0022y\u0022:0,\u0022seat\u0022:null,\u0022phase\u0022:null,\u0022visibility\u0022:null,\u0022winners\u0022:null}"
+          },
+          {
+            "sequence": 647,
+            "actor": "p1",
+            "entry": "game.lua:decide",
+            "message": "{\u0022flowRevision\u0022:646,\u0022kind\u0022:\u0022select\u0022,\u0022entity\u0022:\u0022die2\u0022,\u0022target\u0022:null,\u0022property\u0022:null,\u0022value\u0022:0,\u0022x\u0022:0,\u0022y\u0022:0,\u0022seat\u0022:null,\u0022phase\u0022:null,\u0022visibility\u0022:null,\u0022winners\u0022:null}"
+          },
+          {
+            "sequence": 648,
+            "actor": "p1",
+            "entry": "game.lua:decide",
+            "message": "{\u0022flowRevision\u0022:647,\u0022kind\u0022:\u0022select\u0022,\u0022entity\u0022:\u0022die5\u0022,\u0022target\u0022:null,\u0022property\u0022:null,\u0022value\u0022:0,\u0022x\u0022:0,\u0022y\u0022:0,\u0022seat\u0022:null,\u0022phase\u0022:null,\u0022visibility\u0022:null,\u0022winners\u0022:null}"
+          },
+          {
+            "sequence": 649,
+            "actor": "p1",
+            "entry": "game.lua:decide",
+            "message": "{\u0022flowRevision\u0022:648,\u0022kind\u0022:\u0022reroll\u0022,\u0022entity\u0022:null,\u0022target\u0022:null,\u0022property\u0022:null,\u0022value\u0022:1,\u0022x\u0022:0,\u0022y\u0022:0,\u0022seat\u0022:null,\u0022phase\u0022:null,\u0022visibility\u0022:null,\u0022winners\u0022:null}"
+          },
+          {
+            "sequence": 652,
+            "actor": "p1",
+            "entry": "game.lua:decide",
+            "message": "{\u0022flowRevision\u0022:651,\u0022kind\u0022:\u0022select\u0022,\u0022entity\u0022:\u0022die2\u0022,\u0022target\u0022:null,\u0022property\u0022:null,\u0022value\u0022:0,\u0022x\u0022:0,\u0022y\u0022:0,\u0022seat\u0022:null,\u0022phase\u0022:null,\u0022visibility\u0022:null,\u0022winners\u0022:null}"
+          },
+          {
+            "sequence": 653,
+            "actor": "p1",
+            "entry": "game.lua:decide",
+            "message": "{\u0022flowRevision\u0022:652,\u0022kind\u0022:\u0022adjust\u0022,\u0022entity\u0022:\u0022die2\u0022,\u0022target\u0022:null,\u0022property\u0022:null,\u0022value\u0022:-1,\u0022x\u0022:0,\u0022y\u0022:0,\u0022seat\u0022:null,\u0022phase\u0022:null,\u0022visibility\u0022:null,\u0022winners\u0022:null}"
+          },
+          {
+            "sequence": 654,
+            "actor": "p1",
+            "entry": "game.lua:decide",
+            "message": "{\u0022flowRevision\u0022:653,\u0022kind\u0022:\u0022clear\u0022,\u0022entity\u0022:null,\u0022target\u0022:null,\u0022property\u0022:null,\u0022value\u0022:0,\u0022x\u0022:0,\u0022y\u0022:0,\u0022seat\u0022:null,\u0022phase\u0022:null,\u0022visibility\u0022:null,\u0022winners\u0022:null}"
+          },
+          {
+            "sequence": 655,
+            "actor": "p1",
+            "entry": "game.lua:decide",
+            "message": "{\u0022flowRevision\u0022:654,\u0022kind\u0022:\u0022challenge\u0022,\u0022entity\u0022:null,\u0022target\u0022:null,\u0022property\u0022:null,\u0022value\u0022:3,\u0022x\u0022:0,\u0022y\u0022:0,\u0022seat\u0022:null,\u0022phase\u0022:null,\u0022visibility\u0022:null,\u0022winners\u0022:null}"
+          },
+          {
+            "sequence": 657,
+            "actor": "p1",
+            "entry": "game.lua:decide",
+            "message": "{\u0022flowRevision\u0022:656,\u0022kind\u0022:\u0022attribute\u0022,\u0022entity\u0022:null,\u0022target\u0022:null,\u0022property\u0022:\u0022luck\u0022,\u0022value\u0022:0,\u0022x\u0022:0,\u0022y\u0022:0,\u0022seat\u0022:null,\u0022phase\u0022:null,\u0022visibility\u0022:null,\u0022winners\u0022:null}"
+          },
+          {
+            "sequence": 660,
+            "actor": "p1",
+            "entry": "game.lua:decide",
+            "message": "{\u0022flowRevision\u0022:659,\u0022kind\u0022:\u0022reward\u0022,\u0022entity\u0022:null,\u0022target\u0022:null,\u0022property\u0022:null,\u0022value\u0022:12,\u0022x\u0022:0,\u0022y\u0022:0,\u0022seat\u0022:null,\u0022phase\u0022:null,\u0022visibility\u0022:null,\u0022winners\u0022:null}"
+          },
+          {
+            "sequence": 661,
+            "actor": "p1",
+            "entry": "game.lua:decide",
+            "message": "{\u0022flowRevision\u0022:660,\u0022kind\u0022:\u0022select\u0022,\u0022entity\u0022:\u0022die6\u0022,\u0022target\u0022:null,\u0022property\u0022:null,\u0022value\u0022:0,\u0022x\u0022:0,\u0022y\u0022:0,\u0022seat\u0022:null,\u0022phase\u0022:null,\u0022visibility\u0022:null,\u0022winners\u0022:null}"
+          },
+          {
+            "sequence": 662,
+            "actor": "p1",
+            "entry": "game.lua:decide",
+            "message": "{\u0022flowRevision\u0022:661,\u0022kind\u0022:\u0022store\u0022,\u0022entity\u0022:\u0022die6\u0022,\u0022target\u0022:\u00222\u0022,\u0022property\u0022:\u0022resolve\u0022,\u0022value\u0022:0,\u0022x\u0022:0,\u0022y\u0022:0,\u0022seat\u0022:null,\u0022phase\u0022:null,\u0022visibility\u0022:null,\u0022winners\u0022:null}"
+          },
+          {
+            "sequence": 663,
+            "actor": "p1",
+            "entry": "game.lua:decide",
+            "message": "{\u0022flowRevision\u0022:662,\u0022kind\u0022:\u0022end\u0022,\u0022entity\u0022:null,\u0022target\u0022:null,\u0022property\u0022:null,\u0022value\u0022:0,\u0022x\u0022:0,\u0022y\u0022:0,\u0022seat\u0022:null,\u0022phase\u0022:null,\u0022visibility\u0022:null,\u0022winners\u0022:null}"
+          },
+          {
+            "sequence": 677,
+            "actor": "p1",
+            "entry": "game.lua:decide",
+            "message": "{\u0022flowRevision\u0022:676,\u0022kind\u0022:\u0022ready\u0022,\u0022entity\u0022:null,\u0022target\u0022:null,\u0022property\u0022:null,\u0022value\u0022:0,\u0022x\u0022:0,\u0022y\u0022:0,\u0022seat\u0022:null,\u0022phase\u0022:null,\u0022visibility\u0022:null,\u0022winners\u0022:null}"
+          },
+          {
+            "sequence": 680,
+            "actor": "p1",
+            "entry": "game.lua:decide",
+            "message": "{\u0022flowRevision\u0022:679,\u0022kind\u0022:\u0022challenge\u0022,\u0022entity\u0022:null,\u0022target\u0022:null,\u0022property\u0022:null,\u0022value\u0022:1,\u0022x\u0022:0,\u0022y\u0022:0,\u0022seat\u0022:null,\u0022phase\u0022:null,\u0022visibility\u0022:null,\u0022winners\u0022:null}"
+          },
+          {
+            "sequence": 682,
+            "actor": "p1",
+            "entry": "game.lua:decide",
+            "message": "{\u0022flowRevision\u0022:681,\u0022kind\u0022:\u0022attribute\u0022,\u0022entity\u0022:null,\u0022target\u0022:null,\u0022property\u0022:\u0022luck\u0022,\u0022value\u0022:0,\u0022x\u0022:0,\u0022y\u0022:0,\u0022seat\u0022:null,\u0022phase\u0022:null,\u0022visibility\u0022:null,\u0022winners\u0022:null}"
+          },
+          {
+            "sequence": 685,
+            "actor": "p1",
+            "entry": "game.lua:decide",
+            "message": "{\u0022flowRevision\u0022:684,\u0022kind\u0022:\u0022select\u0022,\u0022entity\u0022:\u0022die5\u0022,\u0022target\u0022:null,\u0022property\u0022:null,\u0022value\u0022:0,\u0022x\u0022:0,\u0022y\u0022:0,\u0022seat\u0022:null,\u0022phase\u0022:null,\u0022visibility\u0022:null,\u0022winners\u0022:null}"
+          },
+          {
+            "sequence": 686,
+            "actor": "p1",
+            "entry": "game.lua:decide",
+            "message": "{\u0022flowRevision\u0022:685,\u0022kind\u0022:\u0022store\u0022,\u0022entity\u0022:\u0022die5\u0022,\u0022target\u0022:\u00221\u0022,\u0022property\u0022:\u0022luck\u0022,\u0022value\u0022:0,\u0022x\u0022:0,\u0022y\u0022:0,\u0022seat\u0022:null,\u0022phase\u0022:null,\u0022visibility\u0022:null,\u0022winners\u0022:null}"
+          },
+          {
+            "sequence": 687,
+            "actor": "p1",
+            "entry": "game.lua:decide",
+            "message": "{\u0022flowRevision\u0022:686,\u0022kind\u0022:\u0022end\u0022,\u0022entity\u0022:null,\u0022target\u0022:null,\u0022property\u0022:null,\u0022value\u0022:0,\u0022x\u0022:0,\u0022y\u0022:0,\u0022seat\u0022:null,\u0022phase\u0022:null,\u0022visibility\u0022:null,\u0022winners\u0022:null}"
+          },
+          {
+            "sequence": 701,
+            "actor": "p1",
+            "entry": "game.lua:decide",
+            "message": "{\u0022flowRevision\u0022:700,\u0022kind\u0022:\u0022ready\u0022,\u0022entity\u0022:null,\u0022target\u0022:null,\u0022property\u0022:null,\u0022value\u0022:0,\u0022x\u0022:0,\u0022y\u0022:0,\u0022seat\u0022:null,\u0022phase\u0022:null,\u0022visibility\u0022:null,\u0022winners\u0022:null}"
+          },
+          {
+            "sequence": 704,
+            "actor": "p1",
+            "entry": "game.lua:decide",
+            "message": "{\u0022flowRevision\u0022:703,\u0022kind\u0022:\u0022select\u0022,\u0022entity\u0022:\u0022die1\u0022,\u0022target\u0022:null,\u0022property\u0022:null,\u0022value\u0022:0,\u0022x\u0022:0,\u0022y\u0022:0,\u0022seat\u0022:null,\u0022phase\u0022:null,\u0022visibility\u0022:null,\u0022winners\u0022:null}"
+          },
+          {
+            "sequence": 705,
+            "actor": "p1",
+            "entry": "game.lua:decide",
+            "message": "{\u0022flowRevision\u0022:704,\u0022kind\u0022:\u0022adjust\u0022,\u0022entity\u0022:\u0022die1\u0022,\u0022target\u0022:null,\u0022property\u0022:null,\u0022value\u0022:-1,\u0022x\u0022:0,\u0022y\u0022:0,\u0022seat\u0022:null,\u0022phase\u0022:null,\u0022visibility\u0022:null,\u0022winners\u0022:null}"
+          },
+          {
+            "sequence": 706,
+            "actor": "p1",
+            "entry": "game.lua:decide",
+            "message": "{\u0022flowRevision\u0022:705,\u0022kind\u0022:\u0022clear\u0022,\u0022entity\u0022:null,\u0022target\u0022:null,\u0022property\u0022:null,\u0022value\u0022:0,\u0022x\u0022:0,\u0022y\u0022:0,\u0022seat\u0022:null,\u0022phase\u0022:null,\u0022visibility\u0022:null,\u0022winners\u0022:null}"
+          },
+          {
+            "sequence": 707,
+            "actor": "p1",
+            "entry": "game.lua:decide",
+            "message": "{\u0022flowRevision\u0022:706,\u0022kind\u0022:\u0022select\u0022,\u0022entity\u0022:\u0022die6\u0022,\u0022target\u0022:null,\u0022property\u0022:null,\u0022value\u0022:0,\u0022x\u0022:0,\u0022y\u0022:0,\u0022seat\u0022:null,\u0022phase\u0022:null,\u0022visibility\u0022:null,\u0022winners\u0022:null}"
+          },
+          {
+            "sequence": 708,
+            "actor": "p1",
+            "entry": "game.lua:decide",
+            "message": "{\u0022flowRevision\u0022:707,\u0022kind\u0022:\u0022adjust\u0022,\u0022entity\u0022:\u0022die6\u0022,\u0022target\u0022:null,\u0022property\u0022:null,\u0022value\u0022:1,\u0022x\u0022:0,\u0022y\u0022:0,\u0022seat\u0022:null,\u0022phase\u0022:null,\u0022visibility\u0022:null,\u0022winners\u0022:null}"
+          },
+          {
+            "sequence": 709,
+            "actor": "p1",
+            "entry": "game.lua:decide",
+            "message": "{\u0022flowRevision\u0022:708,\u0022kind\u0022:\u0022clear\u0022,\u0022entity\u0022:null,\u0022target\u0022:null,\u0022property\u0022:null,\u0022value\u0022:0,\u0022x\u0022:0,\u0022y\u0022:0,\u0022seat\u0022:null,\u0022phase\u0022:null,\u0022visibility\u0022:null,\u0022winners\u0022:null}"
+          },
+          {
+            "sequence": 710,
+            "actor": "p1",
+            "entry": "game.lua:decide",
+            "message": "{\u0022flowRevision\u0022:709,\u0022kind\u0022:\u0022select\u0022,\u0022entity\u0022:\u0022die2\u0022,\u0022target\u0022:null,\u0022property\u0022:null,\u0022value\u0022:0,\u0022x\u0022:0,\u0022y\u0022:0,\u0022seat\u0022:null,\u0022phase\u0022:null,\u0022visibility\u0022:null,\u0022winners\u0022:null}"
+          },
+          {
+            "sequence": 711,
+            "actor": "p1",
+            "entry": "game.lua:decide",
+            "message": "{\u0022flowRevision\u0022:710,\u0022kind\u0022:\u0022adjust\u0022,\u0022entity\u0022:\u0022die2\u0022,\u0022target\u0022:null,\u0022property\u0022:null,\u0022value\u0022:1,\u0022x\u0022:0,\u0022y\u0022:0,\u0022seat\u0022:null,\u0022phase\u0022:null,\u0022visibility\u0022:null,\u0022winners\u0022:null}"
+          },
+          {
+            "sequence": 712,
+            "actor": "p1",
+            "entry": "game.lua:decide",
+            "message": "{\u0022flowRevision\u0022:711,\u0022kind\u0022:\u0022adjust\u0022,\u0022entity\u0022:\u0022die2\u0022,\u0022target\u0022:null,\u0022property\u0022:null,\u0022value\u0022:1,\u0022x\u0022:0,\u0022y\u0022:0,\u0022seat\u0022:null,\u0022phase\u0022:null,\u0022visibility\u0022:null,\u0022winners\u0022:null}"
+          },
+          {
+            "sequence": 713,
+            "actor": "p1",
+            "entry": "game.lua:decide",
+            "message": "{\u0022flowRevision\u0022:712,\u0022kind\u0022:\u0022clear\u0022,\u0022entity\u0022:null,\u0022target\u0022:null,\u0022property\u0022:null,\u0022value\u0022:0,\u0022x\u0022:0,\u0022y\u0022:0,\u0022seat\u0022:null,\u0022phase\u0022:null,\u0022visibility\u0022:null,\u0022winners\u0022:null}"
+          },
+          {
+            "sequence": 714,
+            "actor": "p1",
+            "entry": "game.lua:decide",
+            "message": "{\u0022flowRevision\u0022:713,\u0022kind\u0022:\u0022select\u0022,\u0022entity\u0022:\u0022die5\u0022,\u0022target\u0022:null,\u0022property\u0022:null,\u0022value\u0022:0,\u0022x\u0022:0,\u0022y\u0022:0,\u0022seat\u0022:null,\u0022phase\u0022:null,\u0022visibility\u0022:null,\u0022winners\u0022:null}"
+          },
+          {
+            "sequence": 715,
+            "actor": "p1",
+            "entry": "game.lua:decide",
+            "message": "{\u0022flowRevision\u0022:714,\u0022kind\u0022:\u0022adjust\u0022,\u0022entity\u0022:\u0022die5\u0022,\u0022target\u0022:null,\u0022property\u0022:null,\u0022value\u0022:-1,\u0022x\u0022:0,\u0022y\u0022:0,\u0022seat\u0022:null,\u0022phase\u0022:null,\u0022visibility\u0022:null,\u0022winners\u0022:null}"
+          },
+          {
+            "sequence": 716,
+            "actor": "p1",
+            "entry": "game.lua:decide",
+            "message": "{\u0022flowRevision\u0022:715,\u0022kind\u0022:\u0022adjust\u0022,\u0022entity\u0022:\u0022die5\u0022,\u0022target\u0022:null,\u0022property\u0022:null,\u0022value\u0022:-1,\u0022x\u0022:0,\u0022y\u0022:0,\u0022seat\u0022:null,\u0022phase\u0022:null,\u0022visibility\u0022:null,\u0022winners\u0022:null}"
+          },
+          {
+            "sequence": 717,
+            "actor": "p1",
+            "entry": "game.lua:decide",
+            "message": "{\u0022flowRevision\u0022:716,\u0022kind\u0022:\u0022clear\u0022,\u0022entity\u0022:null,\u0022target\u0022:null,\u0022property\u0022:null,\u0022value\u0022:0,\u0022x\u0022:0,\u0022y\u0022:0,\u0022seat\u0022:null,\u0022phase\u0022:null,\u0022visibility\u0022:null,\u0022winners\u0022:null}"
+          },
+          {
+            "sequence": 718,
+            "actor": "p1",
+            "entry": "game.lua:decide",
+            "message": "{\u0022flowRevision\u0022:717,\u0022kind\u0022:\u0022challenge\u0022,\u0022entity\u0022:null,\u0022target\u0022:null,\u0022property\u0022:null,\u0022value\u0022:2,\u0022x\u0022:0,\u0022y\u0022:0,\u0022seat\u0022:null,\u0022phase\u0022:null,\u0022visibility\u0022:null,\u0022winners\u0022:null}"
+          },
+          {
+            "sequence": 720,
+            "actor": "p1",
+            "entry": "game.lua:decide",
+            "message": "{\u0022flowRevision\u0022:719,\u0022kind\u0022:\u0022attribute\u0022,\u0022entity\u0022:null,\u0022target\u0022:null,\u0022property\u0022:\u0022resolve\u0022,\u0022value\u0022:0,\u0022x\u0022:0,\u0022y\u0022:0,\u0022seat\u0022:null,\u0022phase\u0022:null,\u0022visibility\u0022:null,\u0022winners\u0022:null}"
+          },
+          {
+            "sequence": 723,
+            "actor": "p1",
+            "entry": "game.lua:decide",
+            "message": "{\u0022flowRevision\u0022:722,\u0022kind\u0022:\u0022select\u0022,\u0022entity\u0022:\u0022die3\u0022,\u0022target\u0022:null,\u0022property\u0022:null,\u0022value\u0022:0,\u0022x\u0022:0,\u0022y\u0022:0,\u0022seat\u0022:null,\u0022phase\u0022:null,\u0022visibility\u0022:null,\u0022winners\u0022:null}"
+          },
+          {
+            "sequence": 724,
+            "actor": "p1",
+            "entry": "game.lua:decide",
+            "message": "{\u0022flowRevision\u0022:723,\u0022kind\u0022:\u0022store\u0022,\u0022entity\u0022:\u0022die3\u0022,\u0022target\u0022:\u00221\u0022,\u0022property\u0022:\u0022knowledge\u0022,\u0022value\u0022:0,\u0022x\u0022:0,\u0022y\u0022:0,\u0022seat\u0022:null,\u0022phase\u0022:null,\u0022visibility\u0022:null,\u0022winners\u0022:null}"
+          },
+          {
+            "sequence": 725,
+            "actor": "p1",
+            "entry": "game.lua:decide",
+            "message": "{\u0022flowRevision\u0022:724,\u0022kind\u0022:\u0022end\u0022,\u0022entity\u0022:null,\u0022target\u0022:null,\u0022property\u0022:null,\u0022value\u0022:0,\u0022x\u0022:0,\u0022y\u0022:0,\u0022seat\u0022:null,\u0022phase\u0022:null,\u0022visibility\u0022:null,\u0022winners\u0022:null}"
+          },
+          {
+            "sequence": 733,
+            "actor": "p1",
+            "entry": "game.lua:decide",
+            "message": "{\u0022flowRevision\u0022:732,\u0022kind\u0022:\u0022target\u0022,\u0022entity\u0022:\u0022slot5\u0022,\u0022target\u0022:null,\u0022property\u0022:null,\u0022value\u0022:5,\u0022x\u0022:0,\u0022y\u0022:0,\u0022seat\u0022:null,\u0022phase\u0022:null,\u0022visibility\u0022:null,\u0022winners\u0022:null}"
+          },
+          {
+            "sequence": 742,
+            "actor": "p1",
+            "entry": "game.lua:decide",
+            "message": "{\u0022flowRevision\u0022:741,\u0022kind\u0022:\u0022ready\u0022,\u0022entity\u0022:null,\u0022target\u0022:null,\u0022property\u0022:null,\u0022value\u0022:0,\u0022x\u0022:0,\u0022y\u0022:0,\u0022seat\u0022:null,\u0022phase\u0022:null,\u0022visibility\u0022:null,\u0022winners\u0022:null}"
+          },
+          {
+            "sequence": 745,
+            "actor": "p1",
+            "entry": "game.lua:decide",
+            "message": "{\u0022flowRevision\u0022:744,\u0022kind\u0022:\u0022select\u0022,\u0022entity\u0022:\u0022die1\u0022,\u0022target\u0022:null,\u0022property\u0022:null,\u0022value\u0022:0,\u0022x\u0022:0,\u0022y\u0022:0,\u0022seat\u0022:null,\u0022phase\u0022:null,\u0022visibility\u0022:null,\u0022winners\u0022:null}"
+          },
+          {
+            "sequence": 746,
+            "actor": "p1",
+            "entry": "game.lua:decide",
+            "message": "{\u0022flowRevision\u0022:745,\u0022kind\u0022:\u0022select\u0022,\u0022entity\u0022:\u0022die5\u0022,\u0022target\u0022:null,\u0022property\u0022:null,\u0022value\u0022:0,\u0022x\u0022:0,\u0022y\u0022:0,\u0022seat\u0022:null,\u0022phase\u0022:null,\u0022visibility\u0022:null,\u0022winners\u0022:null}"
+          },
+          {
+            "sequence": 747,
+            "actor": "p1",
+            "entry": "game.lua:decide",
+            "message": "{\u0022flowRevision\u0022:746,\u0022kind\u0022:\u0022reroll\u0022,\u0022entity\u0022:null,\u0022target\u0022:null,\u0022property\u0022:null,\u0022value\u0022:0,\u0022x\u0022:0,\u0022y\u0022:0,\u0022seat\u0022:null,\u0022phase\u0022:null,\u0022visibility\u0022:null,\u0022winners\u0022:null}"
+          },
+          {
+            "sequence": 750,
+            "actor": "p1",
+            "entry": "game.lua:decide",
+            "message": "{\u0022flowRevision\u0022:749,\u0022kind\u0022:\u0022select\u0022,\u0022entity\u0022:\u0022die1\u0022,\u0022target\u0022:null,\u0022property\u0022:null,\u0022value\u0022:0,\u0022x\u0022:0,\u0022y\u0022:0,\u0022seat\u0022:null,\u0022phase\u0022:null,\u0022visibility\u0022:null,\u0022winners\u0022:null}"
+          },
+          {
+            "sequence": 751,
+            "actor": "p1",
+            "entry": "game.lua:decide",
+            "message": "{\u0022flowRevision\u0022:750,\u0022kind\u0022:\u0022reroll\u0022,\u0022entity\u0022:null,\u0022target\u0022:null,\u0022property\u0022:null,\u0022value\u0022:1,\u0022x\u0022:0,\u0022y\u0022:0,\u0022seat\u0022:null,\u0022phase\u0022:null,\u0022visibility\u0022:null,\u0022winners\u0022:null}"
+          },
+          {
+            "sequence": 754,
+            "actor": "p1",
+            "entry": "game.lua:decide",
+            "message": "{\u0022flowRevision\u0022:753,\u0022kind\u0022:\u0022select\u0022,\u0022entity\u0022:\u0022die2\u0022,\u0022target\u0022:null,\u0022property\u0022:null,\u0022value\u0022:0,\u0022x\u0022:0,\u0022y\u0022:0,\u0022seat\u0022:null,\u0022phase\u0022:null,\u0022visibility\u0022:null,\u0022winners\u0022:null}"
+          },
+          {
+            "sequence": 755,
+            "actor": "p1",
+            "entry": "game.lua:decide",
+            "message": "{\u0022flowRevision\u0022:754,\u0022kind\u0022:\u0022reroll\u0022,\u0022entity\u0022:null,\u0022target\u0022:null,\u0022property\u0022:null,\u0022value\u0022:1,\u0022x\u0022:0,\u0022y\u0022:0,\u0022seat\u0022:null,\u0022phase\u0022:null,\u0022visibility\u0022:null,\u0022winners\u0022:null}"
+          },
+          {
+            "sequence": 758,
+            "actor": "p1",
+            "entry": "game.lua:decide",
+            "message": "{\u0022flowRevision\u0022:757,\u0022kind\u0022:\u0022challenge\u0022,\u0022entity\u0022:null,\u0022target\u0022:null,\u0022property\u0022:null,\u0022value\u0022:1,\u0022x\u0022:0,\u0022y\u0022:0,\u0022seat\u0022:null,\u0022phase\u0022:null,\u0022visibility\u0022:null,\u0022winners\u0022:null}"
+          },
+          {
+            "sequence": 760,
+            "actor": "p1",
+            "entry": "game.lua:decide",
+            "message": "{\u0022flowRevision\u0022:759,\u0022kind\u0022:\u0022attribute\u0022,\u0022entity\u0022:null,\u0022target\u0022:null,\u0022property\u0022:\u0022knowledge\u0022,\u0022value\u0022:0,\u0022x\u0022:0,\u0022y\u0022:0,\u0022seat\u0022:null,\u0022phase\u0022:null,\u0022visibility\u0022:null,\u0022winners\u0022:null}"
+          },
+          {
+            "sequence": 763,
+            "actor": "p1",
+            "entry": "game.lua:decide",
+            "message": "{\u0022flowRevision\u0022:762,\u0022kind\u0022:\u0022select\u0022,\u0022entity\u0022:\u0022die1\u0022,\u0022target\u0022:null,\u0022property\u0022:null,\u0022value\u0022:0,\u0022x\u0022:0,\u0022y\u0022:0,\u0022seat\u0022:null,\u0022phase\u0022:null,\u0022visibility\u0022:null,\u0022winners\u0022:null}"
+          },
+          {
+            "sequence": 764,
+            "actor": "p1",
+            "entry": "game.lua:decide",
+            "message": "{\u0022flowRevision\u0022:763,\u0022kind\u0022:\u0022store\u0022,\u0022entity\u0022:\u0022die1\u0022,\u0022target\u0022:\u00221\u0022,\u0022property\u0022:\u0022knowledge\u0022,\u0022value\u0022:0,\u0022x\u0022:0,\u0022y\u0022:0,\u0022seat\u0022:null,\u0022phase\u0022:null,\u0022visibility\u0022:null,\u0022winners\u0022:null}"
+          },
+          {
+            "sequence": 765,
+            "actor": "p1",
+            "entry": "game.lua:decide",
+            "message": "{\u0022flowRevision\u0022:764,\u0022kind\u0022:\u0022select\u0022,\u0022entity\u0022:\u0022die4\u0022,\u0022target\u0022:null,\u0022property\u0022:null,\u0022value\u0022:0,\u0022x\u0022:0,\u0022y\u0022:0,\u0022seat\u0022:null,\u0022phase\u0022:null,\u0022visibility\u0022:null,\u0022winners\u0022:null}"
+          },
+          {
+            "sequence": 766,
+            "actor": "p1",
+            "entry": "game.lua:decide",
+            "message": "{\u0022flowRevision\u0022:765,\u0022kind\u0022:\u0022store\u0022,\u0022entity\u0022:\u0022die4\u0022,\u0022target\u0022:\u00222\u0022,\u0022property\u0022:\u0022resolve\u0022,\u0022value\u0022:0,\u0022x\u0022:0,\u0022y\u0022:0,\u0022seat\u0022:null,\u0022phase\u0022:null,\u0022visibility\u0022:null,\u0022winners\u0022:null}"
+          },
+          {
+            "sequence": 767,
+            "actor": "p1",
+            "entry": "game.lua:decide",
+            "message": "{\u0022flowRevision\u0022:766,\u0022kind\u0022:\u0022end\u0022,\u0022entity\u0022:null,\u0022target\u0022:null,\u0022property\u0022:null,\u0022value\u0022:0,\u0022x\u0022:0,\u0022y\u0022:0,\u0022seat\u0022:null,\u0022phase\u0022:null,\u0022visibility\u0022:null,\u0022winners\u0022:null}"
+          },
+          {
+            "sequence": 781,
+            "actor": "p1",
+            "entry": "game.lua:decide",
+            "message": "{\u0022flowRevision\u0022:780,\u0022kind\u0022:\u0022ready\u0022,\u0022entity\u0022:null,\u0022target\u0022:null,\u0022property\u0022:null,\u0022value\u0022:0,\u0022x\u0022:0,\u0022y\u0022:0,\u0022seat\u0022:null,\u0022phase\u0022:null,\u0022visibility\u0022:null,\u0022winners\u0022:null}"
+          },
+          {
+            "sequence": 784,
+            "actor": "p1",
+            "entry": "game.lua:decide",
+            "message": "{\u0022flowRevision\u0022:783,\u0022kind\u0022:\u0022select\u0022,\u0022entity\u0022:\u0022die1\u0022,\u0022target\u0022:null,\u0022property\u0022:null,\u0022value\u0022:0,\u0022x\u0022:0,\u0022y\u0022:0,\u0022seat\u0022:null,\u0022phase\u0022:null,\u0022visibility\u0022:null,\u0022winners\u0022:null}"
+          },
+          {
+            "sequence": 785,
+            "actor": "p1",
+            "entry": "game.lua:decide",
+            "message": "{\u0022flowRevision\u0022:784,\u0022kind\u0022:\u0022select\u0022,\u0022entity\u0022:\u0022die5\u0022,\u0022target\u0022:null,\u0022property\u0022:null,\u0022value\u0022:0,\u0022x\u0022:0,\u0022y\u0022:0,\u0022seat\u0022:null,\u0022phase\u0022:null,\u0022visibility\u0022:null,\u0022winners\u0022:null}"
+          },
+          {
+            "sequence": 786,
+            "actor": "p1",
+            "entry": "game.lua:decide",
+            "message": "{\u0022flowRevision\u0022:785,\u0022kind\u0022:\u0022reroll\u0022,\u0022entity\u0022:null,\u0022target\u0022:null,\u0022property\u0022:null,\u0022value\u0022:0,\u0022x\u0022:0,\u0022y\u0022:0,\u0022seat\u0022:null,\u0022phase\u0022:null,\u0022visibility\u0022:null,\u0022winners\u0022:null}"
+          },
+          {
+            "sequence": 789,
+            "actor": "p1",
+            "entry": "game.lua:decide",
+            "message": "{\u0022flowRevision\u0022:788,\u0022kind\u0022:\u0022select\u0022,\u0022entity\u0022:\u0022die6\u0022,\u0022target\u0022:null,\u0022property\u0022:null,\u0022value\u0022:0,\u0022x\u0022:0,\u0022y\u0022:0,\u0022seat\u0022:null,\u0022phase\u0022:null,\u0022visibility\u0022:null,\u0022winners\u0022:null}"
+          },
+          {
+            "sequence": 790,
+            "actor": "p1",
+            "entry": "game.lua:decide",
+            "message": "{\u0022flowRevision\u0022:789,\u0022kind\u0022:\u0022adjust\u0022,\u0022entity\u0022:\u0022die6\u0022,\u0022target\u0022:null,\u0022property\u0022:null,\u0022value\u0022:-1,\u0022x\u0022:0,\u0022y\u0022:0,\u0022seat\u0022:null,\u0022phase\u0022:null,\u0022visibility\u0022:null,\u0022winners\u0022:null}"
+          },
+          {
+            "sequence": 791,
+            "actor": "p1",
+            "entry": "game.lua:decide",
+            "message": "{\u0022flowRevision\u0022:790,\u0022kind\u0022:\u0022clear\u0022,\u0022entity\u0022:null,\u0022target\u0022:null,\u0022property\u0022:null,\u0022value\u0022:0,\u0022x\u0022:0,\u0022y\u0022:0,\u0022seat\u0022:null,\u0022phase\u0022:null,\u0022visibility\u0022:null,\u0022winners\u0022:null}"
+          },
+          {
+            "sequence": 792,
+            "actor": "p1",
+            "entry": "game.lua:decide",
+            "message": "{\u0022flowRevision\u0022:791,\u0022kind\u0022:\u0022challenge\u0022,\u0022entity\u0022:null,\u0022target\u0022:null,\u0022property\u0022:null,\u0022value\u0022:2,\u0022x\u0022:0,\u0022y\u0022:0,\u0022seat\u0022:null,\u0022phase\u0022:null,\u0022visibility\u0022:null,\u0022winners\u0022:null}"
+          },
+          {
+            "sequence": 794,
+            "actor": "p1",
+            "entry": "game.lua:decide",
+            "message": "{\u0022flowRevision\u0022:793,\u0022kind\u0022:\u0022attribute\u0022,\u0022entity\u0022:null,\u0022target\u0022:null,\u0022property\u0022:\u0022resolve\u0022,\u0022value\u0022:0,\u0022x\u0022:0,\u0022y\u0022:0,\u0022seat\u0022:null,\u0022phase\u0022:null,\u0022visibility\u0022:null,\u0022winners\u0022:null}"
+          },
+          {
+            "sequence": 797,
+            "actor": "p1",
+            "entry": "game.lua:decide",
+            "message": "{\u0022flowRevision\u0022:796,\u0022kind\u0022:\u0022select\u0022,\u0022entity\u0022:\u0022die2\u0022,\u0022target\u0022:null,\u0022property\u0022:null,\u0022value\u0022:0,\u0022x\u0022:0,\u0022y\u0022:0,\u0022seat\u0022:null,\u0022phase\u0022:null,\u0022visibility\u0022:null,\u0022winners\u0022:null}"
+          },
+          {
+            "sequence": 798,
+            "actor": "p1",
+            "entry": "game.lua:decide",
+            "message": "{\u0022flowRevision\u0022:797,\u0022kind\u0022:\u0022store\u0022,\u0022entity\u0022:\u0022die2\u0022,\u0022target\u0022:\u00222\u0022,\u0022property\u0022:\u0022resolve\u0022,\u0022value\u0022:0,\u0022x\u0022:0,\u0022y\u0022:0,\u0022seat\u0022:null,\u0022phase\u0022:null,\u0022visibility\u0022:null,\u0022winners\u0022:null}"
+          },
+          {
+            "sequence": 799,
+            "actor": "p1",
+            "entry": "game.lua:decide",
+            "message": "{\u0022flowRevision\u0022:798,\u0022kind\u0022:\u0022select\u0022,\u0022entity\u0022:\u0022die5\u0022,\u0022target\u0022:null,\u0022property\u0022:null,\u0022value\u0022:0,\u0022x\u0022:0,\u0022y\u0022:0,\u0022seat\u0022:null,\u0022phase\u0022:null,\u0022visibility\u0022:null,\u0022winners\u0022:null}"
+          },
+          {
+            "sequence": 800,
+            "actor": "p1",
+            "entry": "game.lua:decide",
+            "message": "{\u0022flowRevision\u0022:799,\u0022kind\u0022:\u0022store\u0022,\u0022entity\u0022:\u0022die5\u0022,\u0022target\u0022:\u00224\u0022,\u0022property\u0022:\u0022resolve\u0022,\u0022value\u0022:0,\u0022x\u0022:0,\u0022y\u0022:0,\u0022seat\u0022:null,\u0022phase\u0022:null,\u0022visibility\u0022:null,\u0022winners\u0022:null}"
+          },
+          {
+            "sequence": 801,
+            "actor": "p1",
+            "entry": "game.lua:decide",
+            "message": "{\u0022flowRevision\u0022:800,\u0022kind\u0022:\u0022end\u0022,\u0022entity\u0022:null,\u0022target\u0022:null,\u0022property\u0022:null,\u0022value\u0022:0,\u0022x\u0022:0,\u0022y\u0022:0,\u0022seat\u0022:null,\u0022phase\u0022:null,\u0022visibility\u0022:null,\u0022winners\u0022:null}"
+          },
+          {
+            "sequence": 815,
+            "actor": "p1",
+            "entry": "game.lua:decide",
+            "message": "{\u0022flowRevision\u0022:814,\u0022kind\u0022:\u0022ready\u0022,\u0022entity\u0022:null,\u0022target\u0022:null,\u0022property\u0022:null,\u0022value\u0022:0,\u0022x\u0022:0,\u0022y\u0022:0,\u0022seat\u0022:null,\u0022phase\u0022:null,\u0022visibility\u0022:null,\u0022winners\u0022:null}"
+          },
+          {
+            "sequence": 818,
+            "actor": "p1",
+            "entry": "game.lua:decide",
+            "message": "{\u0022flowRevision\u0022:817,\u0022kind\u0022:\u0022select\u0022,\u0022entity\u0022:\u0022die3\u0022,\u0022target\u0022:null,\u0022property\u0022:null,\u0022value\u0022:0,\u0022x\u0022:0,\u0022y\u0022:0,\u0022seat\u0022:null,\u0022phase\u0022:null,\u0022visibility\u0022:null,\u0022winners\u0022:null}"
+          },
+          {
+            "sequence": 819,
+            "actor": "p1",
+            "entry": "game.lua:decide",
+            "message": "{\u0022flowRevision\u0022:818,\u0022kind\u0022:\u0022adjust\u0022,\u0022entity\u0022:\u0022die3\u0022,\u0022target\u0022:null,\u0022property\u0022:null,\u0022value\u0022:-1,\u0022x\u0022:0,\u0022y\u0022:0,\u0022seat\u0022:null,\u0022phase\u0022:null,\u0022visibility\u0022:null,\u0022winners\u0022:null}"
+          },
+          {
+            "sequence": 820,
+            "actor": "p1",
+            "entry": "game.lua:decide",
+            "message": "{\u0022flowRevision\u0022:819,\u0022kind\u0022:\u0022clear\u0022,\u0022entity\u0022:null,\u0022target\u0022:null,\u0022property\u0022:null,\u0022value\u0022:0,\u0022x\u0022:0,\u0022y\u0022:0,\u0022seat\u0022:null,\u0022phase\u0022:null,\u0022visibility\u0022:null,\u0022winners\u0022:null}"
+          },
+          {
+            "sequence": 821,
+            "actor": "p1",
+            "entry": "game.lua:decide",
+            "message": "{\u0022flowRevision\u0022:820,\u0022kind\u0022:\u0022select\u0022,\u0022entity\u0022:\u0022die6\u0022,\u0022target\u0022:null,\u0022property\u0022:null,\u0022value\u0022:0,\u0022x\u0022:0,\u0022y\u0022:0,\u0022seat\u0022:null,\u0022phase\u0022:null,\u0022visibility\u0022:null,\u0022winners\u0022:null}"
+          },
+          {
+            "sequence": 822,
+            "actor": "p1",
+            "entry": "game.lua:decide",
+            "message": "{\u0022flowRevision\u0022:821,\u0022kind\u0022:\u0022adjust\u0022,\u0022entity\u0022:\u0022die6\u0022,\u0022target\u0022:null,\u0022property\u0022:null,\u0022value\u0022:-1,\u0022x\u0022:0,\u0022y\u0022:0,\u0022seat\u0022:null,\u0022phase\u0022:null,\u0022visibility\u0022:null,\u0022winners\u0022:null}"
+          },
+          {
+            "sequence": 823,
+            "actor": "p1",
+            "entry": "game.lua:decide",
+            "message": "{\u0022flowRevision\u0022:822,\u0022kind\u0022:\u0022clear\u0022,\u0022entity\u0022:null,\u0022target\u0022:null,\u0022property\u0022:null,\u0022value\u0022:0,\u0022x\u0022:0,\u0022y\u0022:0,\u0022seat\u0022:null,\u0022phase\u0022:null,\u0022visibility\u0022:null,\u0022winners\u0022:null}"
+          },
+          {
+            "sequence": 824,
+            "actor": "p1",
+            "entry": "game.lua:decide",
+            "message": "{\u0022flowRevision\u0022:823,\u0022kind\u0022:\u0022challenge\u0022,\u0022entity\u0022:null,\u0022target\u0022:null,\u0022property\u0022:null,\u0022value\u0022:3,\u0022x\u0022:0,\u0022y\u0022:0,\u0022seat\u0022:null,\u0022phase\u0022:null,\u0022visibility\u0022:null,\u0022winners\u0022:null}"
+          },
+          {
+            "sequence": 826,
+            "actor": "p1",
+            "entry": "game.lua:decide",
+            "message": "{\u0022flowRevision\u0022:825,\u0022kind\u0022:\u0022attribute\u0022,\u0022entity\u0022:null,\u0022target\u0022:null,\u0022property\u0022:\u0022resolve\u0022,\u0022value\u0022:0,\u0022x\u0022:0,\u0022y\u0022:0,\u0022seat\u0022:null,\u0022phase\u0022:null,\u0022visibility\u0022:null,\u0022winners\u0022:null}"
+          },
+          {
+            "sequence": 829,
+            "actor": "p1",
+            "entry": "game.lua:decide",
+            "message": "{\u0022flowRevision\u0022:828,\u0022kind\u0022:\u0022reward\u0022,\u0022entity\u0022:null,\u0022target\u0022:null,\u0022property\u0022:null,\u0022value\u0022:9,\u0022x\u0022:0,\u0022y\u0022:0,\u0022seat\u0022:null,\u0022phase\u0022:null,\u0022visibility\u0022:null,\u0022winners\u0022:null}"
+          },
+          {
+            "sequence": 830,
+            "actor": "p1",
+            "entry": "game.lua:decide",
+            "message": "{\u0022flowRevision\u0022:829,\u0022kind\u0022:\u0022select\u0022,\u0022entity\u0022:\u0022die5\u0022,\u0022target\u0022:null,\u0022property\u0022:null,\u0022value\u0022:0,\u0022x\u0022:0,\u0022y\u0022:0,\u0022seat\u0022:null,\u0022phase\u0022:null,\u0022visibility\u0022:null,\u0022winners\u0022:null}"
+          },
+          {
+            "sequence": 831,
+            "actor": "p1",
+            "entry": "game.lua:decide",
+            "message": "{\u0022flowRevision\u0022:830,\u0022kind\u0022:\u0022store\u0022,\u0022entity\u0022:\u0022die5\u0022,\u0022target\u0022:\u00222\u0022,\u0022property\u0022:\u0022resolve\u0022,\u0022value\u0022:0,\u0022x\u0022:0,\u0022y\u0022:0,\u0022seat\u0022:null,\u0022phase\u0022:null,\u0022visibility\u0022:null,\u0022winners\u0022:null}"
+          },
+          {
+            "sequence": 832,
+            "actor": "p1",
+            "entry": "game.lua:decide",
+            "message": "{\u0022flowRevision\u0022:831,\u0022kind\u0022:\u0022end\u0022,\u0022entity\u0022:null,\u0022target\u0022:null,\u0022property\u0022:null,\u0022value\u0022:0,\u0022x\u0022:0,\u0022y\u0022:0,\u0022seat\u0022:null,\u0022phase\u0022:null,\u0022visibility\u0022:null,\u0022winners\u0022:null}"
+          },
+          {
+            "sequence": 846,
+            "actor": "p1",
+            "entry": "game.lua:decide",
+            "message": "{\u0022flowRevision\u0022:845,\u0022kind\u0022:\u0022ready\u0022,\u0022entity\u0022:null,\u0022target\u0022:null,\u0022property\u0022:null,\u0022value\u0022:0,\u0022x\u0022:0,\u0022y\u0022:0,\u0022seat\u0022:null,\u0022phase\u0022:null,\u0022visibility\u0022:null,\u0022winners\u0022:null}"
+          },
+          {
+            "sequence": 849,
+            "actor": "p1",
+            "entry": "game.lua:decide",
+            "message": "{\u0022flowRevision\u0022:848,\u0022kind\u0022:\u0022select\u0022,\u0022entity\u0022:\u0022die1\u0022,\u0022target\u0022:null,\u0022property\u0022:null,\u0022value\u0022:0,\u0022x\u0022:0,\u0022y\u0022:0,\u0022seat\u0022:null,\u0022phase\u0022:null,\u0022visibility\u0022:null,\u0022winners\u0022:null}"
+          },
+          {
+            "sequence": 850,
+            "actor": "p1",
+            "entry": "game.lua:decide",
+            "message": "{\u0022flowRevision\u0022:849,\u0022kind\u0022:\u0022adjust\u0022,\u0022entity\u0022:\u0022die1\u0022,\u0022target\u0022:null,\u0022property\u0022:null,\u0022value\u0022:-1,\u0022x\u0022:0,\u0022y\u0022:0,\u0022seat\u0022:null,\u0022phase\u0022:null,\u0022visibility\u0022:null,\u0022winners\u0022:null}"
+          },
+          {
+            "sequence": 851,
+            "actor": "p1",
+            "entry": "game.lua:decide",
+            "message": "{\u0022flowRevision\u0022:850,\u0022kind\u0022:\u0022clear\u0022,\u0022entity\u0022:null,\u0022target\u0022:null,\u0022property\u0022:null,\u0022value\u0022:0,\u0022x\u0022:0,\u0022y\u0022:0,\u0022seat\u0022:null,\u0022phase\u0022:null,\u0022visibility\u0022:null,\u0022winners\u0022:null}"
+          },
+          {
+            "sequence": 852,
+            "actor": "p1",
+            "entry": "game.lua:decide",
+            "message": "{\u0022flowRevision\u0022:851,\u0022kind\u0022:\u0022challenge\u0022,\u0022entity\u0022:null,\u0022target\u0022:null,\u0022property\u0022:null,\u0022value\u0022:2,\u0022x\u0022:0,\u0022y\u0022:0,\u0022seat\u0022:null,\u0022phase\u0022:null,\u0022visibility\u0022:null,\u0022winners\u0022:null}"
+          },
+          {
+            "sequence": 854,
+            "actor": "p1",
+            "entry": "game.lua:decide",
+            "message": "{\u0022flowRevision\u0022:853,\u0022kind\u0022:\u0022attribute\u0022,\u0022entity\u0022:null,\u0022target\u0022:null,\u0022property\u0022:\u0022resolve\u0022,\u0022value\u0022:0,\u0022x\u0022:0,\u0022y\u0022:0,\u0022seat\u0022:null,\u0022phase\u0022:null,\u0022visibility\u0022:null,\u0022winners\u0022:null}"
+          },
+          {
+            "sequence": 857,
+            "actor": "p1",
+            "entry": "game.lua:decide",
+            "message": "{\u0022flowRevision\u0022:856,\u0022kind\u0022:\u0022select\u0022,\u0022entity\u0022:\u0022die5\u0022,\u0022target\u0022:null,\u0022property\u0022:null,\u0022value\u0022:0,\u0022x\u0022:0,\u0022y\u0022:0,\u0022seat\u0022:null,\u0022phase\u0022:null,\u0022visibility\u0022:null,\u0022winners\u0022:null}"
+          },
+          {
+            "sequence": 858,
+            "actor": "p1",
+            "entry": "game.lua:decide",
+            "message": "{\u0022flowRevision\u0022:857,\u0022kind\u0022:\u0022store\u0022,\u0022entity\u0022:\u0022die5\u0022,\u0022target\u0022:\u00222\u0022,\u0022property\u0022:\u0022resolve\u0022,\u0022value\u0022:0,\u0022x\u0022:0,\u0022y\u0022:0,\u0022seat\u0022:null,\u0022phase\u0022:null,\u0022visibility\u0022:null,\u0022winners\u0022:null}"
+          },
+          {
+            "sequence": 859,
+            "actor": "p1",
+            "entry": "game.lua:decide",
+            "message": "{\u0022flowRevision\u0022:858,\u0022kind\u0022:\u0022end\u0022,\u0022entity\u0022:null,\u0022target\u0022:null,\u0022property\u0022:null,\u0022value\u0022:0,\u0022x\u0022:0,\u0022y\u0022:0,\u0022seat\u0022:null,\u0022phase\u0022:null,\u0022visibility\u0022:null,\u0022winners\u0022:null}"
+          },
+          {
+            "sequence": 873,
+            "actor": "p1",
+            "entry": "game.lua:decide",
+            "message": "{\u0022flowRevision\u0022:872,\u0022kind\u0022:\u0022ready\u0022,\u0022entity\u0022:null,\u0022target\u0022:null,\u0022property\u0022:null,\u0022value\u0022:0,\u0022x\u0022:0,\u0022y\u0022:0,\u0022seat\u0022:null,\u0022phase\u0022:null,\u0022visibility\u0022:null,\u0022winners\u0022:null}"
+          },
+          {
+            "sequence": 876,
+            "actor": "p1",
+            "entry": "game.lua:decide",
+            "message": "{\u0022flowRevision\u0022:875,\u0022kind\u0022:\u0022select\u0022,\u0022entity\u0022:\u0022die3\u0022,\u0022target\u0022:null,\u0022property\u0022:null,\u0022value\u0022:0,\u0022x\u0022:0,\u0022y\u0022:0,\u0022seat\u0022:null,\u0022phase\u0022:null,\u0022visibility\u0022:null,\u0022winners\u0022:null}"
+          },
+          {
+            "sequence": 877,
+            "actor": "p1",
+            "entry": "game.lua:decide",
+            "message": "{\u0022flowRevision\u0022:876,\u0022kind\u0022:\u0022select\u0022,\u0022entity\u0022:\u0022die4\u0022,\u0022target\u0022:null,\u0022property\u0022:null,\u0022value\u0022:0,\u0022x\u0022:0,\u0022y\u0022:0,\u0022seat\u0022:null,\u0022phase\u0022:null,\u0022visibility\u0022:null,\u0022winners\u0022:null}"
+          },
+          {
+            "sequence": 878,
+            "actor": "p1",
+            "entry": "game.lua:decide",
+            "message": "{\u0022flowRevision\u0022:877,\u0022kind\u0022:\u0022select\u0022,\u0022entity\u0022:\u0022die5\u0022,\u0022target\u0022:null,\u0022property\u0022:null,\u0022value\u0022:0,\u0022x\u0022:0,\u0022y\u0022:0,\u0022seat\u0022:null,\u0022phase\u0022:null,\u0022visibility\u0022:null,\u0022winners\u0022:null}"
+          },
+          {
+            "sequence": 879,
+            "actor": "p1",
+            "entry": "game.lua:decide",
+            "message": "{\u0022flowRevision\u0022:878,\u0022kind\u0022:\u0022reroll\u0022,\u0022entity\u0022:null,\u0022target\u0022:null,\u0022property\u0022:null,\u0022value\u0022:0,\u0022x\u0022:0,\u0022y\u0022:0,\u0022seat\u0022:null,\u0022phase\u0022:null,\u0022visibility\u0022:null,\u0022winners\u0022:null}"
+          },
+          {
+            "sequence": 882,
+            "actor": "p1",
+            "entry": "game.lua:decide",
+            "message": "{\u0022flowRevision\u0022:881,\u0022kind\u0022:\u0022select\u0022,\u0022entity\u0022:\u0022die3\u0022,\u0022target\u0022:null,\u0022property\u0022:null,\u0022value\u0022:0,\u0022x\u0022:0,\u0022y\u0022:0,\u0022seat\u0022:null,\u0022phase\u0022:null,\u0022visibility\u0022:null,\u0022winners\u0022:null}"
+          },
+          {
+            "sequence": 883,
+            "actor": "p1",
+            "entry": "game.lua:decide",
+            "message": "{\u0022flowRevision\u0022:882,\u0022kind\u0022:\u0022select\u0022,\u0022entity\u0022:\u0022die4\u0022,\u0022target\u0022:null,\u0022property\u0022:null,\u0022value\u0022:0,\u0022x\u0022:0,\u0022y\u0022:0,\u0022seat\u0022:null,\u0022phase\u0022:null,\u0022visibility\u0022:null,\u0022winners\u0022:null}"
+          },
+          {
+            "sequence": 884,
+            "actor": "p1",
+            "entry": "game.lua:decide",
+            "message": "{\u0022flowRevision\u0022:883,\u0022kind\u0022:\u0022select\u0022,\u0022entity\u0022:\u0022die5\u0022,\u0022target\u0022:null,\u0022property\u0022:null,\u0022value\u0022:0,\u0022x\u0022:0,\u0022y\u0022:0,\u0022seat\u0022:null,\u0022phase\u0022:null,\u0022visibility\u0022:null,\u0022winners\u0022:null}"
+          },
+          {
+            "sequence": 885,
+            "actor": "p1",
+            "entry": "game.lua:decide",
+            "message": "{\u0022flowRevision\u0022:884,\u0022kind\u0022:\u0022reroll\u0022,\u0022entity\u0022:null,\u0022target\u0022:null,\u0022property\u0022:null,\u0022value\u0022:1,\u0022x\u0022:0,\u0022y\u0022:0,\u0022seat\u0022:null,\u0022phase\u0022:null,\u0022visibility\u0022:null,\u0022winners\u0022:null}"
+          },
+          {
+            "sequence": 888,
+            "actor": "p1",
+            "entry": "game.lua:decide",
+            "message": "{\u0022flowRevision\u0022:887,\u0022kind\u0022:\u0022select\u0022,\u0022entity\u0022:\u0022die3\u0022,\u0022target\u0022:null,\u0022property\u0022:null,\u0022value\u0022:0,\u0022x\u0022:0,\u0022y\u0022:0,\u0022seat\u0022:null,\u0022phase\u0022:null,\u0022visibility\u0022:null,\u0022winners\u0022:null}"
+          },
+          {
+            "sequence": 889,
+            "actor": "p1",
+            "entry": "game.lua:decide",
+            "message": "{\u0022flowRevision\u0022:888,\u0022kind\u0022:\u0022adjust\u0022,\u0022entity\u0022:\u0022die3\u0022,\u0022target\u0022:null,\u0022property\u0022:null,\u0022value\u0022:-1,\u0022x\u0022:0,\u0022y\u0022:0,\u0022seat\u0022:null,\u0022phase\u0022:null,\u0022visibility\u0022:null,\u0022winners\u0022:null}"
+          },
+          {
+            "sequence": 890,
+            "actor": "p1",
+            "entry": "game.lua:decide",
+            "message": "{\u0022flowRevision\u0022:889,\u0022kind\u0022:\u0022adjust\u0022,\u0022entity\u0022:\u0022die3\u0022,\u0022target\u0022:null,\u0022property\u0022:null,\u0022value\u0022:-1,\u0022x\u0022:0,\u0022y\u0022:0,\u0022seat\u0022:null,\u0022phase\u0022:null,\u0022visibility\u0022:null,\u0022winners\u0022:null}"
+          },
+          {
+            "sequence": 891,
+            "actor": "p1",
+            "entry": "game.lua:decide",
+            "message": "{\u0022flowRevision\u0022:890,\u0022kind\u0022:\u0022clear\u0022,\u0022entity\u0022:null,\u0022target\u0022:null,\u0022property\u0022:null,\u0022value\u0022:0,\u0022x\u0022:0,\u0022y\u0022:0,\u0022seat\u0022:null,\u0022phase\u0022:null,\u0022visibility\u0022:null,\u0022winners\u0022:null}"
+          },
+          {
+            "sequence": 892,
+            "actor": "p1",
+            "entry": "game.lua:decide",
+            "message": "{\u0022flowRevision\u0022:891,\u0022kind\u0022:\u0022challenge\u0022,\u0022entity\u0022:null,\u0022target\u0022:null,\u0022property\u0022:null,\u0022value\u0022:1,\u0022x\u0022:0,\u0022y\u0022:0,\u0022seat\u0022:null,\u0022phase\u0022:null,\u0022visibility\u0022:null,\u0022winners\u0022:null}"
+          },
+          {
+            "sequence": 894,
+            "actor": "p1",
+            "entry": "game.lua:decide",
+            "message": "{\u0022flowRevision\u0022:893,\u0022kind\u0022:\u0022attribute\u0022,\u0022entity\u0022:null,\u0022target\u0022:null,\u0022property\u0022:\u0022resolve\u0022,\u0022value\u0022:0,\u0022x\u0022:0,\u0022y\u0022:0,\u0022seat\u0022:null,\u0022phase\u0022:null,\u0022visibility\u0022:null,\u0022winners\u0022:null}"
+          },
+          {
+            "sequence": 897,
+            "actor": "p1",
+            "entry": "game.lua:decide",
+            "message": "{\u0022flowRevision\u0022:896,\u0022kind\u0022:\u0022end\u0022,\u0022entity\u0022:null,\u0022target\u0022:null,\u0022property\u0022:null,\u0022value\u0022:0,\u0022x\u0022:0,\u0022y\u0022:0,\u0022seat\u0022:null,\u0022phase\u0022:null,\u0022visibility\u0022:null,\u0022winners\u0022:null}"
+          },
+          {
+            "sequence": 905,
+            "actor": "p1",
+            "entry": "game.lua:decide",
+            "message": "{\u0022flowRevision\u0022:904,\u0022kind\u0022:\u0022target\u0022,\u0022entity\u0022:\u0022slot6\u0022,\u0022target\u0022:null,\u0022property\u0022:null,\u0022value\u0022:6,\u0022x\u0022:0,\u0022y\u0022:0,\u0022seat\u0022:null,\u0022phase\u0022:null,\u0022visibility\u0022:null,\u0022winners\u0022:null}"
+          }
+        ]
+      }
+    ],
+    "success": true,
+    "exitCode": 0
+  }
+}

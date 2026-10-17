@@ -43,3 +43,11 @@ python samples/cursed-investigators/tools/build-project.py .scratch/cursed-edits
 - 实际导出发现整个游戏包误套用 32 MiB 单资源限制；保留包预算和篡改检查，修正导出尾部校验并重建复验。
 
 实际命令返回、规则／画面验证和独立导出证据见 [验收记录](../../docs/validation/cursed-investigators.md)。
+
+独立运行验证使用既有 Player 入口，自动执行同一套合法真人动作并重开一次：
+
+```powershell
+./artifacts/cursed-investigators/player/Play.exe gui --smoke .scratch/investigator-player-check.json --actions docs/validation/evidence/cursed-investigators/sample/winning-actions.json
+```
+
+它会完成两局后关闭窗口并写入结果；正常游玩直接双击 `Play.exe`。规则包的运行指纹为 `A40916F494DA6A1BF74382558B7367345860D286A3BE0B0258A26A1C3E2A1BA9`。

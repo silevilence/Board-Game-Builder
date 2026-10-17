@@ -1,0 +1,857 @@
+{
+  "ok": true,
+  "requestId": "c42bb520a0ac4be0ab79b95e4fcd6a80",
+  "result": [
+    {
+      "operation": {
+        "id": "files.list",
+        "plugin": "author.files",
+        "description": "Enumerate the selected project view",
+        "parameters": {
+          "prefix": {
+            "type": "string",
+            "required": false,
+            "description": "Relative path prefix"
+          }
+        },
+        "resultSchema": {
+          "type": "object",
+          "required": [
+            "source",
+            "paths"
+          ]
+        },
+        "conditions": [],
+        "effects": [],
+        "readsProject": true
+      },
+      "enabled": true,
+      "reason": null
+    },
+    {
+      "operation": {
+        "id": "files.read",
+        "plugin": "author.files",
+        "description": "Read UTF-8 text from the selected project view",
+        "parameters": {
+          "path": {
+            "type": "string",
+            "required": true,
+            "description": "Relative project file"
+          }
+        },
+        "resultSchema": {
+          "type": "object",
+          "required": [
+            "source",
+            "text"
+          ]
+        },
+        "conditions": [
+          "File exists"
+        ],
+        "effects": [],
+        "readsProject": true
+      },
+      "enabled": true,
+      "reason": null
+    },
+    {
+      "operation": {
+        "id": "files.write",
+        "plugin": "author.files",
+        "description": "Apply UTF-8 file changes; null deletes a file. Prefer direct file editing when suitable.",
+        "parameters": {
+          "files": {
+            "type": "object",
+            "required": true,
+            "description": "Relative path to UTF-8 text or null map"
+          }
+        },
+        "resultSchema": {
+          "type": "object",
+          "description": "EditReceipt: requestId, state, saved, source, resultVersion, diagnostics, appliedPaths"
+        },
+        "conditions": [],
+        "effects": [
+          "project"
+        ],
+        "readsProject": true
+      },
+      "enabled": true,
+      "reason": null
+    },
+    {
+      "operation": {
+        "id": "request.result",
+        "plugin": "author.files",
+        "description": "Inspect a retained write receipt without repeating the write",
+        "parameters": {
+          "request": {
+            "type": "string",
+            "required": true,
+            "description": "Original request ID"
+          }
+        },
+        "resultSchema": {
+          "type": "object",
+          "description": "EditReceipt: requestId, state, saved, source, resultVersion, diagnostics, appliedPaths"
+        },
+        "conditions": [],
+        "effects": [],
+        "readsProject": false
+      },
+      "enabled": true,
+      "reason": null
+    },
+    {
+      "operation": {
+        "id": "request.recover",
+        "plugin": "author.files",
+        "description": "Explicitly resume a partial write if every baseline still matches; preserve external changes",
+        "parameters": {
+          "request": {
+            "type": "string",
+            "required": true,
+            "description": "Original request ID"
+          }
+        },
+        "resultSchema": {
+          "type": "object",
+          "description": "EditReceipt: requestId, state, saved, source, resultVersion, diagnostics, appliedPaths"
+        },
+        "conditions": [
+          "Edit mode supports recovery; GUI mode only supports request.result"
+        ],
+        "effects": [
+          "recovery"
+        ],
+        "readsProject": false
+      },
+      "enabled": true,
+      "reason": null
+    },
+    {
+      "operation": {
+        "id": "workspace.save",
+        "plugin": "author.files",
+        "description": "Explicitly save the connected workspace to disk",
+        "parameters": {},
+        "resultSchema": {
+          "type": "object",
+          "description": "EditReceipt: requestId, state, saved, source, resultVersion, diagnostics, appliedPaths"
+        },
+        "conditions": [
+          "GUI edit mode"
+        ],
+        "effects": [
+          "save"
+        ],
+        "readsProject": true
+      },
+      "enabled": true,
+      "reason": null
+    },
+    {
+      "operation": {
+        "id": "project.create.module",
+        "plugin": "author.module",
+        "description": "Create a minimal module project without overwriting existing template files",
+        "parameters": {
+          "id": {
+            "type": "string",
+            "required": false,
+            "description": "Game identity, default untitled"
+          },
+          "definition": {
+            "type": "string",
+            "required": false,
+            "description": "Relative definition path"
+          }
+        },
+        "resultSchema": {
+          "type": "object",
+          "description": "EditReceipt: requestId, state, saved, source, resultVersion, diagnostics, appliedPaths"
+        },
+        "conditions": [
+          "Template paths do not exist"
+        ],
+        "effects": [
+          "project"
+        ],
+        "readsProject": true
+      },
+      "enabled": true,
+      "reason": null
+    },
+    {
+      "operation": {
+        "id": "project.create.state",
+        "plugin": "author.state",
+        "description": "Create a minimal state project without overwriting existing template files",
+        "parameters": {
+          "id": {
+            "type": "string",
+            "required": false,
+            "description": "Game identity, default untitled"
+          },
+          "definition": {
+            "type": "string",
+            "required": false,
+            "description": "Relative definition path"
+          }
+        },
+        "resultSchema": {
+          "type": "object",
+          "description": "EditReceipt: requestId, state, saved, source, resultVersion, diagnostics, appliedPaths"
+        },
+        "conditions": [
+          "Template paths do not exist"
+        ],
+        "effects": [
+          "project"
+        ],
+        "readsProject": true
+      },
+      "enabled": true,
+      "reason": null
+    },
+    {
+      "operation": {
+        "id": "configuration.read",
+        "plugin": "author.configuration",
+        "description": "Read the selected format\u0027s author model",
+        "parameters": {},
+        "resultSchema": {
+          "type": "object",
+          "description": "source, definition path and format-specific configuration object"
+        },
+        "conditions": [
+          "Matching author format plugin"
+        ],
+        "effects": [],
+        "readsProject": true
+      },
+      "enabled": true,
+      "reason": null
+    },
+    {
+      "operation": {
+        "id": "configuration.replace",
+        "plugin": "author.configuration",
+        "description": "Serialize a complete author model through the selected format provider",
+        "parameters": {
+          "configuration": {
+            "type": "object",
+            "required": true,
+            "description": "Complete format-specific model from configuration.read"
+          },
+          "version": {
+            "type": "string",
+            "required": true,
+            "description": "Project version returned by configuration.read"
+          }
+        },
+        "resultSchema": {
+          "type": "object",
+          "description": "EditReceipt: requestId, state, saved, source, resultVersion, diagnostics, appliedPaths"
+        },
+        "conditions": [
+          "Matching author format plugin"
+        ],
+        "effects": [
+          "project"
+        ],
+        "readsProject": true
+      },
+      "enabled": true,
+      "reason": null
+    },
+    {
+      "operation": {
+        "id": "flow.read",
+        "plugin": "author.configuration",
+        "description": "Read the flow graph and shared diagnostics from the current project view",
+        "parameters": {},
+        "resultSchema": {
+          "type": "object",
+          "description": "Project source/version, flow definition and node/edge diagnostics"
+        },
+        "conditions": [
+          "flow enabled in game.start.json"
+        ],
+        "effects": [],
+        "readsProject": true
+      },
+      "enabled": true,
+      "reason": null
+    },
+    {
+      "operation": {
+        "id": "flow.validate",
+        "plugin": "author.configuration",
+        "description": "Validate the flow graph without running scripts or saving drafts",
+        "parameters": {},
+        "resultSchema": {
+          "type": "object",
+          "description": "Project source/version, flow definition and node/edge diagnostics"
+        },
+        "conditions": [
+          "flow enabled in game.start.json"
+        ],
+        "effects": [],
+        "readsProject": true
+      },
+      "enabled": true,
+      "reason": null
+    },
+    {
+      "operation": {
+        "id": "flow.replace",
+        "plugin": "author.configuration",
+        "description": "Replace a flow draft through the selected edit mode; structural errors remain editable",
+        "parameters": {
+          "definition": {
+            "type": "object",
+            "required": true,
+            "description": "Versioned FlowDefinition"
+          },
+          "version": {
+            "type": "string",
+            "required": true,
+            "description": "Project version from flow.read"
+          }
+        },
+        "resultSchema": {
+          "type": "object",
+          "description": "Project source/version, flow definition and node/edge diagnostics"
+        },
+        "conditions": [
+          "flow enabled in game.start.json"
+        ],
+        "effects": [
+          "project"
+        ],
+        "readsProject": true
+      },
+      "enabled": true,
+      "reason": null
+    },
+    {
+      "operation": {
+        "id": "animation.read",
+        "plugin": "author.configuration",
+        "description": "Read animation definitions and shared diagnostics",
+        "parameters": {},
+        "resultSchema": {
+          "type": "object"
+        },
+        "conditions": [],
+        "effects": [],
+        "readsProject": true
+      },
+      "enabled": true,
+      "reason": null
+    },
+    {
+      "operation": {
+        "id": "animation.validate",
+        "plugin": "author.configuration",
+        "description": "Validate the current animation draft and object/resource references",
+        "parameters": {},
+        "resultSchema": {
+          "type": "object"
+        },
+        "conditions": [],
+        "effects": [],
+        "readsProject": true
+      },
+      "enabled": true,
+      "reason": null
+    },
+    {
+      "operation": {
+        "id": "animation.create",
+        "plugin": "author.configuration",
+        "description": "Enable an empty animation library without overwriting files",
+        "parameters": {
+          "path": {
+            "type": "string",
+            "required": true,
+            "description": "New project JSON file"
+          }
+        },
+        "resultSchema": {
+          "type": "object"
+        },
+        "conditions": [],
+        "effects": [
+          "project"
+        ],
+        "readsProject": true
+      },
+      "enabled": true,
+      "reason": null
+    },
+    {
+      "operation": {
+        "id": "animation.replace",
+        "plugin": "author.configuration",
+        "description": "Replace animation content through the current edit mode",
+        "parameters": {
+          "version": {
+            "type": "string",
+            "required": true,
+            "description": "Source version from animation.read"
+          },
+          "definition": {
+            "type": "object",
+            "required": true,
+            "description": "AnimationLibrary format 1"
+          }
+        },
+        "resultSchema": {
+          "type": "object"
+        },
+        "conditions": [],
+        "effects": [
+          "project"
+        ],
+        "readsProject": true
+      },
+      "enabled": true,
+      "reason": null
+    },
+    {
+      "operation": {
+        "id": "resources.import.image",
+        "plugin": "author.resources",
+        "description": "Import PNG/JPEG/GIF/BMP without changing pixels; reject existing paths and resource names",
+        "parameters": {
+          "source": {
+            "type": "string",
+            "required": true,
+            "description": "External source file"
+          },
+          "target": {
+            "type": "string",
+            "required": true,
+            "description": "New relative project file"
+          },
+          "name": {
+            "type": "string",
+            "required": true,
+            "description": "Unique resource name"
+          }
+        },
+        "resultSchema": {
+          "type": "object",
+          "description": "EditReceipt: requestId, state, saved, source, resultVersion, diagnostics, appliedPaths"
+        },
+        "conditions": [
+          "Readable startup resource configuration"
+        ],
+        "effects": [
+          "project"
+        ],
+        "readsProject": true
+      },
+      "enabled": true,
+      "reason": null
+    },
+    {
+      "operation": {
+        "id": "resources.import.atlas",
+        "plugin": "author.resources",
+        "description": "Import TexturePacker JSON Hash and its meta.image together; frame names use the supplied prefix",
+        "parameters": {
+          "source": {
+            "type": "string",
+            "required": true,
+            "description": "External source file"
+          },
+          "target": {
+            "type": "string",
+            "required": true,
+            "description": "New relative project file"
+          },
+          "name": {
+            "type": "string",
+            "required": false,
+            "description": "Optional frame-name prefix"
+          }
+        },
+        "resultSchema": {
+          "type": "object",
+          "description": "EditReceipt: requestId, state, saved, source, resultVersion, diagnostics, appliedPaths"
+        },
+        "conditions": [
+          "Readable startup resource configuration"
+        ],
+        "effects": [
+          "project"
+        ],
+        "readsProject": true
+      },
+      "enabled": true,
+      "reason": null
+    },
+    {
+      "operation": {
+        "id": "resources.move",
+        "plugin": "author.resources",
+        "description": "Move an explicitly declared resource file, preserving names. Directory/glob sources require manual coordination. Dynamic script path references are not rewritten.",
+        "parameters": {
+          "from": {
+            "type": "string",
+            "required": true,
+            "description": "Current relative file"
+          },
+          "to": {
+            "type": "string",
+            "required": true,
+            "description": "New relative file"
+          }
+        },
+        "resultSchema": {
+          "type": "object",
+          "description": "EditReceipt: requestId, state, saved, source, resultVersion, diagnostics, appliedPaths"
+        },
+        "conditions": [
+          "Explicit resource source, no target collision"
+        ],
+        "effects": [
+          "project"
+        ],
+        "readsProject": true
+      },
+      "enabled": true,
+      "reason": null
+    },
+    {
+      "operation": {
+        "id": "project.validate",
+        "plugin": "author.validation",
+        "description": "Validate an isolated version of the selected project view without saving it",
+        "parameters": {
+          "layer": {
+            "type": "string",
+            "required": false,
+            "description": "Maximum layer: files, configuration, dependencies or runtime (default); preceding checks included"
+          }
+        },
+        "resultSchema": {
+          "type": "object",
+          "description": "source, checks actually executed, diagnostics with file/line when known, success, currentAtCompletion"
+        },
+        "conditions": [],
+        "effects": [],
+        "readsProject": true
+      },
+      "enabled": true,
+      "reason": null
+    },
+    {
+      "operation": {
+        "id": "run.cpu",
+        "plugin": "author.run",
+        "description": "Bounded all-CPU runs, repeat determinism and authoritative replay verification",
+        "parameters": {
+          "seed": {
+            "type": "integer",
+            "required": false,
+            "description": "First seed (default 1)"
+          },
+          "count": {
+            "type": "integer",
+            "required": false,
+            "description": "Runs, 1..100 (default 1)"
+          },
+          "limit": {
+            "type": "integer",
+            "required": false,
+            "description": "Maximum steps, 1..100000 (default 500)"
+          }
+        },
+        "resultSchema": {
+          "type": "object",
+          "description": "Source version, explicit session identity or per-seed results; authority data is for author debugging only"
+        },
+        "conditions": [],
+        "effects": [],
+        "readsProject": true
+      },
+      "enabled": true,
+      "reason": null
+    },
+    {
+      "operation": {
+        "id": "debug.start",
+        "plugin": "author.run",
+        "description": "Create an explicit immutable-input debug session artifact; all seats are controlled by author actions",
+        "parameters": {
+          "target": {
+            "type": "string",
+            "required": true,
+            "description": "New session file outside the project"
+          },
+          "seed": {
+            "type": "integer",
+            "required": false,
+            "description": "Seed (default 1)"
+          }
+        },
+        "resultSchema": {
+          "type": "object",
+          "description": "Source version, explicit session identity or per-seed results; authority data is for author debugging only"
+        },
+        "conditions": [],
+        "effects": [
+          "artifact"
+        ],
+        "readsProject": true
+      },
+      "enabled": true,
+      "reason": null
+    },
+    {
+      "operation": {
+        "id": "debug.inspect",
+        "plugin": "author.run",
+        "description": "Inspect the frozen session, legal actions and seat projection; authority=true explicitly requests full debug truth",
+        "parameters": {
+          "session": {
+            "type": "string",
+            "required": true,
+            "description": "Session file"
+          },
+          "seat": {
+            "type": "string",
+            "required": false,
+            "description": "Projection seat, default current"
+          },
+          "authority": {
+            "type": "boolean",
+            "required": false,
+            "description": "Include authoritative state"
+          }
+        },
+        "resultSchema": {
+          "type": "object",
+          "description": "Source version, explicit session identity or per-seed results; authority data is for author debugging only"
+        },
+        "conditions": [],
+        "effects": [],
+        "readsProject": true
+      },
+      "enabled": true,
+      "reason": null
+    },
+    {
+      "operation": {
+        "id": "debug.step",
+        "plugin": "author.run",
+        "description": "Execute a legal action against the specified debug step; use a stable --request for retry",
+        "parameters": {
+          "session": {
+            "type": "string",
+            "required": true,
+            "description": "Session file"
+          },
+          "step": {
+            "type": "integer",
+            "required": true,
+            "description": "Expected step number"
+          },
+          "action": {
+            "type": "string",
+            "required": true,
+            "description": "Offered action ID"
+          },
+          "seat": {
+            "type": "string",
+            "required": false,
+            "description": "Acting seat, default current"
+          }
+        },
+        "resultSchema": {
+          "type": "object",
+          "description": "Source version, explicit session identity or per-seed results; authority data is for author debugging only"
+        },
+        "conditions": [],
+        "effects": [
+          "artifact"
+        ],
+        "readsProject": true
+      },
+      "enabled": true,
+      "reason": null
+    },
+    {
+      "operation": {
+        "id": "debug.record",
+        "plugin": "author.run",
+        "description": "Write a recording and verify replay against the debug session",
+        "parameters": {
+          "session": {
+            "type": "string",
+            "required": true,
+            "description": "Session file"
+          },
+          "target": {
+            "type": "string",
+            "required": true,
+            "description": "New recording output"
+          }
+        },
+        "resultSchema": {
+          "type": "object",
+          "description": "Source version, explicit session identity or per-seed results; authority data is for author debugging only"
+        },
+        "conditions": [],
+        "effects": [
+          "artifact"
+        ],
+        "readsProject": true
+      },
+      "enabled": true,
+      "reason": null
+    },
+    {
+      "operation": {
+        "id": "project.pack",
+        "plugin": "author.export",
+        "description": "Package the selected project version using the official game package protocol",
+        "parameters": {
+          "target": {
+            "type": "string",
+            "required": true,
+            "description": "New .bgm output file outside the project"
+          }
+        },
+        "resultSchema": {
+          "type": "object",
+          "description": "source, target, kind and runtime fingerprint; independent output, not a project save"
+        },
+        "conditions": [
+          "Valid runtime project"
+        ],
+        "effects": [
+          "artifact"
+        ],
+        "readsProject": true
+      },
+      "enabled": true,
+      "reason": null
+    },
+    {
+      "operation": {
+        "id": "player.export",
+        "plugin": "author.export",
+        "description": "Export an independent Windows Player directory using the precompiled formal Player; no SDK invocation",
+        "parameters": {
+          "target": {
+            "type": "string",
+            "required": true,
+            "description": "New independent output directory"
+          },
+          "player": {
+            "type": "string",
+            "required": false,
+            "description": "Formal Player distribution; default bundled player directory"
+          },
+          "components": {
+            "type": "string",
+            "required": false,
+            "description": "Optional directory of verified release component ZIPs for offline export"
+          },
+          "dependencyCache": {
+            "type": "string",
+            "required": false,
+            "description": "Optional same-volume export dependency cache"
+          },
+          "offline": {
+            "type": "boolean",
+            "required": false,
+            "description": "Do not download missing export components"
+          }
+        },
+        "resultSchema": {
+          "type": "object",
+          "description": "source, target, kind and runtime fingerprint; independent output, not a project save"
+        },
+        "conditions": [
+          "Valid runtime project"
+        ],
+        "effects": [
+          "artifact"
+        ],
+        "readsProject": true
+      },
+      "enabled": true,
+      "reason": null
+    },
+    {
+      "operation": {
+        "id": "workspace.external.status",
+        "plugin": "author.workspace",
+        "description": "Inspect external additions, edits and deletions with retained baseline, disk and workspace bytes",
+        "parameters": {},
+        "resultSchema": {
+          "type": "object",
+          "description": "identity, diskVersion, workspaceVersion, dirty, changes (base64 content), pendingForms"
+        },
+        "conditions": [
+          "GUI mode"
+        ],
+        "effects": [],
+        "readsProject": false
+      },
+      "enabled": true,
+      "reason": null
+    },
+    {
+      "operation": {
+        "id": "workspace.external.resolve",
+        "plugin": "author.workspace",
+        "description": "Explicitly coordinate external changes. reload requires a clean workspace; disk discards all workspace drafts; workspace keeps the workspace; merge supplies every changed path. Successful resolution writes the merged state to disk.",
+        "parameters": {
+          "diskVersion": {
+            "type": "string",
+            "required": true,
+            "description": "Disk version from status"
+          },
+          "workspaceVersion": {
+            "type": "string",
+            "required": true,
+            "description": "Workspace version from status"
+          },
+          "choice": {
+            "type": "string",
+            "required": true,
+            "description": "reload, disk, workspace or merge"
+          },
+          "files": {
+            "type": "object",
+            "required": false,
+            "description": "For merge: every externally changed path and pending file draft, plus definition for pending fields, mapped to final UTF-8 text or null"
+          }
+        },
+        "resultSchema": {
+          "type": "object",
+          "description": "EditReceipt: requestId, state, saved, source, resultVersion, diagnostics, appliedPaths"
+        },
+        "conditions": [
+          "GUI mode",
+          "Both versions still match"
+        ],
+        "effects": [
+          "reconciliation"
+        ],
+        "readsProject": false
+      },
+      "enabled": true,
+      "reason": null
+    }
+  ]
+}

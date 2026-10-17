@@ -1,0 +1,10 @@
+PASS all-object-and-spirit-challenges
+PASS tracks-professions-and-beginner
+PASS reserve-capacity-and-reward-dice
+PASS initial-modifiers-and-limits
+PASS costs-and-object-restrictions
+PASS end-effects-order-and-death
+PASS reveal-capture-journal-and-campaign-reset
+PASS remaining-initial-effects-and-ignore
+PASS optional-costs-and-capture-rewards
+{"success":true,"checks":["all-object-and-spirit-challenges","tracks-professions-and-beginner","reserve-capacity-and-reward-dice","initial-modifiers-and-limits","costs-and-object-restrictions","end-effects-order-and-death","reveal-capture-journal-and-campaign-reset","remaining-initial-effects-and-ignore","optional-costs-and-capture-rewards"]}

@@ -1,0 +1,20 @@
+{
+  "success": true,
+  "checkedAssets": {
+    "original": 40,
+    "runtime": 40,
+    "table": 27
+  },
+  "packageBytes": 89796257,
+  "packageSha256": "f1b621bd4c9e301faeda6339c9524632239eedf8378d6a338a807debe292c42c",
+  "entries": 86,
+  "bundledRequiredFiles": [
+    "NotoSansCJKsc-Regular.otf",
+    "LICENSE.txt",
+    "animations.json",
+    "documents.json",
+    "game.start.json",
+    "game.lua"
+  ],
+  "packagePath": "artifacts/cursed-investigators/player/game.bgm"
+}
