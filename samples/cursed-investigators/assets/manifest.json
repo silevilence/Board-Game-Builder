@@ -1,0 +1,1495 @@
+{
+  "schemaVersion": 1,
+  "purpose": "扫描资料资产清单；不是引擎运行或作者格式",
+  "source": {
+    "filename": "咒物调查员.pdf",
+    "pages": 19,
+    "sizeBytes": 28259332,
+    "sha256": "5e2de1a57dc200ce37a6131552330ce983763f2dd2711e31e50b18e91ad2fd0a"
+  },
+  "processing": {
+    "method": "提取 PDF 内嵌原始扫描图，按卡片轮廓外接矩形校正轻微倾斜并裁剪，旋转至可读方向；帮助牌手工定界。PNG 保存，不作文字重绘、去网纹或生成式修复。",
+    "coordinates": "sourceQuad 为原始 2480×3507 扫描图的四角像素坐标，左上为原点。将四角依次映射至输出矩形左上、右上、右下、左下，再逆时针旋转 rotationCounterClockwise；帮助牌的阅读朝向已包含在四角顺序中。",
+    "backMapping": "各类牌背按扫描的相邻页顺序和图案归类。扫描仅提供每类一张背面，无逐张翻面对照；因此记录共用背面，不伪造独立背面。",
+    "englishIds": "英文 ID 仅为本 sample 的文件定位符，不声称是原版官方英文名称。"
+  },
+  "assets": [
+    {
+      "id": "journal-captures",
+      "name": "调查日志：捕获目录",
+      "category": "journal",
+      "side": "front",
+      "path": "journal/front-capture-log.png",
+      "sourcePage": 5,
+      "sourceImageSize": [
+        2480,
+        3507
+      ],
+      "sourceQuad": [
+        [
+          283.2080078125,
+          544.44580078125
+        ],
+        [
+          2438.739501953125,
+          575.2392578125
+        ],
+        [
+          2419.730224609375,
+          1905.86767578125
+        ],
+        [
+          264.198974609375,
+          1875.07421875
+        ]
+      ],
+      "rotationCounterClockwise": 90,
+      "pixelSize": [
+        1332,
+        2157
+      ],
+      "sha256": "52ee775b554cf8abacb949e051b7ff6ba9a2950a602479c8c9cce27e4aefac65",
+      "backAssetId": "journal-observations"
+    },
+    {
+      "id": "journal-observations",
+      "name": "调查日志：灵异现象观察记录",
+      "category": "journal",
+      "side": "back",
+      "path": "journal/back-observation-log.png",
+      "sourcePage": 6,
+      "sourceImageSize": [
+        2480,
+        3507
+      ],
+      "sourceQuad": [
+        [
+          207.5875244140625,
+          476.334716796875
+        ],
+        [
+          2364.1474609375,
+          422.0933837890625
+        ],
+        [
+          2397.55859375,
+          1750.48828125
+        ],
+        [
+          240.9989013671875,
+          1804.7294921875
+        ]
+      ],
+      "rotationCounterClockwise": 90,
+      "pixelSize": [
+        1330,
+        2158
+      ],
+      "sha256": "35473883ebef4917ceeaa052e5c8c3886b224a0d37814c4b9a9b472d866e2016"
+    },
+    {
+      "id": "reference-turn",
+      "name": "回合流程帮助牌",
+      "category": "reference",
+      "side": "front",
+      "path": "cards/reference/fronts/turn-sequence.png",
+      "sourcePage": 5,
+      "sourceImageSize": [
+        2480,
+        3507
+      ],
+      "sourceQuad": [
+        [
+          1949,
+          2140
+        ],
+        [
+          1949,
+          3005
+        ],
+        [
+          506,
+          3005
+        ],
+        [
+          506,
+          2140
+        ]
+      ],
+      "rotationCounterClockwise": 0,
+      "pixelSize": [
+        865,
+        1443
+      ],
+      "sha256": "9ea827d60993d933b094d1bf01639db0c0fa3bd5161ef34d8d546eb98792fdba",
+      "backAssetId": "reference-back"
+    },
+    {
+      "id": "reference-back",
+      "name": "帮助牌共用背面：标题",
+      "category": "reference",
+      "side": "back",
+      "path": "cards/reference/backs/shared.png",
+      "sourcePage": 6,
+      "sourceImageSize": [
+        2480,
+        3507
+      ],
+      "sourceQuad": [
+        [
+          664.110595703125,
+          2188.766845703125
+        ],
+        [
+          2102.469970703125,
+          2192.623291015625
+        ],
+        [
+          2100.204833984375,
+          3037.544677734375
+        ],
+        [
+          661.8453369140625,
+          3033.688232421875
+        ]
+      ],
+      "rotationCounterClockwise": 90,
+      "pixelSize": [
+        846,
+        1439
+      ],
+      "sha256": "43e904ba76e6a82afb8bfcf51da094f8ec75d5346699ee0f40d6b2e0b43f20e6"
+    },
+    {
+      "id": "character-celeste",
+      "name": "塞莱斯特",
+      "category": "characters",
+      "side": "front",
+      "path": "cards/characters/fronts/celeste.png",
+      "sourcePage": 7,
+      "sourceImageSize": [
+        2480,
+        3507
+      ],
+      "sourceQuad": [
+        [
+          1514.4952392578125,
+          282.54766845703125
+        ],
+        [
+          2356.203369140625,
+          301.11480712890625
+        ],
+        [
+          2324.265380859375,
+          1748.96923828125
+        ],
+        [
+          1482.5572509765625,
+          1730.402099609375
+        ]
+      ],
+      "rotationCounterClockwise": 270,
+      "pixelSize": [
+        1449,
+        843
+      ],
+      "sha256": "0e306be28fecc030ba98fe529f2aa66e2580f6f1e8325d425f3736901ec91a9b",
+      "backAssetId": "character-back"
+    },
+    {
+      "id": "character-eleanor",
+      "name": "埃莉诺",
+      "category": "characters",
+      "side": "front",
+      "path": "cards/characters/fronts/eleanor.png",
+      "sourcePage": 7,
+      "sourceImageSize": [
+        2480,
+        3507
+      ],
+      "sourceQuad": [
+        [
+          442.71612548828125,
+          311.693603515625
+        ],
+        [
+          1281.3707275390625,
+          318.9755859375
+        ],
+        [
+          1268.8157958984375,
+          1764.87548828125
+        ],
+        [
+          430.16131591796875,
+          1757.593505859375
+        ]
+      ],
+      "rotationCounterClockwise": 270,
+      "pixelSize": [
+        1447,
+        840
+      ],
+      "sha256": "b47469903773ede7e876999cbdd0c5b9ee53358fb87a5e11b7cf0412ccf9fa1c",
+      "backAssetId": "character-back"
+    },
+    {
+      "id": "character-leland",
+      "name": "利兰",
+      "category": "characters",
+      "side": "front",
+      "path": "cards/characters/fronts/leland.png",
+      "sourcePage": 7,
+      "sourceImageSize": [
+        2480,
+        3507
+      ],
+      "sourceQuad": [
+        [
+          1031.214111328125,
+          1938.5738525390625
+        ],
+        [
+          1869.81591796875,
+          1966.5269775390625
+        ],
+        [
+          1821.640625,
+          3411.7880859375
+        ],
+        [
+          983.0388793945312,
+          3383.8349609375
+        ]
+      ],
+      "rotationCounterClockwise": 270,
+      "pixelSize": [
+        1447,
+        840
+      ],
+      "sha256": "67cc438d0b12a5aa19f6c87d39363a5ed3c0f5aaf45266cd12615d9907641e66",
+      "backAssetId": "character-back"
+    },
+    {
+      "id": "character-back",
+      "name": "角色牌共用背面：人物",
+      "category": "characters",
+      "side": "back",
+      "path": "cards/characters/backs/shared.png",
+      "sourcePage": 8,
+      "sourceImageSize": [
+        2480,
+        3507
+      ],
+      "sourceQuad": [
+        [
+          937.67138671875,
+          951.4501342773438
+        ],
+        [
+          1777.47314453125,
+          958.6278686523438
+        ],
+        [
+          1765.08935546875,
+          2407.547607421875
+        ],
+        [
+          925.2874755859375,
+          2400.369873046875
+        ]
+      ],
+      "rotationCounterClockwise": 0,
+      "pixelSize": [
+        841,
+        1450
+      ],
+      "sha256": "4aedb9ce2aa05b43669cea39c8043a2ec75abe56936c9afd73ecf9c99ffc9979"
+    },
+    {
+      "id": "profession-reluctant-medium",
+      "name": "不情愿的灵媒",
+      "category": "professions",
+      "side": "front",
+      "path": "cards/professions/fronts/reluctant-medium.png",
+      "sourcePage": 9,
+      "sourceImageSize": [
+        2480,
+        3507
+      ],
+      "sourceQuad": [
+        [
+          786.9364013671875,
+          400.7847595214844
+        ],
+        [
+          2223.572265625,
+          433.6849060058594
+        ],
+        [
+          2204.18896484375,
+          1280.0806884765625
+        ],
+        [
+          767.55322265625,
+          1247.1805419921875
+        ]
+      ],
+      "rotationCounterClockwise": 0,
+      "pixelSize": [
+        1438,
+        848
+      ],
+      "sha256": "e244da2136d03e392cc4b1d3ff33808fdf6fdd2cad39ce9d0d8053d5431122a0",
+      "backAssetId": "profession-back"
+    },
+    {
+      "id": "profession-former-detective",
+      "name": "前侦探",
+      "category": "professions",
+      "side": "front",
+      "path": "cards/professions/fronts/former-detective.png",
+      "sourcePage": 9,
+      "sourceImageSize": [
+        2480,
+        3507
+      ],
+      "sourceQuad": [
+        [
+          766.55126953125,
+          1367.91064453125
+        ],
+        [
+          2208.019287109375,
+          1425.11181640625
+        ],
+        [
+          2174.444091796875,
+          2271.2080078125
+        ],
+        [
+          732.9759521484375,
+          2214.0068359375
+        ]
+      ],
+      "rotationCounterClockwise": 0,
+      "pixelSize": [
+        1444,
+        848
+      ],
+      "sha256": "609db0aa9d017fef71d3158621d50e172f07cd3693e8936a256797dfc49c1fb5",
+      "backAssetId": "profession-back"
+    },
+    {
+      "id": "profession-paranormal-investigator",
+      "name": "灵异调查员",
+      "category": "professions",
+      "side": "front",
+      "path": "cards/professions/fronts/paranormal-investigator.png",
+      "sourcePage": 9,
+      "sourceImageSize": [
+        2480,
+        3507
+      ],
+      "sourceQuad": [
+        [
+          741.9935302734375,
+          2396.486083984375
+        ],
+        [
+          2179.744140625,
+          2415.915283203125
+        ],
+        [
+          2168.34375,
+          3259.545166015625
+        ],
+        [
+          730.5931396484375,
+          3240.115966796875
+        ]
+      ],
+      "rotationCounterClockwise": 0,
+      "pixelSize": [
+        1439,
+        845
+      ],
+      "sha256": "b0e1db398e3e482440494ca9b46aeb9f5dae185327e547e9cc187554adc85feb",
+      "backAssetId": "profession-back"
+    },
+    {
+      "id": "profession-back",
+      "name": "职业牌共用背面：双手",
+      "category": "professions",
+      "side": "back",
+      "path": "cards/professions/backs/shared.png",
+      "sourcePage": 10,
+      "sourceImageSize": [
+        2480,
+        3507
+      ],
+      "sourceQuad": [
+        [
+          597.1126708984375,
+          1519.2646484375
+        ],
+        [
+          2036.01123046875,
+          1553.524169921875
+        ],
+        [
+          2015.89892578125,
+          2398.235595703125
+        ],
+        [
+          577.00048828125,
+          2363.97607421875
+        ]
+      ],
+      "rotationCounterClockwise": 90,
+      "pixelSize": [
+        846,
+        1440
+      ],
+      "sha256": "773949b0ae20193497ddfa7b06d996218117af9a4b2d2faf9186a87a325499bf"
+    },
+    {
+      "id": "object-001",
+      "name": "通灵板",
+      "category": "cursed-objects",
+      "side": "front",
+      "path": "cards/cursed-objects/fronts/001.png",
+      "sourcePage": 11,
+      "sourceImageSize": [
+        2480,
+        3507
+      ],
+      "sourceQuad": [
+        [
+          688.0,
+          349.0
+        ],
+        [
+          2141.0,
+          349.0
+        ],
+        [
+          2141.0,
+          1209.0
+        ],
+        [
+          688.0,
+          1209.0
+        ]
+      ],
+      "rotationCounterClockwise": 90,
+      "pixelSize": [
+        861,
+        1454
+      ],
+      "sha256": "ccd9a996a9428ceea5f7fb2300e22339879396f75a41ce7b75797d8fe8ab96dc",
+      "backAssetId": "object-back"
+    },
+    {
+      "id": "object-002",
+      "name": "恐怖娃娃",
+      "category": "cursed-objects",
+      "side": "front",
+      "path": "cards/cursed-objects/fronts/002.png",
+      "sourcePage": 14,
+      "sourceImageSize": [
+        2480,
+        3507
+      ],
+      "sourceQuad": [
+        [
+          102.7050552368164,
+          1094.57958984375
+        ],
+        [
+          940.017333984375,
+          1096.5
+        ],
+        [
+          936.698974609375,
+          2543.3251953125
+        ],
+        [
+          99.3867416381836,
+          2541.40478515625
+        ]
+      ],
+      "rotationCounterClockwise": 0,
+      "pixelSize": [
+        838,
+        1448
+      ],
+      "sha256": "ba1c6e2d595a203b87852b571d4d36633560c0bfd0253c4f4d4f6baa5230006d",
+      "backAssetId": "object-back"
+    },
+    {
+      "id": "object-003",
+      "name": "悲剧镜子",
+      "category": "cursed-objects",
+      "side": "front",
+      "path": "cards/cursed-objects/fronts/003.png",
+      "sourcePage": 14,
+      "sourceImageSize": [
+        2480,
+        3507
+      ],
+      "sourceQuad": [
+        [
+          1018.1929321289062,
+          1449.4176025390625
+        ],
+        [
+          2456.351806640625,
+          1469.8460693359375
+        ],
+        [
+          2444.325927734375,
+          2316.4736328125
+        ],
+        [
+          1006.1669311523438,
+          2296.045166015625
+        ]
+      ],
+      "rotationCounterClockwise": 90,
+      "pixelSize": [
+        848,
+        1439
+      ],
+      "sha256": "f4cd1a1a2d33d392692320622fe112efd3770f0ac8513973f3951eacda8c1e6e",
+      "backAssetId": "object-back"
+    },
+    {
+      "id": "object-004",
+      "name": "针扎人偶",
+      "category": "cursed-objects",
+      "side": "front",
+      "path": "cards/cursed-objects/fronts/004.png",
+      "sourcePage": 11,
+      "sourceImageSize": [
+        2480,
+        3507
+      ],
+      "sourceQuad": [
+        [
+          680.7040405273438,
+          1339.7056884765625
+        ],
+        [
+          2119.254638671875,
+          1302.0240478515625
+        ],
+        [
+          2141.48974609375,
+          2150.882080078125
+        ],
+        [
+          702.9391479492188,
+          2188.563720703125
+        ]
+      ],
+      "rotationCounterClockwise": 90,
+      "pixelSize": [
+        850,
+        1440
+      ],
+      "sha256": "b1407bd76c456c719aaa12df1d025be3f7c15b8c6a5c9f0a373274a3fc8d7956",
+      "backAssetId": "object-back"
+    },
+    {
+      "id": "object-005",
+      "name": "芭蕾舞音乐盒",
+      "category": "cursed-objects",
+      "side": "front",
+      "path": "cards/cursed-objects/fronts/005.png",
+      "sourcePage": 13,
+      "sourceImageSize": [
+        2480,
+        3507
+      ],
+      "sourceQuad": [
+        [
+          656.33447265625,
+          329.62750244140625
+        ],
+        [
+          2093.85546875,
+          371.90753173828125
+        ],
+        [
+          2068.98779296875,
+          1217.411376953125
+        ],
+        [
+          631.4666748046875,
+          1175.13134765625
+        ]
+      ],
+      "rotationCounterClockwise": 90,
+      "pixelSize": [
+        847,
+        1439
+      ],
+      "sha256": "91bf49fb0970471a0012bf17787d41fbb4ee04b9a8879b27e3e6af8200c9faf8",
+      "backAssetId": "object-back"
+    },
+    {
+      "id": "object-006",
+      "name": "诡异面具",
+      "category": "cursed-objects",
+      "side": "front",
+      "path": "cards/cursed-objects/fronts/006.png",
+      "sourcePage": 12,
+      "sourceImageSize": [
+        2480,
+        3507
+      ],
+      "sourceQuad": [
+        [
+          623.4168090820312,
+          305.70855712890625
+        ],
+        [
+          2060.7841796875,
+          316.16204833984375
+        ],
+        [
+          2054.6376953125,
+          1161.288330078125
+        ],
+        [
+          617.2704467773438,
+          1150.834716796875
+        ]
+      ],
+      "rotationCounterClockwise": 90,
+      "pixelSize": [
+        846,
+        1438
+      ],
+      "sha256": "8eb52dda47e069344cffee05dac548357ee66750d315ca442c6e1718133fb16e",
+      "backAssetId": "object-back"
+    },
+    {
+      "id": "object-007",
+      "name": "活肖像画",
+      "category": "cursed-objects",
+      "side": "front",
+      "path": "cards/cursed-objects/fronts/007.png",
+      "sourcePage": 13,
+      "sourceImageSize": [
+        2480,
+        3507
+      ],
+      "sourceQuad": [
+        [
+          630.51318359375,
+          2373.84228515625
+        ],
+        [
+          2068.19287109375,
+          2409.267578125
+        ],
+        [
+          2047.4091796875,
+          3252.73681640625
+        ],
+        [
+          609.7294921875,
+          3217.3115234375
+        ]
+      ],
+      "rotationCounterClockwise": 90,
+      "pixelSize": [
+        845,
+        1439
+      ],
+      "sha256": "1b1e971cabd3b93863baf3f2046fc68a49540a22c50fda10f14978e833e435f7",
+      "backAssetId": "object-back"
+    },
+    {
+      "id": "object-008",
+      "name": "禁书",
+      "category": "cursed-objects",
+      "side": "front",
+      "path": "cards/cursed-objects/fronts/008.png",
+      "sourcePage": 12,
+      "sourceImageSize": [
+        2480,
+        3507
+      ],
+      "sourceQuad": [
+        [
+          645.7781982421875,
+          2368.96728515625
+        ],
+        [
+          2082.433349609375,
+          2417.13916015625
+        ],
+        [
+          2054.161376953125,
+          3260.3076171875
+        ],
+        [
+          617.5062255859375,
+          3212.1357421875
+        ]
+      ],
+      "rotationCounterClockwise": 90,
+      "pixelSize": [
+        845,
+        1438
+      ],
+      "sha256": "2f4c53bb8d3dba9c457a3dd6566ce86853fcf6e2ecd7d94883f707afed396272",
+      "backAssetId": "object-back"
+    },
+    {
+      "id": "object-009",
+      "name": "玩偶匣",
+      "category": "cursed-objects",
+      "side": "front",
+      "path": "cards/cursed-objects/fronts/009.png",
+      "sourcePage": 11,
+      "sourceImageSize": [
+        2480,
+        3507
+      ],
+      "sourceQuad": [
+        [
+          693.7736206054688,
+          2279.376953125
+        ],
+        [
+          2132.546875,
+          2245.8798828125
+        ],
+        [
+          2152.199462890625,
+          3090.009765625
+        ],
+        [
+          713.4262084960938,
+          3123.5068359375
+        ]
+      ],
+      "rotationCounterClockwise": 90,
+      "pixelSize": [
+        845,
+        1440
+      ],
+      "sha256": "9e0f67ebe4a628807f79d96ea471fb7151cbdf6b64be7f90a5708203e0d07639",
+      "backAssetId": "object-back"
+    },
+    {
+      "id": "object-010",
+      "name": "快乐猴子",
+      "category": "cursed-objects",
+      "side": "front",
+      "path": "cards/cursed-objects/fronts/010.png",
+      "sourcePage": 14,
+      "sourceImageSize": [
+        2480,
+        3507
+      ],
+      "sourceQuad": [
+        [
+          1023.633544921875,
+          412.8293151855469
+        ],
+        [
+          2462.741943359375,
+          400.3153381347656
+        ],
+        [
+          2470.096435546875,
+          1246.0775146484375
+        ],
+        [
+          1030.988037109375,
+          1258.5914306640625
+        ]
+      ],
+      "rotationCounterClockwise": 90,
+      "pixelSize": [
+        847,
+        1440
+      ],
+      "sha256": "80a54dbba758cd562dc82d5eda18294fcdc9b49557889772cdcd560a7ad9d500",
+      "backAssetId": "object-back"
+    },
+    {
+      "id": "object-011",
+      "name": "旧玩具屋",
+      "category": "cursed-objects",
+      "side": "front",
+      "path": "cards/cursed-objects/fronts/011.png",
+      "sourcePage": 12,
+      "sourceImageSize": [
+        2480,
+        3507
+      ],
+      "sourceQuad": [
+        [
+          606.68505859375,
+          1337.7919921875
+        ],
+        [
+          2043.446533203125,
+          1314.238525390625
+        ],
+        [
+          2057.31396484375,
+          2160.158935546875
+        ],
+        [
+          620.552490234375,
+          2183.712158203125
+        ]
+      ],
+      "rotationCounterClockwise": 90,
+      "pixelSize": [
+        847,
+        1438
+      ],
+      "sha256": "e111fcbf6d729f90bc949661486317f13368afc9fd7e60a63530975b1aa7dab2",
+      "backAssetId": "object-back"
+    },
+    {
+      "id": "object-012",
+      "name": "诅咒录像",
+      "category": "cursed-objects",
+      "side": "front",
+      "path": "cards/cursed-objects/fronts/012.png",
+      "sourcePage": 15,
+      "sourceImageSize": [
+        2480,
+        3507
+      ],
+      "sourceQuad": [
+        [
+          689.1171264648438,
+          1998.327392578125
+        ],
+        [
+          2126.983642578125,
+          1994.61669921875
+        ],
+        [
+          2129.15771484375,
+          2837.106689453125
+        ],
+        [
+          691.2911987304688,
+          2840.817138671875
+        ]
+      ],
+      "rotationCounterClockwise": 90,
+      "pixelSize": [
+        843,
+        1439
+      ],
+      "sha256": "9538f482853b36703dd986de0ff74327563f139c8371300ed5dc25b2029e650e",
+      "backAssetId": "object-back"
+    },
+    {
+      "id": "object-013",
+      "name": "古怪护符",
+      "category": "cursed-objects",
+      "side": "front",
+      "path": "cards/cursed-objects/fronts/013.png",
+      "sourcePage": 13,
+      "sourceImageSize": [
+        2480,
+        3507
+      ],
+      "sourceQuad": [
+        [
+          649.203369140625,
+          1367.7393798828125
+        ],
+        [
+          2086.75146484375,
+          1334.3079833984375
+        ],
+        [
+          2106.411376953125,
+          2179.688232421875
+        ],
+        [
+          668.86328125,
+          2213.119384765625
+        ]
+      ],
+      "rotationCounterClockwise": 90,
+      "pixelSize": [
+        847,
+        1439
+      ],
+      "sha256": "161db978700b1e0bca1031960c3eab70d0337e4076e83ce543b19586e6918637",
+      "backAssetId": "object-back"
+    },
+    {
+      "id": "object-014",
+      "name": "命运机器",
+      "category": "cursed-objects",
+      "side": "front",
+      "path": "cards/cursed-objects/fronts/014.png",
+      "sourcePage": 14,
+      "sourceImageSize": [
+        2480,
+        3507
+      ],
+      "sourceQuad": [
+        [
+          975.07373046875,
+          2455.194580078125
+        ],
+        [
+          2412.842529296875,
+          2453.166748046875
+        ],
+        [
+          2414.03173828125,
+          3296.332763671875
+        ],
+        [
+          976.262939453125,
+          3298.360595703125
+        ]
+      ],
+      "rotationCounterClockwise": 90,
+      "pixelSize": [
+        844,
+        1439
+      ],
+      "sha256": "980c1fd1d93ece4fc7210067554100161db5326f91ae5a3de52baa56f370208b",
+      "backAssetId": "object-back"
+    },
+    {
+      "id": "object-back",
+      "name": "咒物牌共用背面：圣杯",
+      "category": "cursed-objects",
+      "side": "back",
+      "path": "cards/cursed-objects/backs/shared.png",
+      "sourcePage": 15,
+      "sourceImageSize": [
+        2480,
+        3507
+      ],
+      "sourceQuad": [
+        [
+          658.6159057617188,
+          738.408447265625
+        ],
+        [
+          2096.802734375,
+          682.7366943359375
+        ],
+        [
+          2129.44140625,
+          1525.9056396484375
+        ],
+        [
+          691.2545776367188,
+          1581.5772705078125
+        ]
+      ],
+      "rotationCounterClockwise": 90,
+      "pixelSize": [
+        845,
+        1440
+      ],
+      "sha256": "7a2564f2ca23dda90cbb2db79a3d15f1a394fa7b23c7a9d0dd67b58a69e126ae"
+    },
+    {
+      "id": "spirit-poltergeist",
+      "name": "吵闹鬼",
+      "category": "spirits",
+      "side": "front",
+      "path": "cards/spirits/fronts/level-1/poltergeist.png",
+      "sourcePage": 16,
+      "sourceImageSize": [
+        2480,
+        3507
+      ],
+      "sourceQuad": [
+        [
+          1028.1300048828125,
+          278.56109619140625
+        ],
+        [
+          2468.66796875,
+          287.94573974609375
+        ],
+        [
+          2463.16015625,
+          1133.41796875
+        ],
+        [
+          1022.6219482421875,
+          1124.033447265625
+        ]
+      ],
+      "rotationCounterClockwise": 90,
+      "pixelSize": [
+        846,
+        1442
+      ],
+      "sha256": "ed08d7833327daa873f46038761e7ca01a87e05d4b5d5c47078bb0cef1886a91",
+      "backAssetId": "spirit-back"
+    },
+    {
+      "id": "spirit-revenant",
+      "name": "还魂者",
+      "category": "spirits",
+      "side": "front",
+      "path": "cards/spirits/fronts/level-1/revenant.png",
+      "sourcePage": 16,
+      "sourceImageSize": [
+        2480,
+        3507
+      ],
+      "sourceQuad": [
+        [
+          76.1771240234375,
+          1095.6806640625
+        ],
+        [
+          911.2761840820312,
+          1065.9619140625
+        ],
+        [
+          962.7156982421875,
+          2511.41259765625
+        ],
+        [
+          127.61666870117188,
+          2541.13134765625
+        ]
+      ],
+      "rotationCounterClockwise": 0,
+      "pixelSize": [
+        837,
+        1447
+      ],
+      "sha256": "95cfa2a6a1078ef43169cc68fdfb50efd626a8422c2ea5672ae0fb5e4b2aa13f",
+      "backAssetId": "spirit-back"
+    },
+    {
+      "id": "spirit-phantasm",
+      "name": "幻象",
+      "category": "spirits",
+      "side": "front",
+      "path": "cards/spirits/fronts/level-1/phantasm.png",
+      "sourcePage": 16,
+      "sourceImageSize": [
+        2480,
+        3507
+      ],
+      "sourceQuad": [
+        [
+          1061.8758544921875,
+          1247.8197021484375
+        ],
+        [
+          2505.302490234375,
+          1331.0943603515625
+        ],
+        [
+          2456.485107421875,
+          2177.2587890625
+        ],
+        [
+          1013.0587158203125,
+          2093.984130859375
+        ]
+      ],
+      "rotationCounterClockwise": 90,
+      "pixelSize": [
+        849,
+        1447
+      ],
+      "sha256": "3b667a18053a8f63a7166084c73d02826193d06c0fd077b1d876a61fa416a928",
+      "backAssetId": "spirit-back",
+      "sourceNote": "原扫描触及右侧页边，卡缘可能轻微缺失；未生成补边或补绘。"
+    },
+    {
+      "id": "spirit-apparition",
+      "name": "幻影",
+      "category": "spirits",
+      "side": "front",
+      "path": "cards/spirits/fronts/level-1/apparition.png",
+      "sourcePage": 16,
+      "sourceImageSize": [
+        2480,
+        3507
+      ],
+      "sourceQuad": [
+        [
+          1029.74609375,
+          2324.364013671875
+        ],
+        [
+          2467.9423828125,
+          2337.575927734375
+        ],
+        [
+          2460.19775390625,
+          3180.628173828125
+        ],
+        [
+          1022.0015258789062,
+          3167.416259765625
+        ]
+      ],
+      "rotationCounterClockwise": 90,
+      "pixelSize": [
+        844,
+        1439
+      ],
+      "sha256": "dc34ee346ebaf9cf670999fe371ba412370c2267ec8955145d0eab2275256173",
+      "backAssetId": "spirit-back"
+    },
+    {
+      "id": "spirit-wraith",
+      "name": "幽灵",
+      "category": "spirits",
+      "side": "front",
+      "path": "cards/spirits/fronts/level-2/wraith.png",
+      "sourcePage": 17,
+      "sourceImageSize": [
+        2480,
+        3507
+      ],
+      "sourceQuad": [
+        [
+          1053.0,
+          384.0
+        ],
+        [
+          2479.0,
+          384.0
+        ],
+        [
+          2479.0,
+          1230.0
+        ],
+        [
+          1053.0,
+          1230.0
+        ]
+      ],
+      "rotationCounterClockwise": 90,
+      "pixelSize": [
+        847,
+        1427
+      ],
+      "sha256": "379f19c219eb617dcde94b5848f3658ffc3e2ca01ae654a89d681c1f4131d5dd",
+      "backAssetId": "spirit-back",
+      "sourceNote": "原扫描触及右侧页边，卡缘可能轻微缺失；未生成补边或补绘。"
+    },
+    {
+      "id": "spirit-banshee",
+      "name": "报丧女妖",
+      "category": "spirits",
+      "side": "front",
+      "path": "cards/spirits/fronts/level-2/banshee.png",
+      "sourcePage": 17,
+      "sourceImageSize": [
+        2480,
+        3507
+      ],
+      "sourceQuad": [
+        [
+          129.2982940673828,
+          1026.73876953125
+        ],
+        [
+          964.8129272460938,
+          1043.068115234375
+        ],
+        [
+          936.5388793945312,
+          2489.759521484375
+        ],
+        [
+          101.02420806884766,
+          2473.43017578125
+        ]
+      ],
+      "rotationCounterClockwise": 0,
+      "pixelSize": [
+        837,
+        1448
+      ],
+      "sha256": "cecee41824ff6ff44695059fb795fb6c2cb838ebd0df1b0ff4b57bf00983240f",
+      "backAssetId": "spirit-back"
+    },
+    {
+      "id": "spirit-specter",
+      "name": "幽魂",
+      "category": "spirits",
+      "side": "front",
+      "path": "cards/spirits/fronts/level-2/specter.png",
+      "sourcePage": 17,
+      "sourceImageSize": [
+        2480,
+        3507
+      ],
+      "sourceQuad": [
+        [
+          1026.529541015625,
+          1420.71875
+        ],
+        [
+          2473.132568359375,
+          1385.435791015625
+        ],
+        [
+          2493.733642578125,
+          2230.07958984375
+        ],
+        [
+          1047.130615234375,
+          2265.36279296875
+        ]
+      ],
+      "rotationCounterClockwise": 90,
+      "pixelSize": [
+        846,
+        1448
+      ],
+      "sha256": "7873bd594e3164d74d007a57807c26e040b1ed2edd767118b870b85aa06d509c",
+      "backAssetId": "spirit-back"
+    },
+    {
+      "id": "spirit-drowned",
+      "name": "溺鬼",
+      "category": "spirits",
+      "side": "front",
+      "path": "cards/spirits/fronts/level-2/drowned.png",
+      "sourcePage": 17,
+      "sourceImageSize": [
+        2480,
+        3507
+      ],
+      "sourceQuad": [
+        [
+          1033.6656494140625,
+          2395.125
+        ],
+        [
+          2469.534912109375,
+          2438.70947265625
+        ],
+        [
+          2443.941162109375,
+          3281.87548828125
+        ],
+        [
+          1008.0720825195312,
+          3238.291015625
+        ]
+      ],
+      "rotationCounterClockwise": 90,
+      "pixelSize": [
+        845,
+        1438
+      ],
+      "sha256": "6a3bbab24b9ff24198563ba13fde1e8e0043a30e8b2329747e054723acbe7ba3",
+      "backAssetId": "spirit-back"
+    },
+    {
+      "id": "spirit-ghost",
+      "name": "鬼魂",
+      "category": "spirits",
+      "side": "front",
+      "path": "cards/spirits/fronts/level-3/ghost.png",
+      "sourcePage": 18,
+      "sourceImageSize": [
+        2480,
+        3507
+      ],
+      "sourceQuad": [
+        [
+          1039.122314453125,
+          344.2043151855469
+        ],
+        [
+          2483.476318359375,
+          395.1814880371094
+        ],
+        [
+          2453.624267578125,
+          1240.986572265625
+        ],
+        [
+          1009.2704467773438,
+          1190.0093994140625
+        ]
+      ],
+      "rotationCounterClockwise": 90,
+      "pixelSize": [
+        847,
+        1446
+      ],
+      "sha256": "57fcfb9f474e8ac9d2628c7bd69c84531b1a6d2715c28957cead551b66de4540",
+      "backAssetId": "spirit-back",
+      "sourceNote": "原扫描触及右侧页边，卡缘可能轻微缺失；未生成补边或补绘。"
+    },
+    {
+      "id": "spirit-shade",
+      "name": "阴魂",
+      "category": "spirits",
+      "side": "front",
+      "path": "cards/spirits/fronts/level-3/shade.png",
+      "sourcePage": 18,
+      "sourceImageSize": [
+        2480,
+        3507
+      ],
+      "sourceQuad": [
+        [
+          125.71620178222656,
+          1101.460693359375
+        ],
+        [
+          964.3636474609375,
+          1115.920166015625
+        ],
+        [
+          939.4146728515625,
+          2562.955810546875
+        ],
+        [
+          100.76725769042969,
+          2548.496337890625
+        ]
+      ],
+      "rotationCounterClockwise": 0,
+      "pixelSize": [
+        840,
+        1448
+      ],
+      "sha256": "bf9aeb7af28f7101ab85ffd47d281414a9317c58724c3bf5d5dcc45ac8afea1b",
+      "backAssetId": "spirit-back"
+    },
+    {
+      "id": "spirit-ghoul",
+      "name": "食尸鬼",
+      "category": "spirits",
+      "side": "front",
+      "path": "cards/spirits/fronts/level-3/ghoul.png",
+      "sourcePage": 18,
+      "sourceImageSize": [
+        2480,
+        3507
+      ],
+      "sourceQuad": [
+        [
+          1016.7322387695312,
+          1354.4205322265625
+        ],
+        [
+          2455.18798828125,
+          1361.9124755859375
+        ],
+        [
+          2450.78125,
+          2208.019775390625
+        ],
+        [
+          1012.3253784179688,
+          2200.52783203125
+        ]
+      ],
+      "rotationCounterClockwise": 90,
+      "pixelSize": [
+        847,
+        1439
+      ],
+      "sha256": "fb03458d3d6b177cc40a8166408fc9845e3d9ecb4339b9a0e33a9a43647efcc6",
+      "backAssetId": "spirit-back"
+    },
+    {
+      "id": "spirit-evil-spirit",
+      "name": "恶魂",
+      "category": "spirits",
+      "side": "front",
+      "path": "cards/spirits/fronts/level-3/evil-spirit.png",
+      "sourcePage": 18,
+      "sourceImageSize": [
+        2480,
+        3507
+      ],
+      "sourceQuad": [
+        [
+          1011.1461791992188,
+          2289.35009765625
+        ],
+        [
+          2447.09716796875,
+          2349.3740234375
+        ],
+        [
+          2411.8642578125,
+          3192.24853515625
+        ],
+        [
+          975.9135131835938,
+          3132.224609375
+        ]
+      ],
+      "rotationCounterClockwise": 90,
+      "pixelSize": [
+        845,
+        1438
+      ],
+      "sha256": "aa01ee17904a74c1de28191ab635eea98d226878641a9812e5ebd0c67e082823",
+      "backAssetId": "spirit-back"
+    },
+    {
+      "id": "spirit-back",
+      "name": "咒灵牌共用背面：骷髅",
+      "category": "spirits",
+      "side": "back",
+      "path": "cards/spirits/backs/shared.png",
+      "sourcePage": 19,
+      "sourceImageSize": [
+        2480,
+        3507
+      ],
+      "sourceQuad": [
+        [
+          476.40228271484375,
+          1529.8138427734375
+        ],
+        [
+          1914.310546875,
+          1465.7486572265625
+        ],
+        [
+          1951.861328125,
+          2308.5556640625
+        ],
+        [
+          513.9530639648438,
+          2372.62109375
+        ]
+      ],
+      "rotationCounterClockwise": 90,
+      "pixelSize": [
+        845,
+        1440
+      ],
+      "sha256": "3749d7b43b28927471d83480f0d5e20e5860a1098d01d3c4e55c3293b86784c3"
+    }
+  ]
+}
