@@ -1,8 +1,51 @@
 {
   "title": "咒物调查员 · 调查档案",
   "help": "标准单人：从下层开始，捕获全部六个咒物并击败对应咒灵。\n战役：首局后保留日志和未用奖励，第二局七个遭遇。\n每回合至多完成一项挑战，立即获得幸运／决心／知识之一（初学者可选健康）。\n掷骰数量＝知识－保留骰子。每回合一次免费重掷；幸运重掷，决心改点。\n职业格每格一骰，立即获得二选一效果，留到下回合。\n未完成挑战的回合结束失去健康，另结算已揭露能力。\n咒物三项完成后奖励可用、咒物效果停止；击败咒灵才记录捕获与声望。\n属性按格移动，知识有重复数值。健康到骷髅即失败。\n点骰选中后调整／花费；未选择骰子时挑战自动选一组合法骰子。\n所有缺失边界采用本 sample 的 RULINGS.md，不声称官方补充规则。",
-  "showActions": true,
+  "showActions": false,
   "width": 1820,
   "height": 1000,
-  "statusEntity": "hint"
+  "statusEntity": "hint",
+  "actionTray": true,
+  "endActionLabel": "返回标题",
+  "setup": {
+    "entity": "match",
+    "property": "stage",
+    "value": 1,
+    "steps": [
+      {
+        "title": "咒物调查员",
+        "text": "CURSED INVESTIGATORS\n一张书桌，一份档案，六件等待封存的咒物。\n揭露隐藏的咒灵，运用骰子与职业能力，完成你的调查。",
+        "nextLabel": "开始调查",
+        "actionKinds": []
+      },
+      {
+        "title": "选择模式",
+        "text": "标准单人：完成六个遭遇。\n两局战役：保留调查日志与未用奖励，继续第二局的七个遭遇。\n初学者选项可与任一模式组合，挑战奖励增加恢复健康。",
+        "nextLabel": "选择人物 →",
+        "actionKinds": [
+          "campaign",
+          "beginner"
+        ]
+      },
+      {
+        "title": "选择人物",
+        "text": "选择本次调查的主人公。牌面标明属性轨道，职业将进一步决定初始能力。",
+        "nextLabel": "选择职业 →",
+        "actionKinds": [
+          "character"
+        ],
+        "previewEntity": "character"
+      },
+      {
+        "title": "选择职业",
+        "text": "选择职业，查看能力格与初始属性。准备好后开始调查，洗牌并发出本局咒物。",
+        "nextLabel": "开始游戏",
+        "actionKinds": [
+          "profession"
+        ],
+        "previewEntity": "profession",
+        "submitKind": "start"
+      }
+    ]
+  }
 }

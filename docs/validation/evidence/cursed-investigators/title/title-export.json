@@ -1,0 +1,19 @@
+{
+  "ok": true,
+  "requestId": "8e0ce3cf554b40f991cd7d34150ff140",
+  "result": {
+    "source": {
+      "identity": {
+        "directory": "C:\\code\\dotnet\\Board-Game-Builder\\samples\\cursed-investigators",
+        "profile": "builtin",
+        "mode": "disk",
+        "workspace": null,
+        "generation": 0
+      },
+      "version": "02AA79D795A95502CCF2F90D3505B4D0B1950B7D8C1025F1349CE183C1DF9DC5"
+    },
+    "target": "C:\\code\\dotnet\\Board-Game-Builder\\artifacts\\cursed-investigators\\player-title-v11",
+    "kind": "player-directory",
+    "fingerprint": "D266D5E4C7496A93F491A1EE42383E9D98C10884B5F5C4CF02E82EF8A96FBDFE"
+  }
+}

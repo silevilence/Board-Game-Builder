@@ -4,7 +4,7 @@
 
 ## 发行物
 
-本地 `0.2.1 / win-x64 / API 1`，不是新增公开 Release。最初基线来自 `15d019c`，随后补齐字体、动画、分页文档并重建；最终目录 `artifacts/cursed-investigators/final-v9` 含 CLI、Editor、worker、正式／调试 Player、模板和作者文档。`toolkit.json` 记录基础提交，未提交修改的精确源码摘要另存于验收证据 `source.json`，不能只凭版本号区分。
+本地 `0.2.1 / win-x64 / API 1`，不是新增公开 Release。最初基线来自 `15d019c`，随后补齐字体、动画、分页文档并重建；标题界面追加交付使用 `artifacts/cursed-investigators/title-v11`，含 CLI、Editor、worker、正式／调试 Player、模板和作者文档。`toolkit.json` 记录基础提交，未提交修改的精确源码摘要另存于验收证据 `source.json`，不能只凭版本号区分。
 
 前几轮 ZIP 使用 `scripts/publish-toolkit.ps1`；后续采用 [完整目录构建脚本](../../docs/validation/evidence/cursed-investigators/animations/publish-local.ps1)，仍重新编译所有组件并运行官方 `validate-toolkit.ps1`。没有用单项目 DLL 代替发行物。
 
@@ -23,7 +23,7 @@
 命令在前，`--project` 等选项在后。以下从仓库根目录执行；导出目标必须不存在：
 
 ```powershell
-$bgb = './artifacts/cursed-investigators/final-v9/bgb.exe'
+$bgb = './artifacts/cursed-investigators/title-v11/bgb.exe'
 & $bgb operations --project samples/cursed-investigators
 & $bgb describe files.write --project samples/cursed-investigators
 python samples/cursed-investigators/tools/build-project.py .scratch/cursed-edits.json
@@ -41,13 +41,14 @@ python samples/cursed-investigators/tools/build-project.py .scratch/cursed-edits
 - 引擎缺少随包中文字体、动画作者／运行、分页状态文档，分别新增通用内置能力，具体规则和界面内容留在 sample。
 - 实际窗口发现字体将换行当作缺失字形，修复多行布局并补真实字形测试。
 - 实际导出发现整个游戏包误套用 32 MiB 单资源限制；保留包预算和篡改检查，修正导出尾部校验并重建复验。
+- 标题界面追加使用通用 Player 分步配置、下方合法动作区及终局重开入口。重建完整 v11 后，以 `files.write` 保存 sample 配置、`validate` 校验、`export-player` 导出到 `artifacts/cursed-investigators/player-title-v11`，没有新增 CLI 命令或改变对局规则。
 
 实际命令返回、规则／画面验证和独立导出证据见 [验收记录](../../docs/validation/cursed-investigators.md)。
 
 独立运行验证使用既有 Player 入口，自动执行同一套合法真人动作并重开一次：
 
 ```powershell
-./artifacts/cursed-investigators/player/Play.exe gui --smoke .scratch/investigator-player-check.json --actions docs/validation/evidence/cursed-investigators/sample/winning-actions.json
+./artifacts/cursed-investigators/player-title-v11/Play.exe gui --smoke .scratch/investigator-player-check.json --actions docs/validation/evidence/cursed-investigators/sample/winning-actions.json
 ```
 
-它会完成两局后关闭窗口并写入结果；正常游玩直接双击 `Play.exe`。规则包的运行指纹为 `A40916F494DA6A1BF74382558B7367345860D286A3BE0B0258A26A1C3E2A1BA9`。
+它会完成两局后关闭窗口并写入结果；正常游玩直接双击 `Play.exe`。标题版包的运行指纹为 `D266D5E4C7496A93F491A1EE42383E9D98C10884B5F5C4CF02E82EF8A96FBDFE`；上一版 v9 的证据仍保留为历史验收。

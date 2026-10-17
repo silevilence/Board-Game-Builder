@@ -120,7 +120,7 @@ public sealed partial class PlayerWindow : Window
             activeSeed=value; board=new(session,loaded,presentation.ShowActions); board.HostShortcut+=key=>_=HostKey(key); play.Content=board;
             SetShell(shell);UpdateTitle();
             message.Text=classic?"点牌再点目标 / 拖动 · 双击快速移牌 · 按住右键看牌 · 中键或空白处右拖平移 · H 提示 · F2 新局 / F3 开局设置 / Ctrl+R 重开"
-                :"双击对象执行可用动作，也可使用右侧动作栏 · 滚轮缩放 · 中键平移 · F2 新局 / F3 种子 / Ctrl+R 重开";
+                :"双击对象或点击可用动作 · 滚轮缩放 · 中键平移 · F2 新局 / F3 种子 / Ctrl+R 重开";
             await board.PumpCpu();
         }
         catch(Exception e) { if(current==generation) {message.IsVisible=true; message.Text="无法开始："+e.Message;} }

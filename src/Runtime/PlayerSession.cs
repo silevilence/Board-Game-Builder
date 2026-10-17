@@ -43,7 +43,7 @@ public sealed class PlayerSession : IDisposable
             if(stopped || revision!=Frame.Revision || Frame.Cpu || Frame.View.Ended || Frame.Fault!=null) return new(0,false,"stale-or-inactive");
             var command=Resolve(Frame.Actions,intent);
             var result=await Task.Run(()=>session.SubmitHuman(observer,command));
-            LastMessage=result.Accepted?"操作已提交":result.Reason=="rule-rejected"?"当前规则不允许此操作，请使用右侧可用动作。":$"操作被拒绝：{result.Reason}";
+            LastMessage=result.Accepted?"操作已提交":result.Reason=="rule-rejected"?"当前规则不允许此操作，请使用可用动作。":$"操作被拒绝：{result.Reason}";
             if(!stopped) Frame=await Task.Run(()=>ReadFrame(Frame.Revision+1));
             return result;
         }

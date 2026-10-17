@@ -1,0 +1,13 @@
+{
+  "api": 1,
+  "commit": "97d671bbeade5ce334ab2b489ef7222f4675a120",
+  "version": "0.2.1",
+  "entries": {
+    "cli": "bgb.exe",
+    "debugPlayer": "debug-player/Player.exe",
+    "editor": "editor/Editor.exe",
+    "documentation": "docs/author/entry.md",
+    "player": "player/Player.exe"
+  },
+  "platform": "win-x64"
+}

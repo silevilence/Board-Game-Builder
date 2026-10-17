@@ -21,6 +21,13 @@ public sealed class PlayBoard : UserControl,IDisposable
     private readonly PackagedControlFont controlFont;
     private readonly DocumentShelf documents;
     private readonly string? statusEntity;
+    private readonly DockPanel panel=new();
+    private readonly WrapPanel trayActions=new();
+    private readonly TextBlock trayStatus=new(){TextWrapping=TextWrapping.Wrap,Foreground=Brushes.Wheat,Margin=new Thickness(8,4)};
+    private readonly DockPanel tray=new(){MaxHeight=172};
+    private readonly PlayerSetupView? setupView;
+    private readonly Button returnButton=new(){Name="ReturnToTitle",Margin=new Thickness(8)};
+    private readonly bool useTray;
     private bool disposed;
     private bool pumping;
     private string? hostError;
@@ -37,9 +44,20 @@ public sealed class PlayBoard : UserControl,IDisposable
         this.session=session; this.module=module;
         controlFont=new(this,module.Resources);
         documents=new(module.Resources ?? ResourcePool.Empty);
-        statusEntity=PlayerPresentation.Read(module).StatusEntity;
+        var presentation=PlayerPresentation.Read(module);statusEntity=presentation.StatusEntity;useTray=presentation.ActionTray;
         classic=TableScene.From(session.Frame.View).ClassicCards;
-        var panel=new DockPanel();
+        if(useTray || presentation.EndActionLabel!=null)
+        {
+            // Keep the native table's bounds stable while actions clear/reflow during a submission.
+            // Resizing the native viewport recreates its graphics device and uploaded textures.
+            if(useTray)tray.Height=172;
+            var footer=new DockPanel {Background=new SolidColorBrush(Color.Parse("#182b25"))};
+            returnButton.Content=presentation.EndActionLabel;returnButton.IsVisible=false;
+            returnButton.Click+=(_,_)=>HostShortcut?.Invoke("new-game");
+            DockPanel.SetDock(returnButton,Dock.Right);footer.Children.Add(returnButton);
+            DockPanel.SetDock(trayStatus,Dock.Top);tray.Children.Add(trayStatus);tray.Children.Add(new ScrollViewer {Content=trayActions,MaxHeight=126,HorizontalScrollBarVisibility=Avalonia.Controls.Primitives.ScrollBarVisibility.Disabled});
+            footer.Children.Add(tray);DockPanel.SetDock(footer,Dock.Bottom);panel.Children.Add(footer);
+        }
         if(classic)
         {
             side.Background=new SolidColorBrush(Color.Parse("#e3e3d9"));
@@ -53,7 +71,10 @@ public sealed class PlayBoard : UserControl,IDisposable
         { DockPanel.SetDock(status,Dock.Top); side.Children.Add(status); DockPanel.SetDock(sound,Dock.Bottom); side.Children.Add(sound); side.Children.Add(new ScrollViewer {Content=actions}); }
         side.IsVisible=showActions;
         DockPanel.SetDock(side,Dock.Right); panel.Children.Add(side);
-        DockPanel.SetDock(documents,Dock.Right);panel.Children.Add(documents);panel.Children.Add(table); Content=panel;
+        DockPanel.SetDock(documents,Dock.Right);panel.Children.Add(documents);panel.Children.Add(table);
+        var root=new Grid();root.Children.Add(panel);
+        if(presentation.Setup is {} setup){setupView=new(setup,module.Resources ?? ResourcePool.Empty,Act);root.Children.Add(setupView);}
+        Content=root;
         table.Gesture+=g=> { _=Act(new(g.Kind,g.Entity,g.Target,g.X,g.Y),session.Frame.Revision); };
         table.SelectionChanged+=RefreshActions;
         table.AnimationChanged+=RefreshActions;
@@ -75,6 +96,7 @@ public sealed class PlayBoard : UserControl,IDisposable
     {
         if(disposed) return;
         var frame=session.Frame; var v=frame.View;
+        panel.IsVisible=setupView?.Show(frame)!=true;
         documents.Show(v);
         table.Show(TableScene.From(v,module.Resources)); table.InputEnabled=hostError==null && !session.Busy && !v.Ended && frame.Fault==null && !frame.Cpu;
         status.Text=hostError ?? $"席位 {v.Seat} · 当前 {v.CurrentSeat}\n阶段 {v.Phase} · 行动 {v.Turn}\n"+
@@ -93,12 +115,16 @@ public sealed class PlayBoard : UserControl,IDisposable
         }
         RefreshActions();
         if(frame.Cpu && !v.Ended && frame.Fault==null) status.Text+="\nCPU 正在行动…";
+        trayStatus.Text=status.Text;
+        returnButton.IsVisible=returnButton.Content!=null && v.Ended;
     }
     private void RefreshActions()
     {
         var frame=session.Frame;
         actions.Children.Clear();
         quickActions.Children.Clear();
+        trayActions.Children.Clear();
+        tray.IsVisible=useTray || frame.View.Ended;
         if(classic && hostError==null && !frame.View.Ended && frame.Fault==null)
             foreach(var offer in frame.Actions.Where(a=>a.Shortcuts?.Contains("confirm")==true))
             {
@@ -112,6 +138,11 @@ public sealed class PlayBoard : UserControl,IDisposable
         {
             if(offer.Gesture=="drag" && offer.Command.Entity!=table.Selected) continue;
             var revision=frame.Revision; Add(offer.Label,()=>Act(new("action",Action:offer.Id),revision));
+            if(useTray)
+            {
+                var button=new Button {Content=offer.Label,Margin=new Thickness(4),Padding=new Thickness(10,6),IsEnabled=!session.Busy && !table.AnimationBusy};
+                button.Click+=async (_,_)=>await Act(new("action",Action:offer.Id),revision);trayActions.Children.Add(button);
+            }
         }
     }
     private void Add(string label,Func<Task> action)
@@ -151,7 +182,7 @@ public sealed class PlayBoard : UserControl,IDisposable
         try { while(!disposed && hostError==null && Frame.Cpu && !Frame.View.Ended && Frame.Fault==null) await AdvanceCpu(); }
         finally { pumping=false; }
     }
-    private void SetBusy(string message) { status.Text=message; actions.Children.Clear(); quickActions.Children.Clear(); table.InputEnabled=false; }
+    private void SetBusy(string message) { status.Text=message;trayStatus.Text=message; actions.Children.Clear(); quickActions.Children.Clear();trayActions.Children.Clear(); table.InputEnabled=false; }
     private void PlayTone(bool accepted)
     {
         try
@@ -162,5 +193,5 @@ public sealed class PlayBoard : UserControl,IDisposable
         }
         catch(Exception) { sound.IsChecked=false; sound.Content="音效不可用（已静音）"; }
     }
-    public void Dispose() { disposed=true; session.Stop(); table.Dispose();documents.Dispose(); tone?.Dispose(); controlFont.Dispose(); }
+    public void Dispose() { disposed=true; session.Stop();setupView?.Dispose(); table.Dispose();documents.Dispose(); tone?.Dispose(); controlFont.Dispose(); }
 }

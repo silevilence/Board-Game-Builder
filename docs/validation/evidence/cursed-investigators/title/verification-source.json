@@ -1,0 +1,14 @@
+{
+  "productionFiles": 228,
+  "verificationFiles": [
+    {
+      "path": "tests/CursedInvestigators.ViewTests/Program.cs",
+      "sha256": "F5CB48D479A37E9AAF1CB89C6C3C22D3D55D656E5AB9A5FC7A4D3AE78F5D7E7A"
+    },
+    {
+      "path": "tests/CursedInvestigators.Tests/Program.cs",
+      "sha256": "E89C5033623C5B7A7B85EDA18CCA02D02B56231CFAE4803A13E65115B3A94321"
+    }
+  ],
+  "changedProductionFiles": 0
+}
