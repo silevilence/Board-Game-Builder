@@ -26,6 +26,7 @@
   </Folder>
   <Folder Name="/tests/">
     <Project Path="tests/CursedInvestigators.Tests/CursedInvestigators.Tests.csproj" />
+    <Project Path="tests/CursedInvestigators.ViewTests/CursedInvestigators.ViewTests.csproj" />
     <Project Path="tests/Editor.AsyncProbe/Editor.AsyncProbe.csproj" />
     <Project Path="tests/Editor.Compatibility/Editor.Compatibility.csproj" />
     <Project Path="tests/Engine.Tests/Engine.Tests.csproj" />
