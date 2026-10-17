@@ -65,3 +65,5 @@
 [最终战役运行](evidence/cursed-investigators/sample/campaign-run.json) 为种子 1＋初学者：748 次操作，首局通关，第二局累计捕获 7 件、声望 40 后健康归零判负，无故障。这个结果验证跨局路径和失败结算，不声称自动策略赢得整场战役。
 
 最终 `final-v9` 导出的正式 Player 从临时工作目录启动，[连续两局获胜](evidence/cursed-investigators/sample/player-two-games.json)，共 666 次按钮与 454 次双击操作，重开后的最终投影完全一致。独立目录为 `artifacts/cursed-investigators/player`，直接双击 `Play.exe`；包内资源足够运行，不需要源码、原 PDF、下载目录或系统 Noto 字体。
+
+任务全部完成后再次整体核对：本组无未勾选项，示例与验收文档本地链接有效；最终校验／打包／导出成功，标准对局重复与回放一致，独立正式 Player 两局获胜，227 个生产源码与最终发行物构建摘要一致。追加 [根目录替换回归](evidence/cursed-investigators/sample/export-linked-root.log)，实际将导出暂存根替换为符号链接，确认拒绝发布；本机未跳过该检查。审核无剩余阻塞。关卡／挑战者不在本轮确认范围内，CPU 不保证获胜；这些不是未完成项。

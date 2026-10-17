@@ -26,6 +26,7 @@ try
     tests.Add("flow-review",FlowTests.Review);
     tests.Add("export-dependencies",ExportDependencyTests.Run);
     tests.Add("export-large-package",ExportTests.LargePackage);
+    tests.Add("export-linked-root",ExportTests.LinkedRoot);
     tests.Add("system-runtime",SystemRuntimeTests.Run);
     tests.Add("author-contract",AuthorProjectTests.Contract);
     tests.Add("author-profiles",AuthorProjectTests.Profiles);
@@ -84,7 +85,7 @@ try
     tests.Add("tts-import",ImportTests.Tts);
     tests.Add("print",PrintTests.Run);
     if(args.Any(a=>!tests.ContainsKey(a))) throw new ArgumentException("Unknown test group.");
-    foreach (var test in tests.Where(t => (args.Length == 0 && t.Key != "m2-gate" && t.Key != "m35-gate" && t.Key != "export" && t.Key != "export-large-package") || args.Contains(t.Key))) { test.Value(); Console.WriteLine($"PASS {test.Key}"); }
+    foreach (var test in tests.Where(t => (args.Length == 0 && t.Key != "m2-gate" && t.Key != "m35-gate" && t.Key != "export" && t.Key != "export-large-package" && t.Key != "export-linked-root") || args.Contains(t.Key))) { test.Value(); Console.WriteLine($"PASS {test.Key}"); }
     return 0;
 }
 catch (Exception error) { Console.Error.WriteLine(error); return 1; }

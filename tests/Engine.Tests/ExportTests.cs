@@ -43,4 +43,26 @@ public static class ExportTests
         }
         finally {if(Directory.Exists(target))Directory.Delete(target,true);}
     }
+    public static void LinkedRoot()
+    {
+        var root=Path.GetFullPath("artifacts/export-link-test-"+Guid.NewGuid());
+        Directory.CreateDirectory(root);
+        try
+        {
+            var original=Path.Combine(root,"original");Directory.CreateDirectory(original);
+            var probe=Path.Combine(root,"probe");
+            try {Directory.CreateSymbolicLink(probe,original);}
+            catch(UnauthorizedAccessException) {Console.WriteLine("SKIP export root link: symbolic-link permission unavailable");return;}
+            Directory.Delete(probe);
+            var release=Environment.GetEnvironmentVariable("BGB_TEST_RELEASE") ?? "artifacts/player-release-m2";
+            var target=Path.Combine(root,"export");
+            Check.Throws(()=>PlayerDistribution.Export(release,"samples/quick-cards",target,staging=>
+            {
+                var displaced=Path.Combine(root,"displaced");Directory.Move(staging,displaced);
+                Directory.CreateSymbolicLink(staging,displaced);
+            }),"Linked export content");
+            Check.That(!Directory.Exists(target),"Linked staging root was published");
+        }
+        finally {Directory.Delete(root,true);}
+    }
 }
