@@ -1,0 +1,540 @@
+{
+  "format": 1,
+  "nodes": [
+    {
+      "id": "start",
+      "kind": "start"
+    },
+    {
+      "id": "win",
+      "kind": "end",
+      "winners": [
+        "p1"
+      ]
+    },
+    {
+      "id": "loss",
+      "kind": "end",
+      "winners": []
+    },
+    {
+      "id": "configure",
+      "kind": "player",
+      "results": [
+        "done"
+      ],
+      "seat": {
+        "fixed": "p1"
+      },
+      "actionsScript": {
+        "path": "game.lua",
+        "entry": "actions"
+      },
+      "decideScript": {
+        "path": "game.lua",
+        "entry": "choose"
+      },
+      "parameters": {
+        "node": "configure"
+      }
+    },
+    {
+      "id": "setup",
+      "kind": "system",
+      "results": [
+        "done"
+      ],
+      "script": {
+        "path": "game.lua",
+        "entry": "setup"
+      }
+    },
+    {
+      "id": "arrange",
+      "kind": "system",
+      "results": [
+        "done"
+      ],
+      "script": {
+        "path": "game.lua",
+        "entry": "arrange"
+      }
+    },
+    {
+      "id": "target",
+      "kind": "player",
+      "results": [
+        "done"
+      ],
+      "seat": {
+        "fixed": "p1"
+      },
+      "actionsScript": {
+        "path": "game.lua",
+        "entry": "actions"
+      },
+      "decideScript": {
+        "path": "game.lua",
+        "entry": "choose"
+      },
+      "parameters": {
+        "node": "target"
+      }
+    },
+    {
+      "id": "enter",
+      "kind": "system",
+      "results": [
+        "done",
+        "choice",
+        "dead"
+      ],
+      "script": {
+        "path": "game.lua",
+        "entry": "enter"
+      }
+    },
+    {
+      "id": "revealChoice",
+      "kind": "player",
+      "results": [
+        "done",
+        "dead"
+      ],
+      "seat": {
+        "fixed": "p1"
+      },
+      "actionsScript": {
+        "path": "game.lua",
+        "entry": "actions"
+      },
+      "decideScript": {
+        "path": "game.lua",
+        "entry": "choose"
+      },
+      "parameters": {
+        "node": "revealChoice"
+      }
+    },
+    {
+      "id": "roll",
+      "kind": "system",
+      "results": [
+        "done"
+      ],
+      "script": {
+        "path": "game.lua",
+        "entry": "roll"
+      }
+    },
+    {
+      "id": "modify",
+      "kind": "system",
+      "results": [
+        "again",
+        "done",
+        "choice",
+        "dead"
+      ],
+      "script": {
+        "path": "game.lua",
+        "entry": "modify"
+      }
+    },
+    {
+      "id": "initialChoice",
+      "kind": "player",
+      "results": [
+        "done",
+        "dead"
+      ],
+      "seat": {
+        "fixed": "p1"
+      },
+      "actionsScript": {
+        "path": "game.lua",
+        "entry": "actions"
+      },
+      "decideScript": {
+        "path": "game.lua",
+        "entry": "choose"
+      },
+      "parameters": {
+        "node": "initialChoice"
+      }
+    },
+    {
+      "id": "reserve",
+      "kind": "player",
+      "results": [
+        "done"
+      ],
+      "seat": {
+        "fixed": "p1"
+      },
+      "actionsScript": {
+        "path": "game.lua",
+        "entry": "actions"
+      },
+      "decideScript": {
+        "path": "game.lua",
+        "entry": "choose"
+      },
+      "parameters": {
+        "node": "reserve"
+      }
+    },
+    {
+      "id": "sync",
+      "kind": "system",
+      "results": [
+        "done",
+        "dead"
+      ],
+      "script": {
+        "path": "game.lua",
+        "entry": "sync"
+      }
+    },
+    {
+      "id": "turn",
+      "kind": "player",
+      "results": [
+        "done",
+        "reward",
+        "end",
+        "dead"
+      ],
+      "seat": {
+        "fixed": "p1"
+      },
+      "actionsScript": {
+        "path": "game.lua",
+        "entry": "actions"
+      },
+      "decideScript": {
+        "path": "game.lua",
+        "entry": "choose"
+      },
+      "parameters": {
+        "node": "turn"
+      }
+    },
+    {
+      "id": "reward",
+      "kind": "player",
+      "results": [
+        "done"
+      ],
+      "seat": {
+        "fixed": "p1"
+      },
+      "actionsScript": {
+        "path": "game.lua",
+        "entry": "actions"
+      },
+      "decideScript": {
+        "path": "game.lua",
+        "entry": "choose"
+      },
+      "parameters": {
+        "node": "reward"
+      }
+    },
+    {
+      "id": "afterReward",
+      "kind": "system",
+      "results": [
+        "done",
+        "dead"
+      ],
+      "script": {
+        "path": "game.lua",
+        "entry": "afterReward"
+      }
+    },
+    {
+      "id": "endTurn",
+      "kind": "system",
+      "results": [
+        "again",
+        "choice",
+        "roll",
+        "target",
+        "campaign",
+        "win",
+        "dead"
+      ],
+      "script": {
+        "path": "game.lua",
+        "entry": "endTurn"
+      }
+    },
+    {
+      "id": "endChoice",
+      "kind": "player",
+      "results": [
+        "done",
+        "dead"
+      ],
+      "seat": {
+        "fixed": "p1"
+      },
+      "actionsScript": {
+        "path": "game.lua",
+        "entry": "actions"
+      },
+      "decideScript": {
+        "path": "game.lua",
+        "entry": "choose"
+      },
+      "parameters": {
+        "node": "endChoice"
+      }
+    },
+    {
+      "id": "campaign",
+      "kind": "player",
+      "results": [
+        "done"
+      ],
+      "seat": {
+        "fixed": "p1"
+      },
+      "actionsScript": {
+        "path": "game.lua",
+        "entry": "actions"
+      },
+      "decideScript": {
+        "path": "game.lua",
+        "entry": "choose"
+      },
+      "parameters": {
+        "node": "campaign"
+      }
+    }
+  ],
+  "edges": [
+    {
+      "id": "begin",
+      "from": "start",
+      "to": "configure"
+    },
+    {
+      "id": "configure-done",
+      "from": "configure",
+      "to": "setup",
+      "result": "done"
+    },
+    {
+      "id": "setup-done",
+      "from": "setup",
+      "to": "arrange",
+      "result": "done"
+    },
+    {
+      "id": "arrange-done",
+      "from": "arrange",
+      "to": "target",
+      "result": "done"
+    },
+    {
+      "id": "target-done",
+      "from": "target",
+      "to": "enter",
+      "result": "done"
+    },
+    {
+      "id": "enter-done",
+      "from": "enter",
+      "to": "roll",
+      "result": "done"
+    },
+    {
+      "id": "enter-choice",
+      "from": "enter",
+      "to": "revealChoice",
+      "result": "choice"
+    },
+    {
+      "id": "enter-dead",
+      "from": "enter",
+      "to": "loss",
+      "result": "dead"
+    },
+    {
+      "id": "revealChoice-done",
+      "from": "revealChoice",
+      "to": "roll",
+      "result": "done"
+    },
+    {
+      "id": "revealChoice-dead",
+      "from": "revealChoice",
+      "to": "loss",
+      "result": "dead"
+    },
+    {
+      "id": "roll-done",
+      "from": "roll",
+      "to": "modify",
+      "result": "done"
+    },
+    {
+      "id": "modify-again",
+      "from": "modify",
+      "to": "modify",
+      "result": "again"
+    },
+    {
+      "id": "modify-done",
+      "from": "modify",
+      "to": "reserve",
+      "result": "done"
+    },
+    {
+      "id": "modify-choice",
+      "from": "modify",
+      "to": "initialChoice",
+      "result": "choice"
+    },
+    {
+      "id": "modify-dead",
+      "from": "modify",
+      "to": "loss",
+      "result": "dead"
+    },
+    {
+      "id": "initialChoice-done",
+      "from": "initialChoice",
+      "to": "modify",
+      "result": "done"
+    },
+    {
+      "id": "initialChoice-dead",
+      "from": "initialChoice",
+      "to": "loss",
+      "result": "dead"
+    },
+    {
+      "id": "reserve-done",
+      "from": "reserve",
+      "to": "sync",
+      "result": "done"
+    },
+    {
+      "id": "sync-done",
+      "from": "sync",
+      "to": "turn",
+      "result": "done"
+    },
+    {
+      "id": "sync-dead",
+      "from": "sync",
+      "to": "loss",
+      "result": "dead"
+    },
+    {
+      "id": "turn-done",
+      "from": "turn",
+      "to": "sync",
+      "result": "done"
+    },
+    {
+      "id": "turn-reward",
+      "from": "turn",
+      "to": "reward",
+      "result": "reward"
+    },
+    {
+      "id": "turn-end",
+      "from": "turn",
+      "to": "endTurn",
+      "result": "end"
+    },
+    {
+      "id": "turn-dead",
+      "from": "turn",
+      "to": "loss",
+      "result": "dead"
+    },
+    {
+      "id": "reward-done",
+      "from": "reward",
+      "to": "afterReward",
+      "result": "done"
+    },
+    {
+      "id": "afterReward-done",
+      "from": "afterReward",
+      "to": "turn",
+      "result": "done"
+    },
+    {
+      "id": "afterReward-dead",
+      "from": "afterReward",
+      "to": "loss",
+      "result": "dead"
+    },
+    {
+      "id": "endTurn-again",
+      "from": "endTurn",
+      "to": "endTurn",
+      "result": "again"
+    },
+    {
+      "id": "endTurn-choice",
+      "from": "endTurn",
+      "to": "endChoice",
+      "result": "choice"
+    },
+    {
+      "id": "endTurn-roll",
+      "from": "endTurn",
+      "to": "roll",
+      "result": "roll"
+    },
+    {
+      "id": "endTurn-target",
+      "from": "endTurn",
+      "to": "target",
+      "result": "target"
+    },
+    {
+      "id": "endTurn-campaign",
+      "from": "endTurn",
+      "to": "campaign",
+      "result": "campaign"
+    },
+    {
+      "id": "endTurn-win",
+      "from": "endTurn",
+      "to": "win",
+      "result": "win"
+    },
+    {
+      "id": "endTurn-dead",
+      "from": "endTurn",
+      "to": "loss",
+      "result": "dead"
+    },
+    {
+      "id": "endChoice-done",
+      "from": "endChoice",
+      "to": "endTurn",
+      "result": "done"
+    },
+    {
+      "id": "endChoice-dead",
+      "from": "endChoice",
+      "to": "loss",
+      "result": "dead"
+    },
+    {
+      "id": "campaign-done",
+      "from": "campaign",
+      "to": "setup",
+      "result": "done"
+    }
+  ]
+}

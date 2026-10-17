@@ -1,0 +1,357 @@
+{
+  "format": 1,
+  "method": "Canonical repeated ability text cropped from scanned cards; procedural felt background, seed 20261017",
+  "abilities": [
+    {
+      "id": "ability1",
+      "path": "assets/table/ability-01.png",
+      "source": "assets/runtime/spirit-poltergeist.png",
+      "sourceSha256": "4a0410d4b0e771fec332ccc02f3559fc7437f137e9418544e49617b149767a2a",
+      "box": [
+        21,
+        865,
+        568,
+        998
+      ],
+      "sha256": "477326245d143c97f5e0bb30692f070960f9c67bb5c4652a58a71561c6332a82"
+    },
+    {
+      "id": "ability8",
+      "path": "assets/table/ability-08.png",
+      "source": "assets/runtime/spirit-poltergeist.png",
+      "sourceSha256": "4a0410d4b0e771fec332ccc02f3559fc7437f137e9418544e49617b149767a2a",
+      "box": [
+        21,
+        737,
+        568,
+        865
+      ],
+      "sha256": "03269999c0d1b9a404fbbfff4d7a4cfc33da0e25e5f051d115c61523d2cce403"
+    },
+    {
+      "id": "ability11",
+      "path": "assets/table/ability-11.png",
+      "source": "assets/runtime/spirit-poltergeist.png",
+      "sourceSha256": "4a0410d4b0e771fec332ccc02f3559fc7437f137e9418544e49617b149767a2a",
+      "box": [
+        21,
+        612,
+        568,
+        737
+      ],
+      "sha256": "f87a329dac47cdf02cfe72d06b5d98cab337d1457a7007a876676b68b3bf7acd"
+    },
+    {
+      "id": "ability2",
+      "path": "assets/table/ability-02.png",
+      "source": "assets/runtime/spirit-revenant.png",
+      "sourceSha256": "4ac5bd63d89496e00e685fc5a0cf2cc375ce9e20b6237a78b28c8dec3aa202f4",
+      "box": [
+        21,
+        865,
+        559,
+        998
+      ],
+      "sha256": "76d230c47025cdb6b0a6eef551c495ecfb8e20fa9007bd18f70c755ed94432d9"
+    },
+    {
+      "id": "ability5",
+      "path": "assets/table/ability-05.png",
+      "source": "assets/runtime/spirit-revenant.png",
+      "sourceSha256": "4ac5bd63d89496e00e685fc5a0cf2cc375ce9e20b6237a78b28c8dec3aa202f4",
+      "box": [
+        21,
+        737,
+        559,
+        865
+      ],
+      "sha256": "bd3ecd4fcb9974e8b2e64ce339455a5fc40c2bd08a0b6aa73f9caeb22fe549a4"
+    },
+    {
+      "id": "ability10",
+      "path": "assets/table/ability-10.png",
+      "source": "assets/runtime/spirit-revenant.png",
+      "sourceSha256": "4ac5bd63d89496e00e685fc5a0cf2cc375ce9e20b6237a78b28c8dec3aa202f4",
+      "box": [
+        21,
+        612,
+        559,
+        737
+      ],
+      "sha256": "3bc3d45f00f43fd13c56af6ecd5a25ef8c5d07ed7cf8972d98c0bf75888c5ba4"
+    },
+    {
+      "id": "ability3",
+      "path": "assets/table/ability-03.png",
+      "source": "assets/runtime/spirit-phantasm.png",
+      "sourceSha256": "51d00304389f901a573db4ffd0f1510080672f9a544f0d99422ccd698a2afc6a",
+      "box": [
+        21,
+        865,
+        568,
+        998
+      ],
+      "sha256": "56557e0fbfdf4d0fcb33ee97d28a69ccc50546f2c07d336130c08f213dd0bc62"
+    },
+    {
+      "id": "ability6",
+      "path": "assets/table/ability-06.png",
+      "source": "assets/runtime/spirit-phantasm.png",
+      "sourceSha256": "51d00304389f901a573db4ffd0f1510080672f9a544f0d99422ccd698a2afc6a",
+      "box": [
+        21,
+        737,
+        568,
+        865
+      ],
+      "sha256": "a3dac54e275df5be796edf9d26308e12042fa9cec03dcda0d694586f3553c2bc"
+    },
+    {
+      "id": "ability9",
+      "path": "assets/table/ability-09.png",
+      "source": "assets/runtime/spirit-phantasm.png",
+      "sourceSha256": "51d00304389f901a573db4ffd0f1510080672f9a544f0d99422ccd698a2afc6a",
+      "box": [
+        21,
+        612,
+        568,
+        737
+      ],
+      "sha256": "41d1d8aa2bb3ee9b6bc964aeefd275aca3873daa42b680ea0237ef85862de1d8"
+    },
+    {
+      "id": "ability4",
+      "path": "assets/table/ability-04.png",
+      "source": "assets/runtime/spirit-apparition.png",
+      "sourceSha256": "3563fe41421bcf67dd33b98cf0d047fa46e7fec472466a28b753310666fe4a6d",
+      "box": [
+        21,
+        865,
+        568,
+        998
+      ],
+      "sha256": "929a52bf2900989818ef2f544f596ee1ba72124ad685b9fe65cfa884654b6e43"
+    },
+    {
+      "id": "ability7",
+      "path": "assets/table/ability-07.png",
+      "source": "assets/runtime/spirit-apparition.png",
+      "sourceSha256": "3563fe41421bcf67dd33b98cf0d047fa46e7fec472466a28b753310666fe4a6d",
+      "box": [
+        21,
+        737,
+        568,
+        865
+      ],
+      "sha256": "1085125ab26593679c34b553abcd9ade360df391bedad1aa98ae7c9d51d2cd6e"
+    },
+    {
+      "id": "ability12",
+      "path": "assets/table/ability-12.png",
+      "source": "assets/runtime/spirit-apparition.png",
+      "sourceSha256": "3563fe41421bcf67dd33b98cf0d047fa46e7fec472466a28b753310666fe4a6d",
+      "box": [
+        21,
+        612,
+        568,
+        737
+      ],
+      "sha256": "2d213fbedd4b0405637b1a58854ccfb5c5dd0505d52ae64eb03789f370c85c6f"
+    },
+    {
+      "id": "ability13",
+      "path": "assets/table/ability-13.png",
+      "source": "assets/runtime/spirit-wraith.png",
+      "sourceSha256": "5dd2ee5b0a8704a0d0042372c6f62f3f888bc8d242fe43f9afe017fb9c873454",
+      "box": [
+        21,
+        737,
+        566,
+        865
+      ],
+      "sha256": "4258bdf8851663cc8f0811708413b6f69e6bb2f6f1b1024bad8288c126e2a7a1"
+    },
+    {
+      "id": "ability14",
+      "path": "assets/table/ability-14.png",
+      "source": "assets/runtime/spirit-wraith.png",
+      "sourceSha256": "5dd2ee5b0a8704a0d0042372c6f62f3f888bc8d242fe43f9afe017fb9c873454",
+      "box": [
+        21,
+        612,
+        566,
+        737
+      ],
+      "sha256": "d27f33e6899d989860c37b4608b7a874ceadaa7c9b3d9b368838f1390c1f7d93"
+    },
+    {
+      "id": "ability15",
+      "path": "assets/table/ability-15.png",
+      "source": "assets/runtime/spirit-banshee.png",
+      "sourceSha256": "ed3f19ea0a8b0c2370af5c42474a44d8a0ccc9a29a8da61f2b66a490881d1cf8",
+      "box": [
+        21,
+        612,
+        559,
+        737
+      ],
+      "sha256": "8bab50c8df056c326e051b1312cbbebf0f246dbd2603d46a92b8a8c931a8156f"
+    },
+    {
+      "id": "ability16",
+      "path": "assets/table/ability-16.png",
+      "source": "assets/runtime/spirit-specter.png",
+      "sourceSha256": "77c075b4bc6af9aeea96bb92e4fec662badddd27a7e154452156a73fb9839227",
+      "box": [
+        21,
+        737,
+        565,
+        865
+      ],
+      "sha256": "ccf7d3d0b010352709d1f98ee54167680a50d80c033a0172a02dd63e044fdd57"
+    },
+    {
+      "id": "ability17",
+      "path": "assets/table/ability-17.png",
+      "source": "assets/runtime/spirit-drowned.png",
+      "sourceSha256": "db53871b4dcfa38f542b6d30732f5016566752c9e545886e6b2e5036ac3eccc7",
+      "box": [
+        21,
+        737,
+        569,
+        865
+      ],
+      "sha256": "800b7920750ca337fdc553706e4a0e6bad3ccc7e930b3ce7c2a6ac7b8c5762e9"
+    },
+    {
+      "id": "ability18",
+      "path": "assets/table/ability-18.png",
+      "source": "assets/runtime/spirit-drowned.png",
+      "sourceSha256": "db53871b4dcfa38f542b6d30732f5016566752c9e545886e6b2e5036ac3eccc7",
+      "box": [
+        21,
+        612,
+        569,
+        737
+      ],
+      "sha256": "2e370da9b992c69bf5412a00414bb1f0b7325a35e570eb152dc371e9bb6aa4ba"
+    },
+    {
+      "id": "ability19",
+      "path": "assets/table/ability-19.png",
+      "source": "assets/runtime/spirit-ghost.png",
+      "sourceSha256": "9b38ddb67cb9b2e460a1d5c6abc60b04c74e4c1a8caa8df9f97eae5825bfdc8a",
+      "box": [
+        21,
+        865,
+        567,
+        998
+      ],
+      "sha256": "6b67e578f61dca90ea86a1467877087d547d745acc1e88fc1fcf3ce857e1879a"
+    },
+    {
+      "id": "ability20",
+      "path": "assets/table/ability-20.png",
+      "source": "assets/runtime/spirit-ghost.png",
+      "sourceSha256": "9b38ddb67cb9b2e460a1d5c6abc60b04c74e4c1a8caa8df9f97eae5825bfdc8a",
+      "box": [
+        21,
+        612,
+        567,
+        737
+      ],
+      "sha256": "e7a621eebaf1f93bbd38d5b844faa633402a38908131ceebf7d100e811d6d296"
+    },
+    {
+      "id": "ability21",
+      "path": "assets/table/ability-21.png",
+      "source": "assets/runtime/spirit-shade.png",
+      "sourceSha256": "d8ce8b77ab81f83aac084d581979dbdd8418a36b1fa44756134554209f6600e1",
+      "box": [
+        21,
+        865,
+        561,
+        998
+      ],
+      "sha256": "b1ca4a66a653aa15e28c3015f02e3ff86fa16ad74f13e2e2256b8af88f99c658"
+    },
+    {
+      "id": "ability22",
+      "path": "assets/table/ability-22.png",
+      "source": "assets/runtime/spirit-shade.png",
+      "sourceSha256": "d8ce8b77ab81f83aac084d581979dbdd8418a36b1fa44756134554209f6600e1",
+      "box": [
+        21,
+        737,
+        561,
+        865
+      ],
+      "sha256": "6a1da65c5a0d45abe208fea8544fe0abfa6cb84fb95f2f8b93996d51a5ac911d"
+    },
+    {
+      "id": "ability23",
+      "path": "assets/table/ability-23.png",
+      "source": "assets/runtime/spirit-shade.png",
+      "sourceSha256": "d8ce8b77ab81f83aac084d581979dbdd8418a36b1fa44756134554209f6600e1",
+      "box": [
+        21,
+        612,
+        561,
+        737
+      ],
+      "sha256": "355716b0849532e0be5af1a4be05fb461256a04a7309e2d421c1a409c4280af8"
+    },
+    {
+      "id": "ability24",
+      "path": "assets/table/ability-24.png",
+      "source": "assets/runtime/spirit-ghoul.png",
+      "sourceSha256": "6678143a9c7232f11158f84e967418c8a09f1a15b55e4b8c28fa2070818b6e80",
+      "box": [
+        21,
+        865,
+        570,
+        998
+      ],
+      "sha256": "6d627f99832e7455a64a2665054671e825966e0228ade90ad7782ddb09b093cb"
+    },
+    {
+      "id": "ability25",
+      "path": "assets/table/ability-25.png",
+      "source": "assets/runtime/spirit-ghoul.png",
+      "sourceSha256": "6678143a9c7232f11158f84e967418c8a09f1a15b55e4b8c28fa2070818b6e80",
+      "box": [
+        21,
+        612,
+        570,
+        737
+      ],
+      "sha256": "8344c9596c697bd6ab1766b1b7958ae10f7ff7a3aa20a5771096e8af5c215309"
+    },
+    {
+      "id": "ability26",
+      "path": "assets/table/ability-26.png",
+      "source": "assets/runtime/spirit-evil-spirit.png",
+      "sourceSha256": "74273e6eafb5b95446fd493eb6d5e72008a344bf379fd50814c3991d065cb232",
+      "box": [
+        21,
+        865,
+        569,
+        998
+      ],
+      "sha256": "a509f78cfe342e0f8a17a7967a23a176f75979e62a0ccacad03443b0ab688bb3"
+    },
+    {
+      "id": "ability27",
+      "path": "assets/table/ability-27.png",
+      "source": "assets/runtime/spirit-evil-spirit.png",
+      "sourceSha256": "74273e6eafb5b95446fd493eb6d5e72008a344bf379fd50814c3991d065cb232",
+      "box": [
+        21,
+        612,
+        569,
+        737
+      ],
+      "sha256": "685458633ca6ab3ef9eb777c80ac2d75c95f5e222677343398fc2f3ba319a49c"
+    }
+  ]
+}

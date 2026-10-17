@@ -3,7 +3,7 @@ using BoardGame.Kernel;
 namespace BoardGame.Player;
 
 // Player-only metadata travels as a normal hashed module resource, outside rule state.
-public sealed record PlayerPresentation(string? Title=null,string? Help=null,bool ShowActions=true)
+public sealed record PlayerPresentation(string? Title=null,string? Help=null,bool ShowActions=true,int? Width=null,int? Height=null,string? StatusEntity=null)
 {
     public static PlayerPresentation Read(LoadedModule module)
     {
@@ -12,6 +12,8 @@ public sealed record PlayerPresentation(string? Title=null,string? Help=null,boo
         if(bytes.Length>32*1024) throw new InvalidDataException("player.presentation exceeds 32 KiB");
         var value=Wire.Read<PlayerPresentation>(Encoding.UTF8.GetString(module.Resources.GetBinary("player.presentation").Span));
         if(value.Title?.Length>120 || value.Help?.Length>12000) throw new InvalidDataException("player.presentation text is too long");
+        if(value.Width is <800 or >3840 || value.Height is <600 or >2160)throw new InvalidDataException("player.presentation: width 800..3840, height 600..2160 required");
+        if(value.StatusEntity!=null && !module.Initial.Entities.ContainsKey(value.StatusEntity))throw new InvalidDataException("player.presentation: unknown statusEntity "+value.StatusEntity);
         return value with {Title=string.IsNullOrWhiteSpace(value.Title)?module.Id:value.Title};
     }
 }

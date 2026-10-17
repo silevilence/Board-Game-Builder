@@ -1,0 +1,525 @@
+{
+  "format": 1,
+  "panels": [
+    {
+      "id": "journal",
+      "title": "调查日志",
+      "permanent": true,
+      "width": 330,
+      "pages": [
+        {
+          "title": "捕获目录",
+          "image": "journal-captures",
+          "width": 988,
+          "height": 1600,
+          "fields": [
+            {
+              "x": 175,
+              "y": 128,
+              "size": 28,
+              "text": "单人调查档案"
+            },
+            {
+              "x": 600,
+              "y": 128,
+              "size": 30,
+              "binding": {
+                "entity": "match",
+                "property": "character",
+                "values": {
+                  "1": "塞莱斯特",
+                  "2": "埃莉诺",
+                  "3": "利兰"
+                }
+              }
+            },
+            {
+              "x": 175,
+              "y": 178,
+              "size": 30,
+              "binding": {
+                "entity": "match",
+                "property": "profession",
+                "values": {
+                  "1": "不情愿的灵媒",
+                  "2": "前侦探",
+                  "3": "灵异调查员"
+                }
+              }
+            },
+            {
+              "x": 600,
+              "y": 178,
+              "size": 30,
+              "binding": {
+                "entity": "match",
+                "property": "score"
+              }
+            },
+            {
+              "x": 237,
+              "y": 305,
+              "size": 30,
+              "binding": {
+                "entity": "log1",
+                "property": "captured",
+                "hideZero": true,
+                "nonzeroText": "✓"
+              }
+            },
+            {
+              "x": 237,
+              "y": 342,
+              "size": 30,
+              "binding": {
+                "entity": "log1",
+                "property": "used",
+                "hideZero": true,
+                "nonzeroText": "✓"
+              }
+            },
+            {
+              "x": 689,
+              "y": 305,
+              "size": 30,
+              "binding": {
+                "entity": "log2",
+                "property": "captured",
+                "hideZero": true,
+                "nonzeroText": "✓"
+              }
+            },
+            {
+              "x": 689,
+              "y": 342,
+              "size": 30,
+              "binding": {
+                "entity": "log2",
+                "property": "used",
+                "hideZero": true,
+                "nonzeroText": "✓"
+              }
+            },
+            {
+              "x": 237,
+              "y": 497,
+              "size": 30,
+              "binding": {
+                "entity": "log3",
+                "property": "captured",
+                "hideZero": true,
+                "nonzeroText": "✓"
+              }
+            },
+            {
+              "x": 237,
+              "y": 534,
+              "size": 30,
+              "binding": {
+                "entity": "log3",
+                "property": "used",
+                "hideZero": true,
+                "nonzeroText": "✓"
+              }
+            },
+            {
+              "x": 689,
+              "y": 497,
+              "size": 30,
+              "binding": {
+                "entity": "log4",
+                "property": "captured",
+                "hideZero": true,
+                "nonzeroText": "✓"
+              }
+            },
+            {
+              "x": 689,
+              "y": 534,
+              "size": 30,
+              "binding": {
+                "entity": "log4",
+                "property": "used",
+                "hideZero": true,
+                "nonzeroText": "✓"
+              }
+            },
+            {
+              "x": 237,
+              "y": 689,
+              "size": 30,
+              "binding": {
+                "entity": "log5",
+                "property": "captured",
+                "hideZero": true,
+                "nonzeroText": "✓"
+              }
+            },
+            {
+              "x": 237,
+              "y": 726,
+              "size": 30,
+              "binding": {
+                "entity": "log5",
+                "property": "used",
+                "hideZero": true,
+                "nonzeroText": "✓"
+              }
+            },
+            {
+              "x": 689,
+              "y": 689,
+              "size": 30,
+              "binding": {
+                "entity": "log6",
+                "property": "captured",
+                "hideZero": true,
+                "nonzeroText": "✓"
+              }
+            },
+            {
+              "x": 689,
+              "y": 726,
+              "size": 30,
+              "binding": {
+                "entity": "log6",
+                "property": "used",
+                "hideZero": true,
+                "nonzeroText": "✓"
+              }
+            },
+            {
+              "x": 237,
+              "y": 881,
+              "size": 30,
+              "binding": {
+                "entity": "log7",
+                "property": "captured",
+                "hideZero": true,
+                "nonzeroText": "✓"
+              }
+            },
+            {
+              "x": 237,
+              "y": 918,
+              "size": 30,
+              "binding": {
+                "entity": "log7",
+                "property": "used",
+                "hideZero": true,
+                "nonzeroText": "✓"
+              }
+            },
+            {
+              "x": 689,
+              "y": 881,
+              "size": 30,
+              "binding": {
+                "entity": "log8",
+                "property": "captured",
+                "hideZero": true,
+                "nonzeroText": "✓"
+              }
+            },
+            {
+              "x": 689,
+              "y": 918,
+              "size": 30,
+              "binding": {
+                "entity": "log8",
+                "property": "used",
+                "hideZero": true,
+                "nonzeroText": "✓"
+              }
+            },
+            {
+              "x": 237,
+              "y": 1069,
+              "size": 30,
+              "binding": {
+                "entity": "log9",
+                "property": "captured",
+                "hideZero": true,
+                "nonzeroText": "✓"
+              }
+            },
+            {
+              "x": 237,
+              "y": 1106,
+              "size": 30,
+              "binding": {
+                "entity": "log9",
+                "property": "used",
+                "hideZero": true,
+                "nonzeroText": "✓"
+              }
+            },
+            {
+              "x": 689,
+              "y": 1069,
+              "size": 30,
+              "binding": {
+                "entity": "log10",
+                "property": "captured",
+                "hideZero": true,
+                "nonzeroText": "✓"
+              }
+            },
+            {
+              "x": 689,
+              "y": 1106,
+              "size": 30,
+              "binding": {
+                "entity": "log10",
+                "property": "used",
+                "hideZero": true,
+                "nonzeroText": "✓"
+              }
+            },
+            {
+              "x": 237,
+              "y": 1261,
+              "size": 30,
+              "binding": {
+                "entity": "log11",
+                "property": "captured",
+                "hideZero": true,
+                "nonzeroText": "✓"
+              }
+            },
+            {
+              "x": 237,
+              "y": 1298,
+              "size": 30,
+              "binding": {
+                "entity": "log11",
+                "property": "used",
+                "hideZero": true,
+                "nonzeroText": "✓"
+              }
+            },
+            {
+              "x": 689,
+              "y": 1261,
+              "size": 30,
+              "binding": {
+                "entity": "log12",
+                "property": "captured",
+                "hideZero": true,
+                "nonzeroText": "✓"
+              }
+            },
+            {
+              "x": 689,
+              "y": 1298,
+              "size": 30,
+              "binding": {
+                "entity": "log12",
+                "property": "used",
+                "hideZero": true,
+                "nonzeroText": "✓"
+              }
+            },
+            {
+              "x": 237,
+              "y": 1450,
+              "size": 30,
+              "binding": {
+                "entity": "log13",
+                "property": "captured",
+                "hideZero": true,
+                "nonzeroText": "✓"
+              }
+            },
+            {
+              "x": 237,
+              "y": 1487,
+              "size": 30,
+              "binding": {
+                "entity": "log13",
+                "property": "used",
+                "hideZero": true,
+                "nonzeroText": "✓"
+              }
+            },
+            {
+              "x": 689,
+              "y": 1450,
+              "size": 30,
+              "binding": {
+                "entity": "log14",
+                "property": "captured",
+                "hideZero": true,
+                "nonzeroText": "✓"
+              }
+            },
+            {
+              "x": 689,
+              "y": 1487,
+              "size": 30,
+              "binding": {
+                "entity": "log14",
+                "property": "used",
+                "hideZero": true,
+                "nonzeroText": "✓"
+              }
+            }
+          ]
+        },
+        {
+          "title": "灵异观察",
+          "image": "journal-observations",
+          "width": 986,
+          "height": 1600,
+          "fields": [
+            {
+              "x": 280,
+              "y": 251,
+              "size": 25,
+              "binding": {
+                "entity": "observation4",
+                "property": "count",
+                "hideZero": true
+              },
+              "text": "驱散 ×{value}"
+            },
+            {
+              "x": 280,
+              "y": 462,
+              "size": 25,
+              "binding": {
+                "entity": "observation7",
+                "property": "count",
+                "hideZero": true
+              },
+              "text": "驱散 ×{value}"
+            },
+            {
+              "x": 280,
+              "y": 676,
+              "size": 25,
+              "binding": {
+                "entity": "observation9",
+                "property": "count",
+                "hideZero": true
+              },
+              "text": "驱散 ×{value}"
+            },
+            {
+              "x": 280,
+              "y": 947,
+              "size": 25,
+              "binding": {
+                "entity": "observation1",
+                "property": "count",
+                "hideZero": true
+              },
+              "text": "驱散 ×{value}"
+            },
+            {
+              "x": 280,
+              "y": 1159,
+              "size": 25,
+              "binding": {
+                "entity": "observation6",
+                "property": "count",
+                "hideZero": true
+              },
+              "text": "驱散 ×{value}"
+            },
+            {
+              "x": 280,
+              "y": 1373,
+              "size": 25,
+              "binding": {
+                "entity": "observation11",
+                "property": "count",
+                "hideZero": true
+              },
+              "text": "驱散 ×{value}"
+            },
+            {
+              "x": 743,
+              "y": 251,
+              "size": 25,
+              "binding": {
+                "entity": "observation3",
+                "property": "count",
+                "hideZero": true
+              },
+              "text": "驱散 ×{value}"
+            },
+            {
+              "x": 743,
+              "y": 462,
+              "size": 25,
+              "binding": {
+                "entity": "observation5",
+                "property": "count",
+                "hideZero": true
+              },
+              "text": "驱散 ×{value}"
+            },
+            {
+              "x": 743,
+              "y": 676,
+              "size": 25,
+              "binding": {
+                "entity": "observation12",
+                "property": "count",
+                "hideZero": true
+              },
+              "text": "驱散 ×{value}"
+            },
+            {
+              "x": 743,
+              "y": 947,
+              "size": 25,
+              "binding": {
+                "entity": "observation2",
+                "property": "count",
+                "hideZero": true
+              },
+              "text": "驱散 ×{value}"
+            },
+            {
+              "x": 743,
+              "y": 1159,
+              "size": 25,
+              "binding": {
+                "entity": "observation8",
+                "property": "count",
+                "hideZero": true
+              },
+              "text": "驱散 ×{value}"
+            },
+            {
+              "x": 743,
+              "y": 1373,
+              "size": 25,
+              "binding": {
+                "entity": "observation10",
+                "property": "count",
+                "hideZero": true
+              },
+              "text": "驱散 ×{value}"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "id": "reference",
+      "title": "简要说明",
+      "pages": [
+        {
+          "title": "回合流程",
+          "image": "reference-turn",
+          "width": 614,
+          "height": 1024,
+          "fields": []
+        }
+      ]
+    }
+  ]
+}

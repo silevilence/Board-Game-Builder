@@ -23,3 +23,4 @@ source 可为文件或目录；pattern 支持 `*`、`?`、`**`。目录省略 pa
 `resources.font`（version `1`、api `1`）依赖 `resources`，configuration 为 `{"path":"assets/font.otf","license":"assets/OFL.txt"}`。选择一个静态 OpenType TTF／CFF OTF 作为游戏桌面及 Player 操作控件字体，字体和非空许可证都随包收集，不需要安装系统字体。缺件、格式错误或渲染缺字会报告诊断；切换／关闭视口释放字体缓存。配置使用现有 `files.write`，再运行 `project.validate` 和正式打包／导出。
 
 `resources.animations` 的配置、作者操作和预览见 `bgb.exe docs animation`。字体／动画声明不能使用图片的自动移动命令；调整路径时需同步修改显式配置并重新校验。
+`resources.documents` 可声明侧边分页文档及公开状态绑定，详见 `bgb docs documents`。

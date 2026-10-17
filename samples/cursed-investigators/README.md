@@ -1,22 +1,42 @@
-# 咒物调查员 sample
+# 咒物调查员
 
-当前阶段：**规则与资源已入库，尚未开始游戏实现**。资源包括透明扫描卡片、修复的咒灵黑边、骰面／方形指示物和随包中文字体。本目录暂不包含 `game.start.json`，不能作为运行工程加载。
+发布版 CLI 与状态机引擎的可玩示例：**标准单人、两局战役、初学者变体**。关卡和挑战者保留扫描资料，本轮未实现。
 
-- [规则书转写](RULES.md)：PDF 第 1～4 页规则正文、第 5 页帮助牌，以及需要进一步明确的原文边界。
-- [全部卡牌文字与数值](CARDS.md)：角色、职业、14 张咒物、12 张咒灵的内容，方便后续编写游戏数据和校验。
-- [资源索引](assets/README.md)：正面、共用背面、调查日志的文件链接与来源页码。
-- [裁剪清单](assets/manifest.json)：稳定资源 ID、原始页坐标、朝向、尺寸、SHA-256 与正反面关联。
+## 开始游戏
 
-原始资料由用户提供：`咒物调查员.pdf`（19 页扫描件，规则标注 ©2023 香蕉桌游；设计 Jason Greeno；插图／图标 Brooke Penrose、GameIcons.net）。扫描卡片采用用户指定的像素处理去除外侧白底，缺失黑边复制现有边框纹理补齐，保留内部文字和图案；原 PDF 未复制进仓库。Kenney 图标与 Noto 中文字体的来源、许可证和校验信息分别放在对应资源目录。
+从仓库根目录运行本次完整发行版：
 
-## 后续开发约束
+```powershell
+artifacts/cursed-investigators/final-v9/player/Player.exe gui samples/cursed-investigators
+```
 
-以 [ROADMAP](../../ROADMAP.md)「咒物调查员：发布版 CLI 与状态机引擎验收」为准：
+独立导出目录双击 `Play.exe`，无需源码、PDF、下载目录、编辑器或 .NET SDK。导出方法见 [CLI 使用说明](CLI-USAGE.md)。
 
-1. 先从当时最新源码编译本地引擎发行物，再使用**该发行物中的 CLI**辅助 sample 创作与验证，检查实际作者工具可用性。
-2. 游戏使用现有状态机流程插件。游戏专用的规则、卡牌、流程、文案和呈现全部留在本 sample 中。
-3. **CLI 不新增功能**，只修复既有功能的 bug／不满足项。成品要求所缺少的引擎能力（包括字体加载、动画编辑与动画加载／播放）须作为通用内置插件新增或扩展；通过既有作者操作契约供 CLI 使用。修改后重新编译发行物，再用新产物继续开发和复验。
-4. 完成后新增 `CLI-USAGE.md`，简述实际用过的 CLI 命令、用途、发行物版本／源码提交及必要的重新编译情况，不必逐步记录所有调用。
-5. 成品须具有简略洗牌／发牌动画、精致桌面与分区、侧边常驻且可翻页并自动记录的 journal、随时可查看的 reference，以及与当前合法动作一致的文字提示；详细验收以 ROADMAP 为准。
+右侧选择角色、职业、标准／战役及是否初学者，再开始调查。默认利兰＋灵异调查员、标准单人。调查目录从下往上；双击咒物或点动作按钮选择。双击骰子切换选择，右侧列出当前合法的重掷、改点、职业能力、挑战和奖励操作。未选骰子时，挑战自动选择一组满足要求的骰子；选中骰子时只使用所选范围。每回合最多一次挑战，奖励立即选择。
 
-本次没有构建发行物、调用作者 CLI 或编写运行规则。扫描裁剪使用 Python、pypdf、Pillow 和 OpenCV；这些是资料整理工具，**不能作为已完成 CLI 验收的证据**。
+桌面滚轮或「放大／缩小」可查看扫描文字，中键拖动平移，「查看 → 适应窗口」复位。左侧为角色、职业及封存物件，中间为分层遭遇，右侧为当前咒物／咒灵与已揭露能力，下方为骰池；职业格中的小骰子表示保留。白色方块标记属性和已完成挑战。发牌期间输入短暂锁定，动画完成后继续。
+
+侧栏日志可翻页，捕获、奖励使用、观察次数和声望来自已提交状态；「简要说明」另开参考页，关闭即可返回，不消耗行动。右侧文字提示随阶段更新。游戏菜单支持新开、重开和开局设置；CPU 可自动对局，但策略不保证胜利。
+
+## 规则、数据和资源
+
+- [规则转写](RULES.md)、[全部卡牌](CARDS.md)、[sample 裁定](RULINGS.md)：扫描缺失边界已获授权裁定，明确区别于官方规则。
+- [资源索引](assets/README.md)、[原图清单](assets/manifest.json)：33 张正面、5 张共用背面、日志两面，保留透明化和修边后的原图及来源。
+- `assets/runtime`：等比例派生纹理；`assets/table`：桌面和从扫描提取的能力条。同能力共用图片，避免揭露能力时提前显示咒灵身份。
+- `assets/icons`：Kenney 六个骰面和方块；`assets/fonts`：Noto Sans CJK SC 及许可证。动态文字直接使用包内字体字节。
+- `game.start.json` 注册通用插件；`position.json` 定义实体；`flow.json` 表达选择、设置、修正、骰池、奖励、回合结束与终局；`game.lua` 承载全部游戏规则及 CPU。
+- `animations.json` 描述洗牌／发牌；`documents.json` 定义日志和参考页；`presentation.json` 定义窗口和提示入口。
+
+资源来源：用户提供的 19 页扫描件，规则标注 ©2023 香蕉桌游，设计 Jason Greeno，插图／图标 Brooke Penrose、GameIcons.net。原 PDF 不进入仓库。扫描素材不因 Kenney 或 Noto 的开放许可证而获得相同授权；后两者许可证保存在各自目录。
+
+## 维护与验证
+
+`tools/game-logic.lua` 与 `tools/build-project.py` 是作者源；生成 JSON 编辑请求后，用发布 CLI `files.write` 应用，避免只改生成文件后被覆盖。`prepare-textures.py` 校验原图哈希并按预乘透明度缩放；`prepare-table.py` 生成桌布和能力条，都不修改原扫描。需要 Python 和 Pillow。
+
+```powershell
+dotnet run --project tests/CursedInvestigators.Tests -c Release
+dotnet run --project tests/CursedInvestigators.Tests -c Release -- play 1 beginner
+dotnet run --project tests/CursedInvestigators.ViewTests -c Release
+```
+
+规则测试覆盖全部挑战组合、27 种能力、14 件咒物的关键效果、属性轨道、职业、奖励与战役边界。自动整局上限 2400 次玩家操作，图形验证需要 Windows / Direct3D 11。发布 CLI、独立 Player 及证据见 [验收记录](../../docs/validation/cursed-investigators.md)。

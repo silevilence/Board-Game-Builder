@@ -6,6 +6,7 @@ try
 {
     tests.Add("resource-font",FontResourceTests.Run);
     tests.Add("animation-runtime",AnimationTests.Runtime);
+    tests.Add("resource-documents",DocumentTests.Runtime);
     tests.Add("animation-author",AnimationTests.Author);
     tests.Add("flow-editor-lifetime",FlowEditorTests.Lifetime);
     tests.Add("flow-editor-model",FlowEditorTests.Model);
@@ -24,6 +25,7 @@ try
     tests.Add("flow-delivery",FlowDeliveryTests.Run);
     tests.Add("flow-review",FlowTests.Review);
     tests.Add("export-dependencies",ExportDependencyTests.Run);
+    tests.Add("export-large-package",ExportTests.LargePackage);
     tests.Add("system-runtime",SystemRuntimeTests.Run);
     tests.Add("author-contract",AuthorProjectTests.Contract);
     tests.Add("author-profiles",AuthorProjectTests.Profiles);
@@ -82,7 +84,7 @@ try
     tests.Add("tts-import",ImportTests.Tts);
     tests.Add("print",PrintTests.Run);
     if(args.Any(a=>!tests.ContainsKey(a))) throw new ArgumentException("Unknown test group.");
-    foreach (var test in tests.Where(t => (args.Length == 0 && t.Key != "m2-gate" && t.Key != "m35-gate" && t.Key != "export") || args.Contains(t.Key))) { test.Value(); Console.WriteLine($"PASS {test.Key}"); }
+    foreach (var test in tests.Where(t => (args.Length == 0 && t.Key != "m2-gate" && t.Key != "m35-gate" && t.Key != "export" && t.Key != "export-large-package") || args.Contains(t.Key))) { test.Value(); Console.WriteLine($"PASS {test.Key}"); }
     return 0;
 }
 catch (Exception error) { Console.Error.WriteLine(error); return 1; }

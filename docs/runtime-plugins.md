@@ -37,6 +37,9 @@
 | resources | resources；管理资源池与原始文件，`sources` 声明读取来源 |
 | resources.images | resources.images；依赖 resources，`sources` 加载单图 |
 | resources.texturepacker | resources.texturepacker；依赖 resources，`sources` 加载 TexturePacker JSON Hash |
+| resources.font | resources.font；依赖 resources，显式加载随包字体和许可证，见 [字体协议](packaged-fonts.md) |
+| resources.animations | resources.animations；依赖 resources，加载关键帧和公开状态触发配置，见 [动画格式](author/animation.md) |
+| resources.documents | resources.documents；依赖 resources，加载分页图片与公开属性叠加，见 [分页文档](author/documents.md) |
 | lua.rules | rules；`file` 指向 Lua 规则入口 |
 | rules.commands | rules；可选 `actions` 标准动作列表，启动前校验结构 |
 | flow | rules、flow；`path` 指向版本化流程图，`maxAutomaticSteps` 限定自动推进；与其他 rules 提供者互斥 |

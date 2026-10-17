@@ -1,0 +1,218 @@
+{
+  "format": 1,
+  "clips": [
+    {
+      "id": "deal",
+      "trigger": {
+        "entity": "match",
+        "property": "dealSerial"
+      },
+      "tracks": [
+        {
+          "entity": "slot1",
+          "source": "deck",
+          "backResource": "object-back",
+          "keys": [
+            {
+              "timeMs": 370,
+              "x": 0,
+              "y": 0,
+              "rotation": -8
+            },
+            {
+              "timeMs": 470,
+              "x": -12,
+              "y": -10,
+              "rotation": 8
+            },
+            {
+              "timeMs": 890,
+              "x": 0,
+              "y": 0,
+              "rotation": 0
+            }
+          ]
+        },
+        {
+          "entity": "slot2",
+          "source": "deck",
+          "backResource": "object-back",
+          "keys": [
+            {
+              "timeMs": 440,
+              "x": 0,
+              "y": 0,
+              "rotation": -8
+            },
+            {
+              "timeMs": 540,
+              "x": 12,
+              "y": -10,
+              "rotation": 8
+            },
+            {
+              "timeMs": 980,
+              "x": 0,
+              "y": 0,
+              "rotation": 0
+            }
+          ]
+        },
+        {
+          "entity": "slot3",
+          "source": "deck",
+          "backResource": "object-back",
+          "keys": [
+            {
+              "timeMs": 510,
+              "x": 0,
+              "y": 0,
+              "rotation": -8
+            },
+            {
+              "timeMs": 610,
+              "x": -12,
+              "y": -10,
+              "rotation": 8
+            },
+            {
+              "timeMs": 1070,
+              "x": 0,
+              "y": 0,
+              "rotation": 0
+            }
+          ]
+        },
+        {
+          "entity": "slot4",
+          "source": "deck",
+          "backResource": "object-back",
+          "keys": [
+            {
+              "timeMs": 580,
+              "x": 0,
+              "y": 0,
+              "rotation": -8
+            },
+            {
+              "timeMs": 680,
+              "x": 12,
+              "y": -10,
+              "rotation": 8
+            },
+            {
+              "timeMs": 1160,
+              "x": 0,
+              "y": 0,
+              "rotation": 0
+            }
+          ]
+        },
+        {
+          "entity": "slot5",
+          "source": "deck",
+          "backResource": "object-back",
+          "keys": [
+            {
+              "timeMs": 650,
+              "x": 0,
+              "y": 0,
+              "rotation": -8
+            },
+            {
+              "timeMs": 750,
+              "x": -12,
+              "y": -10,
+              "rotation": 8
+            },
+            {
+              "timeMs": 1250,
+              "x": 0,
+              "y": 0,
+              "rotation": 0
+            }
+          ]
+        },
+        {
+          "entity": "slot6",
+          "source": "deck",
+          "backResource": "object-back",
+          "keys": [
+            {
+              "timeMs": 720,
+              "x": 0,
+              "y": 0,
+              "rotation": -8
+            },
+            {
+              "timeMs": 820,
+              "x": 12,
+              "y": -10,
+              "rotation": 8
+            },
+            {
+              "timeMs": 1340,
+              "x": 0,
+              "y": 0,
+              "rotation": 0
+            }
+          ]
+        },
+        {
+          "entity": "slot7",
+          "source": "deck",
+          "backResource": "object-back",
+          "keys": [
+            {
+              "timeMs": 790,
+              "x": 0,
+              "y": 0,
+              "rotation": -8
+            },
+            {
+              "timeMs": 890,
+              "x": -12,
+              "y": -10,
+              "rotation": 8
+            },
+            {
+              "timeMs": 1430,
+              "x": 0,
+              "y": 0,
+              "rotation": 0
+            }
+          ]
+        },
+        {
+          "entity": "deck",
+          "keys": [
+            {
+              "timeMs": 0,
+              "x": 0,
+              "y": 0,
+              "rotation": 0
+            },
+            {
+              "timeMs": 100,
+              "x": -12,
+              "y": 0,
+              "rotation": -7
+            },
+            {
+              "timeMs": 200,
+              "x": 12,
+              "y": 0,
+              "rotation": 7
+            },
+            {
+              "timeMs": 300,
+              "x": 0,
+              "y": 0,
+              "rotation": 0
+            }
+          ]
+        }
+      ]
+    }
+  ]
+}

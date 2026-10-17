@@ -62,3 +62,9 @@
 | 咒灵 | 正面 | 食尸鬼 | [spirit-ghoul](cards/spirits/fronts/level-3/ghoul.png) | 18 |
 | 咒灵 | 正面 | 恶魂 | [spirit-evil-spirit](cards/spirits/fronts/level-3/evil-spirit.png) | 18 |
 | 咒灵 | 背面 | 咒灵牌共用背面：骷髅 | [spirit-back](cards/spirits/backs/shared.png) | 19 |
+
+## 运行派生资源
+
+`runtime/manifest.json` 关联每张派生图与保留原图的 SHA-256。卡片高度至多 1024，日志 1600，预乘透明度后以 Lanczos 缩放，避免白色边缘；原始裁剪始终留在上表路径。
+
+`table/tabletop.png` 是确定性生成的深色桌布；`table/ability-01.png` 至 `ability-27.png` 是扫描中已揭露能力文字的统一裁片，矩形位置和来源哈希见 `table/manifest.json`。同一能力只使用一种图像，隐藏咒灵完整牌面直到规则允许揭露。运行包只收集显式注册的派生资源、Kenney 图标、字体及许可证，不重复携带原图。

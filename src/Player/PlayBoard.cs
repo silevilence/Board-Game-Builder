@@ -19,6 +19,8 @@ public sealed class PlayBoard : UserControl,IDisposable
     private readonly PlayerSession session;
     private readonly LoadedModule module;
     private readonly PackagedControlFont controlFont;
+    private readonly DocumentShelf documents;
+    private readonly string? statusEntity;
     private bool disposed;
     private bool pumping;
     private string? hostError;
@@ -34,6 +36,8 @@ public sealed class PlayBoard : UserControl,IDisposable
     {
         this.session=session; this.module=module;
         controlFont=new(this,module.Resources);
+        documents=new(module.Resources ?? ResourcePool.Empty);
+        statusEntity=PlayerPresentation.Read(module).StatusEntity;
         classic=TableScene.From(session.Frame.View).ClassicCards;
         var panel=new DockPanel();
         if(classic)
@@ -48,7 +52,8 @@ public sealed class PlayBoard : UserControl,IDisposable
         else
         { DockPanel.SetDock(status,Dock.Top); side.Children.Add(status); DockPanel.SetDock(sound,Dock.Bottom); side.Children.Add(sound); side.Children.Add(new ScrollViewer {Content=actions}); }
         side.IsVisible=showActions;
-        DockPanel.SetDock(side,Dock.Right); panel.Children.Add(side); panel.Children.Add(table); Content=panel;
+        DockPanel.SetDock(side,Dock.Right); panel.Children.Add(side);
+        DockPanel.SetDock(documents,Dock.Right);panel.Children.Add(documents);panel.Children.Add(table); Content=panel;
         table.Gesture+=g=> { _=Act(new(g.Kind,g.Entity,g.Target,g.X,g.Y),session.Frame.Revision); };
         table.SelectionChanged+=RefreshActions;
         table.AnimationChanged+=RefreshActions;
@@ -70,9 +75,16 @@ public sealed class PlayBoard : UserControl,IDisposable
     {
         if(disposed) return;
         var frame=session.Frame; var v=frame.View;
+        documents.Show(v);
         table.Show(TableScene.From(v,module.Resources)); table.InputEnabled=hostError==null && !session.Busy && !v.Ended && frame.Fault==null && !frame.Cpu;
         status.Text=hostError ?? $"席位 {v.Seat} · 当前 {v.CurrentSeat}\n阶段 {v.Phase} · 行动 {v.Turn}\n"+
             (frame.Fault!=null?$"对局故障：{frame.Fault.Code}\n{frame.Fault.Detail}":v.Ended?$"对局结束\n胜者：{string.Join(", ",v.Winners)}":session.LastMessage);
+        if(hostError==null && frame.Fault==null && statusEntity!=null)
+        {
+            var text=v.Entities.FirstOrDefault(e=>e.Id==statusEntity);
+            status.Text=text?.Face ?? "";
+            if(text!=null)foreach(var p in text.Properties)status.Text=status.Text.Replace("{"+p.Key+"}",p.Value.ToString(System.Globalization.CultureInfo.InvariantCulture));
+        }
         if(classic && hostError==null && frame.Fault==null)
         {
             var cards=v.Entities.Where(e=>e.IsContainer && e.Properties.GetValueOrDefault("viewSuit")>0).Sum(e=>e.Count);
@@ -150,5 +162,5 @@ public sealed class PlayBoard : UserControl,IDisposable
         }
         catch(Exception) { sound.IsChecked=false; sound.Content="音效不可用（已静音）"; }
     }
-    public void Dispose() { disposed=true; session.Stop(); table.Dispose(); tone?.Dispose(); controlFont.Dispose(); }
+    public void Dispose() { disposed=true; session.Stop(); table.Dispose();documents.Dispose(); tone?.Dispose(); controlFont.Dispose(); }
 }

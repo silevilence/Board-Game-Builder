@@ -1,0 +1,401 @@
+{
+  "format": 1,
+  "id": "cursed-investigators",
+  "version": "1.0.0",
+  "plugins": [
+    {
+      "id": "kernel",
+      "version": "1",
+      "api": 1,
+      "configuration": {}
+    },
+    {
+      "id": "definition.state",
+      "version": "1",
+      "api": 1,
+      "configuration": {
+        "path": "position.json"
+      }
+    },
+    {
+      "id": "flow",
+      "version": "1",
+      "api": 1,
+      "configuration": {
+        "path": "flow.json",
+        "maxAutomaticSteps": 64
+      }
+    },
+    {
+      "id": "lua.cpu",
+      "version": "1",
+      "api": 1,
+      "configuration": {
+        "file": "game.lua"
+      }
+    },
+    {
+      "id": "session.local",
+      "version": "1",
+      "api": 1,
+      "configuration": {}
+    },
+    {
+      "id": "recording",
+      "version": "1",
+      "api": 1,
+      "configuration": {}
+    },
+    {
+      "id": "resources",
+      "version": "1",
+      "api": 1,
+      "configuration": {
+        "sources": [
+          {
+            "path": "presentation.json",
+            "name": "player.presentation"
+          },
+          {
+            "path": "assets/icons/kenney-board-game-icons/LICENSE.txt",
+            "name": "kenney.license"
+          }
+        ]
+      }
+    },
+    {
+      "id": "resources.images",
+      "version": "1",
+      "api": 1,
+      "configuration": {
+        "sources": [
+          {
+            "path": "assets/runtime/journal-captures.png",
+            "name": "journal-captures"
+          },
+          {
+            "path": "assets/runtime/journal-observations.png",
+            "name": "journal-observations"
+          },
+          {
+            "path": "assets/runtime/reference-turn.png",
+            "name": "reference-turn"
+          },
+          {
+            "path": "assets/runtime/reference-back.png",
+            "name": "reference-back"
+          },
+          {
+            "path": "assets/runtime/character-celeste.png",
+            "name": "character-celeste"
+          },
+          {
+            "path": "assets/runtime/character-eleanor.png",
+            "name": "character-eleanor"
+          },
+          {
+            "path": "assets/runtime/character-leland.png",
+            "name": "character-leland"
+          },
+          {
+            "path": "assets/runtime/character-back.png",
+            "name": "character-back"
+          },
+          {
+            "path": "assets/runtime/profession-reluctant-medium.png",
+            "name": "profession-reluctant-medium"
+          },
+          {
+            "path": "assets/runtime/profession-former-detective.png",
+            "name": "profession-former-detective"
+          },
+          {
+            "path": "assets/runtime/profession-paranormal-investigator.png",
+            "name": "profession-paranormal-investigator"
+          },
+          {
+            "path": "assets/runtime/profession-back.png",
+            "name": "profession-back"
+          },
+          {
+            "path": "assets/runtime/object-001.png",
+            "name": "object-001"
+          },
+          {
+            "path": "assets/runtime/object-002.png",
+            "name": "object-002"
+          },
+          {
+            "path": "assets/runtime/object-003.png",
+            "name": "object-003"
+          },
+          {
+            "path": "assets/runtime/object-004.png",
+            "name": "object-004"
+          },
+          {
+            "path": "assets/runtime/object-005.png",
+            "name": "object-005"
+          },
+          {
+            "path": "assets/runtime/object-006.png",
+            "name": "object-006"
+          },
+          {
+            "path": "assets/runtime/object-007.png",
+            "name": "object-007"
+          },
+          {
+            "path": "assets/runtime/object-008.png",
+            "name": "object-008"
+          },
+          {
+            "path": "assets/runtime/object-009.png",
+            "name": "object-009"
+          },
+          {
+            "path": "assets/runtime/object-010.png",
+            "name": "object-010"
+          },
+          {
+            "path": "assets/runtime/object-011.png",
+            "name": "object-011"
+          },
+          {
+            "path": "assets/runtime/object-012.png",
+            "name": "object-012"
+          },
+          {
+            "path": "assets/runtime/object-013.png",
+            "name": "object-013"
+          },
+          {
+            "path": "assets/runtime/object-014.png",
+            "name": "object-014"
+          },
+          {
+            "path": "assets/runtime/object-back.png",
+            "name": "object-back"
+          },
+          {
+            "path": "assets/runtime/spirit-poltergeist.png",
+            "name": "spirit-poltergeist"
+          },
+          {
+            "path": "assets/runtime/spirit-revenant.png",
+            "name": "spirit-revenant"
+          },
+          {
+            "path": "assets/runtime/spirit-phantasm.png",
+            "name": "spirit-phantasm"
+          },
+          {
+            "path": "assets/runtime/spirit-apparition.png",
+            "name": "spirit-apparition"
+          },
+          {
+            "path": "assets/runtime/spirit-wraith.png",
+            "name": "spirit-wraith"
+          },
+          {
+            "path": "assets/runtime/spirit-banshee.png",
+            "name": "spirit-banshee"
+          },
+          {
+            "path": "assets/runtime/spirit-specter.png",
+            "name": "spirit-specter"
+          },
+          {
+            "path": "assets/runtime/spirit-drowned.png",
+            "name": "spirit-drowned"
+          },
+          {
+            "path": "assets/runtime/spirit-ghost.png",
+            "name": "spirit-ghost"
+          },
+          {
+            "path": "assets/runtime/spirit-shade.png",
+            "name": "spirit-shade"
+          },
+          {
+            "path": "assets/runtime/spirit-ghoul.png",
+            "name": "spirit-ghoul"
+          },
+          {
+            "path": "assets/runtime/spirit-evil-spirit.png",
+            "name": "spirit-evil-spirit"
+          },
+          {
+            "path": "assets/runtime/spirit-back.png",
+            "name": "spirit-back"
+          },
+          {
+            "path": "assets/icons/kenney-board-game-icons/png/dice_1.png",
+            "name": "die1"
+          },
+          {
+            "path": "assets/icons/kenney-board-game-icons/png/dice_2.png",
+            "name": "die2"
+          },
+          {
+            "path": "assets/icons/kenney-board-game-icons/png/dice_3.png",
+            "name": "die3"
+          },
+          {
+            "path": "assets/icons/kenney-board-game-icons/png/dice_4.png",
+            "name": "die4"
+          },
+          {
+            "path": "assets/icons/kenney-board-game-icons/png/dice_5.png",
+            "name": "die5"
+          },
+          {
+            "path": "assets/icons/kenney-board-game-icons/png/dice_6.png",
+            "name": "die6"
+          },
+          {
+            "path": "assets/icons/kenney-board-game-icons/png/d6.png",
+            "name": "marker"
+          },
+          {
+            "path": "assets/table/tabletop.png",
+            "name": "tabletop"
+          },
+          {
+            "path": "assets/table/ability-01.png",
+            "name": "ability1"
+          },
+          {
+            "path": "assets/table/ability-08.png",
+            "name": "ability8"
+          },
+          {
+            "path": "assets/table/ability-11.png",
+            "name": "ability11"
+          },
+          {
+            "path": "assets/table/ability-02.png",
+            "name": "ability2"
+          },
+          {
+            "path": "assets/table/ability-05.png",
+            "name": "ability5"
+          },
+          {
+            "path": "assets/table/ability-10.png",
+            "name": "ability10"
+          },
+          {
+            "path": "assets/table/ability-03.png",
+            "name": "ability3"
+          },
+          {
+            "path": "assets/table/ability-06.png",
+            "name": "ability6"
+          },
+          {
+            "path": "assets/table/ability-09.png",
+            "name": "ability9"
+          },
+          {
+            "path": "assets/table/ability-04.png",
+            "name": "ability4"
+          },
+          {
+            "path": "assets/table/ability-07.png",
+            "name": "ability7"
+          },
+          {
+            "path": "assets/table/ability-12.png",
+            "name": "ability12"
+          },
+          {
+            "path": "assets/table/ability-13.png",
+            "name": "ability13"
+          },
+          {
+            "path": "assets/table/ability-14.png",
+            "name": "ability14"
+          },
+          {
+            "path": "assets/table/ability-15.png",
+            "name": "ability15"
+          },
+          {
+            "path": "assets/table/ability-16.png",
+            "name": "ability16"
+          },
+          {
+            "path": "assets/table/ability-17.png",
+            "name": "ability17"
+          },
+          {
+            "path": "assets/table/ability-18.png",
+            "name": "ability18"
+          },
+          {
+            "path": "assets/table/ability-19.png",
+            "name": "ability19"
+          },
+          {
+            "path": "assets/table/ability-20.png",
+            "name": "ability20"
+          },
+          {
+            "path": "assets/table/ability-21.png",
+            "name": "ability21"
+          },
+          {
+            "path": "assets/table/ability-22.png",
+            "name": "ability22"
+          },
+          {
+            "path": "assets/table/ability-23.png",
+            "name": "ability23"
+          },
+          {
+            "path": "assets/table/ability-24.png",
+            "name": "ability24"
+          },
+          {
+            "path": "assets/table/ability-25.png",
+            "name": "ability25"
+          },
+          {
+            "path": "assets/table/ability-26.png",
+            "name": "ability26"
+          },
+          {
+            "path": "assets/table/ability-27.png",
+            "name": "ability27"
+          }
+        ]
+      }
+    },
+    {
+      "id": "resources.font",
+      "version": "1",
+      "api": 1,
+      "configuration": {
+        "path": "assets/fonts/noto-sans-cjk-sc/NotoSansCJKsc-Regular.otf",
+        "license": "assets/fonts/noto-sans-cjk-sc/LICENSE.txt"
+      }
+    },
+    {
+      "id": "resources.animations",
+      "version": "1",
+      "api": 1,
+      "configuration": {
+        "path": "animations.json"
+      }
+    },
+    {
+      "id": "resources.documents",
+      "version": "1",
+      "api": 1,
+      "configuration": {
+        "path": "documents.json"
+      }
+    }
+  ]
+}

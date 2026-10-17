@@ -1,0 +1,2727 @@
+{
+  "format": 1,
+  "state": {
+    "seats": [
+      {
+        "id": "p1",
+        "team": "investigator",
+        "controller": "human"
+      }
+    ],
+    "phases": [
+      "investigation"
+    ],
+    "phase": "investigation",
+    "layout": {
+      "kind": "free",
+      "originX": 0,
+      "originY": 0
+    },
+    "entities": {
+      "match": {
+        "id": "match",
+        "properties": {
+          "fresh": 0,
+          "stage": 1,
+          "character": 3,
+          "profession": 3,
+          "campaign": 0,
+          "beginner": 0,
+          "game": 1,
+          "health": 7,
+          "luck": 2,
+          "resolve": 5,
+          "knowledge": 3,
+          "initialKnowledge": 3,
+          "maxHealth": 7,
+          "score": 0,
+          "captured": 0,
+          "current": 0,
+          "object": 0,
+          "spirit": 0,
+          "objectDone": 0,
+          "spiritDone": 0,
+          "cap1": 0,
+          "cap2": 0,
+          "cap3": 0,
+          "ignoreCap": 0,
+          "ignoreObject": 0,
+          "challenged": 0,
+          "free": 0,
+          "paidLuck": 0,
+          "paidResolve": 0,
+          "healthLost": 0,
+          "voodoo": 0,
+          "portrait": 0,
+          "machine": 0,
+          "modifier": 0,
+          "endIndex": 0,
+          "encounterWon": 0,
+          "pendingWarp": 0,
+          "pendingChallenge": 0,
+          "choice": 0,
+          "dealSerial": 0,
+          "turns": 0,
+          "loss": 0,
+          "autoSteps": 0,
+          "viewHidden": 1
+        },
+        "x": 0,
+        "y": 0
+      },
+      "character": {
+        "id": "character",
+        "properties": {
+          "viewStyle": 1,
+          "viewWidth": 250,
+          "viewHeight": 145,
+          "shownFace": 2
+        },
+        "x": 165,
+        "y": 220,
+        "faces": [
+          "塞莱斯特",
+          "埃莉诺",
+          "利兰"
+        ],
+        "faceResources": [
+          "character-celeste",
+          "character-eleanor",
+          "character-leland"
+        ],
+        "face": 2
+      },
+      "profession": {
+        "id": "profession",
+        "properties": {
+          "viewStyle": 1,
+          "viewWidth": 250,
+          "viewHeight": 145,
+          "shownFace": 2
+        },
+        "x": 165,
+        "y": 365,
+        "faces": [
+          "不情愿的灵媒",
+          "前侦探",
+          "灵异调查员"
+        ],
+        "faceResources": [
+          "profession-reluctant-medium",
+          "profession-former-detective",
+          "profession-paranormal-investigator"
+        ],
+        "face": 2
+      },
+      "deck": {
+        "id": "deck",
+        "properties": {
+          "viewStyle": 1,
+          "viewWidth": 72,
+          "viewHeight": 124,
+          "shownFace": 0
+        },
+        "x": 670,
+        "y": 195,
+        "faces": [
+          "咒物牌库"
+        ],
+        "faceResources": [
+          "object-back"
+        ]
+      },
+      "slot1": {
+        "id": "slot1",
+        "properties": {
+          "viewStyle": 1,
+          "viewWidth": 85,
+          "viewHeight": 145,
+          "viewHidden": 1,
+          "object": 0,
+          "done": 0,
+          "level": 1,
+          "shownFace": 0
+        },
+        "x": 360,
+        "y": 590,
+        "faces": [
+          "未分配",
+          "通灵板",
+          "恐怖娃娃",
+          "悲剧镜子",
+          "针扎人偶",
+          "芭蕾舞音乐盒",
+          "诡异面具",
+          "活肖像画",
+          "禁书",
+          "玩偶匣",
+          "快乐猴子",
+          "旧玩具屋",
+          "诅咒录像",
+          "古怪护符",
+          "命运机器"
+        ],
+        "faceResources": [
+          "object-back",
+          "object-001",
+          "object-002",
+          "object-003",
+          "object-004",
+          "object-005",
+          "object-006",
+          "object-007",
+          "object-008",
+          "object-009",
+          "object-010",
+          "object-011",
+          "object-012",
+          "object-013",
+          "object-014"
+        ]
+      },
+      "pair1": {
+        "id": "pair1",
+        "properties": {
+          "viewHidden": 1
+        },
+        "x": 0,
+        "y": 0,
+        "isContainer": true,
+        "capacity": 30,
+        "ordered": true,
+        "contents": [],
+        "visibility": "public"
+      },
+      "slot2": {
+        "id": "slot2",
+        "properties": {
+          "viewStyle": 1,
+          "viewWidth": 85,
+          "viewHeight": 145,
+          "viewHidden": 1,
+          "object": 0,
+          "done": 0,
+          "level": 1,
+          "shownFace": 0
+        },
+        "x": 480,
+        "y": 590,
+        "faces": [
+          "未分配",
+          "通灵板",
+          "恐怖娃娃",
+          "悲剧镜子",
+          "针扎人偶",
+          "芭蕾舞音乐盒",
+          "诡异面具",
+          "活肖像画",
+          "禁书",
+          "玩偶匣",
+          "快乐猴子",
+          "旧玩具屋",
+          "诅咒录像",
+          "古怪护符",
+          "命运机器"
+        ],
+        "faceResources": [
+          "object-back",
+          "object-001",
+          "object-002",
+          "object-003",
+          "object-004",
+          "object-005",
+          "object-006",
+          "object-007",
+          "object-008",
+          "object-009",
+          "object-010",
+          "object-011",
+          "object-012",
+          "object-013",
+          "object-014"
+        ]
+      },
+      "pair2": {
+        "id": "pair2",
+        "properties": {
+          "viewHidden": 1
+        },
+        "x": 0,
+        "y": 0,
+        "isContainer": true,
+        "capacity": 30,
+        "ordered": true,
+        "contents": [],
+        "visibility": "public"
+      },
+      "slot3": {
+        "id": "slot3",
+        "properties": {
+          "viewStyle": 1,
+          "viewWidth": 85,
+          "viewHeight": 145,
+          "viewHidden": 1,
+          "object": 0,
+          "done": 0,
+          "level": 1,
+          "shownFace": 0
+        },
+        "x": 600,
+        "y": 590,
+        "faces": [
+          "未分配",
+          "通灵板",
+          "恐怖娃娃",
+          "悲剧镜子",
+          "针扎人偶",
+          "芭蕾舞音乐盒",
+          "诡异面具",
+          "活肖像画",
+          "禁书",
+          "玩偶匣",
+          "快乐猴子",
+          "旧玩具屋",
+          "诅咒录像",
+          "古怪护符",
+          "命运机器"
+        ],
+        "faceResources": [
+          "object-back",
+          "object-001",
+          "object-002",
+          "object-003",
+          "object-004",
+          "object-005",
+          "object-006",
+          "object-007",
+          "object-008",
+          "object-009",
+          "object-010",
+          "object-011",
+          "object-012",
+          "object-013",
+          "object-014"
+        ]
+      },
+      "pair3": {
+        "id": "pair3",
+        "properties": {
+          "viewHidden": 1
+        },
+        "x": 0,
+        "y": 0,
+        "isContainer": true,
+        "capacity": 30,
+        "ordered": true,
+        "contents": [],
+        "visibility": "public"
+      },
+      "slot4": {
+        "id": "slot4",
+        "properties": {
+          "viewStyle": 1,
+          "viewWidth": 85,
+          "viewHeight": 145,
+          "viewHidden": 1,
+          "object": 0,
+          "done": 0,
+          "level": 1,
+          "shownFace": 0
+        },
+        "x": 360,
+        "y": 420,
+        "faces": [
+          "未分配",
+          "通灵板",
+          "恐怖娃娃",
+          "悲剧镜子",
+          "针扎人偶",
+          "芭蕾舞音乐盒",
+          "诡异面具",
+          "活肖像画",
+          "禁书",
+          "玩偶匣",
+          "快乐猴子",
+          "旧玩具屋",
+          "诅咒录像",
+          "古怪护符",
+          "命运机器"
+        ],
+        "faceResources": [
+          "object-back",
+          "object-001",
+          "object-002",
+          "object-003",
+          "object-004",
+          "object-005",
+          "object-006",
+          "object-007",
+          "object-008",
+          "object-009",
+          "object-010",
+          "object-011",
+          "object-012",
+          "object-013",
+          "object-014"
+        ]
+      },
+      "pair4": {
+        "id": "pair4",
+        "properties": {
+          "viewHidden": 1
+        },
+        "x": 0,
+        "y": 0,
+        "isContainer": true,
+        "capacity": 30,
+        "ordered": true,
+        "contents": [],
+        "visibility": "public"
+      },
+      "slot5": {
+        "id": "slot5",
+        "properties": {
+          "viewStyle": 1,
+          "viewWidth": 85,
+          "viewHeight": 145,
+          "viewHidden": 1,
+          "object": 0,
+          "done": 0,
+          "level": 1,
+          "shownFace": 0
+        },
+        "x": 480,
+        "y": 420,
+        "faces": [
+          "未分配",
+          "通灵板",
+          "恐怖娃娃",
+          "悲剧镜子",
+          "针扎人偶",
+          "芭蕾舞音乐盒",
+          "诡异面具",
+          "活肖像画",
+          "禁书",
+          "玩偶匣",
+          "快乐猴子",
+          "旧玩具屋",
+          "诅咒录像",
+          "古怪护符",
+          "命运机器"
+        ],
+        "faceResources": [
+          "object-back",
+          "object-001",
+          "object-002",
+          "object-003",
+          "object-004",
+          "object-005",
+          "object-006",
+          "object-007",
+          "object-008",
+          "object-009",
+          "object-010",
+          "object-011",
+          "object-012",
+          "object-013",
+          "object-014"
+        ]
+      },
+      "pair5": {
+        "id": "pair5",
+        "properties": {
+          "viewHidden": 1
+        },
+        "x": 0,
+        "y": 0,
+        "isContainer": true,
+        "capacity": 30,
+        "ordered": true,
+        "contents": [],
+        "visibility": "public"
+      },
+      "slot6": {
+        "id": "slot6",
+        "properties": {
+          "viewStyle": 1,
+          "viewWidth": 85,
+          "viewHeight": 145,
+          "viewHidden": 1,
+          "object": 0,
+          "done": 0,
+          "level": 1,
+          "shownFace": 0
+        },
+        "x": 600,
+        "y": 420,
+        "faces": [
+          "未分配",
+          "通灵板",
+          "恐怖娃娃",
+          "悲剧镜子",
+          "针扎人偶",
+          "芭蕾舞音乐盒",
+          "诡异面具",
+          "活肖像画",
+          "禁书",
+          "玩偶匣",
+          "快乐猴子",
+          "旧玩具屋",
+          "诅咒录像",
+          "古怪护符",
+          "命运机器"
+        ],
+        "faceResources": [
+          "object-back",
+          "object-001",
+          "object-002",
+          "object-003",
+          "object-004",
+          "object-005",
+          "object-006",
+          "object-007",
+          "object-008",
+          "object-009",
+          "object-010",
+          "object-011",
+          "object-012",
+          "object-013",
+          "object-014"
+        ]
+      },
+      "pair6": {
+        "id": "pair6",
+        "properties": {
+          "viewHidden": 1
+        },
+        "x": 0,
+        "y": 0,
+        "isContainer": true,
+        "capacity": 30,
+        "ordered": true,
+        "contents": [],
+        "visibility": "public"
+      },
+      "slot7": {
+        "id": "slot7",
+        "properties": {
+          "viewStyle": 1,
+          "viewWidth": 85,
+          "viewHeight": 145,
+          "viewHidden": 1,
+          "object": 0,
+          "done": 0,
+          "level": 1,
+          "shownFace": 0
+        },
+        "x": 360,
+        "y": 250,
+        "faces": [
+          "未分配",
+          "通灵板",
+          "恐怖娃娃",
+          "悲剧镜子",
+          "针扎人偶",
+          "芭蕾舞音乐盒",
+          "诡异面具",
+          "活肖像画",
+          "禁书",
+          "玩偶匣",
+          "快乐猴子",
+          "旧玩具屋",
+          "诅咒录像",
+          "古怪护符",
+          "命运机器"
+        ],
+        "faceResources": [
+          "object-back",
+          "object-001",
+          "object-002",
+          "object-003",
+          "object-004",
+          "object-005",
+          "object-006",
+          "object-007",
+          "object-008",
+          "object-009",
+          "object-010",
+          "object-011",
+          "object-012",
+          "object-013",
+          "object-014"
+        ]
+      },
+      "pair7": {
+        "id": "pair7",
+        "properties": {
+          "viewHidden": 1
+        },
+        "x": 0,
+        "y": 0,
+        "isContainer": true,
+        "capacity": 30,
+        "ordered": true,
+        "contents": [],
+        "visibility": "public"
+      },
+      "encounter": {
+        "id": "encounter",
+        "properties": {
+          "viewStyle": 1,
+          "viewWidth": 187,
+          "viewHeight": 320,
+          "viewHidden": 1,
+          "shownFace": 0
+        },
+        "x": 902,
+        "y": 300,
+        "faces": [
+          "通灵板",
+          "恐怖娃娃",
+          "悲剧镜子",
+          "针扎人偶",
+          "芭蕾舞音乐盒",
+          "诡异面具",
+          "活肖像画",
+          "禁书",
+          "玩偶匣",
+          "快乐猴子",
+          "旧玩具屋",
+          "诅咒录像",
+          "古怪护符",
+          "命运机器"
+        ],
+        "faceResources": [
+          "object-001",
+          "object-002",
+          "object-003",
+          "object-004",
+          "object-005",
+          "object-006",
+          "object-007",
+          "object-008",
+          "object-009",
+          "object-010",
+          "object-011",
+          "object-012",
+          "object-013",
+          "object-014"
+        ]
+      },
+      "manifestation": {
+        "id": "manifestation",
+        "properties": {
+          "viewStyle": 1,
+          "viewWidth": 187,
+          "viewHeight": 320,
+          "viewHidden": 1,
+          "shownFace": 0
+        },
+        "x": 902,
+        "y": 300,
+        "faces": [
+          "吵闹鬼",
+          "还魂者",
+          "幻象",
+          "幻影",
+          "幽灵",
+          "报丧女妖",
+          "幽魂",
+          "溺鬼",
+          "鬼魂",
+          "阴魂",
+          "食尸鬼",
+          "恶魂"
+        ],
+        "faceResources": [
+          "spirit-poltergeist",
+          "spirit-revenant",
+          "spirit-phantasm",
+          "spirit-apparition",
+          "spirit-wraith",
+          "spirit-banshee",
+          "spirit-specter",
+          "spirit-drowned",
+          "spirit-ghost",
+          "spirit-shade",
+          "spirit-ghoul",
+          "spirit-evil-spirit"
+        ]
+      },
+      "ability1": {
+        "id": "ability1",
+        "properties": {
+          "viewStyle": 1,
+          "viewWidth": 270,
+          "viewHeight": 60,
+          "viewLabel": 0,
+          "viewLabelY": -12,
+          "viewHidden": 1,
+          "shownFace": 0
+        },
+        "x": 902,
+        "y": 500,
+        "faces": [
+          "尚未揭露",
+          "威胁 · 露出时 −1 决心",
+          "跟随 · 结束需保留骰子",
+          "惊吓 · 露出时 −1 知识",
+          "褪色 · 露出时 −1 幸运",
+          "扰动 · 初始最大骰 −1",
+          "动摇 · 初始重掷一个保留骰",
+          "弥散 · 首次决心额外 −1",
+          "啃咬 · 池中有 6 则 −1 健康",
+          "燃烧 · 池中有 1 则 −1 健康",
+          "劈砍 · 池中有奇数则 −1 健康",
+          "吵闹 · 无挑战 −1 决心",
+          "扰乱 · 无挑战 −1 幸运",
+          "恫吓 · 初始新骰全部 −1",
+          "恐吓 · 无挑战扣知识或健康",
+          "狡猾 · 使用 1 需付决心",
+          "咆哮 · 首次幸运额外 −1 决心",
+          "孤立 · 初始同点骰重掷",
+          "耗竭 · 无挑战按未完成项扣健康",
+          "消失 · 露出时 −2 幸运",
+          "模糊 · 初始 3 重掷／付决心",
+          "麻痹 · 露出扣幸运或健康",
+          "折磨 · 池中有 1 则 −1 知识",
+          "欺骗 · 挑战多一骰，最多六骰",
+          "粉碎 · 露出时 −2 决心",
+          "顽固 · 挑战另付决心或幸运",
+          "惊骇 · 露出时 −2 知识",
+          "变形 · 完成挑战 −1 知识"
+        ],
+        "faceResources": [
+          "ability1",
+          "ability1",
+          "ability2",
+          "ability3",
+          "ability4",
+          "ability5",
+          "ability6",
+          "ability7",
+          "ability8",
+          "ability9",
+          "ability10",
+          "ability11",
+          "ability12",
+          "ability13",
+          "ability14",
+          "ability15",
+          "ability16",
+          "ability17",
+          "ability18",
+          "ability19",
+          "ability20",
+          "ability21",
+          "ability22",
+          "ability23",
+          "ability24",
+          "ability25",
+          "ability26",
+          "ability27"
+        ]
+      },
+      "ability2": {
+        "id": "ability2",
+        "properties": {
+          "viewStyle": 1,
+          "viewWidth": 270,
+          "viewHeight": 60,
+          "viewLabel": 0,
+          "viewLabelY": -12,
+          "viewHidden": 1,
+          "shownFace": 0
+        },
+        "x": 902,
+        "y": 564,
+        "faces": [
+          "尚未揭露",
+          "威胁 · 露出时 −1 决心",
+          "跟随 · 结束需保留骰子",
+          "惊吓 · 露出时 −1 知识",
+          "褪色 · 露出时 −1 幸运",
+          "扰动 · 初始最大骰 −1",
+          "动摇 · 初始重掷一个保留骰",
+          "弥散 · 首次决心额外 −1",
+          "啃咬 · 池中有 6 则 −1 健康",
+          "燃烧 · 池中有 1 则 −1 健康",
+          "劈砍 · 池中有奇数则 −1 健康",
+          "吵闹 · 无挑战 −1 决心",
+          "扰乱 · 无挑战 −1 幸运",
+          "恫吓 · 初始新骰全部 −1",
+          "恐吓 · 无挑战扣知识或健康",
+          "狡猾 · 使用 1 需付决心",
+          "咆哮 · 首次幸运额外 −1 决心",
+          "孤立 · 初始同点骰重掷",
+          "耗竭 · 无挑战按未完成项扣健康",
+          "消失 · 露出时 −2 幸运",
+          "模糊 · 初始 3 重掷／付决心",
+          "麻痹 · 露出扣幸运或健康",
+          "折磨 · 池中有 1 则 −1 知识",
+          "欺骗 · 挑战多一骰，最多六骰",
+          "粉碎 · 露出时 −2 决心",
+          "顽固 · 挑战另付决心或幸运",
+          "惊骇 · 露出时 −2 知识",
+          "变形 · 完成挑战 −1 知识"
+        ],
+        "faceResources": [
+          "ability1",
+          "ability1",
+          "ability2",
+          "ability3",
+          "ability4",
+          "ability5",
+          "ability6",
+          "ability7",
+          "ability8",
+          "ability9",
+          "ability10",
+          "ability11",
+          "ability12",
+          "ability13",
+          "ability14",
+          "ability15",
+          "ability16",
+          "ability17",
+          "ability18",
+          "ability19",
+          "ability20",
+          "ability21",
+          "ability22",
+          "ability23",
+          "ability24",
+          "ability25",
+          "ability26",
+          "ability27"
+        ]
+      },
+      "ability3": {
+        "id": "ability3",
+        "properties": {
+          "viewStyle": 1,
+          "viewWidth": 270,
+          "viewHeight": 60,
+          "viewLabel": 0,
+          "viewLabelY": -12,
+          "viewHidden": 1,
+          "shownFace": 0
+        },
+        "x": 902,
+        "y": 628,
+        "faces": [
+          "尚未揭露",
+          "威胁 · 露出时 −1 决心",
+          "跟随 · 结束需保留骰子",
+          "惊吓 · 露出时 −1 知识",
+          "褪色 · 露出时 −1 幸运",
+          "扰动 · 初始最大骰 −1",
+          "动摇 · 初始重掷一个保留骰",
+          "弥散 · 首次决心额外 −1",
+          "啃咬 · 池中有 6 则 −1 健康",
+          "燃烧 · 池中有 1 则 −1 健康",
+          "劈砍 · 池中有奇数则 −1 健康",
+          "吵闹 · 无挑战 −1 决心",
+          "扰乱 · 无挑战 −1 幸运",
+          "恫吓 · 初始新骰全部 −1",
+          "恐吓 · 无挑战扣知识或健康",
+          "狡猾 · 使用 1 需付决心",
+          "咆哮 · 首次幸运额外 −1 决心",
+          "孤立 · 初始同点骰重掷",
+          "耗竭 · 无挑战按未完成项扣健康",
+          "消失 · 露出时 −2 幸运",
+          "模糊 · 初始 3 重掷／付决心",
+          "麻痹 · 露出扣幸运或健康",
+          "折磨 · 池中有 1 则 −1 知识",
+          "欺骗 · 挑战多一骰，最多六骰",
+          "粉碎 · 露出时 −2 决心",
+          "顽固 · 挑战另付决心或幸运",
+          "惊骇 · 露出时 −2 知识",
+          "变形 · 完成挑战 −1 知识"
+        ],
+        "faceResources": [
+          "ability1",
+          "ability1",
+          "ability2",
+          "ability3",
+          "ability4",
+          "ability5",
+          "ability6",
+          "ability7",
+          "ability8",
+          "ability9",
+          "ability10",
+          "ability11",
+          "ability12",
+          "ability13",
+          "ability14",
+          "ability15",
+          "ability16",
+          "ability17",
+          "ability18",
+          "ability19",
+          "ability20",
+          "ability21",
+          "ability22",
+          "ability23",
+          "ability24",
+          "ability25",
+          "ability26",
+          "ability27"
+        ]
+      },
+      "die1": {
+        "id": "die1",
+        "properties": {
+          "viewStyle": 1,
+          "viewWidth": 48,
+          "viewHeight": 48,
+          "status": 0,
+          "slot": 0,
+          "selected": 0,
+          "value": 1,
+          "viewHidden": 1,
+          "shownFace": 0
+        },
+        "x": 355,
+        "y": 700,
+        "faces": [
+          "1",
+          "2",
+          "3",
+          "4",
+          "5",
+          "6"
+        ],
+        "faceResources": [
+          "die1",
+          "die2",
+          "die3",
+          "die4",
+          "die5",
+          "die6"
+        ],
+        "diceFaces": [
+          1,
+          2,
+          3,
+          4,
+          5,
+          6
+        ]
+      },
+      "die2": {
+        "id": "die2",
+        "properties": {
+          "viewStyle": 1,
+          "viewWidth": 48,
+          "viewHeight": 48,
+          "status": 0,
+          "slot": 0,
+          "selected": 0,
+          "value": 1,
+          "viewHidden": 1,
+          "shownFace": 0
+        },
+        "x": 420,
+        "y": 700,
+        "faces": [
+          "1",
+          "2",
+          "3",
+          "4",
+          "5",
+          "6"
+        ],
+        "faceResources": [
+          "die1",
+          "die2",
+          "die3",
+          "die4",
+          "die5",
+          "die6"
+        ],
+        "diceFaces": [
+          1,
+          2,
+          3,
+          4,
+          5,
+          6
+        ]
+      },
+      "die3": {
+        "id": "die3",
+        "properties": {
+          "viewStyle": 1,
+          "viewWidth": 48,
+          "viewHeight": 48,
+          "status": 0,
+          "slot": 0,
+          "selected": 0,
+          "value": 1,
+          "viewHidden": 1,
+          "shownFace": 0
+        },
+        "x": 485,
+        "y": 700,
+        "faces": [
+          "1",
+          "2",
+          "3",
+          "4",
+          "5",
+          "6"
+        ],
+        "faceResources": [
+          "die1",
+          "die2",
+          "die3",
+          "die4",
+          "die5",
+          "die6"
+        ],
+        "diceFaces": [
+          1,
+          2,
+          3,
+          4,
+          5,
+          6
+        ]
+      },
+      "die4": {
+        "id": "die4",
+        "properties": {
+          "viewStyle": 1,
+          "viewWidth": 48,
+          "viewHeight": 48,
+          "status": 0,
+          "slot": 0,
+          "selected": 0,
+          "value": 1,
+          "viewHidden": 1,
+          "shownFace": 0
+        },
+        "x": 550,
+        "y": 700,
+        "faces": [
+          "1",
+          "2",
+          "3",
+          "4",
+          "5",
+          "6"
+        ],
+        "faceResources": [
+          "die1",
+          "die2",
+          "die3",
+          "die4",
+          "die5",
+          "die6"
+        ],
+        "diceFaces": [
+          1,
+          2,
+          3,
+          4,
+          5,
+          6
+        ]
+      },
+      "die5": {
+        "id": "die5",
+        "properties": {
+          "viewStyle": 1,
+          "viewWidth": 48,
+          "viewHeight": 48,
+          "status": 0,
+          "slot": 0,
+          "selected": 0,
+          "value": 1,
+          "viewHidden": 1,
+          "shownFace": 0
+        },
+        "x": 615,
+        "y": 700,
+        "faces": [
+          "1",
+          "2",
+          "3",
+          "4",
+          "5",
+          "6"
+        ],
+        "faceResources": [
+          "die1",
+          "die2",
+          "die3",
+          "die4",
+          "die5",
+          "die6"
+        ],
+        "diceFaces": [
+          1,
+          2,
+          3,
+          4,
+          5,
+          6
+        ]
+      },
+      "die6": {
+        "id": "die6",
+        "properties": {
+          "viewStyle": 1,
+          "viewWidth": 48,
+          "viewHeight": 48,
+          "status": 0,
+          "slot": 0,
+          "selected": 0,
+          "value": 1,
+          "viewHidden": 1,
+          "shownFace": 0
+        },
+        "x": 680,
+        "y": 700,
+        "faces": [
+          "1",
+          "2",
+          "3",
+          "4",
+          "5",
+          "6"
+        ],
+        "faceResources": [
+          "die1",
+          "die2",
+          "die3",
+          "die4",
+          "die5",
+          "die6"
+        ],
+        "diceFaces": [
+          1,
+          2,
+          3,
+          4,
+          5,
+          6
+        ]
+      },
+      "reward1": {
+        "id": "reward1",
+        "properties": {
+          "viewStyle": 1,
+          "viewWidth": 30,
+          "viewHeight": 30,
+          "status": 0,
+          "value": 1,
+          "selected": 0,
+          "viewHidden": 1,
+          "shownFace": 0
+        },
+        "x": 320,
+        "y": 765,
+        "faces": [
+          "1",
+          "2",
+          "3",
+          "4",
+          "5",
+          "6"
+        ],
+        "faceResources": [
+          "die1",
+          "die2",
+          "die3",
+          "die4",
+          "die5",
+          "die6"
+        ]
+      },
+      "log1": {
+        "id": "log1",
+        "properties": {
+          "captured": 0,
+          "available": 0,
+          "used": 0,
+          "viewHidden": 1
+        },
+        "x": 0,
+        "y": 0
+      },
+      "reward2": {
+        "id": "reward2",
+        "properties": {
+          "viewStyle": 1,
+          "viewWidth": 30,
+          "viewHeight": 30,
+          "status": 0,
+          "value": 1,
+          "selected": 0,
+          "viewHidden": 1,
+          "shownFace": 0
+        },
+        "x": 356,
+        "y": 765,
+        "faces": [
+          "1",
+          "2",
+          "3",
+          "4",
+          "5",
+          "6"
+        ],
+        "faceResources": [
+          "die1",
+          "die2",
+          "die3",
+          "die4",
+          "die5",
+          "die6"
+        ]
+      },
+      "log2": {
+        "id": "log2",
+        "properties": {
+          "captured": 0,
+          "available": 0,
+          "used": 0,
+          "viewHidden": 1
+        },
+        "x": 0,
+        "y": 0
+      },
+      "reward3": {
+        "id": "reward3",
+        "properties": {
+          "viewStyle": 1,
+          "viewWidth": 30,
+          "viewHeight": 30,
+          "status": 0,
+          "value": 1,
+          "selected": 0,
+          "viewHidden": 1,
+          "shownFace": 0
+        },
+        "x": 392,
+        "y": 765,
+        "faces": [
+          "1",
+          "2",
+          "3",
+          "4",
+          "5",
+          "6"
+        ],
+        "faceResources": [
+          "die1",
+          "die2",
+          "die3",
+          "die4",
+          "die5",
+          "die6"
+        ]
+      },
+      "log3": {
+        "id": "log3",
+        "properties": {
+          "captured": 0,
+          "available": 0,
+          "used": 0,
+          "viewHidden": 1
+        },
+        "x": 0,
+        "y": 0
+      },
+      "reward4": {
+        "id": "reward4",
+        "properties": {
+          "viewStyle": 1,
+          "viewWidth": 30,
+          "viewHeight": 30,
+          "status": 0,
+          "value": 1,
+          "selected": 0,
+          "viewHidden": 1,
+          "shownFace": 0
+        },
+        "x": 428,
+        "y": 765,
+        "faces": [
+          "1",
+          "2",
+          "3",
+          "4",
+          "5",
+          "6"
+        ],
+        "faceResources": [
+          "die1",
+          "die2",
+          "die3",
+          "die4",
+          "die5",
+          "die6"
+        ]
+      },
+      "log4": {
+        "id": "log4",
+        "properties": {
+          "captured": 0,
+          "available": 0,
+          "used": 0,
+          "viewHidden": 1
+        },
+        "x": 0,
+        "y": 0
+      },
+      "reward5": {
+        "id": "reward5",
+        "properties": {
+          "viewStyle": 1,
+          "viewWidth": 30,
+          "viewHeight": 30,
+          "status": 0,
+          "value": 1,
+          "selected": 0,
+          "viewHidden": 1,
+          "shownFace": 0
+        },
+        "x": 464,
+        "y": 765,
+        "faces": [
+          "1",
+          "2",
+          "3",
+          "4",
+          "5",
+          "6"
+        ],
+        "faceResources": [
+          "die1",
+          "die2",
+          "die3",
+          "die4",
+          "die5",
+          "die6"
+        ]
+      },
+      "log5": {
+        "id": "log5",
+        "properties": {
+          "captured": 0,
+          "available": 0,
+          "used": 0,
+          "viewHidden": 1
+        },
+        "x": 0,
+        "y": 0
+      },
+      "reward6": {
+        "id": "reward6",
+        "properties": {
+          "viewStyle": 1,
+          "viewWidth": 30,
+          "viewHeight": 30,
+          "status": 0,
+          "value": 1,
+          "selected": 0,
+          "viewHidden": 1,
+          "shownFace": 0
+        },
+        "x": 500,
+        "y": 765,
+        "faces": [
+          "1",
+          "2",
+          "3",
+          "4",
+          "5",
+          "6"
+        ],
+        "faceResources": [
+          "die1",
+          "die2",
+          "die3",
+          "die4",
+          "die5",
+          "die6"
+        ]
+      },
+      "log6": {
+        "id": "log6",
+        "properties": {
+          "captured": 0,
+          "available": 0,
+          "used": 0,
+          "viewHidden": 1
+        },
+        "x": 0,
+        "y": 0
+      },
+      "reward7": {
+        "id": "reward7",
+        "properties": {
+          "viewStyle": 1,
+          "viewWidth": 30,
+          "viewHeight": 30,
+          "status": 0,
+          "value": 1,
+          "selected": 0,
+          "viewHidden": 1,
+          "shownFace": 0
+        },
+        "x": 536,
+        "y": 765,
+        "faces": [
+          "1",
+          "2",
+          "3",
+          "4",
+          "5",
+          "6"
+        ],
+        "faceResources": [
+          "die1",
+          "die2",
+          "die3",
+          "die4",
+          "die5",
+          "die6"
+        ]
+      },
+      "log7": {
+        "id": "log7",
+        "properties": {
+          "captured": 0,
+          "available": 0,
+          "used": 0,
+          "viewHidden": 1
+        },
+        "x": 0,
+        "y": 0
+      },
+      "reward8": {
+        "id": "reward8",
+        "properties": {
+          "viewStyle": 1,
+          "viewWidth": 30,
+          "viewHeight": 30,
+          "status": 0,
+          "value": 1,
+          "selected": 0,
+          "viewHidden": 1,
+          "shownFace": 0
+        },
+        "x": 572,
+        "y": 765,
+        "faces": [
+          "1",
+          "2",
+          "3",
+          "4",
+          "5",
+          "6"
+        ],
+        "faceResources": [
+          "die1",
+          "die2",
+          "die3",
+          "die4",
+          "die5",
+          "die6"
+        ]
+      },
+      "log8": {
+        "id": "log8",
+        "properties": {
+          "captured": 0,
+          "available": 0,
+          "used": 0,
+          "viewHidden": 1
+        },
+        "x": 0,
+        "y": 0
+      },
+      "reward9": {
+        "id": "reward9",
+        "properties": {
+          "viewStyle": 1,
+          "viewWidth": 30,
+          "viewHeight": 30,
+          "status": 0,
+          "value": 1,
+          "selected": 0,
+          "viewHidden": 1,
+          "shownFace": 0
+        },
+        "x": 608,
+        "y": 765,
+        "faces": [
+          "1",
+          "2",
+          "3",
+          "4",
+          "5",
+          "6"
+        ],
+        "faceResources": [
+          "die1",
+          "die2",
+          "die3",
+          "die4",
+          "die5",
+          "die6"
+        ]
+      },
+      "log9": {
+        "id": "log9",
+        "properties": {
+          "captured": 0,
+          "available": 0,
+          "used": 0,
+          "viewHidden": 1
+        },
+        "x": 0,
+        "y": 0
+      },
+      "reward10": {
+        "id": "reward10",
+        "properties": {
+          "viewStyle": 1,
+          "viewWidth": 30,
+          "viewHeight": 30,
+          "status": 0,
+          "value": 1,
+          "selected": 0,
+          "viewHidden": 1,
+          "shownFace": 0
+        },
+        "x": 644,
+        "y": 765,
+        "faces": [
+          "1",
+          "2",
+          "3",
+          "4",
+          "5",
+          "6"
+        ],
+        "faceResources": [
+          "die1",
+          "die2",
+          "die3",
+          "die4",
+          "die5",
+          "die6"
+        ]
+      },
+      "log10": {
+        "id": "log10",
+        "properties": {
+          "captured": 0,
+          "available": 0,
+          "used": 0,
+          "viewHidden": 1
+        },
+        "x": 0,
+        "y": 0
+      },
+      "reward11": {
+        "id": "reward11",
+        "properties": {
+          "viewStyle": 1,
+          "viewWidth": 30,
+          "viewHeight": 30,
+          "status": 0,
+          "value": 1,
+          "selected": 0,
+          "viewHidden": 1,
+          "shownFace": 0
+        },
+        "x": 680,
+        "y": 765,
+        "faces": [
+          "1",
+          "2",
+          "3",
+          "4",
+          "5",
+          "6"
+        ],
+        "faceResources": [
+          "die1",
+          "die2",
+          "die3",
+          "die4",
+          "die5",
+          "die6"
+        ]
+      },
+      "log11": {
+        "id": "log11",
+        "properties": {
+          "captured": 0,
+          "available": 0,
+          "used": 0,
+          "viewHidden": 1
+        },
+        "x": 0,
+        "y": 0
+      },
+      "reward12": {
+        "id": "reward12",
+        "properties": {
+          "viewStyle": 1,
+          "viewWidth": 30,
+          "viewHeight": 30,
+          "status": 0,
+          "value": 1,
+          "selected": 0,
+          "viewHidden": 1,
+          "shownFace": 0
+        },
+        "x": 716,
+        "y": 765,
+        "faces": [
+          "1",
+          "2",
+          "3",
+          "4",
+          "5",
+          "6"
+        ],
+        "faceResources": [
+          "die1",
+          "die2",
+          "die3",
+          "die4",
+          "die5",
+          "die6"
+        ]
+      },
+      "log12": {
+        "id": "log12",
+        "properties": {
+          "captured": 0,
+          "available": 0,
+          "used": 0,
+          "viewHidden": 1
+        },
+        "x": 0,
+        "y": 0
+      },
+      "reward13": {
+        "id": "reward13",
+        "properties": {
+          "viewStyle": 1,
+          "viewWidth": 30,
+          "viewHeight": 30,
+          "status": 0,
+          "value": 1,
+          "selected": 0,
+          "viewHidden": 1,
+          "shownFace": 0
+        },
+        "x": 752,
+        "y": 765,
+        "faces": [
+          "1",
+          "2",
+          "3",
+          "4",
+          "5",
+          "6"
+        ],
+        "faceResources": [
+          "die1",
+          "die2",
+          "die3",
+          "die4",
+          "die5",
+          "die6"
+        ]
+      },
+      "log13": {
+        "id": "log13",
+        "properties": {
+          "captured": 0,
+          "available": 0,
+          "used": 0,
+          "viewHidden": 1
+        },
+        "x": 0,
+        "y": 0
+      },
+      "reward14": {
+        "id": "reward14",
+        "properties": {
+          "viewStyle": 1,
+          "viewWidth": 30,
+          "viewHeight": 30,
+          "status": 0,
+          "value": 1,
+          "selected": 0,
+          "viewHidden": 1,
+          "shownFace": 0
+        },
+        "x": 788,
+        "y": 765,
+        "faces": [
+          "1",
+          "2",
+          "3",
+          "4",
+          "5",
+          "6"
+        ],
+        "faceResources": [
+          "die1",
+          "die2",
+          "die3",
+          "die4",
+          "die5",
+          "die6"
+        ]
+      },
+      "log14": {
+        "id": "log14",
+        "properties": {
+          "captured": 0,
+          "available": 0,
+          "used": 0,
+          "viewHidden": 1
+        },
+        "x": 0,
+        "y": 0
+      },
+      "observation1": {
+        "id": "observation1",
+        "properties": {
+          "count": 0,
+          "viewHidden": 1
+        },
+        "x": 0,
+        "y": 0
+      },
+      "observation2": {
+        "id": "observation2",
+        "properties": {
+          "count": 0,
+          "viewHidden": 1
+        },
+        "x": 0,
+        "y": 0
+      },
+      "observation3": {
+        "id": "observation3",
+        "properties": {
+          "count": 0,
+          "viewHidden": 1
+        },
+        "x": 0,
+        "y": 0
+      },
+      "observation4": {
+        "id": "observation4",
+        "properties": {
+          "count": 0,
+          "viewHidden": 1
+        },
+        "x": 0,
+        "y": 0
+      },
+      "observation5": {
+        "id": "observation5",
+        "properties": {
+          "count": 0,
+          "viewHidden": 1
+        },
+        "x": 0,
+        "y": 0
+      },
+      "observation6": {
+        "id": "observation6",
+        "properties": {
+          "count": 0,
+          "viewHidden": 1
+        },
+        "x": 0,
+        "y": 0
+      },
+      "observation7": {
+        "id": "observation7",
+        "properties": {
+          "count": 0,
+          "viewHidden": 1
+        },
+        "x": 0,
+        "y": 0
+      },
+      "observation8": {
+        "id": "observation8",
+        "properties": {
+          "count": 0,
+          "viewHidden": 1
+        },
+        "x": 0,
+        "y": 0
+      },
+      "observation9": {
+        "id": "observation9",
+        "properties": {
+          "count": 0,
+          "viewHidden": 1
+        },
+        "x": 0,
+        "y": 0
+      },
+      "observation10": {
+        "id": "observation10",
+        "properties": {
+          "count": 0,
+          "viewHidden": 1
+        },
+        "x": 0,
+        "y": 0
+      },
+      "observation11": {
+        "id": "observation11",
+        "properties": {
+          "count": 0,
+          "viewHidden": 1
+        },
+        "x": 0,
+        "y": 0
+      },
+      "observation12": {
+        "id": "observation12",
+        "properties": {
+          "count": 0,
+          "viewHidden": 1
+        },
+        "x": 0,
+        "y": 0
+      },
+      "mark1": {
+        "id": "mark1",
+        "properties": {
+          "viewStyle": 1,
+          "viewWidth": 8,
+          "viewHeight": 8,
+          "viewHidden": 1,
+          "viewLayer": 10,
+          "shownFace": 0
+        },
+        "x": 850,
+        "y": 465,
+        "faces": [
+          "完成"
+        ],
+        "faceResources": [
+          "marker"
+        ]
+      },
+      "mark2": {
+        "id": "mark2",
+        "properties": {
+          "viewStyle": 1,
+          "viewWidth": 8,
+          "viewHeight": 8,
+          "viewHidden": 1,
+          "viewLayer": 10,
+          "shownFace": 0
+        },
+        "x": 902,
+        "y": 465,
+        "faces": [
+          "完成"
+        ],
+        "faceResources": [
+          "marker"
+        ]
+      },
+      "mark3": {
+        "id": "mark3",
+        "properties": {
+          "viewStyle": 1,
+          "viewWidth": 8,
+          "viewHeight": 8,
+          "viewHidden": 1,
+          "viewLayer": 10,
+          "shownFace": 0
+        },
+        "x": 954,
+        "y": 465,
+        "faces": [
+          "完成"
+        ],
+        "faceResources": [
+          "marker"
+        ]
+      },
+      "track-luck": {
+        "id": "track-luck",
+        "properties": {
+          "viewStyle": 1,
+          "viewWidth": 12,
+          "viewHeight": 12,
+          "viewLayer": 10,
+          "shownFace": 0
+        },
+        "x": 173,
+        "y": 334.55,
+        "faces": [
+          "luck"
+        ],
+        "faceResources": [
+          "marker"
+        ]
+      },
+      "track-resolve": {
+        "id": "track-resolve",
+        "properties": {
+          "viewStyle": 1,
+          "viewWidth": 12,
+          "viewHeight": 12,
+          "viewLayer": 10,
+          "shownFace": 0
+        },
+        "x": 208,
+        "y": 244.65,
+        "faces": [
+          "resolve"
+        ],
+        "faceResources": [
+          "marker"
+        ]
+      },
+      "track-knowledge": {
+        "id": "track-knowledge",
+        "properties": {
+          "viewStyle": 1,
+          "viewWidth": 12,
+          "viewHeight": 12,
+          "viewLayer": 10,
+          "shownFace": 0
+        },
+        "x": 238,
+        "y": 308.45,
+        "faces": [
+          "knowledge"
+        ],
+        "faceResources": [
+          "marker"
+        ]
+      },
+      "track-health": {
+        "id": "track-health",
+        "properties": {
+          "viewStyle": 1,
+          "viewWidth": 12,
+          "viewHeight": 12,
+          "viewLayer": 10,
+          "shownFace": 0
+        },
+        "x": 270,
+        "y": 192.45,
+        "faces": [
+          "health"
+        ],
+        "faceResources": [
+          "marker"
+        ]
+      },
+      "status": {
+        "id": "status",
+        "properties": {
+          "viewStyle": 1,
+          "viewWidth": 650,
+          "viewHeight": 60,
+          "viewLabel": 1,
+          "viewLabelY": -20,
+          "viewPassive": 1,
+          "game": 1,
+          "score": 0,
+          "health": 7,
+          "luck": 2,
+          "resolve": 5,
+          "knowledge": 5,
+          "shownFace": 0
+        },
+        "x": 550,
+        "y": 83,
+        "faces": [
+          "第 {game} 局　声望 {score}　健康 {health}\n幸运 {luck}　决心 {resolve}　知识 {knowledge}"
+        ]
+      },
+      "hint": {
+        "id": "hint",
+        "properties": {
+          "viewStyle": 1,
+          "viewWidth": 900,
+          "viewHeight": 35,
+          "viewLabel": 1,
+          "viewLabelY": -12,
+          "viewPassive": 1,
+          "shownFace": 0
+        },
+        "x": 550,
+        "y": 840,
+        "faces": [
+          "选择角色、职业和玩法，然后开始调查。",
+          "处理完本层才能向上一层：选择一件咒物。",
+          "新能力已揭露：选择支付方式。",
+          "初始掷骰修正：选择是否抵抗。",
+          "保留骰子：双击选中要重掷的骰子，或全部保持。",
+          "双击骰子选择；可完成右侧列出的挑战，或调整、保留、使用奖励。",
+          "挑战完成：立即选择一项属性奖励。",
+          "回合结束：选择能力的扣除方式。",
+          "首局完成，进入第二局继续战役。",
+          "全部遭遇结算，调查成功！可翻阅日志，或从游戏菜单重新开始。",
+          "健康耗尽，调查结束。可翻阅日志，或从游戏菜单重新开始。",
+          "本回合挑战已完成：可以安排剩余骰子、使用奖励，然后结束回合。",
+          "命运机器：先双击选择一颗初始骰子，锁定本回合的惩罚点数。",
+          "骰池已空：可以使用尚未用的捕获奖励，或结束回合。",
+          "遭遇已结算：安排剩余骰子，结束回合后选择下一件咒物。"
+        ]
+      },
+      "objectDeck": {
+        "id": "objectDeck",
+        "properties": {
+          "viewHidden": 1
+        },
+        "x": 0,
+        "y": 0,
+        "isContainer": true,
+        "capacity": 30,
+        "ordered": true,
+        "contents": [
+          "object1",
+          "object2",
+          "object3",
+          "object4",
+          "object5",
+          "object6",
+          "object7",
+          "object8",
+          "object9",
+          "object10",
+          "object11",
+          "object12",
+          "object13",
+          "object14"
+        ],
+        "visibility": "public"
+      },
+      "discard": {
+        "id": "discard",
+        "properties": {
+          "viewHidden": 1
+        },
+        "x": 0,
+        "y": 0,
+        "isContainer": true,
+        "capacity": 30,
+        "ordered": true,
+        "contents": [],
+        "visibility": "public"
+      },
+      "object1": {
+        "id": "object1",
+        "properties": {
+          "index": 1
+        },
+        "x": 0,
+        "y": 0,
+        "container": "objectDeck",
+        "visibility": "hidden"
+      },
+      "object2": {
+        "id": "object2",
+        "properties": {
+          "index": 2
+        },
+        "x": 0,
+        "y": 0,
+        "container": "objectDeck",
+        "visibility": "hidden"
+      },
+      "object3": {
+        "id": "object3",
+        "properties": {
+          "index": 3
+        },
+        "x": 0,
+        "y": 0,
+        "container": "objectDeck",
+        "visibility": "hidden"
+      },
+      "object4": {
+        "id": "object4",
+        "properties": {
+          "index": 4
+        },
+        "x": 0,
+        "y": 0,
+        "container": "objectDeck",
+        "visibility": "hidden"
+      },
+      "object5": {
+        "id": "object5",
+        "properties": {
+          "index": 5
+        },
+        "x": 0,
+        "y": 0,
+        "container": "objectDeck",
+        "visibility": "hidden"
+      },
+      "object6": {
+        "id": "object6",
+        "properties": {
+          "index": 6
+        },
+        "x": 0,
+        "y": 0,
+        "container": "objectDeck",
+        "visibility": "hidden"
+      },
+      "object7": {
+        "id": "object7",
+        "properties": {
+          "index": 7
+        },
+        "x": 0,
+        "y": 0,
+        "container": "objectDeck",
+        "visibility": "hidden"
+      },
+      "object8": {
+        "id": "object8",
+        "properties": {
+          "index": 8
+        },
+        "x": 0,
+        "y": 0,
+        "container": "objectDeck",
+        "visibility": "hidden"
+      },
+      "object9": {
+        "id": "object9",
+        "properties": {
+          "index": 9
+        },
+        "x": 0,
+        "y": 0,
+        "container": "objectDeck",
+        "visibility": "hidden"
+      },
+      "object10": {
+        "id": "object10",
+        "properties": {
+          "index": 10
+        },
+        "x": 0,
+        "y": 0,
+        "container": "objectDeck",
+        "visibility": "hidden"
+      },
+      "object11": {
+        "id": "object11",
+        "properties": {
+          "index": 11
+        },
+        "x": 0,
+        "y": 0,
+        "container": "objectDeck",
+        "visibility": "hidden"
+      },
+      "object12": {
+        "id": "object12",
+        "properties": {
+          "index": 12
+        },
+        "x": 0,
+        "y": 0,
+        "container": "objectDeck",
+        "visibility": "hidden"
+      },
+      "object13": {
+        "id": "object13",
+        "properties": {
+          "index": 13
+        },
+        "x": 0,
+        "y": 0,
+        "container": "objectDeck",
+        "visibility": "hidden"
+      },
+      "object14": {
+        "id": "object14",
+        "properties": {
+          "index": 14
+        },
+        "x": 0,
+        "y": 0,
+        "container": "objectDeck",
+        "visibility": "hidden"
+      },
+      "spiritDeck1": {
+        "id": "spiritDeck1",
+        "properties": {
+          "viewHidden": 1
+        },
+        "x": 0,
+        "y": 0,
+        "isContainer": true,
+        "capacity": 30,
+        "ordered": true,
+        "contents": [
+          "spirit1",
+          "spirit2",
+          "spirit3",
+          "spirit4"
+        ],
+        "visibility": "public"
+      },
+      "spirit1": {
+        "id": "spirit1",
+        "properties": {
+          "index": 1
+        },
+        "x": 0,
+        "y": 0,
+        "container": "spiritDeck1",
+        "visibility": "hidden"
+      },
+      "spirit2": {
+        "id": "spirit2",
+        "properties": {
+          "index": 2
+        },
+        "x": 0,
+        "y": 0,
+        "container": "spiritDeck1",
+        "visibility": "hidden"
+      },
+      "spirit3": {
+        "id": "spirit3",
+        "properties": {
+          "index": 3
+        },
+        "x": 0,
+        "y": 0,
+        "container": "spiritDeck1",
+        "visibility": "hidden"
+      },
+      "spirit4": {
+        "id": "spirit4",
+        "properties": {
+          "index": 4
+        },
+        "x": 0,
+        "y": 0,
+        "container": "spiritDeck1",
+        "visibility": "hidden"
+      },
+      "spiritDeck2": {
+        "id": "spiritDeck2",
+        "properties": {
+          "viewHidden": 1
+        },
+        "x": 0,
+        "y": 0,
+        "isContainer": true,
+        "capacity": 30,
+        "ordered": true,
+        "contents": [
+          "spirit5",
+          "spirit6",
+          "spirit7",
+          "spirit8"
+        ],
+        "visibility": "public"
+      },
+      "spirit5": {
+        "id": "spirit5",
+        "properties": {
+          "index": 5
+        },
+        "x": 0,
+        "y": 0,
+        "container": "spiritDeck2",
+        "visibility": "hidden"
+      },
+      "spirit6": {
+        "id": "spirit6",
+        "properties": {
+          "index": 6
+        },
+        "x": 0,
+        "y": 0,
+        "container": "spiritDeck2",
+        "visibility": "hidden"
+      },
+      "spirit7": {
+        "id": "spirit7",
+        "properties": {
+          "index": 7
+        },
+        "x": 0,
+        "y": 0,
+        "container": "spiritDeck2",
+        "visibility": "hidden"
+      },
+      "spirit8": {
+        "id": "spirit8",
+        "properties": {
+          "index": 8
+        },
+        "x": 0,
+        "y": 0,
+        "container": "spiritDeck2",
+        "visibility": "hidden"
+      },
+      "spiritDeck3": {
+        "id": "spiritDeck3",
+        "properties": {
+          "viewHidden": 1
+        },
+        "x": 0,
+        "y": 0,
+        "isContainer": true,
+        "capacity": 30,
+        "ordered": true,
+        "contents": [
+          "spirit9",
+          "spirit10",
+          "spirit11",
+          "spirit12"
+        ],
+        "visibility": "public"
+      },
+      "spirit9": {
+        "id": "spirit9",
+        "properties": {
+          "index": 9
+        },
+        "x": 0,
+        "y": 0,
+        "container": "spiritDeck3",
+        "visibility": "hidden"
+      },
+      "spirit10": {
+        "id": "spirit10",
+        "properties": {
+          "index": 10
+        },
+        "x": 0,
+        "y": 0,
+        "container": "spiritDeck3",
+        "visibility": "hidden"
+      },
+      "spirit11": {
+        "id": "spirit11",
+        "properties": {
+          "index": 11
+        },
+        "x": 0,
+        "y": 0,
+        "container": "spiritDeck3",
+        "visibility": "hidden"
+      },
+      "spirit12": {
+        "id": "spirit12",
+        "properties": {
+          "index": 12
+        },
+        "x": 0,
+        "y": 0,
+        "container": "spiritDeck3",
+        "visibility": "hidden"
+      },
+      "tablecloth": {
+        "id": "tablecloth",
+        "properties": {
+          "viewTablecloth": 1,
+          "viewWidth": 1100,
+          "viewHeight": 870,
+          "shownFace": 0
+        },
+        "x": 0,
+        "y": 0,
+        "faces": [
+          "调查桌面"
+        ],
+        "faceResources": [
+          "tabletop"
+        ]
+      },
+      "captured1": {
+        "id": "captured1",
+        "properties": {
+          "viewStyle": 1,
+          "viewWidth": 36,
+          "viewHeight": 62,
+          "viewHidden": 1,
+          "shownFace": 0
+        },
+        "x": 65,
+        "y": 555,
+        "faces": [
+          "通灵板"
+        ],
+        "faceResources": [
+          "object-001"
+        ]
+      },
+      "captured2": {
+        "id": "captured2",
+        "properties": {
+          "viewStyle": 1,
+          "viewWidth": 36,
+          "viewHeight": 62,
+          "viewHidden": 1,
+          "shownFace": 0
+        },
+        "x": 130,
+        "y": 555,
+        "faces": [
+          "恐怖娃娃"
+        ],
+        "faceResources": [
+          "object-002"
+        ]
+      },
+      "captured3": {
+        "id": "captured3",
+        "properties": {
+          "viewStyle": 1,
+          "viewWidth": 36,
+          "viewHeight": 62,
+          "viewHidden": 1,
+          "shownFace": 0
+        },
+        "x": 195,
+        "y": 555,
+        "faces": [
+          "悲剧镜子"
+        ],
+        "faceResources": [
+          "object-003"
+        ]
+      },
+      "captured4": {
+        "id": "captured4",
+        "properties": {
+          "viewStyle": 1,
+          "viewWidth": 36,
+          "viewHeight": 62,
+          "viewHidden": 1,
+          "shownFace": 0
+        },
+        "x": 260,
+        "y": 555,
+        "faces": [
+          "针扎人偶"
+        ],
+        "faceResources": [
+          "object-004"
+        ]
+      },
+      "captured5": {
+        "id": "captured5",
+        "properties": {
+          "viewStyle": 1,
+          "viewWidth": 36,
+          "viewHeight": 62,
+          "viewHidden": 1,
+          "shownFace": 0
+        },
+        "x": 65,
+        "y": 631,
+        "faces": [
+          "芭蕾舞音乐盒"
+        ],
+        "faceResources": [
+          "object-005"
+        ]
+      },
+      "captured6": {
+        "id": "captured6",
+        "properties": {
+          "viewStyle": 1,
+          "viewWidth": 36,
+          "viewHeight": 62,
+          "viewHidden": 1,
+          "shownFace": 0
+        },
+        "x": 130,
+        "y": 631,
+        "faces": [
+          "诡异面具"
+        ],
+        "faceResources": [
+          "object-006"
+        ]
+      },
+      "captured7": {
+        "id": "captured7",
+        "properties": {
+          "viewStyle": 1,
+          "viewWidth": 36,
+          "viewHeight": 62,
+          "viewHidden": 1,
+          "shownFace": 0
+        },
+        "x": 195,
+        "y": 631,
+        "faces": [
+          "活肖像画"
+        ],
+        "faceResources": [
+          "object-007"
+        ]
+      },
+      "captured8": {
+        "id": "captured8",
+        "properties": {
+          "viewStyle": 1,
+          "viewWidth": 36,
+          "viewHeight": 62,
+          "viewHidden": 1,
+          "shownFace": 0
+        },
+        "x": 260,
+        "y": 631,
+        "faces": [
+          "禁书"
+        ],
+        "faceResources": [
+          "object-008"
+        ]
+      },
+      "captured9": {
+        "id": "captured9",
+        "properties": {
+          "viewStyle": 1,
+          "viewWidth": 36,
+          "viewHeight": 62,
+          "viewHidden": 1,
+          "shownFace": 0
+        },
+        "x": 65,
+        "y": 707,
+        "faces": [
+          "玩偶匣"
+        ],
+        "faceResources": [
+          "object-009"
+        ]
+      },
+      "captured10": {
+        "id": "captured10",
+        "properties": {
+          "viewStyle": 1,
+          "viewWidth": 36,
+          "viewHeight": 62,
+          "viewHidden": 1,
+          "shownFace": 0
+        },
+        "x": 130,
+        "y": 707,
+        "faces": [
+          "快乐猴子"
+        ],
+        "faceResources": [
+          "object-010"
+        ]
+      },
+      "captured11": {
+        "id": "captured11",
+        "properties": {
+          "viewStyle": 1,
+          "viewWidth": 36,
+          "viewHeight": 62,
+          "viewHidden": 1,
+          "shownFace": 0
+        },
+        "x": 195,
+        "y": 707,
+        "faces": [
+          "旧玩具屋"
+        ],
+        "faceResources": [
+          "object-011"
+        ]
+      },
+      "captured12": {
+        "id": "captured12",
+        "properties": {
+          "viewStyle": 1,
+          "viewWidth": 36,
+          "viewHeight": 62,
+          "viewHidden": 1,
+          "shownFace": 0
+        },
+        "x": 260,
+        "y": 707,
+        "faces": [
+          "诅咒录像"
+        ],
+        "faceResources": [
+          "object-012"
+        ]
+      },
+      "captured13": {
+        "id": "captured13",
+        "properties": {
+          "viewStyle": 1,
+          "viewWidth": 36,
+          "viewHeight": 62,
+          "viewHidden": 1,
+          "shownFace": 0
+        },
+        "x": 65,
+        "y": 783,
+        "faces": [
+          "古怪护符"
+        ],
+        "faceResources": [
+          "object-013"
+        ]
+      },
+      "captured14": {
+        "id": "captured14",
+        "properties": {
+          "viewStyle": 1,
+          "viewWidth": 36,
+          "viewHeight": 62,
+          "viewHidden": 1,
+          "shownFace": 0
+        },
+        "x": 130,
+        "y": 783,
+        "faces": [
+          "命运机器"
+        ],
+        "faceResources": [
+          "object-014"
+        ]
+      },
+      "label-heading": {
+        "id": "label-heading",
+        "properties": {
+          "viewStyle": 1,
+          "viewWidth": 970,
+          "viewHeight": 25,
+          "viewLabel": 1,
+          "viewLabelY": -10,
+          "viewPassive": 1,
+          "viewColor": 13482898,
+          "shownFace": 0
+        },
+        "x": 545.0,
+        "y": 48,
+        "faces": [
+          "咒物调查员  /  THE INVESTIGATOR’S DESK"
+        ]
+      },
+      "label-personal": {
+        "id": "label-personal",
+        "properties": {
+          "viewStyle": 1,
+          "viewWidth": 240,
+          "viewHeight": 25,
+          "viewLabel": 1,
+          "viewLabelY": -10,
+          "viewPassive": 1,
+          "viewColor": 13482898,
+          "shownFace": 0
+        },
+        "x": 170.0,
+        "y": 130,
+        "faces": [
+          "调查员档案"
+        ]
+      },
+      "label-tiers": {
+        "id": "label-tiers",
+        "properties": {
+          "viewStyle": 1,
+          "viewWidth": 370,
+          "viewHeight": 25,
+          "viewLabel": 1,
+          "viewLabelY": -10,
+          "viewPassive": 1,
+          "viewColor": 13482898,
+          "shownFace": 0
+        },
+        "x": 525.0,
+        "y": 130,
+        "faces": [
+          "遭遇目录  ·  由下至上调查"
+        ]
+      },
+      "label-active": {
+        "id": "label-active",
+        "properties": {
+          "viewStyle": 1,
+          "viewWidth": 290,
+          "viewHeight": 25,
+          "viewLabel": 1,
+          "viewLabelY": -10,
+          "viewPassive": 1,
+          "viewColor": 13482898,
+          "shownFace": 0
+        },
+        "x": 905.0,
+        "y": 130,
+        "faces": [
+          "当前遭遇"
+        ]
+      },
+      "label-captures": {
+        "id": "label-captures",
+        "properties": {
+          "viewStyle": 1,
+          "viewWidth": 240,
+          "viewHeight": 25,
+          "viewLabel": 1,
+          "viewLabelY": -10,
+          "viewPassive": 1,
+          "viewColor": 13482898,
+          "shownFace": 0
+        },
+        "x": 170.0,
+        "y": 510,
+        "faces": [
+          "封存物件  /  已结算"
+        ]
+      },
+      "label-pool": {
+        "id": "label-pool",
+        "properties": {
+          "viewStyle": 1,
+          "viewWidth": 690,
+          "viewHeight": 25,
+          "viewLabel": 1,
+          "viewLabelY": -10,
+          "viewPassive": 1,
+          "viewColor": 13482898,
+          "shownFace": 0
+        },
+        "x": 685.0,
+        "y": 698,
+        "faces": [
+          "骰子池  ·  双击选择，右侧执行动作"
+        ]
+      }
+    }
+  },
+  "resources": {}
+}

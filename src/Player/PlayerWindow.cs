@@ -83,6 +83,8 @@ public sealed partial class PlayerWindow : Window
             var loaded=await Task.Run(()=>GameRuntime.Load(location));
             if(current!=generation) return;
             presentation=PlayerPresentation.Read(loaded);
+            if(presentation.Width is {} preferredWidth)Width=Math.Min(preferredWidth,(Screens.Primary?.WorkingArea.Width ?? preferredWidth)/RenderScaling);
+            if(presentation.Height is {} preferredHeight)Height=Math.Min(preferredHeight,(Screens.Primary?.WorkingArea.Height ?? preferredHeight)/RenderScaling);
             module=loaded; seat.ItemsSource=loaded.Initial.Seats.Select(s=>s.Id).ToArray();
             var defaultHumans=loaded.Initial.Seats.Where(s=>s.Controller=="human").Select(s=>s.Id).ToArray();
             localHumans.Text=string.Join(",",defaultHumans.Length>0?defaultHumans:[loaded.Initial.Seats[0].Id]);

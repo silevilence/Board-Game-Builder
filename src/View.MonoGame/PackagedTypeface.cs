@@ -31,12 +31,19 @@ public sealed class PackagedTypeface : IDisposable
     {
         if(typeface==null)throw new InvalidOperationException("No packaged font configured");
         using var font=new SKFont(typeface,Math.Clamp(size,6,128)) {Edging=SKFontEdging.Antialias};
-        if(!font.ContainsGlyphs(text))throw new InvalidDataException("Packaged font has missing glyphs: "+text);
+        var lines=text.Replace("\r\n","\n",StringComparison.Ordinal).Replace('\r','\n').Replace("\t","    ",StringComparison.Ordinal).Split('\n');
+        if(lines.Length>32)throw new InvalidDataException("Packaged font label exceeds 32 lines");
+        if(lines.Any(line=>line.Length>0 && !font.ContainsGlyphs(line)))throw new InvalidDataException("Packaged font has missing glyphs: "+text);
         using var paint=new SKPaint {Color=SKColors.White,IsAntialias=true};
-        var metrics=font.Metrics;var width=Math.Clamp((int)Math.Ceiling(font.MeasureText(text))+4,1,16384);
-        var height=Math.Clamp((int)Math.Ceiling(metrics.Descent-metrics.Ascent)+4,1,256);
+        var metrics=font.Metrics;var width=Math.Clamp((int)Math.Ceiling(lines.Max(line=>font.MeasureText(line)))+4,1,16384);
+        var lineHeight=Math.Ceiling(metrics.Descent-metrics.Ascent+Math.Max(0,metrics.Leading));
+        var height=Math.Clamp((int)(lineHeight*lines.Length)+4,1,8192);
         using var bitmap=new SKBitmap(width,height,SKColorType.Rgba8888,SKAlphaType.Premul);
-        using(var canvas=new SKCanvas(bitmap)) {canvas.Clear(SKColors.Transparent);canvas.DrawText(text,2,2-metrics.Ascent,SKTextAlign.Left,font,paint);}
+        using(var canvas=new SKCanvas(bitmap))
+        {
+            canvas.Clear(SKColors.Transparent);
+            for(var i=0;i<lines.Length;i++)canvas.DrawText(lines[i],2,(float)(2-metrics.Ascent+i*lineHeight),SKTextAlign.Left,font,paint);
+        }
         using var image=SKImage.FromBitmap(bitmap);using var png=image.Encode(SKEncodedImageFormat.Png,100);return png.ToArray();
     }
     public void Dispose() {typeface?.Dispose();typeface=null;source=null;Identity="";}

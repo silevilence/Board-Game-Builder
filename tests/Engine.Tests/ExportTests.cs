@@ -22,11 +22,25 @@ public static class ExportTests
         var catalog=System.Text.Json.Nodes.JsonNode.Parse(original)!;catalog["runtimePlugins"]!.AsObject().Remove("kernel");
         File.WriteAllText(manifestPath,catalog.ToJsonString());Check.Throws(()=>PlayerDistribution.Preflight(path,"samples/quick-cards"),"kernel");
         File.WriteAllText(manifestPath,original);
-        foreach(var file in new[]{"Play.exe","versions.json","Editor.dll","CordiSharp.dll"})
+        foreach(var file in new[]{"Play.exe","versions.json","Editor.dll","CordiSharp.dll","game.bgm"})
         {
             var target=path+"-tampered-"+file;
             Check.Throws(()=>PlayerDistribution.Export(release,"samples/quick-cards",target,staging=>File.WriteAllText(Path.Combine(staging,file),"invalid")),file);
             Check.That(!Directory.Exists(target),"Broken export was published");
         }
+    }
+    public static void LargePackage()
+    {
+        var release=Environment.GetEnvironmentVariable("BGB_TEST_RELEASE") ?? "artifacts/player-release-m2";
+        var target=Path.GetFullPath("artifacts/export-large-test-"+Guid.NewGuid());
+        try
+        {
+            // Individually valid scanned resources produce a package above 32 MiB.
+            PlayerDistribution.Export(release,"samples/cursed-investigators",target);
+            var package=Path.Combine(target,"game.bgm");
+            Check.That(new FileInfo(package).Length>BoardGame.Modules.ModuleContentLimits.MaxFileBytes);
+            Check.That(GameRuntime.Load(package).Fingerprint==GameRuntime.Load("samples/cursed-investigators").Fingerprint);
+        }
+        finally {if(Directory.Exists(target))Directory.Delete(target,true);}
     }
 }

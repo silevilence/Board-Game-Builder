@@ -79,8 +79,12 @@ public static class PlayerDistribution
             var protectedFiles=Directory.GetFiles(staging,"*",SearchOption.AllDirectories).ToDictionary(p=>Path.GetRelativePath(staging,p).Replace('\\','/'),p=>ModulePackage.Hash(File.ReadAllBytes(p)));
             progress?.Report("执行当前启用插件的导出附加步骤…"); additionalSteps?.Invoke(staging);
             ValidateExtras(new DirectoryInfo(staging));
+            // These relative paths were captured from our own staging directory, and
+            // ValidateExtras has rejected linked paths. A complete game package may
+            // exceed the per-resource limit enforced by DirectoryModule.SafeFile.
+            // Its expanded contents were already checked by GamePackage.Load above.
             foreach(var file in protectedFiles)
-                if(ModulePackage.Hash(File.ReadAllBytes(DirectoryModule.SafeFile(staging,file.Key)))!=file.Value) throw new InvalidDataException("Export step changed Player runtime: "+file.Key);
+                if(ModulePackage.Hash(File.ReadAllBytes(Path.Combine(staging,file.Key)))!=file.Value) throw new InvalidDataException("Export step changed Player runtime: "+file.Key);
             if(GameRuntime.Load(Path.Combine(staging,"game.bgm")).Fingerprint!=module.Fingerprint) throw new InvalidDataException("Export step changed module package");
             cancellation.ThrowIfCancellationRequested();
             Directory.Move(staging,target);
@@ -90,6 +94,7 @@ public static class PlayerDistribution
     }
     private static void ValidateExtras(DirectoryInfo directory)
     {
+        if((directory.Attributes & FileAttributes.ReparsePoint)!=0)throw new InvalidDataException("Linked export content is forbidden: "+directory.Name);
         foreach(var item in directory.EnumerateFileSystemInfos())
         {
             if((item.Attributes & FileAttributes.ReparsePoint)!=0) throw new InvalidDataException("Linked export content is forbidden: "+item.Name);

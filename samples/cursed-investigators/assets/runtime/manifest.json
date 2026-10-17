@@ -1,0 +1,447 @@
+{
+  "format": 1,
+  "pillow": "12.3.0",
+  "method": "premultiplied RGBA Lanczos; preserved source scans",
+  "assets": [
+    {
+      "id": "journal-captures",
+      "source": "journal/front-capture-log.png",
+      "sourceSha256": "08ea6cfc676d74702d7f2aaafcee96b2b82e4673aaa0526439f2612be6f03d94",
+      "path": "runtime/journal-captures.png",
+      "size": [
+        988,
+        1600
+      ],
+      "sha256": "f9c303853a56d60b122db7121bf908c9ed9f39e45fd4ebc4962cba8e1d205524"
+    },
+    {
+      "id": "journal-observations",
+      "source": "journal/back-observation-log.png",
+      "sourceSha256": "442b8efc262184ccc4d69d0ba0b246ccd919c7c8aa4aad4666266c349b420748",
+      "path": "runtime/journal-observations.png",
+      "size": [
+        986,
+        1600
+      ],
+      "sha256": "be97f808aa761351d0b872ed85cb59ab6d1ba966e8171b2ffbc249f710872262"
+    },
+    {
+      "id": "reference-turn",
+      "source": "cards/reference/fronts/turn-sequence.png",
+      "sourceSha256": "ec3a6a7ef15fcd05d7228c299672b9c703fc91b31169ca84833a099f5d2294e6",
+      "path": "runtime/reference-turn.png",
+      "size": [
+        614,
+        1024
+      ],
+      "sha256": "a1e2a38699454a3fbf3cb4bbf2cf37e7972f5baa22fa5e8c87e9162d42dc19d4"
+    },
+    {
+      "id": "reference-back",
+      "source": "cards/reference/backs/shared.png",
+      "sourceSha256": "6ec531b311461ea36592f9af60ecda4725d0e34fde98e6f4a9e333acd3879d6b",
+      "path": "runtime/reference-back.png",
+      "size": [
+        602,
+        1024
+      ],
+      "sha256": "2fd7a8137315112afc2a0d5cbeddd30608eb073d40b39decb877f9b605cadcc1"
+    },
+    {
+      "id": "character-celeste",
+      "source": "cards/characters/fronts/celeste.png",
+      "sourceSha256": "d006ba1df26d50203ad45fd4f2f19d30ff8495ec465667579508045f0fb84ea7",
+      "path": "runtime/character-celeste.png",
+      "size": [
+        1449,
+        843
+      ],
+      "sha256": "315ad00e6cfe651fca713caf2bf5c591b27c00c2c544fbcf081c9c57094a10c8"
+    },
+    {
+      "id": "character-eleanor",
+      "source": "cards/characters/fronts/eleanor.png",
+      "sourceSha256": "f85af828d586f7fbab3969968154606261fa9213df9227f1ea824abc2054d27b",
+      "path": "runtime/character-eleanor.png",
+      "size": [
+        1447,
+        840
+      ],
+      "sha256": "1af02e127dab29eaf5fd9dd817a18efb7b98c79a90700c520b0ae3786fb8c2d3"
+    },
+    {
+      "id": "character-leland",
+      "source": "cards/characters/fronts/leland.png",
+      "sourceSha256": "2d7e955baa6e0d92549d247abe5c80bc6516beecafb277e1fd2c4784d842d69e",
+      "path": "runtime/character-leland.png",
+      "size": [
+        1447,
+        840
+      ],
+      "sha256": "36571c8bc1f418f6b7051f8eb0afab157639c3433afbc2db68365b279b69b64c"
+    },
+    {
+      "id": "character-back",
+      "source": "cards/characters/backs/shared.png",
+      "sourceSha256": "34aca460ef37e4a1d34d971600dba09c3ba1977f7c0c7cf3d70f0f11b2507470",
+      "path": "runtime/character-back.png",
+      "size": [
+        594,
+        1024
+      ],
+      "sha256": "9b7a58ffb59ed93809b602ac018d59dc2f1ddd54109be844d66e8ded623ad077"
+    },
+    {
+      "id": "profession-reluctant-medium",
+      "source": "cards/professions/fronts/reluctant-medium.png",
+      "sourceSha256": "5b355ea0e0706a2457aae119cd6ad167cae22bb92891412f89dc4f08d6bd5941",
+      "path": "runtime/profession-reluctant-medium.png",
+      "size": [
+        1438,
+        848
+      ],
+      "sha256": "60d67ceb315e165de2b6abb071441ee75a0e74979075c3f3c3422a71777f0e10"
+    },
+    {
+      "id": "profession-former-detective",
+      "source": "cards/professions/fronts/former-detective.png",
+      "sourceSha256": "7299d8e428c6439049d553c9eb27f0112aa2f1bcf1aa129aba1ff4eaa8453b65",
+      "path": "runtime/profession-former-detective.png",
+      "size": [
+        1444,
+        848
+      ],
+      "sha256": "03b79dbe88ec87646b72d1be54898809ed3b91240814bb7018ae729b4be08d5e"
+    },
+    {
+      "id": "profession-paranormal-investigator",
+      "source": "cards/professions/fronts/paranormal-investigator.png",
+      "sourceSha256": "efd51fd410b6e779d3afe8dcd5cce482f7e674e481936da156d522076e5175a9",
+      "path": "runtime/profession-paranormal-investigator.png",
+      "size": [
+        1439,
+        845
+      ],
+      "sha256": "6a17dff50b528d2f60bfa2b33483f827e4ab88a32f0a48b3c307057936e70533"
+    },
+    {
+      "id": "profession-back",
+      "source": "cards/professions/backs/shared.png",
+      "sourceSha256": "92c53d7f2cf30b3779d9a066908de9bc24ea56b0b86e0c12d6beddbd76ca8786",
+      "path": "runtime/profession-back.png",
+      "size": [
+        602,
+        1024
+      ],
+      "sha256": "2f31d966feaec47999859dfee7c7c48a2aa179db4a959fb279594ad46db18766"
+    },
+    {
+      "id": "object-001",
+      "source": "cards/cursed-objects/fronts/001.png",
+      "sourceSha256": "ff09a46c53187814dc36d10d6a4893f1f2f6a6237a72bf0c6c086e7fa14f56a9",
+      "path": "runtime/object-001.png",
+      "size": [
+        606,
+        1024
+      ],
+      "sha256": "9cb6d09c4ef1f243e704be6e4c16a37827dff5ed36a092c96c669d86d6a75bb7"
+    },
+    {
+      "id": "object-002",
+      "source": "cards/cursed-objects/fronts/002.png",
+      "sourceSha256": "a56bf8fa4fe52442a0b30dc1cef290895ca5fb0bab620d31e63d6d3bcdbde4b8",
+      "path": "runtime/object-002.png",
+      "size": [
+        593,
+        1024
+      ],
+      "sha256": "631995e69a81f817d776ef7bd3eb81fb277c2421515f8ffdcb09f3a1d611c436"
+    },
+    {
+      "id": "object-003",
+      "source": "cards/cursed-objects/fronts/003.png",
+      "sourceSha256": "76ebcd1e02eb61d1aa227a5d4032d69b32c4c6adb86a30f55a995826455f8d60",
+      "path": "runtime/object-003.png",
+      "size": [
+        603,
+        1024
+      ],
+      "sha256": "9820616a70162bc716003f10fdf67a02ae5107e23fbdee53e1575c7a14e70817"
+    },
+    {
+      "id": "object-004",
+      "source": "cards/cursed-objects/fronts/004.png",
+      "sourceSha256": "7b8f1e1d386a53fb6481e968ada39f41ef28f9ad814b810ddc1c65a680043f06",
+      "path": "runtime/object-004.png",
+      "size": [
+        604,
+        1024
+      ],
+      "sha256": "240cd90caf96514ff71a307c38690e679e10a1a0d689d025c0904093cf77a713"
+    },
+    {
+      "id": "object-005",
+      "source": "cards/cursed-objects/fronts/005.png",
+      "sourceSha256": "422e47b23a9a29811e538031dd8cd8d57693e5dcf5f1671565396b3c0035422a",
+      "path": "runtime/object-005.png",
+      "size": [
+        603,
+        1024
+      ],
+      "sha256": "74b847e43a4c6db0e8065644350d32234fd9f8a1345804d866749cfd7d5d7588"
+    },
+    {
+      "id": "object-006",
+      "source": "cards/cursed-objects/fronts/006.png",
+      "sourceSha256": "898e0dc1b33a59a8e5f969d8ea93a19f44a2b9822b305b720c2583501b67f598",
+      "path": "runtime/object-006.png",
+      "size": [
+        602,
+        1024
+      ],
+      "sha256": "cc84e1e3f194353b6a424d049f8799606e6fd12cb3ba55238f7ede5fa333bb47"
+    },
+    {
+      "id": "object-007",
+      "source": "cards/cursed-objects/fronts/007.png",
+      "sourceSha256": "936ae67a1700f0abd78150a8c7a0c8caca57f575ed84c56cd82c054911930338",
+      "path": "runtime/object-007.png",
+      "size": [
+        601,
+        1024
+      ],
+      "sha256": "b8bae4dc0577a963c0d77bd9019b74fa74bd332c1dbca19298f071f91c51463d"
+    },
+    {
+      "id": "object-008",
+      "source": "cards/cursed-objects/fronts/008.png",
+      "sourceSha256": "1a117a5b4b5c4bf8acc850e5bcac49541a034aac306e6081b2f03ee11e59d7ce",
+      "path": "runtime/object-008.png",
+      "size": [
+        602,
+        1024
+      ],
+      "sha256": "858c0e6b15ac87a91d59c38998eb71c566a1e0b5bc8d38f16feda6b2ed0d440f"
+    },
+    {
+      "id": "object-009",
+      "source": "cards/cursed-objects/fronts/009.png",
+      "sourceSha256": "069714d52f066a12f19c5adf777c583584517176c22753e554d1d602413cb0ab",
+      "path": "runtime/object-009.png",
+      "size": [
+        601,
+        1024
+      ],
+      "sha256": "3a6ee9b004c68847eefaa8511eefc4e9783503a23501bdace3ab0c913972a5b4"
+    },
+    {
+      "id": "object-010",
+      "source": "cards/cursed-objects/fronts/010.png",
+      "sourceSha256": "06ab4e2457f9b1617666af0c151c57b4b2189788931e9891bf89ef48c3404365",
+      "path": "runtime/object-010.png",
+      "size": [
+        602,
+        1024
+      ],
+      "sha256": "d4f6cb3ab09f987ffdb305f44cc4498a3819a9bb95bb5d142a8b74418cc50b6a"
+    },
+    {
+      "id": "object-011",
+      "source": "cards/cursed-objects/fronts/011.png",
+      "sourceSha256": "0625f34bfc3eb1b3d82f51fd78b7dedbf0843d36a2c5600c32779dea25b49033",
+      "path": "runtime/object-011.png",
+      "size": [
+        603,
+        1024
+      ],
+      "sha256": "941c94e3cac1469c52094312496962c4c413e595a262785923031b308e9c31c0"
+    },
+    {
+      "id": "object-012",
+      "source": "cards/cursed-objects/fronts/012.png",
+      "sourceSha256": "3a54047ca4dee20de89a4db3db81c13f0c5811c1b53887295e45ba24ce418d8d",
+      "path": "runtime/object-012.png",
+      "size": [
+        600,
+        1024
+      ],
+      "sha256": "f254489a2eb4eb7925a1ef7474e24934fbea1e273bac91388786056987cc6dc4"
+    },
+    {
+      "id": "object-013",
+      "source": "cards/cursed-objects/fronts/013.png",
+      "sourceSha256": "89d441a2e8a5fb86f2f424bdef143a2eb4c9706394f6a7075dbffba18b23ae6b",
+      "path": "runtime/object-013.png",
+      "size": [
+        603,
+        1024
+      ],
+      "sha256": "f9b601f7537035bed68adccdd95d77e6ff2b43a7d42452cd915ed4867b82f1f6"
+    },
+    {
+      "id": "object-014",
+      "source": "cards/cursed-objects/fronts/014.png",
+      "sourceSha256": "d16cc26f50c0f7697aaacdc588547e30e8b3f81a0877a656f8b15141237d6cf1",
+      "path": "runtime/object-014.png",
+      "size": [
+        601,
+        1024
+      ],
+      "sha256": "299eb140d951939a0af4556ae7c95114914a98af0ac20cb48d70af0ecccdf7a6"
+    },
+    {
+      "id": "object-back",
+      "source": "cards/cursed-objects/backs/shared.png",
+      "sourceSha256": "1381548bdd6c5bce53eee1970df33cecab4754c8300bf472622d41369705ce9e",
+      "path": "runtime/object-back.png",
+      "size": [
+        601,
+        1024
+      ],
+      "sha256": "06cf55f10aa813365e251b782c47a9d75865f4ddd10a3d4786336031fbe8d0bb"
+    },
+    {
+      "id": "spirit-poltergeist",
+      "source": "cards/spirits/fronts/level-1/poltergeist.png",
+      "sourceSha256": "93e848bab4df1fee3b9a9659c7b34cd6921c738631876cc2ae46d29664cb6b97",
+      "path": "runtime/spirit-poltergeist.png",
+      "size": [
+        601,
+        1024
+      ],
+      "sha256": "4a0410d4b0e771fec332ccc02f3559fc7437f137e9418544e49617b149767a2a"
+    },
+    {
+      "id": "spirit-revenant",
+      "source": "cards/spirits/fronts/level-1/revenant.png",
+      "sourceSha256": "d41646e50e716ece377ff858736638c1db7bbc44f4a33d937e0419aabbb0a2d1",
+      "path": "runtime/spirit-revenant.png",
+      "size": [
+        592,
+        1024
+      ],
+      "sha256": "4ac5bd63d89496e00e685fc5a0cf2cc375ce9e20b6237a78b28c8dec3aa202f4"
+    },
+    {
+      "id": "spirit-phantasm",
+      "source": "cards/spirits/fronts/level-1/phantasm.png",
+      "sourceSha256": "1b297655709d211ff3f2092c66abff7309666f53aa6e2e6cbb289c355a267f10",
+      "path": "runtime/spirit-phantasm.png",
+      "size": [
+        601,
+        1024
+      ],
+      "sha256": "51d00304389f901a573db4ffd0f1510080672f9a544f0d99422ccd698a2afc6a"
+    },
+    {
+      "id": "spirit-apparition",
+      "source": "cards/spirits/fronts/level-1/apparition.png",
+      "sourceSha256": "a483cddc46c2a07cd8db08646c3bcb60d9512cb87420b0e7d31afdaa88714878",
+      "path": "runtime/spirit-apparition.png",
+      "size": [
+        601,
+        1024
+      ],
+      "sha256": "3563fe41421bcf67dd33b98cf0d047fa46e7fec472466a28b753310666fe4a6d"
+    },
+    {
+      "id": "spirit-wraith",
+      "source": "cards/spirits/fronts/level-2/wraith.png",
+      "sourceSha256": "887fcf2ba602af1697e663fb8909ab9e0b5bedd14f9b640cd393e0e89cc823df",
+      "path": "runtime/spirit-wraith.png",
+      "size": [
+        599,
+        1024
+      ],
+      "sha256": "5dd2ee5b0a8704a0d0042372c6f62f3f888bc8d242fe43f9afe017fb9c873454"
+    },
+    {
+      "id": "spirit-banshee",
+      "source": "cards/spirits/fronts/level-2/banshee.png",
+      "sourceSha256": "7dce59a94d1b8f828d8e00b7c2fa13ab4c5b49d7f9fdb260f8c510684e6d3f03",
+      "path": "runtime/spirit-banshee.png",
+      "size": [
+        592,
+        1024
+      ],
+      "sha256": "ed3f19ea0a8b0c2370af5c42474a44d8a0ccc9a29a8da61f2b66a490881d1cf8"
+    },
+    {
+      "id": "spirit-specter",
+      "source": "cards/spirits/fronts/level-2/specter.png",
+      "sourceSha256": "541ff8e2818d887eae8a99ebf8746e9e2327b0e6100d0912f0b10f73960c2ceb",
+      "path": "runtime/spirit-specter.png",
+      "size": [
+        598,
+        1024
+      ],
+      "sha256": "77c075b4bc6af9aeea96bb92e4fec662badddd27a7e154452156a73fb9839227"
+    },
+    {
+      "id": "spirit-drowned",
+      "source": "cards/spirits/fronts/level-2/drowned.png",
+      "sourceSha256": "5f8083ae3d10c427dc808a88d7145d46801dd81c470c615a1bee9710b59c0629",
+      "path": "runtime/spirit-drowned.png",
+      "size": [
+        602,
+        1024
+      ],
+      "sha256": "db53871b4dcfa38f542b6d30732f5016566752c9e545886e6b2e5036ac3eccc7"
+    },
+    {
+      "id": "spirit-ghost",
+      "source": "cards/spirits/fronts/level-3/ghost.png",
+      "sourceSha256": "627ad70f0c8c1afe5c8b5b7ddb2f0f27ef96b8e9c1a35784b816861d2c02cf08",
+      "path": "runtime/spirit-ghost.png",
+      "size": [
+        600,
+        1024
+      ],
+      "sha256": "9b38ddb67cb9b2e460a1d5c6abc60b04c74e4c1a8caa8df9f97eae5825bfdc8a"
+    },
+    {
+      "id": "spirit-shade",
+      "source": "cards/spirits/fronts/level-3/shade.png",
+      "sourceSha256": "69a08524bc61815644fd94f535d280bf401d9379b3994e58e43290898cadec2f",
+      "path": "runtime/spirit-shade.png",
+      "size": [
+        594,
+        1024
+      ],
+      "sha256": "d8ce8b77ab81f83aac084d581979dbdd8418a36b1fa44756134554209f6600e1"
+    },
+    {
+      "id": "spirit-ghoul",
+      "source": "cards/spirits/fronts/level-3/ghoul.png",
+      "sourceSha256": "0aee735035bebde8112613b76080168825cd60fdc6af9c70936d98c76763bbeb",
+      "path": "runtime/spirit-ghoul.png",
+      "size": [
+        603,
+        1024
+      ],
+      "sha256": "6678143a9c7232f11158f84e967418c8a09f1a15b55e4b8c28fa2070818b6e80"
+    },
+    {
+      "id": "spirit-evil-spirit",
+      "source": "cards/spirits/fronts/level-3/evil-spirit.png",
+      "sourceSha256": "a0492836dc5cfa3d2720349a024a43b9450e684f3cf129cbca4636d6758c8bd1",
+      "path": "runtime/spirit-evil-spirit.png",
+      "size": [
+        602,
+        1024
+      ],
+      "sha256": "74273e6eafb5b95446fd493eb6d5e72008a344bf379fd50814c3991d065cb232"
+    },
+    {
+      "id": "spirit-back",
+      "source": "cards/spirits/backs/shared.png",
+      "sourceSha256": "7de62af688291e85afc730e0568d1b7fe62f53b39931e14fbe9b31c208b61ab4",
+      "path": "runtime/spirit-back.png",
+      "size": [
+        601,
+        1024
+      ],
+      "sha256": "757ed5298f96fdbcbe0c4abd596c8c3a68ccac22bdf44cbfe7289fcbeb9d7d5e"
+    }
+  ]
+}

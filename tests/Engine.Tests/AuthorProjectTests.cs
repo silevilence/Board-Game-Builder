@@ -55,7 +55,7 @@ public static class AuthorProjectTests
     public static void Documentation()
     {
         var documents=AuthorDocuments.Installed(AuthorHost.Builtins);
-        Check.That(documents.Count==10 && documents.All(d=>d.Markdown.Length>100));
+        Check.That(documents.Count==11 && documents.All(d=>d.Markdown.Length>100));
         var root=Path.Combine(Path.GetTempPath(),"bgb-docs-"+Guid.NewGuid());
         try
         {
@@ -552,3 +552,5 @@ public static class AuthorProjectTests
         finally {Directory.Delete(root,true);}
     }
 }
+
+
