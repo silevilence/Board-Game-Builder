@@ -1,0 +1,34 @@
+{
+  "animationRetry": {
+    "success": true,
+    "error": null,
+    "checks": [
+      "edit-apply-undo-redo-save-reopen-panel-rebuild",
+      "real-preview-two-enable-disable-cycles",
+      "failed-preview-and-document-switch-cleanup"
+    ]
+  },
+  "documents": {
+    "success": true,
+    "error": null
+  },
+  "animationFirst": {
+    "success": false,
+    "error": "System.IO.IOException: Module save incomplete: 无法删除要被替换的文件。\r\n   at BoardGame.Editor.ModuleDocument.Save(String destination) in C:\\code\\dotnet\\Board-Game-Builder\\src\\Editor.Core\\ModuleDocument.cs:line 109\r\n   at BoardGame.Editor.DocumentWorkspace.Save() in C:\\code\\dotnet\\Board-Game-Builder\\src\\Editor.Core\\DocumentWorkspace.cs:line 91\r\n   at BoardGame.Editor.AnimationVerification.<>c__DisplayClass0_0.<<Create>b__0>d.MoveNext() in C:\\code\\dotnet\\Board-Game-Builder\\src\\Editor\\AnimationVerification.cs:line 33",
+    "checks": []
+  },
+  "player": {
+    "success": true,
+    "error": null,
+    "checks": [
+      "title-mode-character-profession-navigation-and-preview",
+      "stable-viewport-during-action-submission",
+      "local-profession-menu-and-escape-without-authority-change",
+      "board-only-actions-without-side-or-bottom-tray",
+      "real-player-deal-and-encounter-rendering",
+      "journal-pages-and-reference-window-without-game-actions",
+      "resized-window-rendering"
+    ],
+    "devices": 0
+  }
+}

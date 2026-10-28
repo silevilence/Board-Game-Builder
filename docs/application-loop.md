@@ -111,3 +111,9 @@ FreeCell 原来由 classic 样式硬编码的标题、区域说明和皇冠已�
 `BoardGame.Interaction` 承接指针状态、快捷键、牌桌动作菜单和原意图解析，不引用 Runtime、Lua 或任何图形实现。`board.interaction` 消费可信宿主绑定的 `board.submit`：接口只接受版本和命令，没有选择其他席位的参数。两项服务要求安装目录授予 `board.input`，普通展示插件不能取得提交能力；观察和回放只绑定投影，不注册提交目标。
 
 每个输入连接使用单调序号，重复或倒序输入被拒绝；忙碌时收到的输入被消费而不排队。提交前核对投影版本和活动状态，实际会话再次在串行入口检查版本，防止两个视口重复推进。PlayerSession 与 LocalTableSession 使用正式交互插件，最后仍进入唯一 PlaySession update 驱动。关闭输入插件取消尚未完成的提交，关闭会话不发布迟到帧。原 PlayerSession.Resolve 保留为旧调用的显式适配，算法位于独立模块。
+
+## 通用动画和分页
+
+`Presentation.Core` 提供无 UI／桌游依赖的 `TimelineCurve`、`TimelinePlayback`、已解析页内容和 `PageNavigator`。`Presentation.Avalonia.PageShelf` 只接收通用资源、页背景和已解析文字，负责缩放排版、分页、常驻页及独立参考窗口；没有实体查找或表达式执行。页刷新保持各面板页码，结构变化须重建，关闭会释放全部图片和子窗口。
+
+原 AnimationLibrary／DocumentLibrary 作者格式保持不变。`SceneAnimationPlayer` 解析授权场景中的触发计数和实体绑定，交给通用插值；隐藏目标不产生绘制，隐藏来源不参与位移。`DocumentProjection` 在桌游层解析可见属性，再把文字交给通用页面。交互视口使用展示时钟，暂停模拟或等待输入不会冻结已开始的展示动画；停止视口会重置动画和释放页资源，不执行新的命令。资源库改变会清除旧播放和曲线缓存。

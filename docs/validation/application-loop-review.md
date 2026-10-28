@@ -94,3 +94,9 @@
 独立 `BoardGame.Interaction.Tests` 通过：重复／倒序序号、忙碌输入消费、旧版本、双连接旧帧、只读拒绝、展示无提交权限、关闭取消、重复抬起与失焦／忙碌清理。既有 `interaction freecell-shortcuts board-actions local-table` 通过，FreeCell 真实 seed 1 动作链仍完整通关。整解构建零警告、零错误。
 
 实际 Player UNO 完成所有人数与热座／分屏，咒物调查员通过动画时输入禁止、牌桌单次提交、局部菜单取消和视口尺寸稳定。独立 Player `--verify-local` 的 quick-cards／sealed-auction、纯真人／混合 CPU、热座／分屏八种组合全部完成。结果见 [board-input-probes.json](board-input-probes.json)。联机适配仍由后续单独任务接入，原意图解析适配继续可用。
+
+## 动画与分页通用部分
+
+`Presentation.Tests` 在无桌游／UI 依赖的项目中验证插值、时间边界、7／16／33／100 ms 取样、页码和面板切换。`Presentation.Avalonia.Tests` 仅引用通用页面库，实际建立 Avalonia 页面，验证文本排版、刷新保页、结构替换拒绝及释放，并核对程序集无 Kernel／Runtime／View.Abstractions 引用。View.Tests 的旧授权字段、终局阅读、字体和清理测试继续通过。
+
+`animation-runtime resource-documents animation-author` 验证旧格式、隐藏实体与属性、触发重置、最终姿态、包和作者草稿。实际咒物调查员 Player 的发牌、牌桌、日志分页和参考窗口通过；Editor 的运行文档探针及动画预览两轮启停、保存重开、失败和切换清理通过。动画探针首次在测试副本保存 animations.json 时返回 Windows“无法删除要被替换的文件”；未发现只读属性，简单替换测试正常，相同探针原样重试通过。未更改文件属性／权限，也未改作者写入算法；首次失败保留在原始结果中，不能据此宣称从未发生保存错误。结果见 [presentation-probes.json](presentation-probes.json)。最终整解构建零警告、零错误。

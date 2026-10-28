@@ -416,6 +416,17 @@
           "Resources.Abstractions": "[0.3.0, )"
         }
       },
+      "presentation.avalonia": {
+        "type": "Project",
+        "dependencies": {
+          "Avalonia.Desktop": "[12.1.1, )",
+          "Presentation.Core": "[0.3.0, )",
+          "Resources.Abstractions": "[0.3.0, )"
+        }
+      },
+      "presentation.core": {
+        "type": "Project"
+      },
       "rendering.abstractions": {
         "type": "Project",
         "dependencies": {
@@ -451,7 +462,8 @@
       "view.abstractions": {
         "type": "Project",
         "dependencies": {
-          "Kernel.Abstractions": "[0.3.0, )"
+          "Kernel.Abstractions": "[0.3.0, )",
+          "Presentation.Core": "[0.3.0, )"
         }
       },
       "view.monogame": {
@@ -461,6 +473,7 @@
           "Avalonia.Themes.Fluent": "[12.1.1, )",
           "BoardGame.Interaction": "[0.3.0, )",
           "BoardGame.Presentation": "[0.3.0, )",
+          "Presentation.Avalonia": "[0.3.0, )",
           "Rendering.Avalonia": "[0.3.0, )",
           "Rendering.WindowsDX": "[0.3.0, )",
           "View.Abstractions": "[0.3.0, )"
