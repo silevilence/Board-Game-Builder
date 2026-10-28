@@ -8,3 +8,5 @@ using BoardGame.Runtime;
 [assembly:TypeForwardedTo(typeof(RuntimePluginScope))]
 [assembly:TypeForwardedTo(typeof(IAuthoritySession))]
 [assembly:TypeForwardedTo(typeof(SessionFault))]
+
+[assembly:TypeForwardedTo(typeof(InteractionIntent))]

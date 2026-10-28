@@ -105,3 +105,9 @@ CordiSharp 0.2.0 的不同根共用 pump。RuntimeHost 将图形 dispatch 放到
 `BoardGame.Presentation` 的 `board.render` 只依赖 `board.visual-source` 和 `render.target`，无权威提交、Lua、CPU 或图形实现引用。可信适配将现场、回放或远程 `ISeatProjection` 与资源组合为只读 `BoardVisual`；图形线程在当前帧内开放 `IDrawingTarget`。平台视口允许显式替换整组展示贡献，默认 Paint 回调也通过同一 render 阶段执行。`InteractiveTable` 使用正式插件组合，截图使用相同绘制链路，不运行 update。
 
 FreeCell 原来由 classic 样式硬编码的标题、区域说明和皇冠已迁入 `samples/freecell/board.json`，通过资源别名 `board.presentation` 显式声明。格式 1 的 captions 支持文字、位置、字号、颜色和可选可见实体锚点；隐藏锚点不产生文字。旧快照仍可绘制牌桌，但不再由引擎凭样式补出这些专属文字；需要保留标题时，显式加入资源声明并重新打包／生成快照，内容身份随之改变。规则、动作及原有回放算法不变，历史记录不得静默套用新指纹。
+
+## 独立交互与提交权限
+
+`BoardGame.Interaction` 承接指针状态、快捷键、牌桌动作菜单和原意图解析，不引用 Runtime、Lua 或任何图形实现。`board.interaction` 消费可信宿主绑定的 `board.submit`：接口只接受版本和命令，没有选择其他席位的参数。两项服务要求安装目录授予 `board.input`，普通展示插件不能取得提交能力；观察和回放只绑定投影，不注册提交目标。
+
+每个输入连接使用单调序号，重复或倒序输入被拒绝；忙碌时收到的输入被消费而不排队。提交前核对投影版本和活动状态，实际会话再次在串行入口检查版本，防止两个视口重复推进。PlayerSession 与 LocalTableSession 使用正式交互插件，最后仍进入唯一 PlaySession update 驱动。关闭输入插件取消尚未完成的提交，关闭会话不发布迟到帧。原 PlayerSession.Resolve 保留为旧调用的显式适配，算法位于独立模块。

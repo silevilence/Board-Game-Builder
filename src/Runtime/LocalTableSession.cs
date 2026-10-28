@@ -16,12 +16,23 @@ public sealed class LocalTableSession : IDisposable
     private string? pending;
     private long revision;
     private volatile bool disposed;
+    private readonly Dictionary<string,(RuntimeHost Host,IBoardInteraction Input)> inputs=[];
+    private long inputSequence;
     public LocalTableFrame Frame {get;private set;}
     public LocalTableSession(LoadedModule module,uint seed,IReadOnlyDictionary<string,string> controllers,LocalTableMode mode)
     {
         if(module.Initial.Seats.Any(s=>!controllers.ContainsKey(s.Id))) throw new ArgumentException("Every seat requires a controller.");
         humans=module.Initial.Seats.Where(s=>controllers[s.Id]=="human").Select(s=>s.Id).ToArray();
         this.mode=mode;session=new PlaySession(module,seed,controllers);Frame=Read();
+        try
+        {
+            foreach(var seat in humans)
+            {
+                var host=BoardInteractionPlugin.StartAsync(new InputTarget(this,seat)).GetAwaiter().GetResult();
+                inputs.Add(seat,(host,host.Service<IBoardInteraction>(BoardInteractionPlugin.Capability)));
+            }
+        }
+        catch {foreach(var input in inputs.Values)input.Host.Dispose();session.Dispose();throw;}
     }
     private LocalTableFrame Read()
     {
@@ -65,16 +76,27 @@ public sealed class LocalTableSession : IDisposable
         }
         finally {gate.Release();}
     }
-    public async Task<CommandResult> SubmitAsync(long expected,string seat,InteractionIntent intent)
+    public Task<CommandResult> SubmitAsync(long expected,string seat,InteractionIntent intent)=>inputs.TryGetValue(seat,out var input)
+        ?input.Input.SubmitAsync(Interlocked.Increment(ref inputSequence),expected,intent):Task.FromResult(new CommandResult(0,false,"stale-or-inactive"));
+    private sealed class InputTarget(LocalTableSession owner,string seat) : IBoardInteractionTarget
     {
-        await gate.WaitAsync();
+        public InteractionFrame Read()
+        {
+            var frame=owner.Frame;var view=frame.Views.FirstOrDefault(v=>v.View.Seat==seat);
+            return new(frame.Revision,view?.Actions ?? [],!owner.disposed && view!=null && !frame.Cpu && !frame.Ended && frame.Fault==null);
+        }
+        public Task<CommandResult> SubmitAsync(long revision,Command command,CancellationToken cancellation)=>owner.SubmitCommandAsync(revision,seat,command,cancellation);
+    }
+    private async Task<CommandResult> SubmitCommandAsync(long expected,string seat,Command command,CancellationToken cancellation)
+    {
+        await gate.WaitAsync(cancellation);
         try
         {
             var view=Frame.Views.FirstOrDefault(v=>v.View.Seat==seat);
             if(disposed || expected!=revision || view==null || view.Actions.Count==0 || Frame.Cpu || Frame.Ended)
                 return new(0,false,"stale-or-inactive");
             var previous=session.CurrentSeat;
-            var result=await session.SubmitHumanAsync(seat,PlayerSession.Resolve(view.Actions,intent));
+            var result=await session.SubmitHumanAsync(seat,command,cancellation);
             if(!disposed) {if(previous!=session.CurrentSeat) {active=null;pending=null;}revision++;await Refresh();}return result;
         }
         finally {gate.Release();}
@@ -90,5 +112,5 @@ public sealed class LocalTableSession : IDisposable
         }
         finally {gate.Release();}
     }
-    public void Dispose() {disposed=true;session.Dispose();Frame=new(++revision,null,[],false,true);}
+    public void Dispose() {disposed=true;foreach(var input in inputs.Values)input.Host.Dispose();session.Dispose();Frame=new(++revision,null,[],false,true);}
 }

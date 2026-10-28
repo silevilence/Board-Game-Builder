@@ -1,0 +1,133 @@
+{
+  "showcase": {
+    "success": true,
+    "results": [
+      {
+        "settings": "all presets, last human seat, all CPU, cancel"
+      },
+      {
+        "atlas": true,
+        "faces": 53,
+        "textures": 1
+      },
+      {
+        "preset": "4 人",
+        "finished": true,
+        "renders": 15,
+        "textures": 1
+      },
+      {
+        "preset": "5 人",
+        "finished": true,
+        "renders": 13,
+        "textures": 1
+      },
+      {
+        "preset": "6 人",
+        "finished": true,
+        "renders": 13,
+        "textures": 1
+      },
+      {
+        "mode": "HotSeat",
+        "finished": true,
+        "curtains": 20,
+        "renders": 13
+      },
+      {
+        "mode": "SplitScreen",
+        "finished": true,
+        "curtains": 0,
+        "renders": 18
+      },
+      {
+        "allCpu": true,
+        "observations": 107
+      }
+    ]
+  },
+  "cursed": {
+    "success": true,
+    "error": null,
+    "checks": [
+      "title-mode-character-profession-navigation-and-preview",
+      "board-click-blocked-during-deal",
+      "stable-viewport-during-action-submission",
+      "local-profession-menu-and-escape-without-authority-change",
+      "board-only-actions-without-side-or-bottom-tray",
+      "real-player-deal-and-encounter-rendering",
+      "journal-pages-and-reference-window-without-game-actions",
+      "resized-window-rendering"
+    ],
+    "devices": 0
+  },
+  "local": {
+    "success": true,
+    "results": [
+      {
+        "module": "quick-cards",
+        "mode": "HotSeat",
+        "mixed": false,
+        "renders": 5,
+        "curtains": 6,
+        "success": true
+      },
+      {
+        "module": "quick-cards",
+        "mode": "HotSeat",
+        "mixed": true,
+        "renders": 4,
+        "curtains": 3,
+        "success": true
+      },
+      {
+        "module": "sealed-auction",
+        "mode": "HotSeat",
+        "mixed": false,
+        "renders": 6,
+        "curtains": 4,
+        "success": true
+      },
+      {
+        "module": "sealed-auction",
+        "mode": "HotSeat",
+        "mixed": true,
+        "renders": 6,
+        "curtains": 3,
+        "success": true
+      },
+      {
+        "module": "quick-cards",
+        "mode": "SplitScreen",
+        "mixed": false,
+        "renders": 7,
+        "curtains": 0,
+        "success": true
+      },
+      {
+        "module": "quick-cards",
+        "mode": "SplitScreen",
+        "mixed": true,
+        "renders": 4,
+        "curtains": 0,
+        "success": true
+      },
+      {
+        "module": "sealed-auction",
+        "mode": "SplitScreen",
+        "mixed": false,
+        "renders": 15,
+        "curtains": 0,
+        "success": true
+      },
+      {
+        "module": "sealed-auction",
+        "mode": "SplitScreen",
+        "mixed": true,
+        "renders": 15,
+        "curtains": 0,
+        "success": true
+      }
+    ]
+  }
+}

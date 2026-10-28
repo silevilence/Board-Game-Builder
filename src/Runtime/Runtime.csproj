@@ -1,5 +1,6 @@
 <Project Sdk="Microsoft.NET.Sdk">
   <ItemGroup>
+    <ProjectReference Include="../BoardGame.Interaction/BoardGame.Interaction.csproj" />
     <ProjectReference Include="../Application.Core/Application.Core.csproj" />
     <ProjectReference Include="../Resources.Core/Resources.Core.csproj" />
     <ProjectReference Include="../BoardGame.Core/BoardGame.Core.csproj" />

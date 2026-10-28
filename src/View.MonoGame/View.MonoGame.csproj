@@ -1,6 +1,7 @@
 <Project Sdk="Microsoft.NET.Sdk">
   <PropertyGroup><TargetFramework>net10.0-windows</TargetFramework></PropertyGroup>
   <ItemGroup>
+    <ProjectReference Include="../BoardGame.Interaction/BoardGame.Interaction.csproj" />
     <ProjectReference Include="../View.Abstractions/View.Abstractions.csproj" />
     <ProjectReference Include="../BoardGame.Presentation/BoardGame.Presentation.csproj" />
     <ProjectReference Include="../Rendering.WindowsDX/Rendering.WindowsDX.csproj" />

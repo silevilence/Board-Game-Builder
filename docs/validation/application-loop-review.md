@@ -88,3 +88,9 @@
 `BoardGame.Presentation.Tests` 验证现场／回放／远程授权投影绘制相同、隐藏牌与隐藏文字锚点不泄漏、替换展示提供者、无界面跳过展示及多帧 render 不推进权威。程序集没有 Runtime、Lua、MonoGame 或 Avalonia 实现依赖。`view board-actions freecell-shortcuts` 通过，真实 WindowsDX 双视口探针在新 render 组合下通过，最终设备、后端及原生窗口均为零。
 
 实际 Player UNO 探针完成 4／5／6 人、热座、分屏及全 CPU 观察，53 张牌仍共用一张纹理。咒物调查员真实视口完成开局、动画、遭遇、牌桌操作、菜单、文档和缩放，截图人工查看无布局回退，退出设备为零。FreeCell seed 1 两次通关，累计 120 次双击、64 次点击和 4 次动作；每次重开终局一致。原始结果见 `board-render-probes.json`。全解构建零警告、零错误。FreeCell 标题改为显式资源的兼容要求见应用循环文档；未重录最初基线。
+
+## 桌游交互插件
+
+独立 `BoardGame.Interaction.Tests` 通过：重复／倒序序号、忙碌输入消费、旧版本、双连接旧帧、只读拒绝、展示无提交权限、关闭取消、重复抬起与失焦／忙碌清理。既有 `interaction freecell-shortcuts board-actions local-table` 通过，FreeCell 真实 seed 1 动作链仍完整通关。整解构建零警告、零错误。
+
+实际 Player UNO 完成所有人数与热座／分屏，咒物调查员通过动画时输入禁止、牌桌单次提交、局部菜单取消和视口尺寸稳定。独立 Player `--verify-local` 的 quick-cards／sealed-auction、纯真人／混合 CPU、热座／分屏八种组合全部完成。结果见 [board-input-probes.json](board-input-probes.json)。联机适配仍由后续单独任务接入，原意图解析适配继续可用。
