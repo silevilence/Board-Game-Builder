@@ -9,17 +9,17 @@ public interface IDebugSession : IDisposable { Task<DebugReply> SendAsync(DebugR
 // A local author control surface; ordinary PlayerSession never exposes it to players or scripts.
 public sealed class DebugSession : IDisposable
 {
-    private readonly IGameSession session;
+    private readonly PlaySession session;
     private string observer;
     private bool authority;
     private long revision;
     private bool paused;
     private SessionRecording? replay;
     private GameEngine? restored;
-    public DebugSession(LoadedModule module,uint seed,IReadOnlyDictionary<string,string> controllers,string observer)
+    public DebugSession(LoadedModule module,uint seed,IReadOnlyDictionary<string,string> controllers,string observer,CancellationToken cancellation=default)
     {
         if(!module.Initial.Seats.Any(s=>s.Id==observer)) throw new ArgumentException("Unknown observer seat");
-        session=new PlaySession(module,seed,controllers); this.observer=observer;
+        session=new PlaySession(module,seed,controllers,cancellation:cancellation); this.observer=observer;
     }
     public DebugReply Handle(DebugRequest request)
     {
@@ -42,14 +42,14 @@ public sealed class DebugSession : IDisposable
                 session.StepCpu(); revision++; break;
             case "reload": session.ReloadScripts(request.Module ?? throw new InvalidDataException("Missing script version")); revision++; message="脚本已切换，下条命令生效。"; break;
             case "recording": recording=session.ExportRecording(); break;
-            case "pause": paused=true; break;
+            case "pause": paused=true;session.Driver.Paused=true; break;
             case "resume":
-                paused=false; if(replay!=null) revision++;
+                paused=false;session.Driver.Paused=false; if(replay!=null) revision++;
                 else if(session.Fault?.Code is "flow-budget" or "flow-cancelled" or "flow-restored") {session.ResumeFlow();revision++;}
                 replay=null; restored=null; break;
             case "replay":
                 var history=request.Recording ?? session.ExportRecording(); var engine=history.Replay();
-                _=engine.Project(observer); restored=engine; replay=history; paused=true; revision++;
+                _=engine.Project(observer); restored=engine; replay=history; paused=true;session.Driver.Paused=true; revision++;
                 return ReplayReply("日志回放；继续可返回当前试玩。");
             default: throw new InvalidDataException("Unknown local debug operation: "+request.Operation);
         }
@@ -67,7 +67,7 @@ public sealed class InProcessDebugSession : IDebugSession
     private readonly DebugSession session;
     private readonly SemaphoreSlim gate=new(1);
     private bool disposed;
-    public InProcessDebugSession(LoadedModule module,uint seed,IReadOnlyDictionary<string,string> controllers,string observer) => session=new(module,seed,controllers,observer);
+    public InProcessDebugSession(LoadedModule module,uint seed,IReadOnlyDictionary<string,string> controllers,string observer,CancellationToken cancellation=default) => session=new(module,seed,controllers,observer,cancellation);
     public async Task<DebugReply> SendAsync(DebugRequest request)
     {
         await gate.WaitAsync();

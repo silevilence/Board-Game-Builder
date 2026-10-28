@@ -15,7 +15,8 @@ public static class BoardUpdateTests
         {
             var module=GameRuntime.Load("samples/"+name);
             var controllers=module.Initial.Seats.ToDictionary(s=>s.Id,_=>"cpu");
-            using var reference=new PlaySession(module,42,controllers);
+            using var referenceHost=RuntimeComposition.Start(module,42,controllers,500);
+            var reference=referenceHost.Service<IGameSession>("session");
             while(reference.StepCpu()) { }
             Check.That(reference.Ended && reference.Fault==null,name);
             foreach(var rate in new[]{20,120})
@@ -99,7 +100,8 @@ public static class BoardUpdateTests
             for(var draw=0;draw<8;draw++) {first.Render(TimeSpan.FromSeconds(.01));second.Render(TimeSpan.FromSeconds(.02));}
             Check.That(count==session.ExportAuthorityLog().EntryCount);
         }
-        using var reference=new PlaySession(module,42,controllers);while(reference.StepCpu()) { }
+        using var referenceHost=RuntimeComposition.Start(module,42,controllers,500);
+        var reference=referenceHost.Service<IGameSession>("session");while(reference.StepCpu()) { }
         Check.That(draws>0 && Wire.Json(session.ExportAuthorityLog())==Wire.Json(reference.ExportAuthorityLog()),"Viewports changed board results");
     }
     private sealed class SlowCpu(TaskCompletionSource reached,TaskCompletionSource release) : ICpuDecisionProvider

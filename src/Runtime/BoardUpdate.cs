@@ -49,6 +49,8 @@ internal sealed partial class LocalGameSession
         }
         try
         {
+            using var ruleCancellation=(rules as ICancellableExecution)?.Enter(cancellation);
+            using var cpuCancellation=(cpu as ICancellableExecution)?.Enter(cancellation);
             var results=new List<BoardUpdateResult>();
             var revision=branch.Authority.ExportLog().EntryCount;
             foreach(var input in inputs)

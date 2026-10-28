@@ -1,0 +1,83 @@
+{
+  "date": "2026-10-28",
+  "editorCommand": "src/Editor/bin/Debug/net10.0-windows/Editor.exe --verify-session samples/quick-cards <output>",
+  "playerCommand": "src/Player/bin/Release/net10.0-windows/Player.exe --verify-local <output>",
+  "editor": {
+    "success": true,
+    "errors": [],
+    "commands": [
+      7,
+      7
+    ],
+    "devices": 0
+  },
+  "player": {
+    "success": true,
+    "results": [
+      {
+        "module": "quick-cards",
+        "mode": "HotSeat",
+        "mixed": false,
+        "renders": 6,
+        "curtains": 6,
+        "success": true
+      },
+      {
+        "module": "quick-cards",
+        "mode": "HotSeat",
+        "mixed": true,
+        "renders": 4,
+        "curtains": 3,
+        "success": true
+      },
+      {
+        "module": "sealed-auction",
+        "mode": "HotSeat",
+        "mixed": false,
+        "renders": 7,
+        "curtains": 4,
+        "success": true
+      },
+      {
+        "module": "sealed-auction",
+        "mode": "HotSeat",
+        "mixed": true,
+        "renders": 6,
+        "curtains": 3,
+        "success": true
+      },
+      {
+        "module": "quick-cards",
+        "mode": "SplitScreen",
+        "mixed": false,
+        "renders": 7,
+        "curtains": 0,
+        "success": true
+      },
+      {
+        "module": "quick-cards",
+        "mode": "SplitScreen",
+        "mixed": true,
+        "renders": 4,
+        "curtains": 0,
+        "success": true
+      },
+      {
+        "module": "sealed-auction",
+        "mode": "SplitScreen",
+        "mixed": false,
+        "renders": 6,
+        "curtains": 0,
+        "success": true
+      },
+      {
+        "module": "sealed-auction",
+        "mode": "SplitScreen",
+        "mixed": true,
+        "renders": 16,
+        "curtains": 0,
+        "success": true
+      }
+    ]
+  }
+}

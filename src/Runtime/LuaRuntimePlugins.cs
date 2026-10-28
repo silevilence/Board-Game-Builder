@@ -41,8 +41,10 @@ internal sealed class CommandRuleProvider : IRuleProvider, IGameRules
         {Content=new(["actions"],(config,startup)=>_=new CommandRuleProvider(config))};
 }
 
-internal sealed class LuaRuleProvider : IRuleProvider, IDisposable
+internal sealed class LuaRuleProvider : IRuleProvider, IDisposable,ICancellableExecution
 {
+    private readonly InvocationCancellation calls=new();
+    public IDisposable Enter(CancellationToken token)=>calls.Enter(token);
     private readonly LuaWorkerSession worker=new();
     private readonly uint seed;
     public IGameRules Rules {get;private set;}
@@ -50,26 +52,28 @@ internal sealed class LuaRuleProvider : IRuleProvider, IDisposable
     {
         this.seed=seed;
         var script=RuntimeDefinition.Configuration<LuaScript>(definition,"lua.rules");
-        Rules=new LuaRules(script.Source,script.Path,seed,worker);
+        Rules=new LuaRules(script.Source,script.Path,seed,worker,()=>calls.Token);
     }
     public IGameRules Prepare(GameDefinition definition)
     {
         var script=RuntimeDefinition.Configuration<LuaScript>(definition,"lua.rules");
         using var probe=new LuaWorkerSession();
         probe.Invoke(script.Source,script.Path,"__validate_rules","{}",seed);
-        return new LuaRules(script.Source,script.Path,seed,worker);
+        return new LuaRules(script.Source,script.Path,seed,worker,()=>calls.Token);
     }
     public void Apply(IGameRules rules)=>Rules=rules;
     public void Dispose()=>worker.Dispose();
 }
 
-internal sealed class LuaCpuProvider(GameDefinition definition) : ICpuDecisionProvider, IDisposable
+internal sealed class LuaCpuProvider(GameDefinition definition) : ICpuDecisionProvider, IDisposable,ICancellableExecution
 {
+    private readonly InvocationCancellation calls=new();
+    public IDisposable Enter(CancellationToken token)=>calls.Enter(token);
     private readonly LuaWorkerSession worker=new();
     private LuaScript script=RuntimeDefinition.Configuration<LuaScript>(definition,"lua.cpu");
     public string Entry=>script.Path+":decide";
     public Command Decide(SeatView view,IReadOnlyList<ActionOffer> actions,uint random)=>
-        Wire.Read<Command>(worker.Invoke(script.Source,script.Path,"decide",Wire.Json(new {view,actions}),random));
+        Wire.Read<Command>(worker.Invoke(script.Source,script.Path,"decide",Wire.Json(new {view,actions}),random,calls.Token));
     public Action Prepare(GameDefinition definition)
     {
         var candidate=RuntimeDefinition.Configuration<LuaScript>(definition,"lua.cpu");

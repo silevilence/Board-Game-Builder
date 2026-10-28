@@ -8,7 +8,7 @@ public sealed record LocalTableFrame(long Revision,string? WaitingFor,IReadOnlyL
 // The authority stays behind this boundary. Each displayed view is a detached seat projection.
 public sealed class LocalTableSession : IDisposable
 {
-    private readonly IGameSession session;
+    private readonly PlaySession session;
     private readonly string[] humans;
     private readonly LocalTableMode mode;
     private readonly SemaphoreSlim gate=new(1);
@@ -74,7 +74,7 @@ public sealed class LocalTableSession : IDisposable
             if(disposed || expected!=revision || view==null || view.Actions.Count==0 || Frame.Cpu || Frame.Ended)
                 return new(0,false,"stale-or-inactive");
             var previous=session.CurrentSeat;
-            var result=await Task.Run(()=>session.SubmitHuman(seat,PlayerSession.Resolve(view.Actions,intent)));
+            var result=await session.SubmitHumanAsync(seat,PlayerSession.Resolve(view.Actions,intent));
             if(!disposed) {if(previous!=session.CurrentSeat) {active=null;pending=null;}revision++;await Refresh();}return result;
         }
         finally {gate.Release();}
@@ -85,7 +85,7 @@ public sealed class LocalTableSession : IDisposable
         try
         {
             if(disposed || !Frame.Cpu || Frame.Ended) return false;
-            var result=await Task.Run(session.StepCpu);
+            var result=await session.StepCpuAsync();
             if(!disposed) {revision++;await Refresh();}return result;
         }
         finally {gate.Release();}

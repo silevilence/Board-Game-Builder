@@ -13,7 +13,7 @@ public sealed class ExternalDebugSession : IDebugSession
     private readonly SemaphoreSlim gate=new(1);
     private bool disposed;
     private ExternalDebugSession(Process process) { this.process=process; errors=process.StandardError.ReadToEndAsync(); }
-    public static async Task<ExternalDebugSession> Launch(string executable,LoadedModule module,uint seed,Dictionary<string,string> controllers,string observer,bool headless=false)
+    public static async Task<ExternalDebugSession> Launch(string executable,LoadedModule module,uint seed,Dictionary<string,string> controllers,string observer,bool headless=false,CancellationToken cancellation=default)
     {
         if(!File.Exists(executable)) throw new FileNotFoundException("找不到 Player，请先构建 Player 或选择官方调试发行物。",executable);
         var info=new ProcessStartInfo(Path.GetFullPath(executable)) {UseShellExecute=false,CreateNoWindow=true,RedirectStandardInput=true,RedirectStandardOutput=true,RedirectStandardError=true,WorkingDirectory=AppContext.BaseDirectory};
@@ -21,8 +21,8 @@ public sealed class ExternalDebugSession : IDebugSession
         var process=Process.Start(info) ?? throw new IOException("Player failed to start"); var client=new ExternalDebugSession(process);
         try
         {
-            await process.StandardInput.WriteLineAsync(Wire.Json(new DebugStart(1,module,seed,controllers,observer))); await process.StandardInput.FlushAsync();
-            _=await client.Read(); return client;
+            await process.StandardInput.WriteLineAsync(Wire.Json(new DebugStart(1,module,seed,controllers,observer)).AsMemory(),cancellation); await process.StandardInput.FlushAsync(cancellation);
+            _=await client.Read(cancellation); return client;
         }
         catch {client.Dispose();throw;}
     }
@@ -38,9 +38,9 @@ public sealed class ExternalDebugSession : IDebugSession
         catch(Exception error) { Dispose(); throw new IOException("独立 Player 调试失败："+error.Message,error); }
         finally {gate.Release();}
     }
-    private async Task<DebugReply> Read()
+    private async Task<DebugReply> Read(CancellationToken cancellation=default)
     {
-        using var timeout=new CancellationTokenSource(TimeSpan.FromSeconds(30));
+        using var timeout=CancellationTokenSource.CreateLinkedTokenSource(cancellation);timeout.CancelAfter(TimeSpan.FromSeconds(30));
         var line=await process.StandardOutput.ReadLineAsync(timeout.Token);
         if(line==null) throw new IOException("Player 已退出："+await errors);
         if(line.Length>32_000_000) throw new InvalidDataException("Debug reply too large");

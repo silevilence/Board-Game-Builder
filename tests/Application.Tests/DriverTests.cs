@@ -24,7 +24,19 @@ internal static class DriverTests
         await InputAndRenderFault();
         await CloseDuringInitialization();
         await CancellationDuringPublication();
+        await InputWithdrawal();
         Console.WriteLine("PASS application scheduling, clocks, input, cancellation and scoped lifecycle");
+    }
+    private static async Task InputWithdrawal()
+    {
+        var count=-1;
+        var plugin=Updating("input",(frame,_)=>{count=frame.Inputs.Count;return ValueTask.FromResult<Action?>(null);});
+        await using var host=await RuntimeHost.StartAsync(Plan(plugin),[plugin],[]);
+        var first=host.Driver.Enqueue("command",new byte[]{1});
+        Check(host.Driver.WithdrawInput(first) && !host.Driver.WithdrawInput(first),"Queued input withdrawal failed");
+        await host.Driver.AdvanceAsync(TimeSpan.FromMilliseconds(1));Check(count==0,"Withdrawn input was delivered");
+        var second=host.Driver.Enqueue("command",new byte[]{2});Check(second>first,"Sequence reused after withdrawal");
+        await host.Driver.AdvanceAsync(TimeSpan.FromMilliseconds(1));Check(count==1 && !host.Driver.WithdrawInput(second),"Consumed input was not isolated");
     }
     private static async Task CancellationDuringPublication()
     {

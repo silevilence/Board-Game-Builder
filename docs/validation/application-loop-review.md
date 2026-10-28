@@ -1,6 +1,6 @@
 # 小核心阶段调度验收
 
-日期：2026-10-28。记录阶段一各项的独立验收；桌游 update/render、Player／Editor 迁移和整组联合审核尚未完成。
+日期：2026-10-28。记录已完成任务的独立验收；通用 render、Player／Editor 能力拆分和整组联合审核尚未完成。
 
 - 迁移前基线与兼容矩阵见 [application-compatibility.md](application-compatibility.md)。七个示例、各三个固定种子共 21 局，提取宿主后再次运行 `application-baseline` 全部匹配原摘要。
 - `dotnet run --project tests/Application.Tests` 通过。该项目只引用 Application.Core，检查公共程序集不依赖 Kernel、Kernel.Abstractions、Editor 或 MonoGame。包含显式阶段顺序、独立依赖图、顺序环、跨阶段／作用域错误、纯接口提供者、可变／固定逻辑时间、追赶限额、暂停／单步、输入复制与去重、两视口、绘制故障隔离、准备失败与提交故障的不同展示策略、慢任务关闭后的迟到结果、重复启停、启动失败清理、子作用域初始化中关闭及设备／实例／视口逆序释放。
@@ -54,3 +54,11 @@
 `board-update` 将 quick-cards、flow-cards、wasm-counter、sealed-auction 在每秒 20／120 次逻辑调用下跑至终局，与原同步提交的完整权威日志和状态比较一致。双观察视口每步各绘制八次不增加命令。验证等待真人空转、快速重复输入／过期版本、慢 CPU 提供者期间旧投影可读、并发直接推进拒绝、流程预算暂停续行及 update 之间的脚本重载／回放。
 
 后续 update 阶段分别注入取消和失败，确认桌游候选已算完但尚未发布时仍可绘制旧状态，失败后权威记录逐字不变。独立内核用例覆盖历史分支隔离、重复发布、旧版本拒绝及发布后保留句柄失效。Application.Tests 增加发布首动作触发取消的用例，确认不会留下半帧。`board-kernel-plugin runtime-recording flow-progression flow-protection flow-restoration runtime-host reload` 回归通过；真实宿主、实际图形与整组性能验收仍待后续任务。
+
+## 独立、嵌入与无界面宿主
+
+所有 PlaySession 命令与 CPU 推进切换到同一驱动后，`application-baseline` 的 21 局全部匹配原固定数据，未重录基线。Application.Tests、`session-driver board-update debug-play debug-external timeline observers batch flow-protection flow-restoration local-table` 通过；验证每局时钟隔离、暂停／单步、取消输入撤回及 Lua 调用取消后下一 tick 可继续。整解 Debug 构建与 Release Player 构建零警告、零错误。
+
+实际运行 Debug Editor 的 `--verify-session samples/quick-cards`，使用本轮 Release Player：内嵌和外部均完成 7 条命令，覆盖脚本重载／坏脚本保留、暂停／单步、观察席位与显式作者权限、面板重建、回放、迟到结果、进程失败及重启；退出设备数为 0。实际 Release Player 的 `--verify-local` 八种热座／分屏、纯真人／混合 CPU、quick-cards／sealed-auction 组合均通过。原始结果见 [application-host-probes.json](application-host-probes.json)。这些结果不替代后续通用渲染插件、非桌游宿主与干净 Windows 发行验收。
+
+延迟门槛仍为 1000 ms。本轮与基线及图形探针并行运行时一次达到 1185.6 ms；其他测试退出后独立复测八次为 98.7、515.4、169.5、162.9、53.0、498.8、177.2、154.0 ms，通过既有门槛。保留并行负载结果，不将其描述为独立基准。

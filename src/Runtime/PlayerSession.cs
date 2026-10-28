@@ -7,14 +7,14 @@ public sealed record SessionFrame(long Revision,SeatView View,IReadOnlyList<Acti
 // One owner for each PlaySession. UI code keeps the last immutable projection during worker execution.
 public sealed class PlayerSession : IDisposable
 {
-    private readonly IGameSession session;
+    private readonly PlaySession session;
     private readonly string observer;
     private int busy;
     private volatile bool stopped;
     public bool Busy => Volatile.Read(ref busy)!=0;
     public SessionFrame Frame { get; private set; }
     public string LastMessage { get; private set; }="";
-    private PlayerSession(IGameSession session,string observer)
+    private PlayerSession(PlaySession session,string observer)
     {
         this.session=session; this.observer=observer; Frame=ReadFrame(0);
     }
@@ -42,7 +42,7 @@ public sealed class PlayerSession : IDisposable
         {
             if(stopped || revision!=Frame.Revision || Frame.Cpu || Frame.View.Ended || Frame.Fault!=null) return new(0,false,"stale-or-inactive");
             var command=Resolve(Frame.Actions,intent);
-            var result=await Task.Run(()=>session.SubmitHuman(observer,command));
+            var result=await session.SubmitHumanAsync(observer,command);
             LastMessage=result.Accepted?"操作已提交":result.Reason=="rule-rejected"?"当前规则不允许此操作，请使用可用动作。":$"操作被拒绝：{result.Reason}";
             if(!stopped) Frame=await Task.Run(()=>ReadFrame(Frame.Revision+1));
             return result;
@@ -55,7 +55,7 @@ public sealed class PlayerSession : IDisposable
         try
         {
             if(stopped || !Frame.Cpu || Frame.View.Ended || Frame.Fault!=null) return false;
-            var result=await Task.Run(session.StepCpu);
+            var result=await session.StepCpuAsync();
             if(!stopped) Frame=await Task.Run(()=>ReadFrame(Frame.Revision+1));
             LastMessage=result?"CPU 已行动":"CPU 对局故障"; return result;
         }

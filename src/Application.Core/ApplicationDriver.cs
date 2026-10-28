@@ -41,6 +41,25 @@ internal sealed class ApplicationDriver : IApplicationDriver
         }
     }
     public Task AdvanceAsync(TimeSpan elapsed,CancellationToken cancellation=default)=>Start(elapsed,false,cancellation);
+    public long Enqueue(string kind,ReadOnlyMemory<byte> data)
+    {
+        lock(gate)
+        {
+            var next=checked(sequence+1);
+            Enqueue(new(next,kind,data));return next;
+        }
+    }
+    public bool WithdrawInput(long inputSequence)
+    {
+        lock(gate)
+        {
+            var retained=inputs.Where(i=>i.Sequence!=inputSequence).ToArray();
+            if(retained.Length==inputs.Count) return false;
+            inputs.Clear();queuedBytes=0;
+            foreach(var input in retained) {inputs.Enqueue(input);queuedBytes+=input.Data.Length;}
+            return true;
+        }
+    }
     public Task StepAsync(CancellationToken cancellation=default)=>Start(options.FixedStep ?? TimeSpan.FromTicks(TimeSpan.TicksPerSecond/60),true,cancellation);
     private Task Start(TimeSpan elapsed,bool step,CancellationToken cancellation)
     {

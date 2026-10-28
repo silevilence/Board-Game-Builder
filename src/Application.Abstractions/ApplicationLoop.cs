@@ -39,6 +39,8 @@ public interface IApplicationDriver : IAsyncDisposable
     TimeSpan DroppedTime {get;}
     bool Paused {get;set;}
     bool Enqueue(ApplicationInput input);
+    long Enqueue(string kind,ReadOnlyMemory<byte> data);
+    bool WithdrawInput(long sequence);
     Task AdvanceAsync(TimeSpan elapsed,CancellationToken cancellation=default);
     Task StepAsync(CancellationToken cancellation=default);
     Task StopAsync();
