@@ -8,6 +8,7 @@ using BoardGame.Runtime;
 namespace BoardGame.Rendering;
 
 public sealed record GraphicsConfiguration(RuntimeStartup Startup,IReadOnlyList<RuntimePluginDefinition> Catalog);
+public sealed record ViewportComposition(IReadOnlyList<RuntimePluginSelection> Plugins,IReadOnlyList<RuntimePluginDefinition> Catalog);
 
 // One selected backend per top-level window; leases belong to native viewports, not games.
 internal sealed class GraphicsWindowHost

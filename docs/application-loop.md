@@ -99,3 +99,9 @@ Editor 的 sessions 插件在工作线程创建内嵌会话，捕获当前模块
 现有 `DesktopViewport`／`TableRenderer` 暂作桌游调用的兼容适配：主题、牌桌画布和快捷键留在 View.MonoGame，设备操作已迁出。适配不会让图形后端按主题启用规则；完整桌游 render 与启动组合迁移分别验收。字体类型保留原命名空间及程序集转发。
 
 CordiSharp 0.2.0 的不同根共用 pump。RuntimeHost 将图形 dispatch 放到线程池发起，插件激活和资源释放以 Task 异步等待，避免 pump 同步等待 UI 时阻塞另一个根的同步内容加载。无 dispatch 的准备插件保持原执行方式；异步等待不会跳过资源释放，作用域关闭仍等待全部任务完成。
+
+## 独立桌游 render
+
+`BoardGame.Presentation` 的 `board.render` 只依赖 `board.visual-source` 和 `render.target`，无权威提交、Lua、CPU 或图形实现引用。可信适配将现场、回放或远程 `ISeatProjection` 与资源组合为只读 `BoardVisual`；图形线程在当前帧内开放 `IDrawingTarget`。平台视口允许显式替换整组展示贡献，默认 Paint 回调也通过同一 render 阶段执行。`InteractiveTable` 使用正式插件组合，截图使用相同绘制链路，不运行 update。
+
+FreeCell 原来由 classic 样式硬编码的标题、区域说明和皇冠已迁入 `samples/freecell/board.json`，通过资源别名 `board.presentation` 显式声明。格式 1 的 captions 支持文字、位置、字号、颜色和可选可见实体锚点；隐藏锚点不产生文字。旧快照仍可绘制牌桌，但不再由引擎凭样式补出这些专属文字；需要保留标题时，显式加入资源声明并重新打包／生成快照，内容身份随之改变。规则、动作及原有回放算法不变，历史记录不得静默套用新指纹。

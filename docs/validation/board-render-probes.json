@@ -1,0 +1,96 @@
+{
+  "showcase": {
+    "success": true,
+    "results": [
+      {
+        "settings": "all presets, last human seat, all CPU, cancel"
+      },
+      {
+        "atlas": true,
+        "faces": 53,
+        "textures": 1
+      },
+      {
+        "preset": "4 人",
+        "finished": true,
+        "renders": 12,
+        "textures": 1
+      },
+      {
+        "preset": "5 人",
+        "finished": true,
+        "renders": 18,
+        "textures": 1
+      },
+      {
+        "preset": "6 人",
+        "finished": true,
+        "renders": 23,
+        "textures": 1
+      },
+      {
+        "mode": "HotSeat",
+        "finished": true,
+        "curtains": 20,
+        "renders": 3
+      },
+      {
+        "mode": "SplitScreen",
+        "finished": true,
+        "curtains": 0,
+        "renders": 5
+      },
+      {
+        "allCpu": true,
+        "observations": 135
+      }
+    ]
+  },
+  "platform": {
+    "success": true,
+    "errors": [],
+    "screenshots": [
+      "C:\\code\\dotnet\\Board-Game-Builder\\.scratch\\application-loop\\board-render-platform.0.png",
+      "C:\\code\\dotnet\\Board-Game-Builder\\.scratch\\application-loop\\board-render-platform.1.png",
+      "C:\\code\\dotnet\\Board-Game-Builder\\.scratch\\application-loop\\board-render-platform.2.png"
+    ],
+    "input": [
+      "down",
+      "up",
+      "a",
+      "cancel",
+      "cancel"
+    ],
+    "devices": 0,
+    "backends": 0,
+    "nativeWindows": 0
+  },
+  "freecell": {
+    "ended": true,
+    "games": 2,
+    "maxInteractionMs": 856.7989,
+    "success": true,
+    "winners": [
+      "p1"
+    ],
+    "inputCounts": {
+      "action": 4,
+      "double-click": 120,
+      "click": 64
+    }
+  },
+  "cursed": {
+    "success": true,
+    "error": null,
+    "checks": [
+      "title-mode-character-profession-navigation-and-preview",
+      "stable-viewport-during-action-submission",
+      "local-profession-menu-and-escape-without-authority-change",
+      "board-only-actions-without-side-or-bottom-tray",
+      "real-player-deal-and-encounter-rendering",
+      "journal-pages-and-reference-window-without-game-actions",
+      "resized-window-rendering"
+    ],
+    "devices": 0
+  }
+}

@@ -17,7 +17,8 @@ public sealed class DesktopViewport : PlatformViewport
         var plugin=WindowsDxBackend.Plugin();
         return new(new RuntimeStartup(1,"desktop.graphics","1",[new(plugin.Id,plugin.Version,plugin.Api,JsonSerializer.SerializeToElement(new{}))]),[plugin]);
     }
-    public DesktopViewport():base(Configuration())
+    public DesktopViewport():this(null) { }
+    public DesktopViewport(ViewportComposition? presentation):base(Configuration(),presentation)
     {
         MapKey=TableKeys.Map;
         base.Paint=draw=>

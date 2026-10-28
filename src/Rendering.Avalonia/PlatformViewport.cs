@@ -17,6 +17,8 @@ public class PlatformViewport : NativeControlHost, IDisposable
     private RenderViewport? surface;
     private RuntimeHost? renderScope;
     private readonly GraphicsConfiguration configuration;
+    private readonly ViewportComposition? presentation;
+    private readonly DrawingTarget drawing=new();
     private GraphicsWindowHost? graphicsHost;
     private int generation;
     private TimeSpan lastFrame;
@@ -57,13 +59,15 @@ public class PlatformViewport : NativeControlHost, IDisposable
     public void SaveImage(string path)
     {
         if(surface==null || Frames==0) throw new InvalidOperationException("Viewport has not rendered yet");
-        using var stream=File.Create(path);surface.Capture(Frame(),draw=>Paint?.Invoke(draw),stream);
+        using var stream=File.Create(path);surface.Capture(Frame(),draw=>drawing.Present(draw,()=>renderScope!.Render(TimeSpan.Zero)),stream);
     }
 
-    public PlatformViewport(GraphicsConfiguration configuration)
+    public PlatformViewport(GraphicsConfiguration configuration,ViewportComposition? presentation=null)
     {
         this.configuration=configuration with {Startup=configuration.Startup with {
             Plugins=configuration.Startup.Plugins.Select(p=>p with {Configuration=p.Configuration.Clone()}).ToList()},Catalog=configuration.Catalog.ToArray()};
+        this.presentation=presentation==null?null:presentation with {
+            Plugins=presentation.Plugins.Select(p=>p with {Configuration=p.Configuration.Clone()}).ToArray(),Catalog=presentation.Catalog.ToArray()};
         procedure = ProcessMessage;
         Focusable=true;
         timer.Tick += (_, _) => Render();
@@ -130,11 +134,15 @@ public class PlatformViewport : NativeControlHost, IDisposable
             graphicsHost=GraphicsWindowHost.Acquire(TopLevel.GetTopLevel(this)!,configuration);
             var instance=await graphicsHost.Instance;
             if(disposed || current!=generation)return;
-            var draw=new RuntimePluginDefinition("platform.viewport","1",1,["render.target"],[RenderingPlugin.Capability],scope=>
-            {scope.Provide("render.target",this);scope.Render("draw",_=>surface!.Render(Frame(),context=>Paint?.Invoke(context)));})
+            var target=new RuntimePluginDefinition("platform.viewport","1",1,["render.target"],[RenderingPlugin.Capability],scope=>scope.Provide("render.target",drawing))
+                {Execution=new(HostMode.Graphical,RuntimeScope.Viewport)};
+            var callback=new RuntimePluginDefinition("render.callback","1",1,[],["render.target"],scope=>
+            {var output=scope.Service<IDrawingTarget>("render.target");scope.Render("draw",_=>output.Draw(draw=>Paint?.Invoke(draw)));})
                 {Execution=new(HostMode.Graphical,RuntimeScope.Viewport,[new("draw",ApplicationPhase.Render)])};
-            var startup=configuration.Startup with {Plugins=configuration.Startup.Plugins.Append(new BoardGame.Kernel.RuntimePluginSelection(draw.Id,draw.Version,draw.Api,System.Text.Json.JsonSerializer.SerializeToElement(new{}))).ToList()};
-            var next=await RuntimeHost.StartScopedAsync(startup,configuration.Catalog.Append(draw).ToArray(),[],HostMode.Graphical,
+            BoardGame.Kernel.RuntimePluginSelection Select(RuntimePluginDefinition p)=>new(p.Id,p.Version,p.Api,System.Text.Json.JsonSerializer.SerializeToElement(new{}));
+            var content=presentation ?? new ViewportComposition([Select(callback)],[callback]);
+            var startup=configuration.Startup with {Plugins=[..configuration.Startup.Plugins,Select(target),..content.Plugins]};
+            var next=await RuntimeHost.StartScopedAsync(startup,[..configuration.Catalog,target,..content.Catalog],[],HostMode.Graphical,
                 RuntimeScope.Viewport,instance,dispatch:GraphicsWindowHost.Dispatch);
             if(disposed || current!=generation) {await next.DisposeAsync();return;}
             renderScope=next;lastFrame=clock.Elapsed;timer.Start();
@@ -177,7 +185,7 @@ public class PlatformViewport : NativeControlHost, IDisposable
                 Zoom=Math.Max(.1f,Math.Min(width/canvasWidth,height/canvasHeight));
                 PanX=(width-canvasWidth*Zoom)/2; PanY=0;
             }
-            var now=clock.Elapsed;renderScope.Render(now-lastFrame);lastFrame=now;Frames++;Error=null;
+            var now=clock.Elapsed;surface!.Render(Frame(),context=>drawing.Present(context,()=>renderScope.Render(now-lastFrame)));lastFrame=now;Frames++;Error=null;
         }
         catch (Exception e) { Error = e.Message; ReleaseGraphics(); timer.Stop(); Input?.Invoke("error", 0, 0); }
     }

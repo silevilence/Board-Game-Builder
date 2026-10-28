@@ -7,7 +7,7 @@ from zipfile import ZipFile
 root = Path(__file__).resolve().parents[1] / 'samples' / 'freecell'
 root.mkdir(parents=True, exist_ok=True)
 (root / 'assets').mkdir(exist_ok=True)
-entities, resources = [], {'player.presentation': 'player.json'}
+entities, resources = [], {'player.presentation': 'player.json', 'board.presentation': 'board.json'}
 
 def component(kind, data):
     return {'type': kind, 'data': data}

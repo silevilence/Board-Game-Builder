@@ -2,6 +2,7 @@
   <PropertyGroup><TargetFramework>net10.0-windows</TargetFramework></PropertyGroup>
   <ItemGroup>
     <ProjectReference Include="../View.Abstractions/View.Abstractions.csproj" />
+    <ProjectReference Include="../BoardGame.Presentation/BoardGame.Presentation.csproj" />
     <ProjectReference Include="../Rendering.WindowsDX/Rendering.WindowsDX.csproj" />
     <ProjectReference Include="../Rendering.Avalonia/Rendering.Avalonia.csproj" />
   </ItemGroup>

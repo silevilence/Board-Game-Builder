@@ -7,6 +7,7 @@
     <Project Path="src/Application.Abstractions/Application.Abstractions.csproj" />
     <Project Path="src/Application.Core/Application.Core.csproj" />
     <Project Path="src/BoardGame.Core/BoardGame.Core.csproj" />
+    <Project Path="src/BoardGame.Presentation/BoardGame.Presentation.csproj" />
     <Project Path="src/Authoring/Authoring.csproj" />
     <Project Path="src/Cli/Cli.csproj" />
     <Project Path="src/Editor.Core/Editor.Core.csproj" />
@@ -37,6 +38,7 @@
   </Folder>
   <Folder Name="/tests/">
     <Project Path="tests/Application.Tests/Application.Tests.csproj" />
+    <Project Path="tests/BoardGame.Presentation.Tests/BoardGame.Presentation.Tests.csproj" />
     <Project Path="tests/Resources.Tests/Resources.Tests.csproj" />
     <Project Path="tests/Rendering.Tests/Rendering.Tests.csproj" />
     <Project Path="tests/Rendering.WindowsDX.Tests/Rendering.WindowsDX.Tests.csproj" />

@@ -1,9 +1,12 @@
 using Avalonia.Controls;
+using BoardGame.Runtime;
+using BoardGame.Rendering;
+using System.Text.Json;
 namespace BoardGame.View;
 
 public sealed class InteractiveTable : UserControl, IDisposable
 {
-    private readonly DesktopViewport viewport=new();
+    private readonly DesktopViewport viewport;
     private readonly TableInteraction input=new();
     private TableScene scene=new([],BoardGame.Kernel.ResourcePool.Empty);
     private readonly SceneAnimationPlayer animation=new();
@@ -24,37 +27,35 @@ public sealed class InteractiveTable : UserControl, IDisposable
     public event Action<string>? RenderingError;
     public InteractiveTable()
     {
+        RuntimePluginDefinition[] plugins=[BoardRenderPlugin.Input(new VisualSource(_=>ReadVisual())),BoardRenderPlugin.Create()];
+        viewport=new(new ViewportComposition(plugins.Select(p=>new BoardGame.Kernel.RuntimePluginSelection(p.Id,p.Version,p.Api,JsonSerializer.SerializeToElement(new{}))).ToArray(),plugins));
         var zoomIn=new Button {Content="放大 +"}; var zoomOut=new Button {Content="缩小 −"};
         zoomIn.Click+=(_,_)=>viewport.ChangeZoom(1.1f); zoomOut.Click+=(_,_)=>viewport.ChangeZoom(1/1.1f);
         controls.Children.Add(zoomIn); controls.Children.Add(zoomOut);
         var panel=new DockPanel(); DockPanel.SetDock(controls,Dock.Top); panel.Children.Add(controls); panel.Children.Add(viewport); Content=panel;
         input.Gesture+=g=> { viewport.ResetClickSequence(); Gesture?.Invoke(g); }; input.SelectionChanged+=()=>SelectionChanged?.Invoke();
         viewport.CanPeek=(x,y)=>InputEnabled && input.CanPeek(x,y);
-        viewport.Paint=r=>
-        {
-            var wasAnimating=animation.Busy;
-            var frame=animation.Frame(clock.Elapsed.TotalMilliseconds);
-            ScenePainter.Draw(r,frame,Selected,input.Target,input.Peeked);
-            if(wasAnimating!=animation.Busy) {UpdateInput();AnimationChanged?.Invoke();}
-            if(input.Dragging is {} dragging && scene.Items.FirstOrDefault(i=>i.Entity==dragging) is {} item)
-            {
-                var b=item.Bounds;
-                if(scene.ClassicCards)
-                {
-                    var group=scene.Items.Where(i=>i.Entity==dragging || item.Container!=null && i.Container==item.Container && i.Bounds.Y>b.Y);
-                    foreach(var card in group) ScenePainter.DrawCard(r,scene,card with {Bounds=card.Bounds with {X=card.Bounds.X+input.DeltaX,Y=card.Bounds.Y+input.DeltaY}},true);
-                    return;
-                }
-                r.Box(new((int)(b.X+input.DeltaX),(int)(b.Y+input.DeltaY),(int)b.Width,(int)b.Height),new Microsoft.Xna.Framework.Color(225,197,137,190));
-                r.Text(item.Label,(int)(b.X+input.DeltaX+4),(int)(b.Y+input.DeltaY+4),Microsoft.Xna.Framework.Color.Black);
-            }
-        };
         viewport.Input+=(kind,x,y)=>
         {
             if(kind=="error") { InputEnabled=false; RenderingError?.Invoke(viewport.Error ?? "Unknown graphics device error"); return; }
             Pointer(kind,x,y);
         };
         viewport.KeyPressed+=HandleShortcut;
+    }
+    private sealed class VisualSource(Func<RenderFrame,BoardVisual> read) : IBoardVisualSource
+    {public BoardVisual Read(RenderFrame frame)=>read(frame);}
+    private BoardVisual ReadVisual()
+    {
+        var wasAnimating=animation.Busy;
+        var frame=animation.Frame(clock.Elapsed.TotalMilliseconds);
+        if(wasAnimating!=animation.Busy) {UpdateInput();AnimationChanged?.Invoke();}
+        TableItem[] dragged=[];
+        if(input.Dragging is {} dragging && scene.Items.FirstOrDefault(i=>i.Entity==dragging) is {} item)
+        {
+            var group=scene.ClassicCards?scene.Items.Where(i=>i.Entity==dragging || item.Container!=null && i.Container==item.Container && i.Bounds.Y>item.Bounds.Y):[item];
+            dragged=group.Select(card=>card with {Bounds=card.Bounds with {X=card.Bounds.X+input.DeltaX,Y=card.Bounds.Y+input.DeltaY}}).ToArray();
+        }
+        return new(frame,Selected,input.Target,input.Peeked,dragged);
     }
     public void HandleShortcut(string key)
     {

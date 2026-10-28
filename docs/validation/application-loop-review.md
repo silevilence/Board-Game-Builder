@@ -82,3 +82,9 @@
 真实 Player 探针曾停在图集关闭后的同步内容加载。最小 `Application.Tests -- dispatch-isolation` 在修复前稳定失败：图形启动／释放的同步 UI dispatch 阻塞了 CordiSharp 0.2.0 的共享 pump。改为异步等待图形 dispatch 后，最小测试、完整 Application.Tests 与原 Player 探针均通过，临时诊断日志已移除。整解重新构建零警告、零错误。
 
 修复后 `cordi-dispatch application-baseline board-update session-driver runtime-host startup` 全部通过，21 局状态、日志、流程、投影与内容指纹仍匹配最初固定基线。
+
+## 桌游展示插件
+
+`BoardGame.Presentation.Tests` 验证现场／回放／远程授权投影绘制相同、隐藏牌与隐藏文字锚点不泄漏、替换展示提供者、无界面跳过展示及多帧 render 不推进权威。程序集没有 Runtime、Lua、MonoGame 或 Avalonia 实现依赖。`view board-actions freecell-shortcuts` 通过，真实 WindowsDX 双视口探针在新 render 组合下通过，最终设备、后端及原生窗口均为零。
+
+实际 Player UNO 探针完成 4／5／6 人、热座、分屏及全 CPU 观察，53 张牌仍共用一张纹理。咒物调查员真实视口完成开局、动画、遭遇、牌桌操作、菜单、文档和缩放，截图人工查看无布局回退，退出设备为零。FreeCell seed 1 两次通关，累计 120 次双击、64 次点击和 4 次动作；每次重开终局一致。原始结果见 `board-render-probes.json`。全解构建零警告、零错误。FreeCell 标题改为显式资源的兼容要求见应用循环文档；未重录最初基线。

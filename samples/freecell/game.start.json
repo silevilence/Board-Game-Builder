@@ -54,6 +54,10 @@
           {
             "path": "player.json",
             "name": "player.presentation"
+          },
+          {
+            "path": "board.json",
+            "name": "board.presentation"
           }
         ]
       }

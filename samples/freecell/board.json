@@ -1,0 +1,9 @@
+{
+  "format": 1,
+  "captions": [
+    { "text": "空 当", "anchor": "cell-1", "x": 0, "y": -25, "color": 10999470 },
+    { "text": "收 牌  ·  A → K", "anchor": "home-1", "x": 0, "y": -25, "color": 10999470 },
+    { "text": "♔", "anchor": "cell-4", "x": 116, "y": 20, "size": 52, "color": 13556381 },
+    { "text": "FREECELL", "anchor": "cell-4", "x": 112, "y": 86, "size": 12, "color": 10999470 }
+  ]
+}

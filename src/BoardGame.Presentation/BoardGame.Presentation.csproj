@@ -1,0 +1,7 @@
+<Project Sdk="Microsoft.NET.Sdk">
+  <ItemGroup>
+    <ProjectReference Include="../BoardGame.Core/BoardGame.Core.csproj" />
+    <ProjectReference Include="../View.Abstractions/View.Abstractions.csproj" />
+    <ProjectReference Include="../Rendering.Core/Rendering.Core.csproj" />
+  </ItemGroup>
+</Project>
