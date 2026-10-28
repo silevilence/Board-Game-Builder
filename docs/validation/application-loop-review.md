@@ -114,3 +114,9 @@
 Motion.Tests 通过正式目录／包加载、固定输入和 10／20／50／100 ms 调度一致性、目标反馈、暂停／单步、120 帧绘制不更新状态及真实 pump。deps.json 检查无桌游／Lua／WASM 实现。Motion.ViewTests 实际打开独立与双嵌入视口，经原生按键驱动连续运动；暂停仍绘制，关闭一个视口保留另一视口输入，失焦取消只影响自身。通用 ApplicationWindow 重复启停及加载中关闭通过，最终设备／后端／原生窗口计数全零。截图已查看，标题、目标、标记和反馈均正确。
 
 全解构建零警告零错误，WindowsDX 原有双视口契约和 FreeCell 完整快捷键通关回归通过。证据见 [motion-probes.json](motion-probes.json)。此时普通 Player 的统一能力入口仍由下一任务验收，最小宿主不替代该任务。
+
+## Player 外壳与本地席位
+
+Player.Hosting.Tests 在同一获准目录依次打开桌游、实时目录、实时包及再次桌游，实际输入推进实时实例，确认没有席位控件，逐次退出设备归零；缺提供者、冲突提供者和未显示窗口取消通过。通用宿主程序集引用检查无桌游、Runtime 或示例实现。
+
+真实 Player 的旧热座／分屏探针覆盖 quick-cards 与 sealed-auction、纯真人与混合 CPU 八种组合；外壳探针覆盖 freecell／island-settlers／quick-cards × Tools／Game 六种组合，以及取消设置、非法配置、混合席位、重开、经典牌桌热座、包内帮助和加载失败恢复。初次固定 80／160 ms 等待未获得首帧，串行复现后改为最多 5 秒等待明确首帧或绘制错误，所有组合通过；没有放宽规则、终局或资源断言。原始失败与通过结果均保存于 [player-host-probes.json](player-host-probes.json)。

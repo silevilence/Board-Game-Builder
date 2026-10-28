@@ -34,6 +34,8 @@
     <Project Path="src/Networking/Networking.csproj" />
     <Project Path="src/NetworkClient/NetworkClient.csproj" />
     <Project Path="src/Server/Server.csproj" />
+    <Project Path="src/Player.Board/Player.Board.csproj" />
+    <Project Path="src/Player.Hosting/Player.Hosting.csproj" />
     <Project Path="src/Player/Player.csproj" />
     <Project Path="src/Runtime/Runtime.csproj" />
     <Project Path="src/Resources.Abstractions/Resources.Abstractions.csproj" />
@@ -56,6 +58,7 @@
     <Project Path="tests/BoardGame.WasmHosting.Tests/BoardGame.WasmHosting.Tests.csproj" />
     <Project Path="tests/BoardGame.ScriptHosting.Tests/BoardGame.ScriptHosting.Tests.csproj" />
     <Project Path="tests/Presentation.Tests/Presentation.Tests.csproj" />
+    <Project Path="tests/Player.Hosting.Tests/Player.Hosting.Tests.csproj" />
     <Project Path="tests/Presentation.Avalonia.Tests/Presentation.Avalonia.Tests.csproj" />
     <Project Path="tests/BoardGame.Interaction.Tests/BoardGame.Interaction.Tests.csproj" />
     <Project Path="tests/Resources.Tests/Resources.Tests.csproj" />

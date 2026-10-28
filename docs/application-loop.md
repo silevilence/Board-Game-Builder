@@ -133,3 +133,9 @@ FreeCell 原来由 classic 样式硬编码的标题、区域说明和皇冠已�
 Sample.Motion 与 motion-lab 提供独立内容、update 和 application.view；ApplicationWindow、ApplicationViewport 只消费通用契约。ApplicationPump 每实例一份，固定步进由 Driver 负责，暂停完成会等待活动更新提交，单步一次固定逻辑时间。绘制从不可变快照读取，多个视口不创建多个 pump。平台输入带来源，失焦和关闭只取消该来源的持续按键。
 
 `dotnet run --project samples/Minimal.Player -- samples/motion-lab` 可手动运行；也接受正式数据包。最小宿主无需 Kernel、BoardGame.Core、Runtime、Lua 或 Wasmtime。窗口异步加载并保护关闭代次，先停止 pump，再释放视口和实例；玩法与文案均在示例程序集或内容。
+
+## Player 能力与界面
+
+Player.Hosting 不引用桌游、Runtime 默认组合或示例实现。安装入口显式登记 PlayerContribution，使用 CordiSharp 提供 IPlayerProvider；通用宿主读取有预算上限的入口提示，唯一匹配才创建界面，随后仍由对应正式 GameRuntime.Load 完整校验。入口提示不是可信内容，缺少或冲突的提供者不会尝试另一种解析器。快照格式的识别归对应提供者。
+
+Player.Board 承接原开局、种子、席位、控制方式、热座交接、分屏、授权展示、调试窗口及 CLI 兼容行为。Player 程序是安装组合根，同时提供桌游与实时体验；Minimal.Player 只装配实时能力并使用同一通用宿主，无桌游依赖。界面贡献自身不写入游戏启用列表，也不执行模拟；运行能力仍由 game.start.json 决定。每个窗口的贡献上下文保持到窗口关闭，取消未显示窗口也释放上下文。

@@ -19,6 +19,7 @@ public sealed class LocalBoard : UserControl,IDisposable
     internal LocalTableFrame Frame=>session.Frame;
     internal int LiveTables=>tables.Count;
     internal int RenderedFrames=>tables.Sum(t=>t.RenderedFrames);
+    internal string? RenderingFailure {get;private set;}
     internal bool ActionsVisible=>showActions;
     public static async Task<LocalBoard> Create(LoadedModule module,uint seed,IReadOnlyDictionary<string,string> controllers,LocalTableMode mode,bool showActions=true)
     {
@@ -76,7 +77,7 @@ public sealed class LocalBoard : UserControl,IDisposable
             var table=new InteractiveTable {InputEnabled=!seat.Cpu && !seat.View.Ended && seat.Fault==null && seat.Actions.Count>0};tables.Add(table);
             table.Show(TableScene.From(seat.View,module.Resources));panel.Children.Add(table);
             table.Gesture+=g=>_=Run(async ()=> {await session.SubmitAsync(frame.Revision,seat.View.Seat,new(g.Kind,g.Entity,g.Target,g.X,g.Y));});
-            table.RenderingError+=error=> {Clear();header.Children.Add(new TextBlock {Text=error});session.Dispose();};
+            table.RenderingError+=error=> {RenderingFailure=error;Clear();header.Children.Add(new TextBlock {Text=error});session.Dispose();};
         }
     }
     private async Task Run(Func<Task> action)

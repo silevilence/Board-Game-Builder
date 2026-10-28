@@ -6,9 +6,8 @@
   </PropertyGroup>
   <ItemGroup Condition="'$(EnableEditorDebug)' != 'true'"><Compile Remove="DebugPlayerWindow.cs" /></ItemGroup>
   <ItemGroup>
-    <ProjectReference Include="../Runtime/Runtime.csproj" />
-    <ProjectReference Include="../Networking/Networking.csproj" />
-    <ProjectReference Include="../View.MonoGame/View.MonoGame.csproj" />
+    <ProjectReference Include="../Player.Board/Player.Board.csproj" />
+    <ProjectReference Include="../../samples/Sample.Motion/Sample.Motion.csproj" />
   </ItemGroup>
   <Target Name="UseSeparateLuaWorkerDistribution" BeforeTargets="_HandleFileConflictsForPublish">
     <ItemGroup>

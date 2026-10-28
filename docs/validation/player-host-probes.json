@@ -1,0 +1,239 @@
+{
+  "player-host": {
+    "success": true,
+    "errors": [],
+    "checks": [
+      "same-player-board-realtime-package-and-repeat-no-seat-ui",
+      "unknown-and-ambiguous-provider-rejected",
+      "unshown-cancelled-window-releases-provider"
+    ],
+    "devices": 0,
+    "backends": 0,
+    "nativeWindows": 0
+  },
+  "player-local": {
+    "success": false,
+    "error": "System.Exception: Local GUI did not render/finish\r\n   at BoardGame.Player.LocalTableVerification.<>c__DisplayClass0_0.<<Create>b__0>d.MoveNext() in C:\\code\\dotnet\\Board-Game-Builder\\src\\Player.Board\\LocalTableVerification.cs:line 32",
+    "results": [
+      {
+        "module": "quick-cards",
+        "mode": "HotSeat",
+        "mixed": false,
+        "renders": 1,
+        "curtains": 6,
+        "success": true
+      },
+      {
+        "module": "quick-cards",
+        "mode": "HotSeat",
+        "mixed": true,
+        "renders": 4,
+        "curtains": 3,
+        "success": true
+      }
+    ]
+  },
+  "player-shell": {
+    "success": false,
+    "error": "System.InvalidOperationException: Human projection did not render\r\n   at BoardGame.Player.PlayerWindow.<VerifyShell>g__Check|38_0(Boolean pass, String error) in C:\\code\\dotnet\\Board-Game-Builder\\src\\Player.Board\\PlayerWindow.Verification.cs:line 13\r\n   at BoardGame.Player.PlayerWindow.VerifyShell(String output) in C:\\code\\dotnet\\Board-Game-Builder\\src\\Player.Board\\PlayerWindow.Verification.cs:line 49",
+    "results": [
+      {
+        "module": "freecell",
+        "shell": "Tools",
+        "title": "空当接龙 · 对局 #42",
+        "success": true
+      },
+      {
+        "module": "freecell",
+        "shell": "Game",
+        "title": "空当接龙 · 对局 #42",
+        "success": true
+      },
+      {
+        "module": "island-settlers",
+        "shell": "Tools",
+        "title": "群岛开拓 · 对局 #42",
+        "success": true
+      },
+      {
+        "module": "island-settlers",
+        "shell": "Game",
+        "title": "群岛开拓 · 对局 #42",
+        "success": true
+      },
+      {
+        "module": "quick-cards",
+        "shell": "Tools",
+        "title": "quick-cards · 对局 #42",
+        "success": true
+      },
+      {
+        "module": "quick-cards",
+        "shell": "Game",
+        "title": "quick-cards · 对局 #42",
+        "success": true
+      }
+    ]
+  },
+  "player-local-serial": {
+    "success": false,
+    "error": "System.Exception: Local GUI did not render/finish\r\n   at BoardGame.Player.LocalTableVerification.<>c__DisplayClass0_0.<<Create>b__0>d.MoveNext() in C:\\code\\dotnet\\Board-Game-Builder\\src\\Player.Board\\LocalTableVerification.cs:line 32",
+    "results": []
+  },
+  "player-shell-serial": {
+    "success": false,
+    "error": "System.InvalidOperationException: Human projection did not render\r\n   at BoardGame.Player.PlayerWindow.<VerifyShell>g__Check|38_0(Boolean pass, String error) in C:\\code\\dotnet\\Board-Game-Builder\\src\\Player.Board\\PlayerWindow.Verification.cs:line 13\r\n   at BoardGame.Player.PlayerWindow.VerifyShell(String output) in C:\\code\\dotnet\\Board-Game-Builder\\src\\Player.Board\\PlayerWindow.Verification.cs:line 49",
+    "results": [
+      {
+        "module": "freecell",
+        "shell": "Tools",
+        "title": "空当接龙 · 对局 #42",
+        "success": true
+      },
+      {
+        "module": "freecell",
+        "shell": "Game",
+        "title": "空当接龙 · 对局 #42",
+        "success": true
+      },
+      {
+        "module": "island-settlers",
+        "shell": "Tools",
+        "title": "群岛开拓 · 对局 #42",
+        "success": true
+      },
+      {
+        "module": "island-settlers",
+        "shell": "Game",
+        "title": "群岛开拓 · 对局 #42",
+        "success": true
+      },
+      {
+        "module": "quick-cards",
+        "shell": "Tools",
+        "title": "quick-cards · 对局 #42",
+        "success": true
+      },
+      {
+        "module": "quick-cards",
+        "shell": "Game",
+        "title": "quick-cards · 对局 #42",
+        "success": true
+      }
+    ]
+  },
+  "player-local-wait": {
+    "success": true,
+    "results": [
+      {
+        "module": "quick-cards",
+        "mode": "HotSeat",
+        "mixed": false,
+        "renders": 7,
+        "curtains": 6,
+        "success": true
+      },
+      {
+        "module": "quick-cards",
+        "mode": "HotSeat",
+        "mixed": true,
+        "renders": 4,
+        "curtains": 3,
+        "success": true
+      },
+      {
+        "module": "sealed-auction",
+        "mode": "HotSeat",
+        "mixed": false,
+        "renders": 7,
+        "curtains": 4,
+        "success": true
+      },
+      {
+        "module": "sealed-auction",
+        "mode": "HotSeat",
+        "mixed": true,
+        "renders": 6,
+        "curtains": 3,
+        "success": true
+      },
+      {
+        "module": "quick-cards",
+        "mode": "SplitScreen",
+        "mixed": false,
+        "renders": 7,
+        "curtains": 0,
+        "success": true
+      },
+      {
+        "module": "quick-cards",
+        "mode": "SplitScreen",
+        "mixed": true,
+        "renders": 4,
+        "curtains": 0,
+        "success": true
+      },
+      {
+        "module": "sealed-auction",
+        "mode": "SplitScreen",
+        "mixed": false,
+        "renders": 16,
+        "curtains": 0,
+        "success": true
+      },
+      {
+        "module": "sealed-auction",
+        "mode": "SplitScreen",
+        "mixed": true,
+        "renders": 16,
+        "curtains": 0,
+        "success": true
+      }
+    ]
+  },
+  "player-shell-wait": {
+    "success": true,
+    "results": [
+      {
+        "module": "freecell",
+        "shell": "Tools",
+        "title": "空当接龙 · 对局 #42",
+        "success": true
+      },
+      {
+        "module": "freecell",
+        "shell": "Game",
+        "title": "空当接龙 · 对局 #42",
+        "success": true
+      },
+      {
+        "module": "island-settlers",
+        "shell": "Tools",
+        "title": "群岛开拓 · 对局 #42",
+        "success": true
+      },
+      {
+        "module": "island-settlers",
+        "shell": "Game",
+        "title": "群岛开拓 · 对局 #42",
+        "success": true
+      },
+      {
+        "module": "quick-cards",
+        "shell": "Tools",
+        "title": "quick-cards · 对局 #42",
+        "success": true
+      },
+      {
+        "module": "quick-cards",
+        "shell": "Game",
+        "title": "quick-cards · 对局 #42",
+        "success": true
+      },
+      {
+        "settings": "cancel, invalid, mixed CPU, restart, classic hotseat, recovery, metadata, CLI",
+        "success": true
+      }
+    ]
+  }
+}

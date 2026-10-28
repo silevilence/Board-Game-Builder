@@ -24,7 +24,11 @@ internal static class LocalTableVerification
                     var renders=0;var curtains=0;
                     for(var i=0;i<80 && !board.Frame.Ended;i++)
                     {
-                        await Task.Delay(80);renders+=board.RenderedFrames;
+                        await Task.Delay(80);
+                        for(var wait=0;board.LiveTables>0 && board.RenderedFrames==0 && board.RenderingFailure==null && wait<200;wait++)await Task.Delay(25);
+                        if(board.RenderingFailure!=null)throw new Exception(board.RenderingFailure);
+                        if(board.LiveTables>0 && board.RenderedFrames==0)throw new Exception("Visible local projection never rendered");
+                        renders+=board.RenderedFrames;
                         if(board.Frame.WaitingFor!=null) {curtains++;if(board.LiveTables!=0 || board.Frame.Views.Count!=0) throw new Exception("Private viewport survived handoff");}
                         if(board.Frame.Fault!=null) throw new Exception(board.Frame.Fault.Code);
                         await board.VerifyStep();

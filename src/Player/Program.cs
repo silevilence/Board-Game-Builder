@@ -1,4 +1,8 @@
 using BoardGame.View;
+using BoardGame.Rendering;
+using BoardGame.AppRuntime;
+using System.Text.Json;
+using Sample.Motion;
 namespace BoardGame.Player;
 internal static class Program
 {
@@ -21,7 +25,11 @@ internal static class Program
             PlayerLaunch launch;
             try {launch=PlayerLaunch.Parse(args.Length==0?[]:args[1..]);}
             catch(ArgumentException error) {Console.Error.WriteLine(error.Message);return 2;}
-            return ViewportApp.Run("",[],()=>new PlayerWindow(launch.Module,launch.Smoke,launch.Actions,shell:launch.Shell));
+            var bundled=Path.Combine(AppContext.BaseDirectory,"game.bgm");
+            if(launch.Module==null && File.Exists(bundled))launch=launch with {Module=bundled};
+            var backend=WindowsDxBackend.Plugin();
+            var graphics=new GraphicsConfiguration(new(1,"graphics","1",[new(backend.Id,backend.Version,backend.Api,JsonSerializer.SerializeToElement(new{}))]),[backend]);
+            return PlayerApplication.Run(new PlayerCatalog([BoardPlayerProvider.Contribution(),new ApplicationPlayerProvider(new ApplicationCatalog(MotionPlugins.Catalog()),graphics).Contribution()]),launch);
         }
         if(args.Length>0 && args[0]=="viewport") return ViewportApp.Run("Board Game Builder — Player viewport probe",args[1..]);
         if(args.Length==2 && args[0]=="table") return ViewportApp.Run("",[],()=>TablePreview.Create(args[1]));

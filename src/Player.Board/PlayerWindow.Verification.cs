@@ -45,7 +45,9 @@ public sealed partial class PlayerWindow
             dialog.Mode.SelectedIndex=1;dialog.Confirm();await pending;
             Check(activeSeed==77 && localHumans.Text=="p2,p4" && localBoard!=null && !ReferenceEquals(existing,localBoard),"Settings did not start new mixed game");
             Check(localBoard!.Frame.WaitingFor=="p2" && localBoard.LiveTables==0,"CPU / human handoff incorrect");
-            await localBoard.VerifyStep();await Task.Delay(160);
+            await localBoard.VerifyStep();
+            for(var wait=0;localBoard.RenderedFrames==0 && localBoard.RenderingFailure==null && wait<200;wait++)await Task.Delay(25);
+            Check(localBoard.RenderingFailure==null,localBoard.RenderingFailure ?? "");
             Check(localBoard.LiveTables==1 && localBoard.Frame.Views[0].View.Seat=="p2" && localBoard.RenderedFrames>0,"Human projection did not render");
             localBoard.ToggleActions();Check(!localBoard.ActionsVisible,"Cannot hide local actions");
             localBoard.ToggleActions();Check(localBoard.ActionsVisible,"Cannot restore local actions");
