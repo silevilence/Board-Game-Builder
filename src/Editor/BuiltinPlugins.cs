@@ -38,9 +38,22 @@ public static class BuiltinPlugins
         }));
         app.Install(new("base.sessions",1,["sessions"],["documents"],scope=>
         {
-            var sessions=new SessionController(scope.Service<DocumentWorkspace>("documents"));scope.Own(sessions);scope.Provide("sessions",sessions);
+            var sessions=new ApplicationSessions(scope.Service<DocumentWorkspace>("documents"));
+            scope.OwnAsync(sessions);scope.Provide("sessions",sessions);
         },true));
-        app.Install(new("base.viewports",1,["viewports"],[],scope=>scope.Provide("viewports",new EditorViewports()),true));
+        app.Install(new("base.viewports",1,["viewports"],[],scope=>scope.Provide("viewports",EditorViewports.WindowsDx()),true));
+        app.Install(new("play.board.sessions",1,["board.sessions"],["documents"],scope=>
+        {
+            var sessions=new BoardSessionController(scope.Service<DocumentWorkspace>("documents"));scope.Own(sessions);scope.Provide("board.sessions",sessions);
+        }));
+        app.Install(new("board.viewports",1,["board.viewports"],[],scope=>scope.Provide("board.viewports",new BoardViewports())));
+        app.Install(new("runtime.motion",1,[],["sessions"],scope=>
+            scope.Own(scope.Service<ApplicationSessions>("sessions").Register("motion",new BoardGame.AppRuntime.ApplicationCatalog(Sample.Motion.MotionPlugins.Catalog())))));
+        app.Install(new("play.application",1,[],["documents","sessions","viewports","panels"],scope=>
+        {
+            var sessions=scope.Service<ApplicationSessions>("sessions");
+            scope.Service<PanelContributions>("panels").Register(scope,"play.application","应用试玩",()=>new FormatPanel(scope,s=>new ApplicationPlayPanel(s),()=>sessions.Supported,()=>"当前内容没有通用应用试玩提供者；桌游请使用桌游试玩面板。"));
+        }));
         app.Install(new("base.assemblies",1,["assemblies"],[],_=>{},true)
         {
             InitializeAsync=async scope=>
@@ -49,11 +62,11 @@ public static class BuiltinPlugins
                 scope.Provide("assemblies",new EditorAssemblies(app,app.Root.Get<CordiSharp.Loading.AssemblyLoaderService>("loader")!));
             }
         });
-        app.Install(new("author.layout",1,[],["documents","viewports","panels"],scope=>
+        app.Install(new("author.layout",1,[],["documents","board.viewports","panels"],scope=>
             scope.Service<PanelContributions>("panels").Register(scope,"author.layout","布局视口",()=>new FormatPanel(scope,s=>new LayoutPanel(s)))));
-        app.Install(new("play.controls",1,[],["sessions","viewports","panels"],scope=>
-            scope.Service<PanelContributions>("panels").Register(scope,"play.controls","试玩与调试",()=>new PlayPanel(scope))));
-        app.Install(new("author.scripts",1,[],["documents","sessions","panels"],scope=>
+        app.Install(new("play.controls",1,[],["documents","board.sessions","board.viewports","panels"],scope=>
+            scope.Service<PanelContributions>("panels").Register(scope,"play.controls","桌游试玩与调试",()=>new FormatPanel(scope,s=>new PlayPanel(s),()=>BoardSessionController.Supports(scope.Document)))));
+        app.Install(new("author.scripts",1,[],["documents","board.sessions","panels"],scope=>
             scope.Service<PanelContributions>("panels").Register(scope,"author.scripts","Lua 脚本",()=>new ScriptPanel(scope))));
         app.Install(FlowEditorPlugin.Definition);
         app.Install(AnimationEditorPlugin.Definition);

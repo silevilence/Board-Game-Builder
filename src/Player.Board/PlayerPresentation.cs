@@ -34,4 +34,3 @@ public sealed record PlayerPresentation(string? Title=null,string? Help=null,boo
         return value with {Title=string.IsNullOrWhiteSpace(value.Title)?module.Id:value.Title};
     }
 }
-

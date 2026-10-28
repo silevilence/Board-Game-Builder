@@ -224,6 +224,15 @@ public sealed class EditorPluginScope
         Context.Effect(()=> (Func<Task>)(()=>application.OnOwnerThreadAsync(resource.Dispose)));
     }
     public void Guard(Func<string?> reason)=>Own(application.Guard(Id,reason));
+    public void OwnAsync(IAsyncDisposable resource)
+    {
+        Context.Effect(()=>(Func<Task>)(async()=>
+        {
+            Task pending=Task.CompletedTask;
+            await application.OnOwnerThreadAsync(()=>pending=resource.DisposeAsync().AsTask());
+            await pending;
+        }));
+    }
     public void Provide(string key,object service)
     {
         Cancellation.ThrowIfCancellationRequested();

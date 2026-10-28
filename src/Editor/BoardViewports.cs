@@ -1,7 +1,7 @@
 using BoardGame.View;
 namespace BoardGame.Editor;
 
-public sealed class EditorViewports
+public sealed class BoardViewports
 {
     public InteractiveTable Create(EditorPluginScope owner)
     {

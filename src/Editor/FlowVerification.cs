@@ -65,7 +65,7 @@ internal static class FlowVerification
                 if (Wrapper().Content is not TextBlock) throw new Exception("Create undo retained flow UI");
                 documents.Redo(); await Wrapper().Ready;
                 documents.Set(ModuleDocument.Open("samples/flow-cards")); await Wrapper().Ready;
-                var commands = app.Service<EditorCommands>("commands"); var sessions = app.Service<SessionController>("sessions");
+                var commands = app.Service<EditorCommands>("commands"); var sessions = app.Service<BoardSessionController>("board.sessions");
                 FlowPanel Panel() => (FlowPanel)Wrapper().Content!;
                 await commands.Execute("flow.open"); await Task.Delay(150);
                 await BuildPrototype(app, host.Window, Panel);

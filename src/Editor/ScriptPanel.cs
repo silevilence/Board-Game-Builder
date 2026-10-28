@@ -43,7 +43,7 @@ public sealed class ScriptPanel : UserControl
 {
     public ScriptPanel(EditorPluginScope context)
     {
-        var sessions=context.Service<SessionController>("sessions");
+        var sessions=context.Service<BoardSessionController>("board.sessions");
         var cancellation=context.Cancellation;
         var rules=new TextBox {AcceptsReturn=true,FontFamily=FontFamily.Parse("Consolas")};
         var cpu=new TextBox {AcceptsReturn=true,FontFamily=FontFamily.Parse("Consolas")};

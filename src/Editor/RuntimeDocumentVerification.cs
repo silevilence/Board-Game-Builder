@@ -41,7 +41,7 @@ internal static class RuntimeDocumentVerification
                     await app.Reload("author.files");
                     if(!documents.Draft("position.json").Dirty) throw new Exception("Generic draft lost");
                     documents.ApplyDrafts();_=documents.Current.Snapshot();
-                    var sessions=app.Service<SessionController>("sessions");await sessions.Start();
+                    var sessions=app.Service<BoardSessionController>("board.sessions");await sessions.Start();
                     Trace("cycle "+i+" session started");
                     if(!sessions.Active || sessions.Frame==null) throw new Exception("Alternate format did not start");
                     var revision=sessions.Frame.Revision;

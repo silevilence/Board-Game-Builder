@@ -33,7 +33,7 @@ internal static class ToolkitVerification
                 documents.EditDraft("rules.lua",script+"\n-- installed editor draft\n");
                 documents.Save();documents.Set(ModuleDocument.Open(documents.Location));
                 Check(documents.Current!.Text("rules.lua").Contains("installed editor draft"),"Create, edit, save and reopen");
-                var sessions=host.Application.Service<SessionController>("sessions");
+                var sessions=host.Application.Service<BoardSessionController>("board.sessions");
                 Check(File.Exists(sessions.Executable),"Bundled debug Player located");
                 foreach(var external in new[]{false,true})
                 {

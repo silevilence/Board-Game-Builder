@@ -14,6 +14,12 @@ internal static class Program
         if(args.Length==2 && args[0]=="--verify-background") return ViewportApp.Run("",[],()=>new PlayerWindow("samples/quick-cards",verifyBackground:args[1],shell:PlayerShell.Tools));
         if(args.Length==2 && args[0]=="--verify-shell") return ViewportApp.Run("",[],()=>new PlayerWindow("samples/quick-cards",verifyShell:args[1]));
 #if EDITOR_DEBUG
+        if(args.FirstOrDefault()=="--editor-application-debug")
+        {
+            var backend=WindowsDxBackend.Plugin();
+            var graphics=new GraphicsConfiguration(new(1,"graphics","1",[new(backend.Id,backend.Version,backend.Api,JsonSerializer.SerializeToElement(new{}))]),[backend]);
+            return ViewportApp.Run("",[],()=>new ApplicationDebugWindow(new ApplicationCatalog(MotionPlugins.Catalog()),graphics));
+        }
         if(args.FirstOrDefault()=="--editor-debug")
         {
             if(args.Contains("--headless")) { BoardGame.Runtime.DebugTransport.Serve(); return 0; }

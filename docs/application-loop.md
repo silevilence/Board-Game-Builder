@@ -139,3 +139,13 @@ Sample.Motion 与 motion-lab 提供独立内容、update 和 application.view；
 Player.Hosting 不引用桌游、Runtime 默认组合或示例实现。安装入口显式登记 PlayerContribution，使用 CordiSharp 提供 IPlayerProvider；通用宿主读取有预算上限的入口提示，唯一匹配才创建界面，随后仍由对应正式 GameRuntime.Load 完整校验。入口提示不是可信内容，缺少或冲突的提供者不会尝试另一种解析器。快照格式的识别归对应提供者。
 
 Player.Board 承接原开局、种子、席位、控制方式、热座交接、分屏、授权展示、调试窗口及 CLI 兼容行为。Player 程序是安装组合根，同时提供桌游与实时体验；Minimal.Player 只装配实时能力并使用同一通用宿主，无桌游依赖。界面贡献自身不写入游戏启用列表，也不执行模拟；运行能力仍由 game.start.json 决定。每个窗口的贡献上下文保持到窗口关闭，取消未显示窗口也释放上下文。
+
+## Editor 会话贡献
+
+基础 `sessions` 是 ApplicationSessions，基础 `viewports` 是通用应用视口工厂；两者不要求席位、合法命令或桌游投影。获准目录通过独立运行提供者贡献登记，示例目录由 runtime.motion 登记；play.application 只管理可重建面板，卸载面板不重启模拟。暂停等待提交边界，单步固定 1/60 秒；状态轮询不会吞掉正在等待的用户控制。
+
+原 SessionController 改名 BoardSessionController，由 play.board.sessions 提供 `board.sessions`，桌游视口使用 `board.viewports`。桌游控制、Lua 重载、命令时间轴、身份与流程调试仍消费原 IDebugSession，纯展示面板不会取得额外玩家权限。原扩展使用这些旧类型时须重新构建，并将依赖键改为 board.sessions／board.viewports；Editor.SamplePlugin 及其清单已同步。通用面板不显示桌游指令，不支持的内容保留文件编辑。
+
+Application.Debug 定义通用作者调试契约；嵌入与独立 Player 共享同一应用时钟、暂停及单步逻辑。外部传输只用继承的标准输入输出，校验内容快照和获准目录，不监听网络；收到首个实际图形帧后完成握手。关闭正常发送 stop 并等待退出，超时才终止自己创建的子进程。运行程序集不引用 Editor 或编辑器专用 CordiSharp 插件。
+
+试玩先应用内存文件草稿并捕获不可变 ProjectView，保存来源版本，不写磁盘。文档代次、取消及迟到结果检查保护新文档；面板资源与会话分开释放。EditorPluginScope.OwnAsync 在 UI 线程开始释放 UI 所有者，再异步等待后台清理，不能阻塞 CordiSharp 全局 pump。

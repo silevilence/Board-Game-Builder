@@ -120,3 +120,9 @@ Motion.Tests 通过正式目录／包加载、固定输入和 10／20／50／100
 Player.Hosting.Tests 在同一获准目录依次打开桌游、实时目录、实时包及再次桌游，实际输入推进实时实例，确认没有席位控件，逐次退出设备归零；缺提供者、冲突提供者和未显示窗口取消通过。通用宿主程序集引用检查无桌游、Runtime 或示例实现。
 
 真实 Player 的旧热座／分屏探针覆盖 quick-cards 与 sealed-auction、纯真人与混合 CPU 八种组合；外壳探针覆盖 freecell／island-settlers／quick-cards × Tools／Game 六种组合，以及取消设置、非法配置、混合席位、重开、经典牌桌热座、包内帮助和加载失败恢复。初次固定 80／160 ms 等待未获得首帧，串行复现后改为最多 5 秒等待明确首帧或绘制错误，所有组合通过；没有放宽规则、终局或资源断言。原始失败与通过结果均保存于 [player-host-probes.json](player-host-probes.json)。
+
+## Editor 通用试玩与桌游调试
+
+实际 Editor 应用探针在嵌入和独立 Player 两种模式加载未保存 Motion 草稿，核对来源文本与磁盘字节不变、暂停／固定单步／继续、两次面板重建保留同一实例与 tick、外部进程死亡清除状态、切换文档时丢弃迟到启动、切回桌游和运行提供者停用／再启用。最终图形设备与后端为零。外部握手等待真实视口首帧。
+
+原桌游 SessionVerification 的嵌入／外部两种模式通过：席位观察、显式作者真值、Lua／CPU 重载、坏脚本保留旧状态、三次面板重建、非法动作、忙碌暂停、终局记录与回放、停止迟到响应以及外部进程故障；两种模式均记录 7 次命令，最终设备零。真实 foundation 与 runtime-documents 探针通过；无界面 cordi、cordi-dispatch、flow-editor-lifetime 以及 Application.Tests 全部通过。全解构建零警告零错误。证据见 [editor-session-probes.json](editor-session-probes.json)。

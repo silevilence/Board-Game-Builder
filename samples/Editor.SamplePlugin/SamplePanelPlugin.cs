@@ -22,7 +22,7 @@ public sealed class SamplePanelPlugin : IPlugin<EditorPluginScope>
         scope.Service<PanelContributions>("panels").Register(scope,"sample.panel","预编译扩展示例",()=>
         {
             // Shared Avalonia controls avoid registering collectible control types in global UI caches.
-            var table=scope.Service<EditorViewports>("viewports").Create(scope);
+            var table=scope.Service<BoardViewports>("board.viewports").Create(scope);
             table.RenderingError+=_=>data.Events++;
             return new UserControl {Tag=data,Content=table};
         });

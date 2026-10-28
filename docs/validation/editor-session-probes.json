@@ -1,0 +1,30 @@
+{
+  "editor-application-final": {
+    "success": true,
+    "errors": [],
+    "checks": [
+      "embedded-external-draft-pause-fixed-step-panel-rebuild-no-save",
+      "external-process-failure-removes-stale-state",
+      "document-switch-late-start-board-session-and-provider-reenable"
+    ],
+    "devices": 0,
+    "backends": 0
+  },
+  "editor-board-session": {
+    "success": true,
+    "errors": [],
+    "commands": [
+      7,
+      7
+    ],
+    "devices": 0
+  },
+  "editor-foundation": {
+    "success": true,
+    "errors": []
+  },
+  "editor-runtime-documents": {
+    "success": true,
+    "error": null
+  }
+}

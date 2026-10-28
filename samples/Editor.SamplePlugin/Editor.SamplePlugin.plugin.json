@@ -1,1 +1,1 @@
-{"id":"sample.panel","api":1,"entry":"sample.panel","provides":["sample.data"],"requires":["panels","documents","viewports"]}
+{"id":"sample.panel","api":1,"entry":"sample.panel","provides":["sample.data"],"requires":["panels","documents","board.viewports"]}

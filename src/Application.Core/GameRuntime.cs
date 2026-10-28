@@ -19,6 +19,11 @@ public static class GameRuntime
         return Restore(snapshot,catalog);
     }
     public static GameContent LoadDirectory(string directory,ContentCatalog catalog,string? preset=null)=>Build(ContentSource.Directory(directory),catalog,preset);
+    public static GameContent LoadFiles(IReadOnlyDictionary<string,byte[]> files,ContentCatalog catalog,string? preset=null)
+    {
+        var copy=files.ToDictionary(p=>p.Key,p=>p.Value.ToArray(),StringComparer.Ordinal);
+        ValidateFiles(copy);return Build(ContentSource.Snapshot(copy),catalog,preset);
+    }
     public static GameContent Restore(ContentSnapshot original,ContentCatalog catalog)
     {
         var snapshot=ContentJson.Copy(original);

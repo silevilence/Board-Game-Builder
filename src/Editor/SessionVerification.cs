@@ -17,7 +17,7 @@ internal static class SessionVerification
             {
                 await host.Ready;var app=host.Application;
                 var documents=app.Service<DocumentWorkspace>("documents");var initial=documents.Current!.Snapshot().Fingerprint;
-                var sessions=app.Service<SessionController>("sessions");
+                var sessions=app.Service<BoardSessionController>("board.sessions");
                 foreach(var external in new[]{false,true})
                 {
                     sessions.External=external;
@@ -61,7 +61,7 @@ internal static class SessionVerification
                     var recording=(await sessions.Send(new("recording")))?.Recording ?? throw new Exception("Missing recording");recordings.Add(recording);
                     if(recording.Switches.Count<3) throw new Exception("Reload versions missing");
                     await sessions.Send(new("replay"));if(sessions.Frame.StateHash!=final || !sessions.Frame.IsReplay) throw new Exception("Replay differs");
-                    if(((PlayPanel)((TabItem)app.Service<WorkspaceShell>("workspace").Tabs.SelectedItem!).Content!).Table.RenderedFrames==0) throw new Exception("No rendered play frames");
+                    if(((PlayPanel)((FormatPanel)((TabItem)app.Service<WorkspaceShell>("workspace").Tabs.SelectedItem!).Content!).Content!).Table.RenderedFrames==0) throw new Exception("No rendered play frames");
                     sessions.Stop();
                     if(sessions.Active || sessions.Reply!=null || sessions.Frame!=null) throw new Exception("Stop left old state");
                     await sessions.Start();sessions.SuspendScheduler();

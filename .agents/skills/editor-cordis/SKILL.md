@@ -28,7 +28,7 @@ description: 新增、修改或修复本项目编辑器功能时使用，按现�
 | 内置插件归属、装配及面板工厂 | `src/Editor/BuiltinPlugins.cs`；同目录对应 `*Panel.cs` |
 | 定义、依赖、scope 与生命周期 | `src/Editor.Core/EditorApplication.cs` |
 | 面板挂载、命令与附加贡献 | `src/Editor/WorkspaceShell.cs`、`src/Editor.Core/EditorCommands.cs`、`src/Editor/CommandSurface.cs` |
-| 文档／草稿、会话、视口、导出 | `src/Editor.Core/DocumentWorkspace.cs`、`src/Editor/SessionController.cs`、`src/Editor/EditorViewports.cs`、`src/Editor/ExportWorkflow.cs` |
+| 文档／草稿、会话、视口、导出 | `src/Editor.Core/DocumentWorkspace.cs`、`src/Editor/ApplicationSessions.cs`、`src/Editor/BoardSessionController.cs`、`src/Editor/ApplicationViewports.cs`、`src/Editor/BoardViewports.cs`、`src/Editor/ExportWorkflow.cs` |
 | 作者格式注册、读写与格式面板 | `src/Authoring/GameAuthorFormats.cs`、`src/Editor.Core/ModuleDocument.cs`、`src/Editor/FormatPanel.cs` |
 | 外部作者工作区与连接 | `src/Editor.Core/AuthorWorkspace.cs`、`src/Editor.Core/ExternalWorkspace.cs`、`src/Editor.Core/AuthorWorkspaceService.cs`、`src/Authoring/GuiConnection.cs` |
 | 验证 | `tests/Engine.Tests/CordiTests.cs`、`tests/Engine.Tests/ReviewFollowupTests.cs`；真实 UI／会话／导出验证参数见 `src/Editor/Program.cs`，实现见同目录 `*Verification.cs` |

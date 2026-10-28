@@ -18,6 +18,7 @@
     <Project Path="src/BoardGame.Wasm/BoardGame.Wasm.csproj" />
     <Project Path="src/BoardGame.Interaction/BoardGame.Interaction.csproj" />
     <Project Path="src/BoardGame.Presentation/BoardGame.Presentation.csproj" />
+    <Project Path="src/Application.Debug/Application.Debug.csproj" />
     <Project Path="src/Authoring/Authoring.csproj" />
     <Project Path="src/Cli/Cli.csproj" />
     <Project Path="src/Editor.Core/Editor.Core.csproj" />

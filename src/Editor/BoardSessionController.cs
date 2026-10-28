@@ -5,8 +5,8 @@ using BoardGame.Authoring;
 
 namespace BoardGame.Editor;
 
-// Foundation plugin owns the session, scheduling and command generation. Views can come and go.
-public sealed class SessionController : IDisposable
+// Board capability owns seats, command scheduling and author diagnostics. Views can come and go.
+public sealed class BoardSessionController : IDisposable
 {
     private readonly DocumentWorkspace documents;
     private readonly DispatcherTimer timer=new() {Interval=TimeSpan.FromMilliseconds(100)};
@@ -32,7 +32,7 @@ public sealed class SessionController : IDisposable
     public bool AuthorityLog { get; set; }
     public string LogPath { get; set; }=EditorPaths.InWorkspace("artifacts/debug-session.json");
     public event Action? Changed;
-    public SessionController(DocumentWorkspace documents)
+    public BoardSessionController(DocumentWorkspace documents)
     {
         this.documents=documents;documents.Replaced+=DocumentChanged;
         timer.Tick+=async (_,_)=> {if(Frame is {Cpu:true,View.Ended:false,Fault:null,Paused:false,IsReplay:false} && !Busy) await Send(new("cpu",Frame.Revision));};
@@ -41,7 +41,7 @@ public sealed class SessionController : IDisposable
     private void DocumentChanged()
     {
         Stop();ActiveSeed=null;CpuSeats.Clear();Reveal=false;
-        try {SyncSeats(documents.Current?.Snapshot());} catch(Exception error) {Status=error.Message;}
+        try {SyncSeats(Supports(documents.Current)?documents.Current?.Snapshot():null);} catch(Exception error) {Status=error.Message;}
         Changed?.Invoke();
     }
     public void SyncSeats(LoadedModule? module)
@@ -50,11 +50,17 @@ public sealed class SessionController : IDisposable
         foreach(var seat in module?.Initial.Seats ?? []) CpuSeats[seat.Id]=previous.GetValueOrDefault(seat.Id,seat.Controller=="cpu");
         if(Observer==null || !CpuSeats.ContainsKey(Observer)) Observer=CpuSeats.Keys.FirstOrDefault();
     }
+    public static bool Supports(ModuleDocument? document)
+    {
+        try {return document?.Startup["plugins"]?.AsArray().Any(p=>p?["id"]?.GetValue<string>() is "definition.module" or "definition.state")==true;}
+        catch {return false;}
+    }
     public async Task Start()
     {
         Stop();var current=generation;starting=new();var cancellation=starting.Token;Busy=true;Changed?.Invoke();
         try
         {
+            if(!Supports(documents.Current))throw new InvalidOperationException("此工程没有桌游运行能力，请使用应用试玩。");
             if(!uint.TryParse(Seed,out var seed)) throw new InvalidDataException("种子必须是无符号整数");
             documents.ApplyDrafts();Module=documents.Current?.Snapshot() ?? throw new InvalidOperationException("请打开模块");SyncSeats(Module);
             SourceView = new(new(documents.Current!.DirectoryPath!, "editor.session", "gui", documents.WorkspaceId, documents.Generation), documents.Current.CopyFiles());

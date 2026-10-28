@@ -12,7 +12,7 @@ public sealed class FlowPanel : UserControl
     {
         var documents = scope.Service<DocumentWorkspace>("documents");
         var flow = scope.Service<FlowWorkspace>("flow.author");
-        var sessions = scope.Service<SessionController>("sessions");
+        var sessions = scope.Service<BoardSessionController>("board.sessions");
         var status = new TextBlock { TextWrapping = TextWrapping.Wrap };
         var work = new FlowEditorWork(scope, message => status.Text = message);
         var canvas = new FlowCanvas(documents, flow, work, message => status.Text = message);
@@ -104,12 +104,12 @@ public sealed class FlowPanel : UserControl
 
 public static class FlowEditorPlugin
 {
-    public static EditorPluginDefinition Definition => new("author.flow", 1, ["flow.author"], ["documents", "sessions", "panels", "commands", "workspace"], scope =>
+    public static EditorPluginDefinition Definition => new("author.flow", 1, ["flow.author"], ["documents", "board.sessions", "panels", "commands", "workspace"], scope =>
     {
         var documents = scope.Service<DocumentWorkspace>("documents");
         var flow = new FlowWorkspace(documents); scope.Provide("flow.author", flow);
         var commands = scope.Service<EditorCommands>("commands");
-        var sessions = scope.Service<SessionController>("sessions");
+        var sessions = scope.Service<BoardSessionController>("board.sessions");
         commands.Register(scope, new("flow.play", "重开流程试玩（作者）", async () =>
         {
             var model = flow.Read(); if (!model.Success) throw new InvalidDataException("请先修复流程校验错误。");

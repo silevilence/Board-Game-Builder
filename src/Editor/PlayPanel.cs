@@ -7,7 +7,7 @@ namespace BoardGame.Editor;
 
 public sealed class PlayPanel : UserControl,IDisposable
 {
-    private readonly SessionController controller;
+    private readonly BoardSessionController controller;
     internal InteractiveTable Table { get; }
     private readonly StackPanel actions=new() {Width=260,Spacing=6};
     private readonly TextBlock status=new() {TextWrapping=Avalonia.Media.TextWrapping.Wrap};
@@ -20,8 +20,8 @@ public sealed class PlayPanel : UserControl,IDisposable
     private readonly Button start=new() {Content="开始试玩"};
     public PlayPanel(EditorPluginScope scope)
     {
-        controller=scope.Service<SessionController>("sessions");
-        Table=scope.Service<EditorViewports>("viewports").Create(scope);
+        controller=scope.Service<BoardSessionController>("board.sessions");
+        Table=scope.Service<BoardViewports>("board.viewports").Create(scope);
         seed=new TextBox {Text=controller.Seed,Width=100};
         var external=new CheckBox {Content="独立 Player",IsChecked=controller.External};
         var executable=new TextBox {Text=controller.Executable,Width=260,PlaceholderText="调试 Player.exe 路径"};
