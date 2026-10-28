@@ -20,6 +20,39 @@ internal sealed class FlowController : IFlowProgression,IRuleProvider,IGameRules
     private CancellationToken activeCancellation;
     private bool disposed;
     public SessionFault? Fault {get;private set;}
+    public IPreparedFlow Prepare(IBoardStateBranch branch,CancellationToken cancellation=default)
+    {
+        var transactions=branch.Authority as IFlowAuthority ?? throw new InvalidOperationException("Flow preparation requires transactional board authority");
+        var linked=CancellationTokenSource.CreateLinkedTokenSource(lifetime,cancellation);
+        var candidate=new FlowController(branch.Authority,transactions,content,budget,linked.Token) {Fault=Fault};
+        lock(cancellationGate) if(stop.IsCancellationRequested) candidate.Cancel();
+        return new PreparedFlow(this,candidate,linked);
+    }
+    private sealed class PreparedFlow(FlowController owner,FlowController candidate,CancellationTokenSource linked) : IPreparedFlow
+    {
+        private bool disposed;
+        public IFlowProgression Value=>candidate;
+        public Action Seal()
+        {
+            ObjectDisposedException.ThrowIf(disposed,this);
+            var preparedFault=candidate.Fault;var cancelled=candidate.stop.IsCancellationRequested;
+            Dispose();
+            return ()=>
+            {
+                owner.Fault=preparedFault;
+                lock(owner.cancellationGate)
+                {
+                    owner.stop.Dispose();owner.stop=new();
+                    if(cancelled) owner.stop.Cancel();
+                }
+            };
+        }
+        public void Dispose()
+        {
+            if(disposed) return;disposed=true;
+            try {candidate.Dispose();} finally {linked.Dispose();}
+        }
+    }
     public FlowController(IAuthoritySession authority,IFlowAuthority transactions,FlowContent content,int budget,CancellationToken lifetime)
     {
         this.authority=authority;this.transactions=transactions;this.content=content;this.budget=budget;this.lifetime=lifetime;

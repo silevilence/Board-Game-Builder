@@ -114,7 +114,7 @@ internal sealed class ApplicationDriver : IApplicationDriver
         {
             cancellation.ThrowIfCancellationRequested();EnsureActive();
             foreach(var (phase,commit) in pending)
-                try {cancellation.ThrowIfCancellationRequested();EnsureActive();commit();}
+                try {commit();}
                 catch(Exception error)
                 {
                     publicationValid=false;Fail(phase,error);

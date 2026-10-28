@@ -11,4 +11,5 @@ public interface IFlowProgression : IAuthoritySession
     void Advance(CancellationToken cancellation=default);
     void Cancel();
     void Resume(CancellationToken cancellation=default);
+    IPreparedFlow Prepare(IBoardStateBranch branch,CancellationToken cancellation=default);
 }

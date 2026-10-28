@@ -48,3 +48,9 @@
 ## 桌游记录插件与只读回放
 
 `board-recording runtime-recording replay flow-restoration secrets reload` 六组通过。新增用例分别完成 Lua、流程和 WASM 示例后关闭运行实例，再独立创建每席位观察投影，与实时最终投影逐项比较；重复读取和修改返回值不改变回放内容，返回对象不能转换为提交／会话／权威接口。测试未知席位、坏校验和、缺失结构与玩家投影记录误用。现有回归继续覆盖脚本切换、实际随机结果、流程路径、秘密提交及旧日志拒绝语义。
+
+## 桌游 update 与候选发布
+
+`board-update` 将 quick-cards、flow-cards、wasm-counter、sealed-auction 在每秒 20／120 次逻辑调用下跑至终局，与原同步提交的完整权威日志和状态比较一致。双观察视口每步各绘制八次不增加命令。验证等待真人空转、快速重复输入／过期版本、慢 CPU 提供者期间旧投影可读、并发直接推进拒绝、流程预算暂停续行及 update 之间的脚本重载／回放。
+
+后续 update 阶段分别注入取消和失败，确认桌游候选已算完但尚未发布时仍可绘制旧状态，失败后权威记录逐字不变。独立内核用例覆盖历史分支隔离、重复发布、旧版本拒绝及发布后保留句柄失效。Application.Tests 增加发布首动作触发取消的用例，确认不会留下半帧。`board-kernel-plugin runtime-recording flow-progression flow-protection flow-restoration runtime-host reload` 回归通过；真实宿主、实际图形与整组性能验收仍待后续任务。

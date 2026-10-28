@@ -23,7 +23,17 @@ internal static class DriverTests
         await ScopeLifetimes();
         await InputAndRenderFault();
         await CloseDuringInitialization();
+        await CancellationDuringPublication();
         Console.WriteLine("PASS application scheduling, clocks, input, cancellation and scoped lifecycle");
+    }
+    private static async Task CancellationDuringPublication()
+    {
+        using var cancellation=new CancellationTokenSource();var committed=0;
+        var first=Updating("first",(_,_)=>ValueTask.FromResult<Action?>(()=>{committed++;cancellation.Cancel();}));
+        var second=Updating("second",(_,_)=>ValueTask.FromResult<Action?>(()=>committed++),["first/tick"]);
+        await using var host=await RuntimeHost.StartAsync(Plan(first,second),[first,second],[]);
+        await host.Driver.AdvanceAsync(TimeSpan.FromMilliseconds(1),cancellation.Token);
+        Check(committed==2 && host.Driver.CompletedTick==1 && host.Driver.Fault==null,"Cancellation split a publication boundary");
     }
     private static async Task ClocksAndViewports()
     {

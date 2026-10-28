@@ -14,6 +14,8 @@ public sealed class PlaySession : IGameSession
     public static PlaySession Restore(LoadedModule module,SessionRecording recording,IReadOnlyDictionary<string,string>? controllers=null,int maxSteps=500,CancellationToken cancellation=default)=>
         new(RuntimeComposition.Start(module,recording.Log.Seed,controllers,maxSteps,cancellation,Wire.Copy(recording)));
     public SessionFault? Fault=>session.Fault;
+    public IApplicationDriver Driver=>host.Driver!;
+    public IReadOnlyList<BoardUpdateResult> UpdateResults=>((IBoardUpdateState)session).UpdateResults;
     public int Steps=>session.Steps;
     public bool Ended=>session.Ended;
     public string CurrentSeat=>session.CurrentSeat;
@@ -35,18 +37,18 @@ public sealed class PlaySession : IGameSession
     public void Dispose()=>host.Dispose();
 }
 
-internal sealed class LocalGameSession : IGameSession
+internal sealed partial class LocalGameSession : IGameSession,IBoardUpdateState
 {
     private readonly IFlowProgression? flow;
     private SessionFault? fault;
     private readonly object commands=new();
     private LoadedModule module;
     private readonly IRecordingProvider recording;
-    private readonly List<Diagnostic> cpuDiagnostics=[];
+    private List<Diagnostic> cpuDiagnostics=[];
     private readonly IAuthoritySession engine;
     private readonly RuleBinding ruleBinding;
     private readonly IEffectProvider? effects;
-    private readonly Dictionary<string,string> controllers;
+    private Dictionary<string,string> controllers;
     private readonly uint seed;
     private readonly int maxSteps;
     private readonly IRuleProvider rules;
@@ -59,11 +61,12 @@ internal sealed class LocalGameSession : IGameSession
     public bool IsCpu => controllers[CurrentSeat]=="cpu";
     public bool SupportsCpu => cpu!=null;
     internal LocalGameSession(LoadedModule module,uint seed,IReadOnlyDictionary<string,string> controllers,int maxSteps,
-        IAuthoritySession engine,RuleBinding ruleBinding,IRuleProvider rules,ICpuDecisionProvider? cpu,IEffectProvider? effects,IRecordingProvider recording,IFlowProgression? flow=null)
+        IAuthoritySession engine,RuleBinding ruleBinding,IRuleProvider rules,ICpuDecisionProvider? cpu,IEffectProvider? effects,IRecordingProvider recording,IBoardTransactionSource preparation,IFlowProgression? flow=null)
     {
         if(maxSteps<1) throw new ArgumentOutOfRangeException(nameof(maxSteps));
         this.module=Wire.Copy(module);this.seed=seed;this.maxSteps=maxSteps;
         this.recording=recording;
+        this.preparation=preparation;
         this.controllers=new(controllers);this.engine=flow ?? engine;this.ruleBinding=ruleBinding;this.rules=rules;this.cpu=cpu;this.effects=effects;this.flow=flow;
         ruleBinding.Replace(ComposeRules(rules.Rules));
         Steps=engine.ExportLog().Entries.Count(e=>e.Submission.Accepted && e.Submission.Execution=="player");
@@ -72,28 +75,29 @@ internal sealed class LocalGameSession : IGameSession
     }
     public SeatView View(string seat) {lock(commands) return engine.Project(seat);}
     public IReadOnlyList<ActionOffer> Actions(string? seat=null)
-    {lock(commands) return ReadActions(seat);}
+    {lock(commands) return preparing?Wire.Copy(actionCache.GetValueOrDefault(seat ?? CurrentSeat) ?? []):ReadActions(seat);}
     private IReadOnlyList<ActionOffer> ReadActions(string? seat)
     {
         if(disposed || Fault!=null || Ended) return [];
-        try { return engine.Actions(seat ?? CurrentSeat); }
+        try {var actor=seat ?? CurrentSeat;var offers=engine.Actions(actor);actionCache[actor]=Wire.Copy(offers.ToList());return offers;}
         catch(Exception e) { Stop("rule-failure",e.Message);return []; }
     }
     public CommandResult SubmitHuman(string seat,Command command)
-    {lock(commands) return SubmitHumanCore(seat,command);}
+    {lock(commands) {BeginDirectMutation();return SubmitHumanCore(seat,command);}}
     private CommandResult SubmitHumanCore(string seat,Command command)
     {
         if(disposed || Fault!=null || Ended || !engine.CanAct(seat) || controllers.GetValueOrDefault(seat)!="human") return new(0,false,"operation-not-allowed");
         return Submit(command,false,seat);
     }
     public bool StepCpu()
-    {lock(commands) return StepCpuCore();}
-    public void CancelFlow()=>flow?.Cancel();
+    {lock(commands) {BeginDirectMutation();return StepCpuCore();}}
+    public void CancelFlow() {lock(commands) {generation++;activeFlow?.Cancel();flow?.Cancel();}}
     public void ResumeFlow(CancellationToken cancellation=default)
     {
         lock(commands)
         {
             ObjectDisposedException.ThrowIf(disposed,this);
+            BeginDirectMutation();
             if(fault!=null || flow==null) throw new InvalidOperationException("Session requires restart or has no flow");
             flow.Resume(cancellation);
         }
@@ -103,6 +107,7 @@ internal sealed class LocalGameSession : IGameSession
         lock(commands)
         {
             ObjectDisposedException.ThrowIf(disposed,this);
+            BeginDirectMutation();
             if(!controllers.ContainsKey(seat) || controller is not ("human" or "cpu")) throw new ArgumentException("Invalid seat/controller configuration.");
             if(controller=="cpu" && cpu==null) throw new InvalidOperationException("Missing CPU capability");
             controllers[seat]=controller;
@@ -142,15 +147,15 @@ internal sealed class LocalGameSession : IGameSession
         if(Ended) StopExecution();
         return result;
     }
-    private void StopExecution() { (rules as IDisposable)?.Dispose();(cpu as IDisposable)?.Dispose(); }
-    private void Stop(string code,string detail) { Fault ??=new(code,CurrentSeat,detail); cpuDiagnostics.Add(new(engine.ExportLog().EntryCount+1,CurrentSeat,cpu?.Entry ?? "session",code+": "+detail)); StopExecution(); }
+    private void StopExecution() {if(staged) return;(rules as IDisposable)?.Dispose();(cpu as IDisposable)?.Dispose();}
+    private void Stop(string code,string detail) {generation++;Fault ??=new(code,CurrentSeat,detail); cpuDiagnostics.Add(new(engine.ExportLog().EntryCount+1,CurrentSeat,cpu?.Entry ?? "session",code+": "+detail)); StopExecution(); }
     public ReplayLog ExportAuthorityLog() {lock(commands) return engine.ExportLog();}
     public IReadOnlyList<Diagnostic> ExportDiagnostics() {lock(commands) return engine.ExportDiagnostics().Concat(Wire.Copy(cpuDiagnostics)).OrderBy(d=>d.Sequence).ToArray();}
     public string AuthorityStateHash() {lock(commands) return Wire.Hash(Wire.Json(engine.ExportAuthorityState()));}
     public GameState ExportAuthorityState() {lock(commands) return engine.ExportAuthorityState();}
     // The owner serializes this with commands. A successful switch affects the next submission.
     public void ReloadScripts(LoadedModule candidate)
-    {lock(commands) ReloadScriptsCore(candidate);}
+    {lock(commands) {BeginDirectMutation();ReloadScriptsCore(candidate);}}
     private void ReloadScriptsCore(LoadedModule candidate)
     {
         ObjectDisposedException.ThrowIf(disposed,this);

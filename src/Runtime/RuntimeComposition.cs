@@ -43,11 +43,14 @@ internal static class RuntimeComposition
         var hasCpu=capabilities.Contains("cpu");var hasEffects=capabilities.Contains("effects");
         var hasFlow=capabilities.Contains("flow");
         catalog.Add(new RuntimePluginDefinition("session.local","1",1,["session"],
-            [..AuthorityPlugin.Required,"rules","recording",..(hasCpu?new[]{"cpu"}:[]),..(hasEffects?new[]{"effects"}:[]),..(hasFlow?new[]{"flow"}:[])],scope=>
-                scope.Provide("session",scope.Own(new LocalGameSession(Module(),seed,controllers ?? throw new InvalidOperationException("Session controllers are required"),maxSteps,
+            [..AuthorityPlugin.Required,"board-preparation","rules","recording",..(hasCpu?new[]{"cpu"}:[]),..(hasEffects?new[]{"effects"}:[]),..(hasFlow?new[]{"flow"}:[])],scope=>
+            {
+                var session=scope.Own(new LocalGameSession(Module(),seed,controllers ?? throw new InvalidOperationException("Session controllers are required"),maxSteps,
                     scope.Service<IAuthoritySession>("authority"),scope.Service<RuleBinding>("rule-binding"),scope.Service<IRuleProvider>("rules"),
-                    hasCpu?scope.Service<ICpuDecisionProvider>("cpu"):null,hasEffects?scope.Service<IEffectProvider>("effects"):null,scope.Service<IRecordingProvider>("recording"),hasFlow?scope.Service<IFlowProgression>("flow"):null))))
-            {Permissions=[AuthorityPlugin.Access],ServicePermissions=new Dictionary<string,string>{{"session",AuthorityPlugin.Access}}});
+                    hasCpu?scope.Service<ICpuDecisionProvider>("cpu"):null,hasEffects?scope.Service<IEffectProvider>("effects"):null,scope.Service<IRecordingProvider>("recording"),scope.Service<IBoardTransactionSource>("board-preparation"),hasFlow?scope.Service<IFlowProgression>("flow"):null));
+                scope.Provide("session",session);scope.Update("advance",session.PrepareUpdate);
+            })
+            {Permissions=[AuthorityPlugin.Access],ServicePermissions=new Dictionary<string,string>{{"session",AuthorityPlugin.Access}},Execution=new(Contributions:[new("advance",ApplicationPhase.Update)])});
         return catalog;
     }
 }
