@@ -32,3 +32,9 @@
 ## Lua 执行器与调用绑定
 
 `lua-executor lua cpu sandbox worker reload flow-systems flow-restoration` 八组回归通过。新用例用位置／速度／时间数据调用独立执行器，验证自定义数组字段、无桌游字段猜测、函数导出校验、惰性 worker、多实例与多次调用的 VM 隔离、未知 IPC 版本拒绝，并检查执行器程序集不依赖 Kernel、Runtime 或 BoardGame.Core。既有 worker 测试继续验证超时／内存超限、回收、父进程退出、重复释放及并发响应隔离；重载失败保留旧脚本。
+
+## WASM 执行器与效果绑定
+
+`wasm-executor` 验证不依赖桌游程序集的独立算术调用、每次全局状态重置、过期句柄拒绝、导出／imports／重复模块／体积预算及重复释放。既有 `wasm wasm-extensions wasm-isolation` 覆盖四种能力、越权与非法效果、内存／fuel 超限及权威事务原子性。
+
+本机原实现和提取后实现均在越界读取用例以 `0xC0000409` 终止；替回 HEAD 原实现的对照实验确认此为迁移前问题。[上游问题 374](https://github.com/bytecodealliance/wasmtime-dotnet/issues/374) 与 [PR 390](https://github.com/bytecodealliance/wasmtime-dotnet/pull/390) 说明 CET 与信号式 trap 恢复冲突。启用显式检查后，越界读取、unreachable、整数除零及递归栈溢出均返回预期 TrapException，原隔离用例完整通过；未关闭 CET 或修改系统策略。兼容层依赖固定绑定的内部配置句柄，正式公开 API 发布后需移除；AOT 支持另行实证。

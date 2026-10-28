@@ -43,3 +43,7 @@ StopAsync 立即拒绝后续输入及推进，取消未完成任务，并等待�
 `Lua.Execution` 仅依赖通用抽象和 MoonSharp，提供 `LuaExecution`（单次 VM）与 `LuaProcessSession`（受限工作进程）。调用者显式传入函数、JSON、种子和 `LuaCallShape`；执行器不识别 actions、commands、winners 或规则验证入口。数组结果、数组字段和需要验证的导出函数由绑定指定。每请求重建 VM，OS 进程按作用域复用；保持指令、内存、墙钟、输入输出预算与父进程退出清理。
 
 现有 `LuaWorker`／`LuaWorkerSession`／`LuaEvaluator`／`LuaRules` 名称和桌游语义保留在 Lua 绑定／worker 程序集，规则、CPU 与流程调用继续使用受限输入及原重载边界。worker IPC 升为 api 2，携带显式结果形状；缺版本／未知版本拒绝，发行时必须使用匹配 worker，不回退旧协议。通用宿主可直接引用 Lua.Execution 并传入获准 worker 路径，无需引用桌游会话。共享随机算法移入通用抽象并保留旧类型转发，权威随机状态的所有权仍在桌游事务。
+
+`Wasm.Execution` 只引用固定版本 Wasmtime，管理编译模块、每次调用的新 Store、fuel／内存／模块数量与体积预算及释放。调用期间的 `WasmCall` 不能跨调用保留使用，不开放 imports、WASI 或宿主状态句柄。桌游 `WasmPlugins` 继续负责 API／版本／哈希／权限校验及 component／command／snap／container 绑定，结果转换为标准命令进入原权威事务。没有启用 WASM 插件的组合不创建执行器。
+
+执行器使用显式 trap 检查，兼容 Windows CET 保护；不改变系统安全策略。48.0.2 原生库支持此配置，但托管绑定尚未暴露，因此 `WasmtimeTrapCompatibility` 只获取配置 SafeHandle 调用对应原生 setter，失败时拒绝启动。升级至包含[上游 PR 390](https://github.com/bytecodealliance/wasmtime-dotnet/pull/390) 的正式版本后应删除此兼容层并使用公开 API。这是普通 .NET 的已验证路径，不能推导为 NativeAOT 验收通过。
