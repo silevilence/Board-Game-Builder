@@ -38,3 +38,9 @@
 `wasm-executor` 验证不依赖桌游程序集的独立算术调用、每次全局状态重置、过期句柄拒绝、导出／imports／重复模块／体积预算及重复释放。既有 `wasm wasm-extensions wasm-isolation` 覆盖四种能力、越权与非法效果、内存／fuel 超限及权威事务原子性。
 
 本机原实现和提取后实现均在越界读取用例以 `0xC0000409` 终止；替回 HEAD 原实现的对照实验确认此为迁移前问题。[上游问题 374](https://github.com/bytecodealliance/wasmtime-dotnet/issues/374) 与 [PR 390](https://github.com/bytecodealliance/wasmtime-dotnet/pull/390) 说明 CET 与信号式 trap 恢复冲突。启用显式检查后，越界读取、unreachable、整数除零及递归栈溢出均返回预期 TrapException，原隔离用例完整通过；未关闭 CET 或修改系统策略。兼容层依赖固定绑定的内部配置句柄，正式公开 API 发布后需移除；AOT 支持另行实证。
+
+## 流程与桌游推进协作
+
+`flow-progression` 只装配内核、流程与测试观察视口，不装配 session、记录或 CPU。通过公开推进契约完成动态席位多次动作及终局，验证空 update 不进入节点、等待时重复推进／投影／render／重建观察视口不增加日志、过期动作拒绝及终局不重复效果。展示只接收绑定席位投影，系统上下文不泄漏。此处使用测试 render 回调，不替代真实图形验收。
+
+`flow-runtime flow-progression flow-systems flow-players flow-protection flow-restoration flow-review` 七组通过，覆盖分支优先级、原子失败、秘密信息、取消／预算、等待与已提交边界恢复及规则互斥。对等待动作校验边界调整后再次运行 progression／players／protection。

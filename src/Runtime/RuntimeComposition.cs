@@ -34,7 +34,7 @@ internal static class RuntimeComposition
         GameDefinition Definition()=>RuntimeDefinition.From(Module());
         RuntimeStartup Startup()=>startup ?? throw new InvalidOperationException("Startup configuration is required to activate this capability");
         var catalog=new List<RuntimePluginDefinition>
-        {AuthorityPlugin.Create(Module,seed,restored),FlowController.Plugin(Module,cancellation,restored!=null),LuaRuntimePlugins.Rules(Definition,seed),LuaRuntimePlugins.Cpu(Definition),CommandRuleProvider.Plugin,WasmRuntimePlugin.Create(Definition)};
+        {AuthorityPlugin.Create(Module,seed,restored),FlowRuntimePlugin.Create(Module,cancellation,restored!=null),LuaRuntimePlugins.Rules(Definition,seed),LuaRuntimePlugins.Cpu(Definition),CommandRuleProvider.Plugin,WasmRuntimePlugin.Create(Definition)};
         catalog.Add(DefinitionPlugins.Module(Startup));
         catalog.Add(StateDefinitionLoader.Plugin(Startup));
         catalog.Add(SessionRecorder.Plugin(Module,recording));
@@ -46,7 +46,7 @@ internal static class RuntimeComposition
             [..AuthorityPlugin.Required,"rules","recording",..(hasCpu?new[]{"cpu"}:[]),..(hasEffects?new[]{"effects"}:[]),..(hasFlow?new[]{"flow"}:[])],scope=>
                 scope.Provide("session",scope.Own(new LocalGameSession(Module(),seed,controllers ?? throw new InvalidOperationException("Session controllers are required"),maxSteps,
                     scope.Service<IAuthoritySession>("authority"),scope.Service<RuleBinding>("rule-binding"),scope.Service<IRuleProvider>("rules"),
-                    hasCpu?scope.Service<ICpuDecisionProvider>("cpu"):null,hasEffects?scope.Service<IEffectProvider>("effects"):null,scope.Service<IRecordingProvider>("recording"),hasFlow?scope.Service<FlowController>("flow"):null))))
+                    hasCpu?scope.Service<ICpuDecisionProvider>("cpu"):null,hasEffects?scope.Service<IEffectProvider>("effects"):null,scope.Service<IRecordingProvider>("recording"),hasFlow?scope.Service<IFlowProgression>("flow"):null))))
             {Permissions=[AuthorityPlugin.Access],ServicePermissions=new Dictionary<string,string>{{"session",AuthorityPlugin.Access}}});
         return catalog;
     }

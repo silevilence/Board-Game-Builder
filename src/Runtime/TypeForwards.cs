@@ -5,3 +5,4 @@ using BoardGame.Runtime;
 [assembly:TypeForwardedTo(typeof(RuntimePluginDefinition))]
 [assembly:TypeForwardedTo(typeof(RuntimePluginScope))]
 [assembly:TypeForwardedTo(typeof(IAuthoritySession))]
+[assembly:TypeForwardedTo(typeof(SessionFault))]

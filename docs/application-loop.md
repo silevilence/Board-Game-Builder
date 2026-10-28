@@ -47,3 +47,9 @@ StopAsync 立即拒绝后续输入及推进，取消未完成任务，并等待�
 `Wasm.Execution` 只引用固定版本 Wasmtime，管理编译模块、每次调用的新 Store、fuel／内存／模块数量与体积预算及释放。调用期间的 `WasmCall` 不能跨调用保留使用，不开放 imports、WASI 或宿主状态句柄。桌游 `WasmPlugins` 继续负责 API／版本／哈希／权限校验及 component／command／snap／container 绑定，结果转换为标准命令进入原权威事务。没有启用 WASM 插件的组合不创建执行器。
 
 执行器使用显式 trap 检查，兼容 Windows CET 保护；不改变系统安全策略。48.0.2 原生库支持此配置，但托管绑定尚未暴露，因此 `WasmtimeTrapCompatibility` 只获取配置 SafeHandle 调用对应原生 setter，失败时拒绝启动。升级至包含[上游 PR 390](https://github.com/bytecodealliance/wasmtime-dotnet/pull/390) 的正式版本后应删除此兼容层并使用公开 API。这是普通 .NET 的已验证路径，不能推导为 NativeAOT 验收通过。
+
+## 流程推进
+
+`FlowRuntimePlugin.Create` 可独立登记规则与 `IFlowProgression`，只依赖桌游权威及事务能力，不依赖 session 或 driver。推进契约位于 BoardGame.Core；会话仅通过该接口协调 Advance／Submit／Resume，Cancel 可并发发出。自动节点的效果及续行仍在同一权威事务内提交，规则控制来源互斥及不支持 WASM 组合的诊断保持原样。
+
+读取投影、render、启动观察视口和空的 update 不推进流程。协调者显式 Advance 后停在玩家等待边界；重复 Advance 不再重复查询等待节点的动作脚本。节点刚进入等待、玩家提交后仍即时验证下一组动作，保留原故障语义。取消、预算暂停及已提交恢复边界须显式 Resume；图形生命周期不能隐式恢复或重开流程。

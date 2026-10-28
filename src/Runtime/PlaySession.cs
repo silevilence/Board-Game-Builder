@@ -1,7 +1,6 @@
 using System.Globalization;
 using BoardGame.Kernel;
 namespace BoardGame.Runtime;
-public sealed record SessionFault(string Code,string Seat,string Detail);
 public sealed class PlaySession : IGameSession
 {
     private readonly RuntimeHost host;
@@ -38,7 +37,7 @@ public sealed class PlaySession : IGameSession
 
 internal sealed class LocalGameSession : IGameSession
 {
-    private readonly FlowController? flow;
+    private readonly IFlowProgression? flow;
     private SessionFault? fault;
     private readonly object commands=new();
     private LoadedModule module;
@@ -60,7 +59,7 @@ internal sealed class LocalGameSession : IGameSession
     public bool IsCpu => controllers[CurrentSeat]=="cpu";
     public bool SupportsCpu => cpu!=null;
     internal LocalGameSession(LoadedModule module,uint seed,IReadOnlyDictionary<string,string> controllers,int maxSteps,
-        IAuthoritySession engine,RuleBinding ruleBinding,IRuleProvider rules,ICpuDecisionProvider? cpu,IEffectProvider? effects,IRecordingProvider recording,FlowController? flow=null)
+        IAuthoritySession engine,RuleBinding ruleBinding,IRuleProvider rules,ICpuDecisionProvider? cpu,IEffectProvider? effects,IRecordingProvider recording,IFlowProgression? flow=null)
     {
         if(maxSteps<1) throw new ArgumentOutOfRangeException(nameof(maxSteps));
         this.module=Wire.Copy(module);this.seed=seed;this.maxSteps=maxSteps;

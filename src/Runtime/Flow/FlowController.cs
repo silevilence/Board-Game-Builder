@@ -4,7 +4,7 @@ using System.Text.Json;
 
 namespace BoardGame.Runtime;
 
-internal sealed class FlowController : IAuthoritySession,IRuleProvider,IGameRules,IDisposable
+internal sealed class FlowController : IFlowProgression,IRuleProvider,IGameRules,IDisposable
 {
     private readonly IAuthoritySession authority;
     private readonly IFlowAuthority transactions;
@@ -15,8 +15,8 @@ internal sealed class FlowController : IAuthoritySession,IRuleProvider,IGameRule
     private readonly CancellationToken lifetime;
     private readonly object cancellationGate=new();
     private CancellationTokenSource stop=new();
-    // After construction, LocalGameSession serializes Advance/Submit/Resume/Actions with its
-    // commands lock. Cancel only signals stop under cancellationGate; Advance assigns activeCancellation.
+    // The owning coordinator serializes progression; the capability has no session dependency.
+    // Cancel only signals stop under cancellationGate; Advance assigns activeCancellation.
     private CancellationToken activeCancellation;
     private bool disposed;
     public SessionFault? Fault {get;private set;}
@@ -55,10 +55,11 @@ internal sealed class FlowController : IAuthoritySession,IRuleProvider,IGameRule
             var state=authority.ExportAuthorityState();var flow=state.Flow!;
             if(state.Ended || Fault!=null)return;
             if(activeCancellation.IsCancellationRequested) {Fault=new("flow-cancelled","","Cancelled at committed node "+flow.Node);return;}
-            if(flow.Status=="waiting") {CheckActions(flow);return;}
+            if(flow.Status=="waiting") return;
             var node=nodes[flow.Node];
             var result=transactions.SubmitFlow(null,new(){Kind="flow-enter",Entity=node.Id},flow.Revision,tx=>Enter(tx,node,flow));
             if(!result.Accepted) {Fault=new(result.Reason=="flow-cancelled"?"flow-cancelled":"flow-execution", "", "Node "+node.Id+": "+result.Reason);return;}
+            if(authority.ExportAuthorityState().Flow is {Status:"waiting"} entered) {CheckActions(entered);return;}
         }
         if(authority.ExportAuthorityState().Flow is {Status:"ready"} current) Fault=new("flow-budget","","Automatic step budget exhausted at node "+current.Node);
         else if(authority.ExportAuthorityState().Flow is {Status:"waiting"} waiting) CheckActions(waiting);
@@ -165,7 +166,11 @@ internal sealed class FlowController : IAuthoritySession,IRuleProvider,IGameRule
             tx.Complete(outcome.Complete?Leave(tx.Snapshot(),node,next,outcome.Result):next);
             if(stop.IsCancellationRequested || lifetime.IsCancellationRequested) throw new FlowOperationException("flow-cancelled");
         });
-        if(result.Accepted)Advance();
+        if(result.Accepted)
+        {
+            if(authority.ExportAuthorityState().Flow is {Status:"waiting"} waiting) CheckActions(waiting);
+            else Advance();
+        }
         else if(result.Reason.StartsWith("flow-",StringComparison.Ordinal)) Fault=new(result.Reason=="flow-cancelled"?"flow-cancelled":"flow-execution",seat,"Node "+node.Id+": "+result.Reason);
         return result;
     }

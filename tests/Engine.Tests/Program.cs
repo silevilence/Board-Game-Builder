@@ -25,6 +25,7 @@ try
     tests.Add("flow-contract",FlowTests.Contract);
     tests.Add("flow-validation",FlowTests.Validation);
     tests.Add("flow-runtime",FlowTests.Runtime);
+    tests.Add("flow-progression",FlowProgressionTests.Run);
     tests.Add("flow-systems",FlowTests.Systems);
     tests.Add("flow-players",FlowTests.Players);
     tests.Add("flow-protection",FlowTests.Protection);
