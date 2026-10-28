@@ -1,0 +1,6 @@
+<Project Sdk="Microsoft.NET.Sdk">
+  <ItemGroup>
+    <ProjectReference Include="../Application.Abstractions/Application.Abstractions.csproj" />
+    <PackageReference Include="CordiSharp" Version="[0.2.0]" ExcludeAssets="analyzers" />
+  </ItemGroup>
+</Project>

@@ -4,6 +4,8 @@
     <Project Path="samples/Editor.SamplePlugin/Editor.SamplePlugin.csproj" />
   </Folder>
   <Folder Name="/src/">
+    <Project Path="src/Application.Abstractions/Application.Abstractions.csproj" />
+    <Project Path="src/Application.Core/Application.Core.csproj" />
     <Project Path="src/Authoring/Authoring.csproj" />
     <Project Path="src/Cli/Cli.csproj" />
     <Project Path="src/Editor.Core/Editor.Core.csproj" />
@@ -25,6 +27,7 @@
     <Project Path="src/View.MonoGame/View.MonoGame.csproj" />
   </Folder>
   <Folder Name="/tests/">
+    <Project Path="tests/Application.Tests/Application.Tests.csproj" />
     <Project Path="tests/CursedInvestigators.Tests/CursedInvestigators.Tests.csproj" />
     <Project Path="tests/CursedInvestigators.ViewTests/CursedInvestigators.ViewTests.csproj" />
     <Project Path="tests/Editor.AsyncProbe/Editor.AsyncProbe.csproj" />

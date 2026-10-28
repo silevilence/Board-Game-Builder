@@ -9,7 +9,5 @@ public sealed record GameDefinition(GameState Initial,
     SortedDictionary<string,JsonElement> CapabilityData,
     ResourcePool? Resources=null);
 
-public sealed record RuntimePluginSelection(string Id,string Version,int Api,JsonElement Configuration);
-public sealed record RuntimeStartup(int Format,string Id,string Version,List<RuntimePluginSelection> Plugins);
 public sealed record RuntimeIdentity(int Format,RuntimeStartup Startup,string DefinitionSource,
     SortedDictionary<string,string> ContentHashes);

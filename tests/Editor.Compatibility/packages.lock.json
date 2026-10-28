@@ -371,13 +371,19 @@
         "resolved": "0.94.1",
         "contentHash": "11YMr7FnAbL83bQmVxlhbIKHvSLxjO81D12Ej0QMSGXMDTxNA9MTOa4MQxx43nv5el/efuPHwzyrj6a5ha2gug=="
       },
-      "kernel.abstractions": {
+      "application.abstractions": {
         "type": "Project"
+      },
+      "kernel.abstractions": {
+        "type": "Project",
+        "dependencies": {
+          "Application.Abstractions": "[0.3.0, )"
+        }
       },
       "view.abstractions": {
         "type": "Project",
         "dependencies": {
-          "Kernel.Abstractions": "[0.2.1, )"
+          "Kernel.Abstractions": "[0.3.0, )"
         }
       },
       "view.monogame": {
@@ -388,7 +394,7 @@
           "MonoGame.Framework.WindowsDX": "[3.8.4.1, )",
           "SkiaSharp": "[3.119.4, )",
           "System.Drawing.Common": "[10.0.0, )",
-          "View.Abstractions": "[0.2.1, )"
+          "View.Abstractions": "[0.3.0, )"
         }
       }
     }
