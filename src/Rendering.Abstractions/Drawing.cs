@@ -28,7 +28,7 @@ public sealed record ViewportTarget(nint Handle,int Width,int Height,double Scal
 }
 public sealed record RenderBackendDescriptor(string Id,string Version,string Platform,bool SupportsNativeAot);
 public sealed record RenderMetrics(int Images,int Labels,int LabelsCreated);
-public sealed record ViewportInput(string Kind,float X=0,float Y=0,string? Key=null);
+public sealed record ViewportInput(string Kind,float X=0,float Y=0,string? Key=null,string? Source=null);
 
 /// <summary>Available only during a render callback. Assets contain no device handles.</summary>
 public interface IDraw2D

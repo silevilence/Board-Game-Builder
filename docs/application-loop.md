@@ -127,3 +127,9 @@ FreeCell 原来由 classic 样式硬编码的标题、区域说明和皇冠已�
 既有 Runtime 是兼容默认组合入口，保留原目录／format 2、PlaySession 与作者调试行为，并转交分离后的实现；它的全量引用不再是新通用宿主的依赖。Player 外壳及发行提供者的迁移由后续任务承接。旧 `SessionRecording.Replay()` 现在由 Runtime 命名空间的扩展适配供应默认目录校验；选择性宿主必须显式传入其快照验证策略。已编译调用者须与本次程序集版本一起重建，不承诺跨版本托管 ABI。记录数据格式、哈希和算法不变。
 
 普通 BoardGame.Hosting 的内容实例固定来源版本，其记录不能替换为另一份内容。当前此入口通过重建实例切换来源；既有默认组合的作者脚本重载仍保持原行为。所有格式迁移均显式选择目录和加载器，不把原 format 2 包交给 format 3 解析器静默转换。
+
+## 最小实时组合
+
+Sample.Motion 与 motion-lab 提供独立内容、update 和 application.view；ApplicationWindow、ApplicationViewport 只消费通用契约。ApplicationPump 每实例一份，固定步进由 Driver 负责，暂停完成会等待活动更新提交，单步一次固定逻辑时间。绘制从不可变快照读取，多个视口不创建多个 pump。平台输入带来源，失焦和关闭只取消该来源的持续按键。
+
+`dotnet run --project samples/Minimal.Player -- samples/motion-lab` 可手动运行；也接受正式数据包。最小宿主无需 Kernel、BoardGame.Core、Runtime、Lua 或 Wasmtime。窗口异步加载并保护关闭代次，先停止 pump，再释放视口和实例；玩法与文案均在示例程序集或内容。

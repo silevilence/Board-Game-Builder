@@ -1,0 +1,12 @@
+{
+  "title": "Motion lab",
+  "instructions": "Arrow keys move. Space resets.",
+  "success": "Target reached. Space resets.",
+  "width": 640,
+  "height": 360,
+  "speed": 140,
+  "startX": 60,
+  "startY": 180,
+  "targetX": 520,
+  "targetY": 180
+}

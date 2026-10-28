@@ -1,0 +1,46 @@
+{
+  "format": 1,
+  "id": "motion-lab",
+  "version": "1",
+  "plugins": [
+    {
+      "id": "motion.definition",
+      "version": "1",
+      "api": 1,
+      "configuration": {
+        "path": "motion.json"
+      }
+    },
+    {
+      "id": "resources",
+      "version": "1",
+      "api": 1,
+      "configuration": {}
+    },
+    {
+      "id": "resources.images",
+      "version": "1",
+      "api": 1,
+      "configuration": {
+        "sources": [
+          {
+            "path": "marker.png",
+            "name": "marker"
+          }
+        ]
+      }
+    },
+    {
+      "id": "motion.loop",
+      "version": "1",
+      "api": 1,
+      "configuration": {}
+    },
+    {
+      "id": "motion.view",
+      "version": "1",
+      "api": 1,
+      "configuration": {}
+    }
+  ]
+}

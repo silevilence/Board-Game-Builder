@@ -108,3 +108,9 @@
 抽离后的默认 Runtime 在最初 21 局基线上逐项匹配，未重录；`board-recording board-update session-driver lua-executor wasm-executor runtime-recording` 全部通过。后续 `packages content-discovery online-reconnect online-audience online-secrets runtime-host startup` 全部通过。完整构建零警告、零错误。一次并行 NuGet 还原报告“文件已存在”；使用正常串行还原后通过，没有删除缓存或修改安全设置。上述装配验证不宣称 Player 外壳、普通发行 UI 或干净 Windows 验收已完成，这些仍按后续任务独立验收。
 
 追加 WASM-only 宿主验证：只引用 BoardGame.Hosting + BoardGame.Wasm，实际扩展计数命令、更新发布、记录回放及加载时的 WASM 内容哈希拒绝通过，deps.json 不含 Lua 或兼容 Runtime。载荷加载器通过新增的默认接口重载接收独立复制的有效启动配置；旧加载器继续使用原 Load(source)，保留禁止将 game.start.json 当普通内容文件读取的边界。
+
+## 非桌游实时示例
+
+Motion.Tests 通过正式目录／包加载、固定输入和 10／20／50／100 ms 调度一致性、目标反馈、暂停／单步、120 帧绘制不更新状态及真实 pump。deps.json 检查无桌游／Lua／WASM 实现。Motion.ViewTests 实际打开独立与双嵌入视口，经原生按键驱动连续运动；暂停仍绘制，关闭一个视口保留另一视口输入，失焦取消只影响自身。通用 ApplicationWindow 重复启停及加载中关闭通过，最终设备／后端／原生窗口计数全零。截图已查看，标题、目标、标记和反馈均正确。
+
+全解构建零警告零错误，WindowsDX 原有双视口契约和 FreeCell 完整快捷键通关回归通过。证据见 [motion-probes.json](motion-probes.json)。此时普通 Player 的统一能力入口仍由下一任务验收，最小宿主不替代该任务。

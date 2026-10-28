@@ -1,5 +1,7 @@
 <Solution>
   <Folder Name="/samples/">
+    <Project Path="samples/Minimal.Player/Minimal.Player.csproj" />
+    <Project Path="samples/Sample.Motion/Sample.Motion.csproj" />
     <Project Path="samples/Author.SamplePlugin/Author.SamplePlugin.csproj" />
     <Project Path="samples/Editor.SamplePlugin/Editor.SamplePlugin.csproj" />
   </Folder>
@@ -46,6 +48,8 @@
   </Folder>
   <Folder Name="/tests/">
     <Project Path="tests/Application.Tests/Application.Tests.csproj" />
+    <Project Path="tests/Motion.Tests/Motion.Tests.csproj" />
+    <Project Path="tests/Motion.ViewTests/Motion.ViewTests.csproj" />
     <Project Path="tests/Application.Hosting.Tests/Application.Hosting.Tests.csproj" />
     <Project Path="tests/BoardGame.Presentation.Tests/BoardGame.Presentation.Tests.csproj" />
     <Project Path="tests/BoardGame.Hosting.Tests/BoardGame.Hosting.Tests.csproj" />

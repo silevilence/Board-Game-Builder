@@ -42,6 +42,7 @@ public class PlatformViewport : NativeControlHost, IDisposable
     public Action<IDraw2D>? Paint { get; set; }
     public Func<float,float,bool>? UsesSecondaryPointer { get; set; }
     public event Action<string>? KeyPressed;
+    public event Action<string,bool>? KeyChanged;
     private bool panning;
     private bool releasingCapture;
     private long lastClick;
@@ -103,7 +104,7 @@ public class PlatformViewport : NativeControlHost, IDisposable
         if(disposed) return;disposed=true;
         CancelInput();
         inputRoot?.RemoveHandler(PointerWheelChangedEvent,RootWheel); inputRoot=null;
-        timer.Stop(); ReleaseGraphics();ReleaseAttachment(); Paint=null; Input=null; UsesSecondaryPointer=null; KeyPressed=null;
+        timer.Stop(); ReleaseGraphics();ReleaseAttachment(); Paint=null; Input=null; UsesSecondaryPointer=null; KeyPressed=null;KeyChanged=null;
     }
     protected override void OnAttachedToVisualTree(Avalonia.VisualTreeAttachmentEventArgs e)
     {
@@ -219,8 +220,11 @@ public class PlatformViewport : NativeControlHost, IDisposable
                 ChangeZoom((short)((ulong)w >> 16) > 0 ? 1.1f : 1/1.1f); return 0;
             case 0x100: case 0x104:
                 var key=MapKey?.Invoke((int)w,(GetKeyState(0x11)&0x8000)!=0,(GetKeyState(0x12)&0x8000)!=0);
-                if(key!=null) { if(((long)l & (1L<<30))==0) KeyPressed?.Invoke(key); return 0; }
+                if(key!=null) { if(((long)l & (1L<<30))==0) {KeyPressed?.Invoke(key);KeyChanged?.Invoke(key,true);} return 0; }
                 break;
+            case 0x101: case 0x105:
+                var released=MapKey?.Invoke((int)w,(GetKeyState(0x11)&0x8000)!=0,(GetKeyState(0x12)&0x8000)!=0);
+                if(released!=null){KeyChanged?.Invoke(released,false);return 0;}break;
             case 0x215:
                 if(releasingCapture) break;
                 goto case 0x1F;

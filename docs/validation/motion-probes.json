@@ -1,0 +1,38 @@
+{
+  "motion": {
+    "success": true,
+    "errors": [],
+    "checks": [
+      "standalone-and-two-embedded-viewports",
+      "native-key-down-up-continuous-motion-target-and-paused-render",
+      "single-step-shared-instance-close-one-view-and-focus-cancel",
+      "application-window-repeated-start-close-and-close-during-load"
+    ],
+    "screenshots": [
+      "C:\\code\\dotnet\\Board-Game-Builder\\.scratch\\application-loop\\motion-view.json.standalone.png",
+      "C:\\code\\dotnet\\Board-Game-Builder\\.scratch\\application-loop\\motion-view.json.embedded.png"
+    ],
+    "devices": 0,
+    "backends": 0,
+    "nativeWindows": 0
+  },
+  "graphicsRegression": {
+    "success": true,
+    "errors": [],
+    "screenshots": [
+      "C:\\code\\dotnet\\Board-Game-Builder\\.scratch\\application-loop\\windowsdx-realtime.0.png",
+      "C:\\code\\dotnet\\Board-Game-Builder\\.scratch\\application-loop\\windowsdx-realtime.1.png",
+      "C:\\code\\dotnet\\Board-Game-Builder\\.scratch\\application-loop\\windowsdx-realtime.2.png"
+    ],
+    "input": [
+      "down",
+      "up",
+      "a",
+      "cancel",
+      "cancel"
+    ],
+    "devices": 0,
+    "backends": 0,
+    "nativeWindows": 0
+  }
+}
