@@ -8,6 +8,7 @@ try
     tests.Add("application-baseline",ApplicationBaselineTests.Run);
     tests.Add("content-discovery",ContentDiscoveryTests.Run);
     tests.Add("board-kernel-plugin",BoardKernelPluginTests.Run);
+    tests.Add("lua-executor",LuaExecutorTests.Run);
     tests.Add("board-actions",BoardActionTests.Run);
     tests.Add("resource-font",FontResourceTests.Run);
     tests.Add("animation-runtime",AnimationTests.Runtime);

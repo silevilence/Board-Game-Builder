@@ -14,6 +14,7 @@
     <Project Path="src/Kernel.Abstractions/Kernel.Abstractions.csproj" />
     <Project Path="src/Kernel/Kernel.csproj" />
     <Project Path="src/Lua/Lua.csproj" />
+    <Project Path="src/Lua.Execution/Lua.Execution.csproj" />
     <Project Path="src/Launcher.Core/Launcher.Core.csproj" />
     <Project Path="src/Launcher.Cli/Launcher.Cli.csproj" />
     <Project Path="src/Launcher/Launcher.csproj" />

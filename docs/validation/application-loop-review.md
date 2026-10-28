@@ -28,3 +28,7 @@
 `board-kernel-plugin` 验证不依赖 Runtime／Lua／Wasmtime 的独立内核插件装配、投影包装不可转换为权威接口、绑定席位投影的复制隔离、非法命令不改变状态，以及普通规则声明受保护依赖仍被启动校验拒绝。安装目录权限与游戏配置分离，配置内伪造权限不能授权。记录、流程与会话中可取得权威信息的接口也受相同限制。
 
 `board-kernel-plugin runtime-host startup commands visibility secrets flow-runtime runtime-recording` 八组回归通过。Kernel 算法、事务与受控随机未拆散；既有基线命令／投影／记录继续逐项比较。该任务不表示桌游 update 或展示插件迁移已经完成。
+
+## Lua 执行器与调用绑定
+
+`lua-executor lua cpu sandbox worker reload flow-systems flow-restoration` 八组回归通过。新用例用位置／速度／时间数据调用独立执行器，验证自定义数组字段、无桌游字段猜测、函数导出校验、惰性 worker、多实例与多次调用的 VM 隔离、未知 IPC 版本拒绝，并检查执行器程序集不依赖 Kernel、Runtime 或 BoardGame.Core。既有 worker 测试继续验证超时／内存超限、回收、父进程退出、重复释放及并发响应隔离；重载失败保留旧脚本。

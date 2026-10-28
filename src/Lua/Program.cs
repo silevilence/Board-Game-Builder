@@ -14,8 +14,9 @@ if(args.Length==2 && args[0]=="--server" && int.TryParse(args[1],out var parentI
         try
         {
             var request=Wire.Read<LuaRequest>(await LuaProtocol.Read(input,LuaProtocol.RequestLimit));
+            if(request.Api!=2) throw new InvalidDataException("Unsupported Lua executor protocol");
             if(request.Source.Length>262144 || request.Input.Length>2097152) throw new InvalidDataException("Lua input budget exceeded.");
-            response=new(true,LuaEvaluator.Invoke(request.Source,request.Path,request.Entry,request.Input,request.Seed),"");
+            response=new(true,LuaExecution.Invoke(request.Source,request.Path,request.Entry,request.Input,request.Seed,request.Shape),"");
         }
         catch(EndOfStreamException) { return 0; }
         catch(Exception error) { response=new(false,"",error.Message.Length>65536?error.Message[..65536]:error.Message); }
@@ -26,7 +27,8 @@ if(args.Length==2 && args[0]=="--server" && int.TryParse(args[1],out var parentI
 try
 {
     var request=Wire.Read<LuaRequest>(Console.In.ReadToEnd());
-    var json=LuaEvaluator.Invoke(request.Source,request.Path,request.Entry,request.Input,request.Seed);
+    if(request.Api!=2) throw new InvalidDataException("Unsupported Lua executor protocol");
+    var json=LuaExecution.Invoke(request.Source,request.Path,request.Entry,request.Input,request.Seed,request.Shape);
     Console.Write(Wire.Json(new LuaResponse(true,json,"")));return 0;
 }
 catch(Exception error)

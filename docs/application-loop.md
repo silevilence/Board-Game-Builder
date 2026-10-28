@@ -37,3 +37,9 @@ StopAsync 立即拒绝后续输入及推进，取消未完成任务，并等待�
 桌游基础提供者位于 `BoardGame.Core`，只依赖 Kernel 与 Application.Core；实体／席位／命令等仍属于 Kernel.Abstractions 的桌游契约，小核心不引用它。权威、流程事务、记录与会话服务要求安装目录授予 `board.authority` 权限；权限不来自启动配置。普通规则、CPU 或展示即使声明依赖也不能取得受保护服务。投影服务使用独立包装，可信适配按已授权席位生成 `ISeatProjection` 后只将它交给展示，包装不实现权威调试接口。`IAuthoritySession` 明确属于可信系统／作者接口，由原 Runtime 程序集转发到 BoardGame.Core。
 
 原 `BoardGame.Runtime.GameRuntime.Load`／`GamePackage.Pack` 保留既有 LoadedModule、桌游快照与 format 2 包的显式适配，不自动升级旧数据；新增传入 `ContentCatalog` 的重载转交上述通用实现。仅依赖小核心的宿主直接引用 `BoardGame.AppRuntime` 门面，既有桌游宿主保留原命名空间。通用加载器不尝试旧桌游解析器；旧桌游调用也不静默解析 format 3。插件作者应显式选择对应数据契约，后续默认桌游组合迁移不能靠伪造桌游数据兼容非桌游内容。
+
+## 执行器与桌游绑定
+
+`Lua.Execution` 仅依赖通用抽象和 MoonSharp，提供 `LuaExecution`（单次 VM）与 `LuaProcessSession`（受限工作进程）。调用者显式传入函数、JSON、种子和 `LuaCallShape`；执行器不识别 actions、commands、winners 或规则验证入口。数组结果、数组字段和需要验证的导出函数由绑定指定。每请求重建 VM，OS 进程按作用域复用；保持指令、内存、墙钟、输入输出预算与父进程退出清理。
+
+现有 `LuaWorker`／`LuaWorkerSession`／`LuaEvaluator`／`LuaRules` 名称和桌游语义保留在 Lua 绑定／worker 程序集，规则、CPU 与流程调用继续使用受限输入及原重载边界。worker IPC 升为 api 2，携带显式结果形状；缺版本／未知版本拒绝，发行时必须使用匹配 worker，不回退旧协议。通用宿主可直接引用 Lua.Execution 并传入获准 worker 路径，无需引用桌游会话。共享随机算法移入通用抽象并保留旧类型转发，权威随机状态的所有权仍在桌游事务。

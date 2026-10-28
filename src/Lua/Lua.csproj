@@ -2,8 +2,6 @@
   <PropertyGroup><OutputType>Exe</OutputType></PropertyGroup>
   <ItemGroup>
     <ProjectReference Include="../Kernel.Abstractions/Kernel.Abstractions.csproj" />
-  </ItemGroup>
-  <ItemGroup>
-    <PackageReference Include="MoonSharp" Version="2.0.0" />
+    <ProjectReference Include="../Lua.Execution/Lua.Execution.csproj" />
   </ItemGroup>
 </Project>
