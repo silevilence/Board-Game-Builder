@@ -62,3 +62,9 @@
 实际运行 Debug Editor 的 `--verify-session samples/quick-cards`，使用本轮 Release Player：内嵌和外部均完成 7 条命令，覆盖脚本重载／坏脚本保留、暂停／单步、观察席位与显式作者权限、面板重建、回放、迟到结果、进程失败及重启；退出设备数为 0。实际 Release Player 的 `--verify-local` 八种热座／分屏、纯真人／混合 CPU、quick-cards／sealed-auction 组合均通过。原始结果见 [application-host-probes.json](application-host-probes.json)。这些结果不替代后续通用渲染插件、非桌游宿主与干净 Windows 发行验收。
 
 延迟门槛仍为 1000 ms。本轮与基线及图形探针并行运行时一次达到 1185.6 ms；其他测试退出后独立复测八次为 98.7、515.4、169.5、162.9、53.0、498.8、177.2、154.0 ms，通过既有门槛。保留并行负载结果，不将其描述为独立基准。
+
+## 独立资源加载
+
+`dotnet run --project tests/Resources.Tests` 通过。该可执行项目只引用 Resources.Core，检查资源抽象、实现和 Application.Core 无桌游或 MonoGame 程序集依赖；非桌游内容通过插件读取单图、裁剪／旋转图集和中文字体，验证通配符依赖收集、重复名称、缺件、未知资源、越界枚举及保留入口过滤。删除源目录后，包与快照恢复仍匹配原指纹。资源提供者没有帧回调，定义提供者不解析资源格式。
+
+`resource-font animation-runtime resource-documents atlas resource-plugins runtime-recording author-resources print` 全部通过；`application-baseline` 的 21 局与最初固定摘要一致，未重录。Application.Tests 通过，整解构建零警告、零错误。View.Tests 实际字体栅格化、UI 字形加载、重置／独立释放，以及文档授权投影、分页、刷新、终局和释放通过；此处不替代后续 WindowsDX 通用 render 接入验收。

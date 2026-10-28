@@ -377,8 +377,12 @@
       "kernel.abstractions": {
         "type": "Project",
         "dependencies": {
-          "Application.Abstractions": "[0.3.0, )"
+          "Application.Abstractions": "[0.3.0, )",
+          "Resources.Abstractions": "[0.3.0, )"
         }
+      },
+      "resources.abstractions": {
+        "type": "Project"
       },
       "view.abstractions": {
         "type": "Project",

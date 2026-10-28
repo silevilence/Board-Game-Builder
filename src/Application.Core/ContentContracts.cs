@@ -14,6 +14,7 @@ public interface IContentLoader
 public interface IContentSource
 {
     ReadOnlyMemory<byte> Read(string path);
+    IReadOnlyList<string> Enumerate(string path);
 }
 public sealed record ContentPayload(string Format,int Version,JsonElement Data);
 public sealed record ContentIdentity(int Format,RuntimeStartup Startup,string DefinitionSource,SortedDictionary<string,string> Files);

@@ -50,10 +50,10 @@ public static class AnimationFile
 
 internal sealed class AnimationResourceLoader : IResourceLoader
 {
-    public void Load(ResourceSource source,ResourceInput input,ResourcePoolBuilder builder)
+    public void Load(ResourceSource source,ResourceInput input,BoardGame.Resources.AssetBuilder builder)
     {
         var bytes=input.Read(source.Path);
-        try {builder.Animations(AnimationFile.Parse(System.Text.Encoding.UTF8.GetString(bytes)));}
+        try {((ResourcePoolBuilder)builder).Animations(AnimationFile.Parse(System.Text.Encoding.UTF8.GetString(bytes)));}
         catch(Exception e) when(e is InvalidDataException or JsonException) {throw new InvalidDataException(source.Path+": "+e.Message,e);}
     }
 }

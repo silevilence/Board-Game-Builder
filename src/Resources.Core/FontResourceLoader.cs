@@ -1,6 +1,7 @@
 using System.Buffers.Binary;
 using System.Text.Json;
 using BoardGame.Kernel;
+using BoardGame.Resources;
 
 namespace BoardGame.Runtime;
 
@@ -9,7 +10,7 @@ internal sealed class FontResourceLoader(FontReference font) : IResourceLoader
 {
     internal static FontReference Read(JsonElement configuration)
     {
-        GameRuntime.CheckObject(configuration,["path","license"],"resources.font");
+        RuntimeDiscovery.CheckObject(configuration,["path","license"],"resources.font");
         string Path(string key)
         {
             if(!configuration.TryGetProperty(key,out var value) || value.ValueKind!=JsonValueKind.String || string.IsNullOrWhiteSpace(value.GetString()))
@@ -20,7 +21,7 @@ internal sealed class FontResourceLoader(FontReference font) : IResourceLoader
         if(result.Resource==result.License)throw new InvalidDataException("resources.font.license: must be a separate file");
         return result;
     }
-    public void Load(ResourceSource source,ResourceInput input,ResourcePoolBuilder builder)
+    public void Load(ResourceSource source,ResourceInput input,AssetBuilder builder)
     {
         Validate(input.Read(font.Resource),font.Resource);
         if(input.Read(font.License).Length==0)throw new InvalidDataException(font.License+": empty font license");

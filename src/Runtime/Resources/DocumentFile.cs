@@ -46,5 +46,6 @@ public static partial class DocumentFile
 }
 internal sealed class DocumentResourceLoader : IResourceLoader
 {
-    public void Load(ResourceSource source,ResourceInput input,ResourcePoolBuilder builder)=>builder.Documents(DocumentFile.Parse(Encoding.UTF8.GetString(input.Read(source.Path))));
+    public void Load(ResourceSource source,ResourceInput input,BoardGame.Resources.AssetBuilder builder)=>
+        ((ResourcePoolBuilder)builder).Documents(DocumentFile.Parse(Encoding.UTF8.GetString(input.Read(source.Path))));
 }

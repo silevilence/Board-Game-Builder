@@ -2,7 +2,7 @@ using System.Text.Json;
 using BoardGame.Kernel;
 namespace BoardGame.Runtime;
 
-internal static class TexturePackerFormat
+public static class TexturePackerFormat
 {
     public static IReadOnlyDictionary<string,ImageReference> Frames(JsonDocument document,string image,byte[] bytes,string location)
     {

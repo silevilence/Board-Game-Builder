@@ -77,3 +77,11 @@ StopAsync 立即拒绝后续输入及推进，取消未完成任务，并等待�
 PlayerSession 和 LocalTableSession 直接等待异步入口；CLI 批量、独立命令行、内嵌／外部调试的同步兼容调用最终都进入同一驱动。规则与 CPU 的 Lua 请求接收当前 update 的取消令牌，按调用上下文隔离，取消不污染下一次执行。DisposeAsync 取消正在执行的请求，等待驱动停止后释放插件；同步 Dispose 用于同步所有者。
 
 Editor 的 sessions 插件在工作线程创建内嵌会话，捕获当前模块与文档代次；停止或切换文档取消尚未完成的启动，外部 Player 握手同样可取消并回收进程。调试暂停／单步绑定驱动时钟，观察和面板重建不触发推进。图形线程仍负责现有视口设备调用，WindowsDX render 接入在后续单独迁移。
+
+## 独立资源能力
+
+`Resources.Abstractions` 提供 `AssetSet`、图像裁剪／旋转描述和字体引用，不依赖桌游或图形设备；`Resources.Core` 提供文件、单图、TexturePacker 与字体加载器、`AssetRegistry` 和 `AssetPlugins.Catalog`，只引用资源抽象及 Application.Core。资源插件仅注册准备服务，无需空 update／render。资源字节及描述按内容版本冻结，GPU 缓存仍由各视口持有和释放。
+
+定义提供者通过 `ContentResourceInput(IContentSource)` 让资源注册表解析格式。`IContentSource.Enumerate` 返回已验证、排序且受数量预算限制的路径，拒绝越界、链接和大小写重复；不暴露入口与包清单。枚举本身不捕获文件字节，通配符匹配后实际读取的依赖才进入指纹、包及快照。目录、包与快照使用相同加载器，保持命名、字体许可与大小预算。
+
+桌游 `ResourcePool` 继承通用资源描述，只追加动画和分页文档元数据；旧类型名通过程序集转发保留，JSON 属性顺序保持原指纹。桌游资源插件显式附加动画／文档加载器，牌面、打印及既有视口继续消费相同图像与字体描述。兼容命名空间 `BoardGame.Kernel`／`BoardGame.Runtime` 不表示通用资源程序集依赖桌游程序集；依赖边界由独立测试检查。

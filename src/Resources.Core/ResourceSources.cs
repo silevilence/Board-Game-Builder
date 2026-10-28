@@ -1,20 +1,19 @@
 using System.Text.Json;
 using System.Text.RegularExpressions;
-using BoardGame.Kernel;
-using BoardGame.Modules;
+using BoardGame.Resources;
 
 namespace BoardGame.Runtime;
 
-internal sealed record ResourceSource(string Path,string? Pattern=null,string? Name=null,string Prefix="")
+public sealed record ResourceSource(string Path,string? Pattern=null,string? Name=null,string Prefix="")
 {
     public static ResourceSource[] Read(JsonElement configuration,string plugin)
     {
-        GameRuntime.CheckObject(configuration,["sources"],plugin);
+        RuntimeDiscovery.CheckObject(configuration,["sources"],plugin);
         if(!configuration.TryGetProperty("sources",out var sources))return [];
         if(sources.ValueKind!=JsonValueKind.Array || sources.GetArrayLength()>128)throw new InvalidDataException(plugin+": sources must be an array of at most 128 entries");
         return sources.EnumerateArray().Select(item=>
         {
-            GameRuntime.CheckObject(item,["path","pattern","name","prefix"],plugin+".sources");
+            RuntimeDiscovery.CheckObject(item,["path","pattern","name","prefix"],plugin+".sources");
             var path=item.GetProperty("path").GetString()!;CheckPath(path,true);
             var pattern=item.TryGetProperty("pattern",out var p)?p.GetString():null;
             if(pattern!=null) {CheckPath(pattern,false,true);_=Glob(pattern);}
@@ -25,13 +24,13 @@ internal sealed record ResourceSource(string Path,string? Pattern=null,string? N
             return new ResourceSource(path,pattern,name,prefix);
         }).ToArray();
     }
-    internal static void CheckName(string name)
+    public static void CheckName(string name)
     {if(string.IsNullOrWhiteSpace(name) || name.Length>512 || name.Any(char.IsControl))throw new InvalidDataException("Invalid resource name: "+name);}
-    internal static void CheckPath(string path,bool root=false,bool glob=false)
+    public static void CheckPath(string path,bool root=false,bool glob=false)
     {
         if(root && path==".")return;
         if(glob) {if(path.Contains('[') || path.Contains(']'))throw new InvalidDataException("Only *, ? and ** glob syntax is supported");path=path.Replace('*','x').Replace('?','x');}
-        ModulePackage.ValidatePath(path);
+        ContentPath.Validate(path);
     }
     internal static Regex Glob(string pattern)
     {
@@ -46,7 +45,7 @@ internal sealed record ResourceSource(string Path,string? Pattern=null,string? N
     }
 }
 
-internal abstract class ResourceInput
+public abstract class ResourceInput
 {
     private readonly Dictionary<string,ReadOnlyMemory<byte>> read=new(StringComparer.Ordinal);
     public IReadOnlyDictionary<string,ReadOnlyMemory<byte>> Files=>read;
@@ -57,7 +56,7 @@ internal abstract class ResourceInput
         ResourceSource.CheckPath(path);
         if(read.TryGetValue(path,out var existing))return existing.ToArray();
         var bytes=ReadFile(path);
-        if(bytes.Length>ModuleContentLimits.MaxFileBytes || read.Count>=ModuleContentLimits.MaxFiles || read.Values.Sum(v=>(long)v.Length)+bytes.Length>ModuleContentLimits.MaxTotalBytes)
+        if(bytes.Length>ResourceContentLimits.MaxFileBytes || read.Count>=ResourceContentLimits.MaxFiles || read.Values.Sum(v=>(long)v.Length)+bytes.Length>ResourceContentLimits.MaxTotalBytes)
             throw new InvalidDataException("Resource content size budget exceeded");
         read.Add(path,bytes);return bytes;
     }
@@ -67,9 +66,9 @@ internal abstract class ResourceInput
         if(selection.File && source.Pattern!=null)throw new InvalidDataException("Resource pattern requires a directory: "+source.Path);
         if(!selection.File && source.Name!=null)throw new InvalidDataException("Resource name requires a single file: "+source.Path);
         var pattern=ResourceSource.Glob(source.Pattern ?? "**/*");var count=0;var scanned=0;
-        foreach(var path in selection.Paths.Take(ModuleContentLimits.MaxFiles+1).Order(StringComparer.Ordinal))
+        foreach(var path in selection.Paths.Take(ResourceContentLimits.MaxFiles+1).Order(StringComparer.Ordinal))
         {
-            if(++scanned>ModuleContentLimits.MaxFiles)throw new InvalidDataException("Resource scan file budget exceeded");
+            if(++scanned>ResourceContentLimits.MaxFiles)throw new InvalidDataException("Resource scan file budget exceeded");
             var relative=selection.File?System.IO.Path.GetFileName(path):source.Path=="."?path:path[(source.Path.Length+1)..];
             if(!selection.File && !pattern.IsMatch(relative))continue;
             if(!selection.File && source.Pattern==null && defaultFilter!=null && !defaultFilter(path))continue;
@@ -80,15 +79,15 @@ internal abstract class ResourceInput
     }
 }
 
-internal sealed class DirectoryResourceInput(string directory) : ResourceInput
+public sealed class DirectoryResourceInput(string directory) : ResourceInput
 {
-    private readonly string root=System.IO.Path.GetFullPath(directory);
-    protected override byte[] ReadFile(string path)=>File.ReadAllBytes(DirectoryModule.SafeFile(root,path));
+    private readonly string root=System.IO.Path.TrimEndingDirectorySeparator(System.IO.Path.GetFullPath(directory));
+    protected override byte[] ReadFile(string path)=>File.ReadAllBytes(SafeFile(path));
     protected override (bool File,IEnumerable<string> Paths) Enumerate(string path)
     {
         ResourceSource.CheckPath(path,true);
         var full=path=="."?root:System.IO.Path.Combine(root,path);
-        if(File.Exists(full)) {_=DirectoryModule.SafeFile(root,path);return(true,new[]{path});}
+        if(File.Exists(full)) {_=SafeFile(path);return(true,new[]{path});}
         if(!Directory.Exists(full))throw new InvalidDataException(path+": missing resource path");
         for(var current=new DirectoryInfo(full);current!=null;current=current.Parent)
         {if((current.Attributes & FileAttributes.ReparsePoint)!=0)throw new InvalidDataException(path+": linked resource directories are unsupported");if(current.FullName==root)break;}
@@ -103,9 +102,21 @@ internal sealed class DirectoryResourceInput(string directory) : ResourceInput
             else yield return System.IO.Path.GetRelativePath(root,entry.FullName).Replace('\\','/');
         }
     }
+    private string SafeFile(string relative)
+    {
+        ContentPath.Validate(relative);
+        var rootPath=System.IO.Path.TrimEndingDirectorySeparator(root);
+        var path=System.IO.Path.GetFullPath(System.IO.Path.Combine(rootPath,relative));
+        if((File.GetAttributes(rootPath)&FileAttributes.ReparsePoint)!=0)throw new InvalidDataException("Linked resource roots are unsupported");
+        if(!path.StartsWith(rootPath+System.IO.Path.DirectorySeparatorChar,StringComparison.OrdinalIgnoreCase) || !File.Exists(path))throw new InvalidDataException(relative+": missing file or path escapes resources");
+        if(new FileInfo(path).Length>ResourceContentLimits.MaxFileBytes)throw new InvalidDataException(relative+": file size budget exceeded");
+        for(FileSystemInfo? current=new FileInfo(path);current!=null && current.FullName!=rootPath;current=Directory.GetParent(current.FullName))
+            if((current.Attributes&FileAttributes.ReparsePoint)!=0)throw new InvalidDataException(relative+": linked paths are unsupported");
+        return path;
+    }
 }
 
-internal sealed class SnapshotResourceInput(ResourcePool pool) : ResourceInput
+public sealed class SnapshotResourceInput(AssetSet pool) : ResourceInput
 {
     protected override byte[] ReadFile(string path)=>pool.GetFile(path).ToArray();
     protected override (bool File,IEnumerable<string> Paths) Enumerate(string path)=>pool.Files.ContainsKey(path)

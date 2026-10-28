@@ -50,7 +50,7 @@ public static class GamePackage
         if(!manifest.Files.Keys.ToHashSet(StringComparer.Ordinal).SetEquals(files.Keys)) throw new InvalidDataException("Package file set mismatch");
         foreach(var file in files)
             if(manifest.Files[file.Key]!=ContentJson.Hash(file.Value)) throw new InvalidDataException(file.Key+": package hash mismatch");
-        ContentSource Source()=>new(name=>files.TryGetValue(name,out var value)?value:throw new InvalidDataException(name+": missing package content"));
+        ContentSource Source()=>ContentSource.Snapshot(files);
         var content=GameRuntime.Build(Source(),catalog,null);
         if(content.Fingerprint!=manifest.Fingerprint) throw new InvalidDataException("Package content identity mismatch");
         if(!content.Snapshot.Files.Keys.ToHashSet(StringComparer.Ordinal).SetEquals(files.Keys)) throw new InvalidDataException("Package contains undeclared content");

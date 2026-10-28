@@ -25,12 +25,15 @@
     <Project Path="src/Server/Server.csproj" />
     <Project Path="src/Player/Player.csproj" />
     <Project Path="src/Runtime/Runtime.csproj" />
+    <Project Path="src/Resources.Abstractions/Resources.Abstractions.csproj" />
+    <Project Path="src/Resources.Core/Resources.Core.csproj" />
     <Project Path="src/Toolkit.Entry/Toolkit.Entry.csproj" />
     <Project Path="src/View.Abstractions/View.Abstractions.csproj" />
     <Project Path="src/View.MonoGame/View.MonoGame.csproj" />
   </Folder>
   <Folder Name="/tests/">
     <Project Path="tests/Application.Tests/Application.Tests.csproj" />
+    <Project Path="tests/Resources.Tests/Resources.Tests.csproj" />
     <Project Path="tests/CursedInvestigators.Tests/CursedInvestigators.Tests.csproj" />
     <Project Path="tests/CursedInvestigators.ViewTests/CursedInvestigators.ViewTests.csproj" />
     <Project Path="tests/Editor.AsyncProbe/Editor.AsyncProbe.csproj" />

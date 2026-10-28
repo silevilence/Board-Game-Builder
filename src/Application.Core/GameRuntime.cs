@@ -25,7 +25,7 @@ public static class GameRuntime
         if(snapshot.Kind!="application-content" || snapshot.Format!=1 || snapshot.Identity?.Format!=1 || snapshot.Files==null || snapshot.Payload==null)
             throw new InvalidDataException("Unknown application snapshot/identity version");
         ValidateFiles(snapshot.Files);
-        var restored=Build(new(path=>snapshot.Files.TryGetValue(path,out var bytes)?bytes:throw new InvalidDataException(path+": missing snapshot content")),catalog,snapshot.Preset);
+        var restored=Build(ContentSource.Snapshot(snapshot.Files),catalog,snapshot.Preset);
         if(!restored.Snapshot.Files.Keys.ToHashSet(StringComparer.Ordinal).SetEquals(snapshot.Files.Keys)) throw new InvalidDataException("Snapshot contains undeclared content");
         if(snapshot.Payload.Format!=restored.Payload.Format || snapshot.Payload.Version!=restored.Payload.Version)
             throw new InvalidDataException("Unknown payload format/version");
