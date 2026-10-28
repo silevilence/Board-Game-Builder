@@ -16,3 +16,9 @@
 `content-discovery` 添加只存在于测试获准目录的定义提供者，通过 `GameRuntime.Load` 的目录、入口路径、包和快照入口验证，无需修改宿主目录分支；该配置只有一个定义插件，不被自动补装桌游规则或席位服务。此项仍使用既有 GameDefinition 载荷，非桌游载荷留给下一任务。未知实现、版本、未知字段与路径越界均拒绝。
 
 `content-discovery startup definition-plugins alternative-definition runtime-entry resource-plugins flow-delivery wasm-extensions` 八组回归通过。宿主可显式传入 `approvedPlugins`，它是受信任发行目录参数，不从游戏内容加载程序集；调用方恢复自定义快照时必须提供同一获准实现。默认内置目录、ID、有效配置和内容身份保持不变。
+
+## 通用内容载荷与打包
+
+`tests/Application.Tests/ContentTests.cs` 的 motion 内容完全不引用 GameState、席位或桌游契约：使用自身格式、两个预设及各自资源，从目录、固定入口和 format 3 包实际加载；删除原目录后分别从包和快照恢复。只在构建时序列化初始内容，更新使用普通 double 内存状态。测试拒绝未知载荷／封套版本、内容篡改、漏掉未选中预设资源、未知提供者、路径越界、大小写重复路径和额外未声明内容，并确认打包／恢复没有激活运行插件。该用例是内容契约验收，不代替后续真实图形实时示例。
+
+桌游 format 2 包、快照／记录仍由显式适配保留旧身份和结构校验。`packages runtime-recording atlas resource-font animation-runtime resource-documents` 六组回归通过；基线对局结果保持原值。通用核心的打包与恢复没有调用桌游状态校验。

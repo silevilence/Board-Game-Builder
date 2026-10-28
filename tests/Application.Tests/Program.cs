@@ -21,3 +21,4 @@ foreach(var assembly in new[]{typeof(PhaseOrder).Assembly,typeof(UpdateFrame).As
 new ApplicationClockOptions().Validate();
 Console.WriteLine("PASS application contracts and phase ordering");
 await DriverTests.Run();
+ContentTests.Run();

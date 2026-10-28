@@ -38,6 +38,8 @@ public static class RuntimeDiscovery
         try
         {
             var sources=describe(selection.Configuration);ContentPath.Validate(sources.Source);
+            if(sources.Presets==null || sources.Presets.Count>32 || sources.Presets.Keys.Any(k=>string.IsNullOrWhiteSpace(k) || k.Length>80) ||
+                sources.Presets.Count>0 && !sources.Presets.Values.Contains(sources.Source)) throw new InvalidDataException("Invalid definition presets/default");
             foreach(var source in sources.Presets.Values) ContentPath.Validate(source);
             return (selection,sources);
         }
@@ -47,8 +49,17 @@ public static class RuntimeDiscovery
     public static IEnumerable<string> Files(RuntimeStartup startup,IReadOnlyList<RuntimePluginDefinition> catalog)
     {
         foreach(var selection in startup.Plugins)
-            foreach(var path in catalog.Single(p=>p.Id==selection.Id).Content?.Files?.Invoke(selection.Configuration) ?? [])
-            {ContentPath.Validate(path);yield return path;}
+        {
+            string[] paths;
+            try
+            {
+                paths=(catalog.Single(p=>p.Id==selection.Id).Content?.Files?.Invoke(selection.Configuration) ?? []).ToArray();
+                foreach(var path in paths) ContentPath.Validate(path);
+            }
+            catch(Exception error) when(error is not OutOfMemoryException)
+            {throw new InvalidDataException(selection.Id+": content discovery failed: "+error.Message,error);}
+            foreach(var path in paths) yield return path;
+        }
     }
     public static RuntimeStartup Preparation(RuntimeStartup startup,IReadOnlyList<RuntimePluginDefinition> catalog)
     {

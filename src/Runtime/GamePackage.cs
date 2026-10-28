@@ -8,6 +8,8 @@ namespace BoardGame.Runtime;
 public sealed record GamePackageManifest(int Format,string Fingerprint,SortedDictionary<string,string> Files);
 public static class GamePackage
 {
+    public static void Pack(string directory,string destination,BoardGame.AppRuntime.ContentCatalog catalog)=>
+        BoardGame.AppRuntime.GamePackage.Pack(directory,destination,catalog);
     public static void Pack(string directory,string destination,IReadOnlyList<RuntimePluginDefinition>? approvedPlugins=null)
     {
         var module=GameRuntime.LoadDirectory(directory,approvedPlugins:approvedPlugins);

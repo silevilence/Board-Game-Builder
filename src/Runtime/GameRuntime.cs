@@ -9,6 +9,8 @@ namespace BoardGame.Runtime;
 public static class GameRuntime
 {
     public const string Entry="game.start.json";
+    public static BoardGame.AppRuntime.GameContent Load(string source,BoardGame.AppRuntime.ContentCatalog catalog,string? preset)=>
+        BoardGame.AppRuntime.GameRuntime.Load(source,catalog,preset);
     public static SortedDictionary<string,string> PluginVersions=>new(RuntimeComposition.Catalog().ToDictionary(p=>p.Id,p=>p.Version),StringComparer.Ordinal);
     public static RuntimeStartup ReadStartup(string directory,IReadOnlyList<RuntimePluginDefinition>? approvedPlugins=null)
     {

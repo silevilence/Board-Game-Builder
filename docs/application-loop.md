@@ -27,3 +27,11 @@ StopAsync 立即拒绝后续输入及推进，取消未完成任务，并等待�
 `RuntimeHost.StartScopedAsync` 接受显式父宿主、作用域、模式与时钟；实例的 `Driver` 是唯一推进所有者，视口的 `Render` 只绘制。可选 `dispatch` 同步封送该作用域的激活与 `Own` 资源释放，图形适配用它维持设备线程归属；默认在当前工作线程执行。render 必须由宿主在正确线程调用。异步启动与关闭应被等待，UI 不得同步阻塞等待自身 dispatch。父宿主关闭会等待仍在初始化的子作用域，不提前释放其依赖。积压输入另有 4 MiB 总字节上限。
 
 契约验证：`dotnet run --project tests/Application.Tests`。宿主实现及桌游迁移分别验收；该契约文档不能作为真实图形或非桌游游戏交付证据。
+
+## 内容与兼容门面
+
+`BoardGame.AppRuntime.GameRuntime.Load(source, catalog, preset)` 和 `GamePackage.Pack(directory, destination, catalog)` 位于 Application.Core，获准 `ContentCatalog` 由宿主传入。加载只激活提供者声明的准备能力；`IContentLoader` 返回自身 format/version 的初始内容载荷，通过 `IContentSource` 读取受路径和大小限制的内容。所有预设及其实际读取的依赖都纳入身份，运行状态由 update 插件自选内存模型，不要求每帧 JSON。
+
+通用快照为 `kind: application-content, format: 1`，通用包为 `.bgm format: 3`。快照同时保留完整内容字节、有效启动身份和提供者载荷；恢复只从快照读取，重新准备并比较载荷、版本、内容指纹与完整文件集合。修改声明以外的载荷、缺件、重复路径、未知版本或内容不一致拒绝。目录和包使用同一准备路径，不执行规则或更新回调。
+
+原 `BoardGame.Runtime.GameRuntime.Load`／`GamePackage.Pack` 保留既有 LoadedModule、桌游快照与 format 2 包的显式适配，不自动升级旧数据；新增传入 `ContentCatalog` 的重载转交上述通用实现。仅依赖小核心的宿主直接引用 `BoardGame.AppRuntime` 门面，既有桌游宿主保留原命名空间。通用加载器不尝试旧桌游解析器；旧桌游调用也不静默解析 format 3。插件作者应显式选择对应数据契约，后续默认桌游组合迁移不能靠伪造桌游数据兼容非桌游内容。
