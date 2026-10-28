@@ -18,7 +18,7 @@ internal static class AnimationVerification
             var checks=new List<string>();string? error=null;
             try
             {
-                await host.Ready;var app=host.Application;var docs=app.Service<DocumentWorkspace>("documents");
+                await host.Ready;await host.Application.Enable("author.runtime.board");await host.Application.Enable("author.module");var app=host.Application;var docs=app.Service<DocumentWorkspace>("documents");
                 FormatPanel Wrapper()=> (FormatPanel)app.Service<WorkspaceShell>("workspace").Tabs.Items.OfType<TabItem>().Single(t=>Equals(t.Tag,"author.animation")).Content!;
                 AnimationPanel Panel()=>(AnimationPanel)Wrapper().Content!;
                 T Find<T>(string name) where T:Control=>Panel().GetLogicalDescendants().OfType<T>().Single(c=>c.Name==name);

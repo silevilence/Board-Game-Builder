@@ -1,0 +1,15 @@
+{
+  "defaultProfile": "motion",
+  "profiles": {
+    "motion": {
+      "format": 1,
+      "plugins": [
+        {"id":"edit.disk"},
+        {"id":"author.files"},
+        {"id":"author.motion"},
+        {"id":"author.configuration"},
+        {"id":"author.validation"}
+      ]
+    }
+  }
+}

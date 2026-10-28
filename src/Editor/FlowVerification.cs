@@ -23,7 +23,7 @@ internal static class FlowVerification
             object? pluginIdentity = null;
             try
             {
-                await host.Ready;
+                await host.Ready;await host.Application.Enable("author.runtime.board");await host.Application.Enable("author.module");
                 var app = host.Application; var documents = app.Service<DocumentWorkspace>("documents");
                 var authorPlugin = app.Catalog.Single(p => p.Id == "author.flow");
                 var runtimePlugins = GameRuntime.PluginVersions;

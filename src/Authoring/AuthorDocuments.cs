@@ -7,21 +7,11 @@ public static class AuthorDocuments
 {
     public static IReadOnlyList<AuthorDocument> Installed(IReadOnlyList<AuthorPlugin> plugins)
     {
-        var mapping = new (string Topic, string Plugin, string Title)[]
-        {
-            ("entry","author.core","工程入口与最小创作"),("profile","author.core","Profile、模式与回执"),
-            ("definition-module","author.module","组件定义格式"),("definition-state","author.state","状态定义格式"),
-            ("resources","author.resources","图片与图集"),("lua","author.run","Lua 规则和 CPU API"),
-            ("debugging","author.run","校验与调试"),("export","author.export","打包和 Player 导出"),
-            ("flow","author.configuration","流程图、节点脚本与诊断"),
-            ("animation","author.configuration","动画配置、编辑与预览"),
-            ("documents","author.configuration","分页文档与公开状态字段")
-        };
-        var result = mapping.Where(m => plugins.Any(p => p.Id == m.Plugin)).Select(m => new AuthorDocument(m.Topic,m.Plugin,m.Title,Read(m.Topic))).ToList();
-        result.AddRange(plugins.SelectMany(p => p.Documents));
+        var result = plugins.SelectMany(p => p.Documents).ToList();
         if(result.GroupBy(d=>d.Topic).Any(g=>g.Count()>1))throw new InvalidDataException("Duplicate documentation topic");
         return result;
     }
+    public static AuthorDocument Bundled(string topic,string plugin,string title)=>new(topic,plugin,title,Read(topic));
     private static string Read(string topic)
     {
         using var stream=typeof(AuthorDocuments).Assembly.GetManifestResourceStream("Authoring.docs."+topic+".md")

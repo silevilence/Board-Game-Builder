@@ -58,3 +58,9 @@ GUI 通道只执行工作区读取、提交、查询及协调；校验、CPU 运
 调用写操作时可传 `--request <唯一标识>`。同标识、同操作参数返回原回执；不同内容拒绝。使用 `request.result`（参数 `request`）核对结果，`request.recover` 显式续写尚未完成的部分。中断后用户修改的文件不会被恢复覆盖；需先检查保留的意图和当前内容。取消可能发生在部分文件已写入之后，此时返回部分失败，随后核对回执。
 
 回执与原意图在 `.bgb-author` 中持续保留，不自动过期。删除该目录会丢失核对依据；无保留记录时结果为 `Unknown`，不得当作未执行而自动重放。请求 ID 不应重复用于新工作。回执报告历史提交版本，后续外部修改不会改写历史回执。
+
+## 非桌游作者能力
+
+格式、操作、文档和运行校验由获准作者插件贡献。运行入口仍为 game.start.json，作者 profile 选择的工具不写入游戏运行列表。缺少专用作者格式时仍可 files.read／files.write；若已安装匹配运行提供者，仍可校验和试玩。缺失或冲突提供者会明确诊断，不静默改用桌游格式。
+
+仓库中的实时示例使用独立 author.motion 插件。可运行 `dotnet run --project src/Cli -- validate --project samples/motion-lab`、`dotnet run --project src/Cli -- call configuration.read --project samples/motion-lab` 和 `dotnet run --project src/Cli -- call run.application --project samples/motion-lab`。最后一项默认执行 60 次固定 1/60 秒更新，可用 ticks 参数设置 1～10000；不宣称获得桌游终局或记录回放。GUI 模式继续核对工作区／文档代次，修改进入草稿，只有 workspace.save 显式写盘。

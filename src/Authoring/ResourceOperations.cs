@@ -21,7 +21,7 @@ public static class ResourceOperations
         scope.Register(new(ImportInfo("image"), call => Import(call, false)));
         scope.Register(new(ImportInfo("atlas"), call => Import(call, true)));
         scope.Register(new(MoveInfo, Move));
-    }, "Resource import and declaration-aware file organization") { Operations = [ImportInfo("image"), ImportInfo("atlas"), MoveInfo] };
+    }, "Resource import and declaration-aware file organization") { Documents=[AuthorDocuments.Bundled("resources","author.resources","图片与图集")], Operations = [ImportInfo("image"), ImportInfo("atlas"), MoveInfo] };
     private static async Task<object> Import(AuthorCall call, bool atlas)
     {
         var target = call.String("target"); ProjectPaths.Validate(target);

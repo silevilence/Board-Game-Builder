@@ -16,7 +16,7 @@ internal static class AssemblyVerification
             var errors=new List<string>();
             try
             {
-                await host.Ready;var app=host.Application;var assemblies=app.Service<EditorAssemblies>("assemblies");
+                await host.Ready;await host.Application.Enable("author.runtime.board");await host.Application.Enable("author.module");var app=host.Application;var assemblies=app.Service<EditorAssemblies>("assemblies");
                 try
                 {
                     await assemblies.Load(EditorPaths.InWorkspace("tests/Editor.AsyncProbe/bin/Release/net10.0-windows/Editor.AsyncProbe.dll"));

@@ -41,7 +41,7 @@ public static class FormatOperations
                     if (call.View.Exists(path)) throw new AuthorOperationException("template.conflict", "Template file already exists", path);
                 return await call.Mode.Apply(call.View.Change(call.RequestId, files.ToDictionary(p => p.Key, p => (byte[]?)p.Value)), call.Cancellation);
             }));
-        }, "Author support and template for definition." + name) { Operations = [info] };
+        }, "Author support and template for definition." + name) { Operations = [info],Documents=[AuthorDocuments.Bundled("definition-"+name,"author."+name,"定义格式："+name)] };
     }
     private static Dictionary<string, byte[]> StateTemplate()
     {
@@ -81,7 +81,7 @@ public static class FormatOperations
             var data = format.Serialize(call.View, configuration);
             return await call.Mode.Apply(call.View.Change(call.RequestId, new Dictionary<string, byte[]?> { [format.DefinitionPath] = Encoding.UTF8.GetBytes(data) }), call.Cancellation);
         }));
-    }, "Format-independent structured author operations") { Operations = [ReadInfo, ReplaceInfo,..FlowOperations.Operations,..AnimationOperations.Operations] };
+    }, "Format-independent structured author operations") { Documents=[AuthorDocuments.Bundled("flow","author.configuration","流程图、节点脚本与诊断"),AuthorDocuments.Bundled("animation","author.configuration","动画配置、编辑与预览"),AuthorDocuments.Bundled("documents","author.configuration","分页文档与公开状态字段")], Operations = [ReadInfo, ReplaceInfo,..FlowOperations.Operations,..AnimationOperations.Operations] };
     private static IGameAuthorFormat Resolve(AuthorCall call) => call.Formats.Resolve(call.View)
-        ?? throw new AuthorOperationException("format.unavailable", "Enable matching author.module or author.state support, or use files.read/files.write and direct editing", GameRuntime.Entry);
+        ?? throw new AuthorOperationException("format.unavailable", "Enable a matching author format provider, or use files.read/files.write and direct editing", GameRuntime.Entry);
 }

@@ -21,6 +21,10 @@ public static class BuiltinPlugins
             scope.Own(new CommandSurface(window,scope.Service<WorkspaceShell>("workspace"),commands));
         },true));
         app.Install(new("base.documents",1,["documents"],["workspace","commands"],scope=>DocumentPlugin.Activate(app,window,scope),true));
+        app.Install(new("author.runtime.board",1,[],["documents"],scope=>
+            scope.Own(scope.Service<DocumentWorkspace>("documents").Runtimes.Register(new BoardGame.Authoring.BoardAuthorRuntime()))));
+        app.Install(new("author.module",1,[],["documents"],scope=>
+            scope.Own(scope.Service<DocumentWorkspace>("documents").AuthorFormats.Register(BoardGame.Authoring.GameAuthorFormats.ModuleProvider))));
         app.Install(new("author.workspace",1,["author.workspace"],["documents","panels","commands"],scope=>
         {
             scope.Provide("author.workspace",new AuthorWorkspaceService(scope.Service<DocumentWorkspace>("documents"),
@@ -47,8 +51,12 @@ public static class BuiltinPlugins
             var sessions=new BoardSessionController(scope.Service<DocumentWorkspace>("documents"));scope.Own(sessions);scope.Provide("board.sessions",sessions);
         }));
         app.Install(new("board.viewports",1,["board.viewports"],[],scope=>scope.Provide("board.viewports",new BoardViewports())));
-        app.Install(new("runtime.motion",1,[],["sessions"],scope=>
-            scope.Own(scope.Service<ApplicationSessions>("sessions").Register("motion",new BoardGame.AppRuntime.ApplicationCatalog(Sample.Motion.MotionPlugins.Catalog())))));
+        app.Install(new("runtime.motion",1,[],["sessions","documents"],scope=>
+        {
+            var catalog=new BoardGame.AppRuntime.ApplicationCatalog(Sample.Motion.MotionPlugins.Catalog());
+            scope.Own(scope.Service<ApplicationSessions>("sessions").Register("motion",catalog));
+            scope.Own(scope.Service<DocumentWorkspace>("documents").Runtimes.Register(new BoardGame.Authoring.ApplicationAuthorRuntime("motion",catalog)));
+        }));
         app.Install(new("play.application",1,[],["documents","sessions","viewports","panels"],scope=>
         {
             var sessions=scope.Service<ApplicationSessions>("sessions");

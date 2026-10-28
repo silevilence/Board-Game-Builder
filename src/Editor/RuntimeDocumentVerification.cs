@@ -15,7 +15,7 @@ internal static class RuntimeDocumentVerification
             string? error=null;
             try
             {
-                await host.Ready;Trace("host ready");var app=host.Application;var documents=app.Service<DocumentWorkspace>("documents");
+                await host.Ready;await host.Application.Enable("author.runtime.board");await host.Application.Enable("author.module");Trace("host ready");var app=host.Application;var documents=app.Service<DocumentWorkspace>("documents");
                 foreach(var id in new[]{"author.configuration","author.files","author.startup","author.scripts","author.media","author.turns","author.print"}) {Trace("enable "+id);await app.Enable(id);}
                 Control Panel(string id)=>(Control)app.Service<WorkspaceShell>("workspace").Tabs.Items.OfType<TabItem>().Single(t=>Equals(t.Tag,id)).Content!;
                 async Task WaitFor<T>()

@@ -1,5 +1,5 @@
 using System.Text.Json;
-using BoardGame.Runtime;
+using BoardGame.AppRuntime;
 
 namespace BoardGame.Authoring;
 
@@ -23,7 +23,7 @@ public static class ValidationOperations
         var last = Array.IndexOf(Layers, layer);
         if (last < 0) throw new AuthorOperationException("arguments.invalid", "Unknown validation layer: " + layer);
         var checks = new List<string>(); var diagnostics = new List<AuthorDiagnostic>();
-        using var snapshot = new ProjectSnapshot(call.View);
+
         for (var index = 0; index <= last; index++)
         {
             call.Cancellation.ThrowIfCancellationRequested();
@@ -41,40 +41,20 @@ public static class ValidationOperations
                         }
                         break;
                     case "configuration":
-                        var startup = GameRuntime.ReadStartup(snapshot.Directory);
+                        checks.AddRange(await call.Runtimes.Resolve(call.View).Validate(call.View,check,call.Cancellation));
                         var format = call.Formats.Resolve(call.View);
                         if (format != null) _ = format.Read(call.View);
                         break;
                     case "dependencies":
-                        var configuration = GameRuntime.ReadStartup(snapshot.Directory);
-                        _ = GameResources.Load(configuration, snapshot.Directory);
-                        foreach (var plugin in configuration.Plugins.Where(p => p.Id is "lua.rules" or "lua.cpu"))
-                        {
-                            var file = plugin.Configuration.GetProperty("file").GetString()!;
-                            if (!call.View.Exists(file)) throw new AuthorOperationException("dependency.missing", "Missing script for " + plugin.Id, file);
-                        }
-                        break;
                     case "runtime":
-                        var module = GameRuntime.Load(snapshot.Directory);
-                        using (var game = new PlaySession(module,cancellation:call.Cancellation))
-                        {
-                            _ = game.Actions();
-                            if (game.Fault != null) throw new AuthorOperationException(game.Fault.Code, game.Fault.Detail);
-                        }
-                        if (module.RuntimeIdentity!.Startup.Plugins.Any(p => p.Id == "lua.cpu"))
-                        {
-                            checks.Add("initial-cpu-action");
-                            using var cpu = new PlaySession(module, 1, module.Initial.Seats.ToDictionary(s => s.Id, _ => "cpu"),cancellation:call.Cancellation);
-                            _ = cpu.StepCpu();
-                            if (cpu.Fault != null) throw new AuthorOperationException(cpu.Fault.Code, cpu.Fault.Detail);
-                        }
+                        checks.AddRange(await call.Runtimes.Resolve(call.View).Validate(call.View,check,call.Cancellation));
                         break;
                 }
             }
             catch (Exception error) when (error is not OperationCanceledException and not OutOfMemoryException)
             {
                 var path = (error as AuthorOperationException)?.Path ?? call.View.Paths.FirstOrDefault(p => error.Message.Contains(p, StringComparison.Ordinal));
-                diagnostics.Add(new((error as AuthorOperationException)?.Code ?? "validation." + check, error.Message.Replace(snapshot.Directory, "<snapshot>"), path));
+                diagnostics.Add(new((error as AuthorOperationException)?.Code ?? "validation." + check, error.Message, path));
             }
             if (diagnostics.Count > 0) break;
         }

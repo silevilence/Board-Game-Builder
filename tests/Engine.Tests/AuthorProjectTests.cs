@@ -501,7 +501,7 @@ public static class AuthorProjectTests
             for(var i=0;i<3;i++)
             {
                 var host=AuthorHost.Start(selected).GetAwaiter().GetResult();
-                Check.That(host.Enabled.Count==2 && host.Service<IProjectEditMode>("author.mode").Read().Result.Source.Identity.Profile=="local");
+                Check.That(host.Enabled.Select(p=>p.Id).ToHashSet().SetEquals(["author.core","author.runtime.board","edit.disk"]) && host.Service<IProjectEditMode>("author.mode").Read().Result.Source.Identity.Profile=="local");
                 host.DisposeAsync().AsTask().GetAwaiter().GetResult();
             }
             File.WriteAllText(Path.Combine(root,"game.start.json"),"invalid");Directory.CreateDirectory(Path.Combine(root,"child"));

@@ -126,3 +126,11 @@ Player.Hosting.Tests 在同一获准目录依次打开桌游、实时目录、�
 实际 Editor 应用探针在嵌入和独立 Player 两种模式加载未保存 Motion 草稿，核对来源文本与磁盘字节不变、暂停／固定单步／继续、两次面板重建保留同一实例与 tick、外部进程死亡清除状态、切换文档时丢弃迟到启动、切回桌游和运行提供者停用／再启用。最终图形设备与后端为零。外部握手等待真实视口首帧。
 
 原桌游 SessionVerification 的嵌入／外部两种模式通过：席位观察、显式作者真值、Lua／CPU 重载、坏脚本保留旧状态、三次面板重建、非法动作、忙碌暂停、终局记录与回放、停止迟到响应以及外部进程故障；两种模式均记录 7 次命令，最终设备零。真实 foundation 与 runtime-documents 探针通过；无界面 cordi、cordi-dispatch、flow-editor-lifetime 以及 Application.Tests 全部通过。全解构建零警告零错误。证据见 [editor-session-probes.json](editor-session-probes.json)。
+
+## 作者能力与 CLI 发现
+
+Motion.Authoring.Tests 通过独立提供者的格式读写、文档发现、运行校验、60 次固定更新，以及磁盘／GUI 两种模式下的来源版本、旧版本拒绝、不隐式保存、Undo／Redo、显式保存、旧工作区代次拒绝和缺提供者诊断。真实 CLI 对 motion-lab 完成五项实际检查（含 initial-application-update），无诊断。
+
+真实 Editor—CLI 连接探针在原桌游工作流之外，追加实时工程：无专用 Editor 格式仍保留文件编辑，CLI 配置写入仅修改草稿；校验、12 次固定更新及嵌入试玩读取同一草稿版本，Undo／Redo 和显式保存通过。原连接的导入撤销、未保存打包、外部冲突协调及三次连接重启继续通过，最终插件 effects 为零。foundation、runtime-documents 实际探针通过；author-contract、author-profiles、author-operations、author-validation、author-docs、author-workspace、author-cli、author-templates、author-connections、author-connection-lifetime 和 documents 回归通过。全解构建零警告零错误。
+
+CLI 首次运行发现本地输出目录中 2026-10-10 的 Author.SamplePlugin.dll 仍依赖旧 Authoring 1.0.0.0；保留副本到 .scratch/application-loop/Author.SamplePlugin.before-author-refactor.dll 后，以当前样例工程重建产物替换该开发输出，两文件 SHA-256 一致。没有放宽插件版本检查或增加加载回退。证据见 [author-capability-probes.json](author-capability-probes.json)。按用户后续要求，本条提交后停止；后续结构化面板、导入打印、联网、模板迁移、普通导出及整体验收尚未完成，不勾选。

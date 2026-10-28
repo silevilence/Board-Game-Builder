@@ -32,7 +32,7 @@ public static class RunOperations
     {
         scope.Register(new(CpuInfo, Cpu)); scope.Register(new(StartInfo, Start)); scope.Register(new(InspectInfo, Inspect));
         scope.Register(new(StepInfo, Step)); scope.Register(new(RecordInfo, Record));
-    }, "Headless runtime sessions and deterministic verification") { Operations = [CpuInfo, StartInfo, InspectInfo, StepInfo, RecordInfo] };
+    }, "Headless runtime sessions and deterministic verification") { Documents=[AuthorDocuments.Bundled("lua","author.run","Lua 规则和 CPU API"),AuthorDocuments.Bundled("debugging","author.run","校验与调试")], Operations = [CpuInfo, StartInfo, InspectInfo, StepInfo, RecordInfo] };
     private static Task<object> Cpu(AuthorCall call)
     {
         var seed = call.Integer("seed", 1); var count = call.Integer("count", 1); var limit = call.Integer("limit", 500);

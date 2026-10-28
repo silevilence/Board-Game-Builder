@@ -149,3 +149,11 @@ Player.Board 承接原开局、种子、席位、控制方式、热座交接、�
 Application.Debug 定义通用作者调试契约；嵌入与独立 Player 共享同一应用时钟、暂停及单步逻辑。外部传输只用继承的标准输入输出，校验内容快照和获准目录，不监听网络；收到首个实际图形帧后完成握手。关闭正常发送 stop 并等待退出，超时才终止自己创建的子进程。运行程序集不引用 Editor 或编辑器专用 CordiSharp 插件。
 
 试玩先应用内存文件草稿并捕获不可变 ProjectView，保存来源版本，不写磁盘。文档代次、取消及迟到结果检查保护新文档；面板资源与会话分开释放。EditorPluginScope.OwnAsync 在 UI 线程开始释放 UI 所有者，再异步等待后台清理，不能阻塞 CordiSharp 全局 pump。
+
+## 作者格式、运行校验与能力发现
+
+`author.core` 提供空的格式、操作及 AuthorRuntimes 注册表；具体提供者通过所属 CordiSharp 作者插件登记。通用 project.validate 只协调文件／配置／依赖／运行层次与来源版本，桌游初始动作、CPU 验证归 BoardAuthorRuntime。ApplicationAuthorRuntime 使用同一获准 ApplicationCatalog，从 ProjectView 文件构建内容并执行一次受控更新；没有唯一匹配提供者时明确拒绝，不尝试桌游解析器。文档目录由每个 AuthorPlugin.Documents 贡献，基础发现不再维护桌游主题映射。
+
+默认 CLI 安装目录包含必需的 author.runtime.board 兼容适配登记，保持既有 format 1 作者 profile 可用；这是获准解析能力，不会给非桌游补装运行插件或创建桌游会话。独立安装目录可以不包含该适配。Motion 作者实现位于 Sample.Motion.Authoring，由 CLI 组合根显式装配，工程 author.profile.json 选择 author.motion；格式读写、校验和固定时间运行均使用相同 ProjectView／IProjectEditMode。此阶段没有将非桌游接入旧桌游导出器，普通导出仍由后续任务验收。
+
+真实 Editor 基础文档使用空目录；author.module 和 author.runtime.board 分别登记原 module 作者格式及桌游内容校验，runtime.motion 登记实时运行和内容校验。未登记专用作者格式时保留通用文件编辑、验证与试玩，不能自动获得桌游面板。保存通过文档绑定的运行提供者校验内容，仍使用原版本冲突与编辑模式提交。参数为空的旧 DocumentWorkspace／ModuleDocument 创建接口继续作为显式兼容 API 保留默认桌游目录，生产 Editor 不使用该默认。

@@ -11,9 +11,10 @@ public interface IAuthorPluginPackage
 public static class AuthorPluginPackages
 {
     // Only explicitly installed author code is loaded here; game projects cannot select arbitrary DLL paths.
-    public static IReadOnlyList<AuthorPlugin> Discover(string directory)
+    public static IReadOnlyList<AuthorPlugin> Discover(string directory,IEnumerable<AuthorPlugin>? additionalBuiltins=null)
     {
         var plugins = AuthorHost.Builtins.ToList();
+        plugins.AddRange(additionalBuiltins ?? []);
         if (!Directory.Exists(directory)) return plugins;
         foreach (var path in Directory.EnumerateFiles(directory, "*.dll").Order(StringComparer.Ordinal))
         {

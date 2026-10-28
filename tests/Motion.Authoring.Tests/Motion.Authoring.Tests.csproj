@@ -1,0 +1,1 @@
+<Project Sdk="Microsoft.NET.Sdk"><PropertyGroup><OutputType>Exe</OutputType></PropertyGroup><ItemGroup><ProjectReference Include="../../samples/Sample.Motion.Authoring/Sample.Motion.Authoring.csproj" /><ProjectReference Include="../../src/Editor.Core/Editor.Core.csproj" /></ItemGroup></Project>

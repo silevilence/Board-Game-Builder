@@ -13,7 +13,7 @@ internal static class M3Verification
         {
             try
             {
-                await host.Ready;var app=host.Application;
+                await host.Ready;await host.Application.Enable("author.runtime.board");await host.Application.Enable("author.module");var app=host.Application;
                 async Task ReadyPanels()
                 {
                     foreach(var panel in app.Service<WorkspaceShell>("workspace").Tabs.Items.OfType<TabItem>().Select(t=>t.Content).OfType<FormatPanel>()) await panel.Ready;

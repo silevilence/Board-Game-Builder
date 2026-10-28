@@ -20,7 +20,7 @@ public static class ExportOperations
     {
         scope.Register(new(PackageInfo, call => Export(call, false)));
         scope.Register(new(ExportInfo, call => Export(call, true)));
-    }, "Official game packaging and standalone Player export") { Operations = [PackageInfo, ExportInfo] };
+    }, "Official game packaging and standalone Player export") { Documents=[AuthorDocuments.Bundled("export","author.export","打包和 Player 导出")], Operations = [PackageInfo, ExportInfo] };
     private static Task<object> Export(AuthorCall call, bool player)
     {
         call.Cancellation.ThrowIfCancellationRequested();

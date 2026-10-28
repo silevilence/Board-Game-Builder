@@ -15,7 +15,7 @@ internal static class FoundationVerification
             var errors=new List<string>();
             try
             {
-                await host.Ready;
+                await host.Ready;await host.Application.Enable("author.runtime.board");await host.Application.Enable("author.module");
                 var app=host.Application;
                 async Task ReadyPanels()
                 {

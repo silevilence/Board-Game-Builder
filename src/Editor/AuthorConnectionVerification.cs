@@ -19,7 +19,7 @@ internal static class AuthorConnectionVerification
             void Check(bool condition,string name) {if(!condition)throw new Exception(name);checks.Add(name);File.WriteAllText(output+".progress",name);}
             try
             {
-                await host.Ready;
+                await host.Ready;await host.Application.Enable("author.runtime.board");await host.Application.Enable("author.module");
                 var app=host.Application;var documents=app.Service<DocumentWorkspace>("documents");
                 var project=output+".project";var initial=ModuleDocument.Create();initial.Save(project);
                 var selections=AuthorProfiles.Default.Plugins.Select(p=>p.Id=="edit.disk"?new AuthorPluginSelection("edit.gui"):p).ToArray();
@@ -75,6 +75,23 @@ internal static class AuthorConnectionVerification
                 documents.Set(ModuleDocument.Open(Path.GetFullPath("samples/state-minimal")));
                 documents.EditForm(DocumentWorkspace.ExternalMergeForm,"{unfinished generic merge");
                 Check(documents.Dirty,"Generic merge input works without structured author format");
+                project=output+".motion-project";Directory.CreateDirectory(project);
+                foreach(var file in ProjectPaths.Read("samples/motion-lab"))File.WriteAllBytes(Path.Combine(project,file.Key),file.Value);
+                File.WriteAllText(Path.Combine(project,AuthorProfiles.ConfigurationFile),JsonSerializer.Serialize(new{defaultProfile="connected",profiles=new{connected=new AuthorProfile(1,[new("edit.gui"),new("author.files"),new("author.motion"),new("author.configuration"),new("author.validation")])}},AuthorProfiles.Json));
+                await app.Enable("runtime.motion");documents.Set(ModuleDocument.Open(project));
+                Check(!documents.Current!.SupportsStructuredEditing,"Unknown Editor format remains without board panels");
+                var motionDisk=File.ReadAllBytes(Path.Combine(project,"motion.json"));
+                var motionRead=(await Call("configuration.read",new{})).GetProperty("result");
+                var motionConfig=System.Text.Json.Nodes.JsonNode.Parse(motionRead.GetProperty("configuration").GetRawText())!.AsObject();
+                motionConfig["title"]="Connected motion draft";
+                var motionWrite=await Call("configuration.replace",new{version=motionRead.GetProperty("source").GetProperty("version").GetString(),configuration=motionConfig});
+                Check(!motionWrite.GetProperty("result").GetProperty("saved").GetBoolean() && motionDisk.SequenceEqual(File.ReadAllBytes(Path.Combine(project,"motion.json"))),"Generic CLI configuration stays in GUI draft");
+                var motionValid=await Call("project.validate",new{});Check(motionValid.GetProperty("result").GetProperty("success").GetBoolean(),"Generic GUI snapshot validation");
+                var motionRun=await Call("run.application",new{ticks=12});Check(motionRun.GetProperty("result").GetProperty("ticks").GetInt64()==12,"Generic GUI snapshot fixed-time run");
+                documents.Undo();Check(!documents.Current.Text("motion.json").Contains("Connected motion draft"),"Generic configuration Undo");documents.Redo();
+                var application=app.Service<ApplicationSessions>("sessions");await application.Start();
+                Check(application.Active && application.SourceView!.Text("motion.json").Contains("Connected motion draft"),"Preview shares CLI draft version");application.Stop();
+                await Call("workspace.save",new{});Check(File.ReadAllText(Path.Combine(project,"motion.json")).Contains("Connected motion draft"),"Explicit generic workspace save");
                 documents.Set(null);await app.DisposeAsync();Check(app.Root.Fiber.DisposableCount==0,"Plugin effects released");
             }
             catch(Exception error) {failure=error.ToString();}

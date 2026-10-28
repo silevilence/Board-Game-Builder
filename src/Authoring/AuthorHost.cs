@@ -23,8 +23,9 @@ public sealed class AuthorHost : IAsyncDisposable
     { Profile = profile; Installed = installed; Enabled = enabled; }
     public static IReadOnlyList<AuthorPlugin> Builtins =>
     [
-        new("author.core", "1", 1, ["author.formats", "author.operations"], [], s =>
-        { s.Provide("author.formats", new GameAuthorFormats(false)); s.Provide("author.operations", new AuthorOperations()); }, "Project contract and operation registry", true),
+        new("author.core", "1", 1, ["author.formats", "author.operations", "author.runtimes"], [], s =>
+        { s.Provide("author.formats", new GameAuthorFormats(false)); s.Provide("author.operations", new AuthorOperations());s.Provide("author.runtimes",new AuthorRuntimes()); }, "Project contract and operation registry", true) {Documents=[AuthorDocuments.Bundled("entry","author.core","工程入口与最小创作"),AuthorDocuments.Bundled("profile","author.core","Profile、模式与回执")]},
+        BoardAuthorRuntime.Plugin,
         new("edit.disk", "1", 1, ["author.mode"], [], s => s.Provide("author.mode", s.Own(new DiskEditMode(
             new(s.Profile.Project, s.Profile.Name, "disk")))), "Read current disk content and commit guarded changes"),
         FileOperations.Plugin, FormatOperations.Module, FormatOperations.State, FormatOperations.Configuration, ResourceOperations.Plugin, ValidationOperations.Plugin, RunOperations.Plugin, ExportOperations.Plugin, GuiEditMode.Plugin, WorkspaceCoordination.Plugin
@@ -106,7 +107,7 @@ public sealed class AuthorHost : IAsyncDisposable
         var view = info.ReadsProject ? await mode.Read(cancellation) : null;
         if (view != null) view.Intent = intent;
         return await Service<AuthorOperations>("author.operations").Invoke(id,
-            new(view, mode, Service<GameAuthorFormats>("author.formats"), arguments, requestId, cancellation));
+            new(view, mode, Service<GameAuthorFormats>("author.formats"), arguments, requestId, cancellation){Runtimes=Service<AuthorRuntimes>("author.runtimes")});
     }, cancellation);
     public async Task<T> Execute<T>(Func<Task<T>> action, CancellationToken cancellation = default)
     {

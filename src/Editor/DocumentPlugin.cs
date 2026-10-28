@@ -8,7 +8,7 @@ public static class DocumentPlugin
 {
     public static void Activate(EditorApplication app,Window window,EditorPluginScope scope)
     {
-        var documents=new DocumentWorkspace();scope.Own(documents);scope.Provide("documents",documents);
+        var documents=new DocumentWorkspace(legacyBoardDefaults:false);scope.Own(documents);scope.Provide("documents",documents);
         var shell=scope.Service<WorkspaceShell>("workspace");var commands=scope.Service<EditorCommands>("commands");
         var path=new TextBox {Width=400,PlaceholderText="模块目录（另存为请选择新目录）"};shell.Toolbar.Children.Add(path);
         scope.Own(new Cleanup(()=>shell.Toolbar.Children.Remove(path)));

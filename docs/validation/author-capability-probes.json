@@ -1,0 +1,43 @@
+{
+  "author-capability-gui-v1": {
+    "success": true,
+    "checks": [
+      "Workspace commands registered once",
+      "CLI reads unsaved UI draft",
+      "Import applied only to workspace",
+      "UI Undo removes complete import",
+      "UI Redo preserves draft",
+      "Validation uses workspace snapshot",
+      "Packaging does not save workspace",
+      "Explicit save persists workspace",
+      "Explicit reload coordinates disk",
+      "Command availability shares workspace state",
+      "Registered command executes reconciliation",
+      "Dirty workspace disables clean reload command",
+      "Workspace commands removed with plugin",
+      "Workspace commands restored without duplicates",
+      "Merge draft survives panel reconstruction",
+      "Listener removed 0",
+      "Listener removed 1",
+      "Listener removed 2",
+      "Generic merge input works without structured author format",
+      "Unknown Editor format acquired board panels",
+      "Generic CLI configuration stays in GUI draft",
+      "Generic GUI snapshot validation",
+      "Generic GUI snapshot fixed-time run",
+      "Generic configuration Undo",
+      "Preview shares CLI draft version",
+      "Explicit generic workspace save",
+      "Plugin effects released"
+    ],
+    "error": null
+  },
+  "author-runtime-documents": {
+    "success": true,
+    "error": null
+  },
+  "author-foundation": {
+    "success": true,
+    "errors": []
+  }
+}

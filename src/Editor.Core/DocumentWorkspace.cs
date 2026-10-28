@@ -11,8 +11,11 @@ public sealed partial class DocumentWorkspace : IDisposable
     private readonly Dictionary<DocumentDraftTarget,DocumentDraft> drafts=new();
     private readonly Dictionary<string,DocumentDraft> forms=new(StringComparer.Ordinal);
     public Dictionary<string,string> ViewState { get; }=new(StringComparer.Ordinal);
-    public GameAuthorFormats AuthorFormats {get;}=new();
-    public DocumentWorkspace() {AuthorFormats.Changed+=Notify;}
+    public GameAuthorFormats AuthorFormats {get;}
+    public AuthorRuntimes Runtimes {get;}
+    // The parameterless constructor preserves the standalone legacy author API. The Editor supplies an empty catalog.
+    public DocumentWorkspace(bool legacyBoardDefaults=true)
+    {AuthorFormats=new(legacyBoardDefaults);Runtimes=legacyBoardDefaults?BoardAuthorRuntime.LegacyCatalog():new();AuthorFormats.Changed+=Notify;}
     public ModuleDocument? Current { get; private set; }
     public string Location { get; set; }="";
     private IEnumerable<DocumentDraft> AllDrafts=>drafts.Values.Concat(forms.Values);
@@ -31,7 +34,7 @@ public sealed partial class DocumentWorkspace : IDisposable
         Generation++;authorUndo.Clear();authorRedo.Clear();ExternalMergeBaseline=null;
         if(Current!=null) Current.Changed-=Notify;
         Current=document;drafts.Clear();forms.Clear();ViewState.Clear();Selection=null;Location=document?.DirectoryPath ?? "";
-        if(Current!=null) {Current.AuthorFormats=AuthorFormats;Current.Changed+=Notify;}
+        if(Current!=null) {Current.AuthorFormats=AuthorFormats;Current.Runtimes=Runtimes;Current.Changed+=Notify;}
         Replaced?.Invoke();Notify();
     }
     public DocumentDraft Draft(string path)=>Draft(new DocumentDraftTarget(path));

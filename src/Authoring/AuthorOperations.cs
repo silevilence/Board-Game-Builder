@@ -13,6 +13,7 @@ public sealed record AuthorOperation(AuthorOperationInfo Info, Func<AuthorCall, 
 public sealed record AuthorCall(ProjectView? Project, IProjectEditMode Mode, GameAuthorFormats Formats,
     JsonElement Arguments, string RequestId, CancellationToken Cancellation)
 {
+    public AuthorRuntimes Runtimes {get;init;}=new();
     public ProjectView View => Project ?? throw new InvalidOperationException("This operation did not request a project view");
     public string String(string key) => Arguments.GetProperty(key).GetString()!;
     public string? OptionalString(string key) => Arguments.TryGetProperty(key, out var value) ? value.GetString() : null;

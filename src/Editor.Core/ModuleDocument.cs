@@ -17,6 +17,7 @@ public sealed class ModuleDocument : IAuthorFiles
     private string saved;
     private Dictionary<string,byte[]> savedFiles;
     internal GameAuthorFormats AuthorFormats {get;set;}=new();
+    internal AuthorRuntimes Runtimes {get;set;}=BoardAuthorRuntime.LegacyCatalog();
     public string? DirectoryPath { get; private set; }
     public bool Dirty => Hash(files)!=saved;
     public bool CanUndo => undo.Count>0;
@@ -90,7 +91,7 @@ public sealed class ModuleDocument : IAuthorFiles
     public void Save(string? destination=null)
     {
         var target=Path.GetFullPath(destination ?? DirectoryPath ?? throw new InvalidOperationException("Choose a module directory."));
-        _=Snapshot();
+        Runtimes.ValidateContent(new ProjectView(new(DirectoryPath ?? "","editor-save","gui"),CopyFiles()));
         var same=string.Equals(DirectoryPath,target,StringComparison.OrdinalIgnoreCase);
         if(!same && (Directory.Exists(target) || File.Exists(target))) throw new IOException("Choose a new module directory for Save As.");
         void CheckConflict()

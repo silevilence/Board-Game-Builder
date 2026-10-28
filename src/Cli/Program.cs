@@ -1,5 +1,6 @@
 using System.Text.Json;
 using BoardGame.Authoring;
+using Sample.Motion;
 
 var output = Console.Out;
 Console.SetOut(Console.Error);
@@ -38,7 +39,7 @@ try
     }
     if(args[0]=="docs")
     {
-        var documents=AuthorDocuments.Installed(AuthorPluginPackages.Discover(Path.Combine(AppContext.BaseDirectory,"plugins","author")));
+        var documents=AuthorDocuments.Installed(AuthorPluginPackages.Discover(Path.Combine(AppContext.BaseDirectory,"plugins","author"),[MotionAuthorPlugin.Definition]));
         object value=args.Length==1?documents.Select(d=>new {d.Topic,d.Plugin,d.Title}):documents.SingleOrDefault(d=>d.Topic==args[1]) ?? throw new ArgumentException("Unknown documentation topic");
         Write(new {version=AuthorDocuments.Version,result=value});return 0;
     }
@@ -67,7 +68,7 @@ try
     }
     var effective = AuthorProfiles.Resolve(AuthorProfiles.Locate(project, Environment.CurrentDirectory), profile);
     if(instance!=null) effective=effective with {Profile=effective.Profile with {Workspace=instance}};
-    await using var host = await AuthorHost.Start(effective, AuthorPluginPackages.Discover(Path.Combine(AppContext.BaseDirectory, "plugins", "author")));
+    await using var host = await AuthorHost.Start(effective, AuthorPluginPackages.Discover(Path.Combine(AppContext.BaseDirectory, "plugins", "author"),[MotionAuthorPlugin.Definition]));
     object result = args[0] switch
     {
         "profile" => new { effective, mode = host.Enabled.Single(p => p.Provides.Contains("author.mode")).Id, plugins = host.Enabled.Select(p => p.Id) },
