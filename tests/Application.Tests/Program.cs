@@ -20,3 +20,4 @@ foreach(var assembly in new[]{typeof(PhaseOrder).Assembly,typeof(UpdateFrame).As
     Assert(!assembly.GetReferencedAssemblies().Any(a=>a.Name is "Kernel" or "Kernel.Abstractions" or "Editor" or "Editor.Core" or "MonoGame.Framework"),"Generic assembly references board/UI types");
 new ApplicationClockOptions().Validate();
 Console.WriteLine("PASS application contracts and phase ordering");
+await DriverTests.Run();
