@@ -47,5 +47,6 @@ internal sealed class SessionRecorder : IRecordingProvider
     public SessionRecording Capture()=>SessionRecording.Create(authority.ExportLog(),switches,versions);
     public IAuthoritySession Replay(SessionRecording recording)=>new KernelAuthority(recording.Replay());
     public static RuntimePluginDefinition Plugin(Func<LoadedModule> module,SessionRecording? recording=null)=>new("recording","1",1,["recording"],["authority"],scope=>
-        scope.Provide("recording",new SessionRecorder(scope.Service<IAuthoritySession>("authority"),module(),recording)));
+        scope.Provide("recording",new SessionRecorder(scope.Service<IAuthoritySession>("authority"),module(),recording)))
+        {Permissions=[AuthorityPlugin.Access],ServicePermissions=new Dictionary<string,string>{{"recording",AuthorityPlugin.Access}}};
 }

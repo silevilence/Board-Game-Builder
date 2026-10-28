@@ -6,6 +6,7 @@
   <Folder Name="/src/">
     <Project Path="src/Application.Abstractions/Application.Abstractions.csproj" />
     <Project Path="src/Application.Core/Application.Core.csproj" />
+    <Project Path="src/BoardGame.Core/BoardGame.Core.csproj" />
     <Project Path="src/Authoring/Authoring.csproj" />
     <Project Path="src/Cli/Cli.csproj" />
     <Project Path="src/Editor.Core/Editor.Core.csproj" />

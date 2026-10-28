@@ -34,4 +34,6 @@ StopAsync 立即拒绝后续输入及推进，取消未完成任务，并等待�
 
 通用快照为 `kind: application-content, format: 1`，通用包为 `.bgm format: 3`。快照同时保留完整内容字节、有效启动身份和提供者载荷；恢复只从快照读取，重新准备并比较载荷、版本、内容指纹与完整文件集合。修改声明以外的载荷、缺件、重复路径、未知版本或内容不一致拒绝。目录和包使用同一准备路径，不执行规则或更新回调。
 
+桌游基础提供者位于 `BoardGame.Core`，只依赖 Kernel 与 Application.Core；实体／席位／命令等仍属于 Kernel.Abstractions 的桌游契约，小核心不引用它。权威、流程事务、记录与会话服务要求安装目录授予 `board.authority` 权限；权限不来自启动配置。普通规则、CPU 或展示即使声明依赖也不能取得受保护服务。投影服务使用独立包装，可信适配按已授权席位生成 `ISeatProjection` 后只将它交给展示，包装不实现权威调试接口。`IAuthoritySession` 明确属于可信系统／作者接口，由原 Runtime 程序集转发到 BoardGame.Core。
+
 原 `BoardGame.Runtime.GameRuntime.Load`／`GamePackage.Pack` 保留既有 LoadedModule、桌游快照与 format 2 包的显式适配，不自动升级旧数据；新增传入 `ContentCatalog` 的重载转交上述通用实现。仅依赖小核心的宿主直接引用 `BoardGame.AppRuntime` 门面，既有桌游宿主保留原命名空间。通用加载器不尝试旧桌游解析器；旧桌游调用也不静默解析 format 3。插件作者应显式选择对应数据契约，后续默认桌游组合迁移不能靠伪造桌游数据兼容非桌游内容。

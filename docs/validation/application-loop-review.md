@@ -22,3 +22,9 @@
 `tests/Application.Tests/ContentTests.cs` 的 motion 内容完全不引用 GameState、席位或桌游契约：使用自身格式、两个预设及各自资源，从目录、固定入口和 format 3 包实际加载；删除原目录后分别从包和快照恢复。只在构建时序列化初始内容，更新使用普通 double 内存状态。测试拒绝未知载荷／封套版本、内容篡改、漏掉未选中预设资源、未知提供者、路径越界、大小写重复路径和额外未声明内容，并确认打包／恢复没有激活运行插件。该用例是内容契约验收，不代替后续真实图形实时示例。
 
 桌游 format 2 包、快照／记录仍由显式适配保留旧身份和结构校验。`packages runtime-recording atlas resource-font animation-runtime resource-documents` 六组回归通过；基线对局结果保持原值。通用核心的打包与恢复没有调用桌游状态校验。
+
+## 独立桌游基础能力
+
+`board-kernel-plugin` 验证不依赖 Runtime／Lua／Wasmtime 的独立内核插件装配、投影包装不可转换为权威接口、绑定席位投影的复制隔离、非法命令不改变状态，以及普通规则声明受保护依赖仍被启动校验拒绝。安装目录权限与游戏配置分离，配置内伪造权限不能授权。记录、流程与会话中可取得权威信息的接口也受相同限制。
+
+`board-kernel-plugin runtime-host startup commands visibility secrets flow-runtime runtime-recording` 八组回归通过。Kernel 算法、事务与受控随机未拆散；既有基线命令／投影／记录继续逐项比较。该任务不表示桌游 update 或展示插件迁移已经完成。

@@ -4,11 +4,6 @@ using System.Text.Json;
 
 namespace BoardGame.Runtime;
 
-internal interface IFlowAuthority
-{
-    CommandResult SubmitFlow(string? actor,Command command,long revision,Action<GameEngine.FlowTransaction> operation);
-}
-
 internal sealed class FlowController : IAuthoritySession,IRuleProvider,IGameRules,IDisposable
 {
     private readonly IAuthoritySession authority;
@@ -45,7 +40,7 @@ internal sealed class FlowController : IAuthoritySession,IRuleProvider,IGameRule
                 controller.Fault=new(failed.Reason=="flow-cancelled"?"flow-cancelled":"flow-execution","","Restored failed transaction at node "+flow.Node+": "+failed.Reason);
         }
         scope.Provide("flow",controller);scope.Provide("rules",controller);
-    }) {Content=new(["path","maxAutomaticSteps"],(config,startup)=>
+    }) {Permissions=[AuthorityPlugin.Access],ServicePermissions=new Dictionary<string,string>{{"rules",AuthorityPlugin.Access},{"flow",AuthorityPlugin.Access}},Content=new(["path","maxAutomaticSteps"],(config,startup)=>
     {
         ContentPath.Validate(config.GetProperty("path").GetString()!);
         if(config.TryGetProperty("maxAutomaticSteps",out var limit) && (!limit.TryGetInt32(out var steps) || steps is <1 or >100000)) throw new InvalidDataException("flow: maxAutomaticSteps must be 1..100000");

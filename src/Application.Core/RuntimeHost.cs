@@ -9,6 +9,9 @@ public sealed record RuntimePluginDefinition(string Id,string Version,int Api,st
 {
     public PluginExecution Execution {get;init;}=new();
     public PluginContentContract? Content {get;init;}
+    // Permissions are assigned by the trusted installation catalog, never by game.start.json.
+    public string[] Permissions {get;init;}=[];
+    public IReadOnlyDictionary<string,string> ServicePermissions {get;init;}=new Dictionary<string,string>();
 }
 
 // Validation policy only. CordiSharp owns all service registrations and resource lifetimes.
@@ -63,6 +66,9 @@ public sealed class RuntimeHost : IDisposable, IAsyncDisposable
                 throw new InvalidDataException(selection.Id+": configuration must be an object");
             if(plugin.Execution==null || plugin.Execution.Modes==0 || (plugin.Execution.Modes & ~HostMode.All)!=0 || !Enum.IsDefined(plugin.Execution.Scope))
                 throw new InvalidDataException(plugin.Id+": invalid execution declaration");
+            if(plugin.Permissions==null || plugin.Permissions.Any(string.IsNullOrWhiteSpace) || plugin.ServicePermissions==null ||
+                plugin.ServicePermissions.Any(p=>!plugin.Provides.Contains(p.Key) || string.IsNullOrWhiteSpace(p.Value)))
+                throw new InvalidDataException(plugin.Id+": invalid service permission declaration");
         }
         if(mode is not (HostMode.Headless or HostMode.Graphical)) throw new ArgumentOutOfRangeException(nameof(mode));
         selected=selected.Where(p=>(p.Value.Execution.Modes & mode)!=0 && (mode!=HostMode.Headless || p.Value.Execution.Scope==RuntimeScope.Instance))
@@ -88,6 +94,8 @@ public sealed class RuntimeHost : IDisposable, IAsyncDisposable
                 if(!providers.TryGetValue(dependency,out var provider)) throw new InvalidDataException(id+": missing capability "+dependency);
                 if(selected[provider].Execution.Scope>selected[id].Execution.Scope)
                     throw new InvalidDataException(id+": dependency on shorter-lived scope "+dependency);
+                if(selected[provider].ServicePermissions.TryGetValue(dependency,out var permission) && !selected[id].Permissions.Contains(permission,StringComparer.Ordinal))
+                    throw new InvalidDataException(id+": capability permission denied: "+dependency);
                 Visit(provider);
             }
             visiting.Remove(id);done.Add(id);order.Add(selected[id]);
@@ -104,6 +112,7 @@ public sealed class RuntimeHost : IDisposable, IAsyncDisposable
         // Freeze inputs before scheduling, so the graph cannot change in the queue.
         startup=startup with {Plugins=startup.Plugins.Select(p=>p with {Configuration=p.Configuration.Clone()}).ToList()};
         catalog=catalog.Select(p=>p with {Provides=p.Provides?.ToArray()!,Requires=p.Requires?.ToArray()!,
+            Permissions=p.Permissions?.ToArray()!,ServicePermissions=p.ServicePermissions?.ToDictionary(p=>p.Key,p=>p.Value,StringComparer.Ordinal)!,
             Execution=p.Execution with {Contributions=p.Execution.Contributions?.Select(c=>c with {Before=c.Before?.ToArray(),After=c.After?.ToArray()}).ToArray()}}).ToArray();
         var requiredCopy=required.ToArray();
         clock ??=new();clock.Validate();

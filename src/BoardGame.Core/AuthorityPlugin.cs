@@ -22,8 +22,9 @@ internal sealed class KernelAuthority(GameEngine engine) : IAuthoritySession,IFl
     public IReadOnlyList<Diagnostic> ExportDiagnostics()=>engine.ExportDiagnostics();
 }
 
-internal static class AuthorityPlugin
+public static class AuthorityPlugin
 {
+    public const string Access="board.authority";
     public static readonly string[] Required=["authority","projection","random","rule-binding"];
     public static RuntimePluginDefinition Create(Func<LoadedModule> input,uint seed,GameEngine? restored=null)=>new("kernel","1",1,[..Required,"flow-transactions"],[],scope=>
     {
@@ -31,9 +32,28 @@ internal static class AuthorityPlugin
         var binding=new RuleBinding();
         var authority=new KernelAuthority(restored ?? new GameEngine(module.Initial,seed,module.Fingerprint,binding));
         scope.Provide("authority",authority);
-        scope.Provide("projection",authority);
-        scope.Provide("random",authority);
+        scope.Provide("projection",new BoardProjectionSource(authority));
+        // Random state can only advance inside the existing atomic command transaction.
+        scope.Provide("random",new BoardCommandSource(authority));
         scope.Provide("rule-binding",binding);
         scope.Provide("flow-transactions",authority);
-    });
+    }) {ServicePermissions=new Dictionary<string,string>
+        {{"authority",Access},{"projection",Access},{"random",Access},{"rule-binding",Access},{"flow-transactions",Access}}};
+}
+
+internal sealed class BoardProjectionSource(IAuthoritySession authority) : IBoardProjectionSource
+{
+    public ISeatProjection ForSeat(string seat)
+    {
+        _=authority.Project(seat);
+        return new SeatProjection(authority,seat);
+    }
+    private sealed class SeatProjection(IAuthoritySession authority,string seat) : ISeatProjection
+    {public SeatView View()=>authority.Project(seat);}
+}
+internal sealed class BoardCommandSource(IAuthoritySession authority) : IBoardCommandSource
+{
+    public bool CanAct(string seat)=>authority.CanAct(seat);
+    public IReadOnlyList<ActionOffer> Actions(string seat)=>authority.Actions(seat);
+    public CommandResult Submit(string seat,Command command)=>authority.Submit(seat,command);
 }

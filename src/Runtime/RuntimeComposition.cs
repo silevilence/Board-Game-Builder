@@ -42,11 +42,12 @@ internal static class RuntimeComposition
         var capabilities=catalog.Where(p=>startup?.Plugins?.Any(s=>s.Id==p.Id)==true).SelectMany(p=>p.Provides).ToHashSet();
         var hasCpu=capabilities.Contains("cpu");var hasEffects=capabilities.Contains("effects");
         var hasFlow=capabilities.Contains("flow");
-        catalog.Add(new("session.local","1",1,["session"],
+        catalog.Add(new RuntimePluginDefinition("session.local","1",1,["session"],
             [..AuthorityPlugin.Required,"rules","recording",..(hasCpu?new[]{"cpu"}:[]),..(hasEffects?new[]{"effects"}:[]),..(hasFlow?new[]{"flow"}:[])],scope=>
                 scope.Provide("session",scope.Own(new LocalGameSession(Module(),seed,controllers ?? throw new InvalidOperationException("Session controllers are required"),maxSteps,
                     scope.Service<IAuthoritySession>("authority"),scope.Service<RuleBinding>("rule-binding"),scope.Service<IRuleProvider>("rules"),
-                    hasCpu?scope.Service<ICpuDecisionProvider>("cpu"):null,hasEffects?scope.Service<IEffectProvider>("effects"):null,scope.Service<IRecordingProvider>("recording"),hasFlow?scope.Service<FlowController>("flow"):null)))));
+                    hasCpu?scope.Service<ICpuDecisionProvider>("cpu"):null,hasEffects?scope.Service<IEffectProvider>("effects"):null,scope.Service<IRecordingProvider>("recording"),hasFlow?scope.Service<FlowController>("flow"):null))))
+            {Permissions=[AuthorityPlugin.Access],ServicePermissions=new Dictionary<string,string>{{"session",AuthorityPlugin.Access}}});
         return catalog;
     }
 }

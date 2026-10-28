@@ -28,17 +28,6 @@ public interface IEffectProvider
     Command Expand(SeatView view,Command command);
 }
 
-public interface IAuthoritySession
-{
-    SeatView Project(string seat);
-    bool CanAct(string seat);
-    IReadOnlyList<ActionOffer> Actions(string seat);
-    CommandResult Submit(string seat,Command command);
-    GameState ExportAuthorityState();
-    ReplayLog ExportLog();
-    IReadOnlyList<Diagnostic> ExportDiagnostics();
-}
-
 public interface IGameSession : IDisposable
 {
     SessionFault? Fault { get; }

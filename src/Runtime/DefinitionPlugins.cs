@@ -37,5 +37,5 @@ internal static class DefinitionPlugins
 {
     public static RuntimePluginDefinition Module(Func<RuntimeStartup> startup)=>new("definition.module","1",1,["definition"],[],scope=>
         scope.Provide("definition",new ModuleDefinitionLoader(startup(),scope.Configuration.GetProperty("path").GetString()!)))
-        {Content=DefinitionContent.Contract(true)};
+        {Content=DefinitionContent.Contract(true),ServicePermissions=new Dictionary<string,string>{{"definition",AuthorityPlugin.Access}}};
 }
