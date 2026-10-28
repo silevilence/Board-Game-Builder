@@ -75,32 +75,34 @@ internal static class ResourcePlugins
     internal static bool IsResource(string id)=>id is "resources" or "resources.images" or "resources.texturepacker" or "resources.font" or "resources.animations" or "resources.documents";
     public static IEnumerable<RuntimePluginDefinition> Catalog(Func<ResourcePool?> pool)
     {
-        yield return new("resources","1",1,["resources"],[],scope=>
+        yield return new RuntimePluginDefinition("resources","1",1,["resources"],[],scope=>
         {
             var registry=new ResourceRegistry(pool());scope.Provide("resources",registry);
             scope.Own(registry.Register(new BinaryResourceLoader(),ResourceSource.Read(scope.Configuration,"resources")));
-        });
+        }) {Content=Sources("resources")};
         yield return Loader("resources.images",new ImageResourceLoader());
         yield return Loader("resources.texturepacker",new TexturePackerResourceLoader());
-        yield return new("resources.documents","1",1,["resources.documents"],["resources"],scope=>
+        yield return new RuntimePluginDefinition("resources.documents","1",1,["resources.documents"],["resources"],scope=>
         {
             var path=scope.Configuration.GetProperty("path").GetString()!;ResourceSource.CheckPath(path);
             scope.Provide("resources.documents",scope.Own(scope.Service<ResourceRegistry>("resources").Register(new DocumentResourceLoader(),[new(path)])));
-        });
-        yield return new("resources.animations","1",1,["resources.animations"],["resources"],scope=>
+        }) {Content=PathContent};
+        yield return new RuntimePluginDefinition("resources.animations","1",1,["resources.animations"],["resources"],scope=>
         {
             var path=scope.Configuration.GetProperty("path").GetString()!;ResourceSource.CheckPath(path);
             scope.Provide("resources.animations",scope.Own(scope.Service<ResourceRegistry>("resources").Register(new AnimationResourceLoader(),[new(path)])));
-        });
-        yield return new("resources.font","1",1,["resources.font"],["resources"],scope=>
+        }) {Content=PathContent};
+        yield return new RuntimePluginDefinition("resources.font","1",1,["resources.font"],["resources"],scope=>
         {
             var font=FontResourceLoader.Read(scope.Configuration);
             scope.Provide("resources.font",scope.Own(scope.Service<ResourceRegistry>("resources").Register(new FontResourceLoader(font),[new(font.Resource)])));
-        });
+        }) {Content=new(["path","license"],(config,startup)=>_=FontResourceLoader.Read(config),Prepare:true)};
     }
+    private static PluginContentContract PathContent=>new(["path"],(config,startup)=>ContentPath.Validate(config.GetProperty("path").GetString()!),Prepare:true);
+    private static PluginContentContract Sources(string id)=>new(["sources"],(config,startup)=>_=ResourceSource.Read(config,id),Prepare:true);
     private static RuntimePluginDefinition Loader(string id,IResourceLoader loader)=>new(id,"1",1,[id],["resources"],scope=>
     {
         var registration=scope.Service<ResourceRegistry>("resources").Register(loader,ResourceSource.Read(scope.Configuration,id));
         scope.Provide(id,scope.Own(registration));
-    });
+    }) {Content=Sources(id)};
 }

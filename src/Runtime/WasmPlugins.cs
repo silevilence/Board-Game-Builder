@@ -87,5 +87,11 @@ internal sealed class EffectRules(IGameRules rules,IEffectProvider plugins) : IG
 internal static class WasmRuntimePlugin
 {
     public static RuntimePluginDefinition Create(Func<GameDefinition> definition)=>new("wasm","1",1,["effects"],[],scope=>
-        scope.Provide("effects",scope.Own(new WasmPlugins(RuntimeDefinition.Configuration<List<RuntimePlugin>>(definition(),"wasm")))));
+        scope.Provide("effects",scope.Own(new WasmPlugins(RuntimeDefinition.Configuration<List<RuntimePlugin>>(definition(),"wasm")))))
+        {Content=new(["extensions"],(config,startup)=>
+        {
+            var extensions=System.Text.Json.JsonSerializer.Deserialize<List<RuntimeDependency>>(config.GetProperty("extensions"),Wire.Options) ?? throw new InvalidDataException("wasm: missing extensions");
+            if(extensions.Any(p=>p.Kind!="wasm" || p.EditorOnly)) throw new InvalidDataException("wasm: expected runtime WASM extension");
+            ModulePackage.ValidateDependencies(extensions);
+        },Files:config=>System.Text.Json.JsonSerializer.Deserialize<List<RuntimeDependency>>(config.GetProperty("extensions"),Wire.Options)!.Select(p=>p.File!))};
 }

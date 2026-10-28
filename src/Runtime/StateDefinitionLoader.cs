@@ -65,5 +65,6 @@ internal sealed class StateDefinitionLoader(RuntimeStartup startup,string source
     }
     public IReadOnlyList<string> ContentFiles(string directory)=>[Source];
     public static RuntimePluginDefinition Plugin(Func<RuntimeStartup> startup)=>new("definition.state","1",1,["definition"],[],s=>
-        s.Provide("definition",new StateDefinitionLoader(startup(),s.Configuration.GetProperty("path").GetString()!)));
+        s.Provide("definition",new StateDefinitionLoader(startup(),s.Configuration.GetProperty("path").GetString()!)))
+        {Content=DefinitionContent.Contract(false)};
 }

@@ -8,10 +8,10 @@ namespace BoardGame.Runtime;
 public sealed record GamePackageManifest(int Format,string Fingerprint,SortedDictionary<string,string> Files);
 public static class GamePackage
 {
-    public static void Pack(string directory,string destination)
+    public static void Pack(string directory,string destination,IReadOnlyList<RuntimePluginDefinition>? approvedPlugins=null)
     {
-        var module=GameRuntime.LoadDirectory(directory);
-        foreach(var preset in GamePresets.Choices(module).Keys) _=GameRuntime.LoadDirectory(directory,preset);
+        var module=GameRuntime.LoadDirectory(directory,approvedPlugins:approvedPlugins);
+        foreach(var preset in GamePresets.Choices(module.RuntimeIdentity!.Startup,approvedPlugins).Keys) _=GameRuntime.LoadDirectory(directory,preset,approvedPlugins);
         var files=new SortedDictionary<string,byte[]>(StringComparer.Ordinal);
         foreach(var path in module.RuntimeIdentity!.ContentHashes.Keys.Append(GameRuntime.Entry))
             files.Add(path,File.ReadAllBytes(DirectoryModule.SafeFile(directory,path)));
@@ -27,11 +27,11 @@ public static class GamePackage
                 foreach(var file in files) {using var stream=zip.CreateEntry(file.Key).Open();stream.Write(file.Value);}
                 using var writer=new StreamWriter(zip.CreateEntry("package.manifest.json").Open(),new UTF8Encoding(false));writer.Write(Wire.Json(manifest));
             }
-            _=Load(temp);File.Move(temp,target,false);
+            _=Load(temp,approvedPlugins:approvedPlugins);File.Move(temp,target,false);
         }
         finally {if(File.Exists(temp)) File.Delete(temp);}
     }
-    public static LoadedModule Load(string path,string? preset=null)
+    public static LoadedModule Load(string path,string? preset=null,IReadOnlyList<RuntimePluginDefinition>? approvedPlugins=null)
     {
         var temp=Path.Combine(Path.GetTempPath(),"bgb-runtime-package-"+Guid.NewGuid());
         try
@@ -66,11 +66,11 @@ public static class GamePackage
             {
                 var destination=Path.Combine(temp,file.Key);Directory.CreateDirectory(Path.GetDirectoryName(destination)!);File.WriteAllBytes(destination,file.Value);
             }
-            var module=GameRuntime.LoadDirectory(temp);
+            var module=GameRuntime.LoadDirectory(temp,approvedPlugins:approvedPlugins);
             if(module.Fingerprint!=manifest.Fingerprint) throw new InvalidDataException("Package runtime fingerprint mismatch");
             var expected=module.RuntimeIdentity!.ContentHashes.Keys.Append(GameRuntime.Entry).ToHashSet(StringComparer.Ordinal);
             if(!expected.SetEquals(manifest.Files.Keys)) throw new InvalidDataException("Package contains undeclared content");
-            return preset==null?module:GameRuntime.LoadDirectory(temp,preset);
+            return preset==null?module:GameRuntime.LoadDirectory(temp,preset,approvedPlugins);
         }
         catch(Exception error) when(error is not OutOfMemoryException) {throw new InvalidDataException(path+": "+error.Message,error);}
         finally {if(Directory.Exists(temp)) Directory.Delete(temp,true);}

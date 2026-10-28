@@ -45,7 +45,12 @@ internal sealed class FlowController : IAuthoritySession,IRuleProvider,IGameRule
                 controller.Fault=new(failed.Reason=="flow-cancelled"?"flow-cancelled":"flow-execution","","Restored failed transaction at node "+flow.Node+": "+failed.Reason);
         }
         scope.Provide("flow",controller);scope.Provide("rules",controller);
-    });
+    }) {Content=new(["path","maxAutomaticSteps"],(config,startup)=>
+    {
+        ContentPath.Validate(config.GetProperty("path").GetString()!);
+        if(config.TryGetProperty("maxAutomaticSteps",out var limit) && (!limit.TryGetInt32(out var steps) || steps is <1 or >100000)) throw new InvalidDataException("flow: maxAutomaticSteps must be 1..100000");
+        if(startup.Plugins.Any(p=>p.Id=="wasm")) throw new InvalidDataException("flow: WASM effects are not supported by this version");
+    })};
     public void Advance(CancellationToken cancellation=default)
     {
         using var linked=CancellationTokenSource.CreateLinkedTokenSource(lifetime,stop.Token,cancellation);

@@ -8,6 +8,7 @@ public sealed record RuntimePluginDefinition(string Id,string Version,int Api,st
     Action<RuntimePluginScope> Activate)
 {
     public PluginExecution Execution {get;init;}=new();
+    public PluginContentContract? Content {get;init;}
 }
 
 // Validation policy only. CordiSharp owns all service registrations and resource lifetimes.

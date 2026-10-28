@@ -37,7 +37,8 @@ internal sealed class CommandRuleProvider : IRuleProvider, IGameRules
     public IReadOnlyList<ActionOffer> Actions(SeatView view)=>Wire.Copy(offers);
     public RuleDecision Decide(SeatView view,Command command)=>offers.Any(a=>Wire.Json(a.Command)==Wire.Json(command))
         ?new(true,"",[command]):new(false,"Command is not offered",[]);
-    public static RuntimePluginDefinition Plugin=>new("rules.commands","1",1,["rules"],[],s=>s.Provide("rules",new CommandRuleProvider(s.Configuration)));
+    public static RuntimePluginDefinition Plugin=>new("rules.commands","1",1,["rules"],[],s=>s.Provide("rules",new CommandRuleProvider(s.Configuration)))
+        {Content=new(["actions"],(config,startup)=>_=new CommandRuleProvider(config))};
 }
 
 internal sealed class LuaRuleProvider : IRuleProvider, IDisposable
@@ -81,8 +82,10 @@ internal sealed class LuaCpuProvider(GameDefinition definition) : ICpuDecisionPr
 
 internal static class LuaRuntimePlugins
 {
+    private static PluginContentContract ScriptContent=>new(["file"],(config,_)=>ContentPath.Validate(config.GetProperty("file").GetString()!),
+        Files:config=>[config.GetProperty("file").GetString()!]);
     public static RuntimePluginDefinition Rules(Func<GameDefinition> definition,uint seed)=>new("lua.rules","1",1,["rules"],[],scope=>
-        scope.Provide("rules",scope.Own(new LuaRuleProvider(definition(),seed))));
+        scope.Provide("rules",scope.Own(new LuaRuleProvider(definition(),seed)))) {Content=ScriptContent};
     public static RuntimePluginDefinition Cpu(Func<GameDefinition> definition)=>new("lua.cpu","1",1,["cpu"],[],scope=>
-        scope.Provide("cpu",scope.Own(new LuaCpuProvider(definition()))));
+        scope.Provide("cpu",scope.Own(new LuaCpuProvider(definition())))) {Content=ScriptContent};
 }

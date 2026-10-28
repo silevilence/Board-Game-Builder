@@ -6,6 +6,7 @@ var tests = new Dictionary<string, Action> { ["cordi"] = CordiTests.Run, ["cordi
 try
 {
     tests.Add("application-baseline",ApplicationBaselineTests.Run);
+    tests.Add("content-discovery",ContentDiscoveryTests.Run);
     tests.Add("board-actions",BoardActionTests.Run);
     tests.Add("resource-font",FontResourceTests.Run);
     tests.Add("animation-runtime",AnimationTests.Runtime);
