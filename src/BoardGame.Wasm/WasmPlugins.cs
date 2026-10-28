@@ -68,19 +68,7 @@ public sealed class WasmPlugins : IEffectProvider, IDisposable
     public void Dispose() {lock(gate) {plugins.Clear();executor.Dispose();}}
 }
 
-internal sealed class EffectRules(IGameRules rules,IEffectProvider plugins) : IGameRules
-{
-    public IReadOnlyList<ActionOffer> Actions(SeatView view)=>rules.Actions(view);
-    public RuleDecision Decide(SeatView view,Command command)
-    {
-        var decision=rules.Decide(view,command);
-        if(!decision.Allowed) return decision;
-        // Expansion is pure: the Kernel applies the entire resulting batch or none of it.
-        return decision with {Commands=decision.Commands.Select(c=>plugins.Expand(view,c)).ToList()};
-    }
-}
-
-internal static class WasmRuntimePlugin
+public static class WasmRuntimePlugin
 {
     public static RuntimePluginDefinition Create(Func<GameDefinition> definition)=>new("wasm","1",1,["effects"],[],scope=>
         scope.Provide("effects",scope.Own(new WasmPlugins(RuntimeDefinition.Configuration<List<RuntimePlugin>>(definition(),"wasm")))))

@@ -1,0 +1,54 @@
+{
+  "BoardGame.ScriptHosting.Tests": [
+    "Application.Abstractions/0.3.0",
+    "Application.Core/0.3.0",
+    "BoardGame.Core/0.3.0",
+    "BoardGame.Hosting/0.3.0",
+    "BoardGame.Lua/0.3.0",
+    "BoardGame.Recording/0.3.0",
+    "BoardGame.ScriptHosting.Tests/0.3.0",
+    "BoardGame.Session/0.3.0",
+    "Kernel.Abstractions/0.3.0",
+    "Kernel/0.3.0",
+    "Lua.Execution/0.3.0",
+    "Lua/0.3.0",
+    "Modules/0.3.0",
+    "Resources.Abstractions/0.3.0",
+    "Resources.Core/0.3.0"
+  ],
+  "BoardGame.WasmHosting.Tests": [
+    "Application.Abstractions/0.3.0",
+    "Application.Core/0.3.0",
+    "BoardGame.Core/0.3.0",
+    "BoardGame.Hosting/0.3.0",
+    "BoardGame.Recording/0.3.0",
+    "BoardGame.Session/0.3.0",
+    "BoardGame.Wasm/0.3.0",
+    "BoardGame.WasmHosting.Tests/0.3.0",
+    "Kernel.Abstractions/0.3.0",
+    "Kernel/0.3.0",
+    "Modules/0.3.0",
+    "Resources.Abstractions/0.3.0",
+    "Resources.Core/0.3.0",
+    "Wasm.Execution/0.3.0"
+  ],
+  "Application.Hosting.Tests": [
+    "Application.Abstractions/0.3.0",
+    "Application.Core/0.3.0",
+    "Application.Hosting.Tests/0.3.0"
+  ],
+  "BoardGame.Hosting.Tests": [
+    "Application.Abstractions/0.3.0",
+    "Application.Core/0.3.0",
+    "BoardGame.Core/0.3.0",
+    "BoardGame.Hosting.Tests/0.3.0",
+    "BoardGame.Hosting/0.3.0",
+    "BoardGame.Recording/0.3.0",
+    "BoardGame.Session/0.3.0",
+    "Kernel.Abstractions/0.3.0",
+    "Kernel/0.3.0",
+    "Modules/0.3.0",
+    "Resources.Abstractions/0.3.0",
+    "Resources.Core/0.3.0"
+  ]
+}

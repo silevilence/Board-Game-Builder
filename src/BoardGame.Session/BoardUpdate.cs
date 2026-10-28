@@ -28,6 +28,7 @@ internal sealed partial class LocalGameSession
     }
     private LocalGameSession(LocalGameSession source,IAuthoritySession authority,IFlowProgression? candidateFlow)
     {
+        content=source.content;
         staged=true;preparation=source.preparation;module=source.module;recording=source.recording;
         seed=source.seed;maxSteps=source.maxSteps;ruleBinding=source.ruleBinding;
         rules=source.rules;cpu=source.cpu;effects=source.effects;

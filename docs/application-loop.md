@@ -117,3 +117,13 @@ FreeCell 原来由 classic 样式硬编码的标题、区域说明和皇冠已�
 `Presentation.Core` 提供无 UI／桌游依赖的 `TimelineCurve`、`TimelinePlayback`、已解析页内容和 `PageNavigator`。`Presentation.Avalonia.PageShelf` 只接收通用资源、页背景和已解析文字，负责缩放排版、分页、常驻页及独立参考窗口；没有实体查找或表达式执行。页刷新保持各面板页码，结构变化须重建，关闭会释放全部图片和子窗口。
 
 原 AnimationLibrary／DocumentLibrary 作者格式保持不变。`SceneAnimationPlayer` 解析授权场景中的触发计数和实体绑定，交给通用插值；隐藏目标不产生绘制，隐藏来源不参与位移。`DocumentProjection` 在桌游层解析可见属性，再把文字交给通用页面。交互视口使用展示时钟，暂停模拟或等待输入不会冻结已开始的展示动画；停止视口会重置动画和释放页资源，不执行新的命令。资源库改变会清除旧播放和曲线缓存。
+
+## 显式获准装配与可选程序集
+
+`ApplicationCatalog` 接收发行宿主显式提供的工厂，以 `GameRuntime.Load`／`GamePackage.Pack` 和同一 ContentCatalog 完成内容发现、校验和运行。启动时重新核对快照属于当前获准目录，只绑定启动配置实际选择的实现；安装目录中其他格式或能力的工厂不会读取该游戏载荷。没有全局程序集扫描、默认桌游补装或从数据包执行 DLL 的路径。
+
+桌游规则契约位于 BoardGame.Core；Lua／WASM 绑定分别位于 BoardGame.Lua／BoardGame.Wasm；记录和原更新协调器分别位于 BoardGame.Recording／BoardGame.Session。新程序集复用原算法，均无需反向引用默认 Runtime。BoardGame.Hosting 提供可显式组合的普通桌游装配，`definition.board-state` 从已有状态文档解析器生成 format 3 内容，资源由通用 AssetRegistry 加载。无脚本组合不引用 Lua／WASM；脚本组合由宿主另行加入 LuaRuntimePlugins 等获准工厂。
+
+既有 Runtime 是兼容默认组合入口，保留原目录／format 2、PlaySession 与作者调试行为，并转交分离后的实现；它的全量引用不再是新通用宿主的依赖。Player 外壳及发行提供者的迁移由后续任务承接。旧 `SessionRecording.Replay()` 现在由 Runtime 命名空间的扩展适配供应默认目录校验；选择性宿主必须显式传入其快照验证策略。已编译调用者须与本次程序集版本一起重建，不承诺跨版本托管 ABI。记录数据格式、哈希和算法不变。
+
+普通 BoardGame.Hosting 的内容实例固定来源版本，其记录不能替换为另一份内容。当前此入口通过重建实例切换来源；既有默认组合的作者脚本重载仍保持原行为。所有格式迁移均显式选择目录和加载器，不把原 format 2 包交给 format 3 解析器静默转换。

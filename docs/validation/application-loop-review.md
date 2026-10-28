@@ -100,3 +100,11 @@
 `Presentation.Tests` 在无桌游／UI 依赖的项目中验证插值、时间边界、7／16／33／100 ms 取样、页码和面板切换。`Presentation.Avalonia.Tests` 仅引用通用页面库，实际建立 Avalonia 页面，验证文本排版、刷新保页、结构替换拒绝及释放，并核对程序集无 Kernel／Runtime／View.Abstractions 引用。View.Tests 的旧授权字段、终局阅读、字体和清理测试继续通过。
 
 `animation-runtime resource-documents animation-author` 验证旧格式、隐藏实体与属性、触发重置、最终姿态、包和作者草稿。实际咒物调查员 Player 的发牌、牌桌、日志分页和参考窗口通过；Editor 的运行文档探针及动画预览两轮启停、保存重开、失败和切换清理通过。动画探针首次在测试副本保存 animations.json 时返回 Windows“无法删除要被替换的文件”；未发现只读属性，简单替换测试正常，相同探针原样重试通过。未更改文件属性／权限，也未改作者写入算法；首次失败保留在原始结果中，不能据此宣称从未发生保存错误。结果见 [presentation-probes.json](presentation-probes.json)。最终整解构建零警告、零错误。
+
+## 可选普通装配前置
+
+三个独立可执行测试分别只引用 Application.Core、BoardGame.Hosting、BoardGame.Hosting + BoardGame.Lua，通过正式加载、format 3 打包、驱动和关闭。桌游两种组合完成终局及记录校验回放；Lua 组合使用实际受限 worker。测试核对 deps.json：非桌游没有 Kernel／桌游实现，无脚本桌游没有 Lua／WASM／图形实现，Lua 桌游没有 Wasmtime 或兼容 Runtime。实际项目引用清单见 [optional-assembly.json](optional-assembly.json)。同时验证未选工厂不绑定、外来获准目录拒绝和必需记录能力缺失拒绝。
+
+抽离后的默认 Runtime 在最初 21 局基线上逐项匹配，未重录；`board-recording board-update session-driver lua-executor wasm-executor runtime-recording` 全部通过。后续 `packages content-discovery online-reconnect online-audience online-secrets runtime-host startup` 全部通过。完整构建零警告、零错误。一次并行 NuGet 还原报告“文件已存在”；使用正常串行还原后通过，没有删除缓存或修改安全设置。上述装配验证不宣称 Player 外壳、普通发行 UI 或干净 Windows 验收已完成，这些仍按后续任务独立验收。
+
+追加 WASM-only 宿主验证：只引用 BoardGame.Hosting + BoardGame.Wasm，实际扩展计数命令、更新发布、记录回放及加载时的 WASM 内容哈希拒绝通过，deps.json 不含 Lua 或兼容 Runtime。载荷加载器通过新增的默认接口重载接收独立复制的有效启动配置；旧加载器继续使用原 Load(source)，保留禁止将 game.start.json 当普通内容文件读取的边界。

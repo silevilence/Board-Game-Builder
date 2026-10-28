@@ -1,0 +1,1 @@
+<Project Sdk="Microsoft.NET.Sdk"><ItemGroup><ProjectReference Include="../BoardGame.Session/BoardGame.Session.csproj" /><ProjectReference Include="../Resources.Core/Resources.Core.csproj" /></ItemGroup></Project>

@@ -9,6 +9,11 @@
     <Project Path="src/Presentation.Core/Presentation.Core.csproj" />
     <Project Path="src/Presentation.Avalonia/Presentation.Avalonia.csproj" />
     <Project Path="src/BoardGame.Core/BoardGame.Core.csproj" />
+    <Project Path="src/BoardGame.Hosting/BoardGame.Hosting.csproj" />
+    <Project Path="src/BoardGame.Recording/BoardGame.Recording.csproj" />
+    <Project Path="src/BoardGame.Session/BoardGame.Session.csproj" />
+    <Project Path="src/BoardGame.Lua/BoardGame.Lua.csproj" />
+    <Project Path="src/BoardGame.Wasm/BoardGame.Wasm.csproj" />
     <Project Path="src/BoardGame.Interaction/BoardGame.Interaction.csproj" />
     <Project Path="src/BoardGame.Presentation/BoardGame.Presentation.csproj" />
     <Project Path="src/Authoring/Authoring.csproj" />
@@ -41,7 +46,11 @@
   </Folder>
   <Folder Name="/tests/">
     <Project Path="tests/Application.Tests/Application.Tests.csproj" />
+    <Project Path="tests/Application.Hosting.Tests/Application.Hosting.Tests.csproj" />
     <Project Path="tests/BoardGame.Presentation.Tests/BoardGame.Presentation.Tests.csproj" />
+    <Project Path="tests/BoardGame.Hosting.Tests/BoardGame.Hosting.Tests.csproj" />
+    <Project Path="tests/BoardGame.WasmHosting.Tests/BoardGame.WasmHosting.Tests.csproj" />
+    <Project Path="tests/BoardGame.ScriptHosting.Tests/BoardGame.ScriptHosting.Tests.csproj" />
     <Project Path="tests/Presentation.Tests/Presentation.Tests.csproj" />
     <Project Path="tests/Presentation.Avalonia.Tests/Presentation.Avalonia.Tests.csproj" />
     <Project Path="tests/BoardGame.Interaction.Tests/BoardGame.Interaction.Tests.csproj" />

@@ -1,13 +1,14 @@
 <Project Sdk="Microsoft.NET.Sdk">
   <ItemGroup>
+    <ProjectReference Include="../BoardGame.Session/BoardGame.Session.csproj" />
     <ProjectReference Include="../BoardGame.Interaction/BoardGame.Interaction.csproj" />
     <ProjectReference Include="../Application.Core/Application.Core.csproj" />
     <ProjectReference Include="../Resources.Core/Resources.Core.csproj" />
     <ProjectReference Include="../BoardGame.Core/BoardGame.Core.csproj" />
-    <ProjectReference Include="../Wasm.Execution/Wasm.Execution.csproj" />
+    <ProjectReference Include="../BoardGame.Wasm/BoardGame.Wasm.csproj" />
     <ProjectReference Include="../Kernel/Kernel.csproj" />
     <ProjectReference Include="../Modules/Modules.csproj" />
-    <ProjectReference Include="../Lua/Lua.csproj" />
+    <ProjectReference Include="../BoardGame.Lua/BoardGame.Lua.csproj" />
   </ItemGroup>
   <ItemGroup>
     <PackageReference Include="CordiSharp" Version="[0.2.0]" ExcludeAssets="analyzers" />

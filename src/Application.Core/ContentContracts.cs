@@ -10,6 +10,7 @@ public interface IContentLoader
     string PayloadFormat {get;}
     int PayloadVersion {get;}
     JsonElement Load(IContentSource source);
+    JsonElement Load(IContentSource source,RuntimeStartup startup)=>Load(source);
 }
 public interface IContentSource
 {

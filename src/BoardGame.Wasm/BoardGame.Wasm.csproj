@@ -1,0 +1,7 @@
+<Project Sdk="Microsoft.NET.Sdk">
+  <ItemGroup>
+    <ProjectReference Include="../BoardGame.Core/BoardGame.Core.csproj" />
+    <ProjectReference Include="../Modules/Modules.csproj" />
+    <ProjectReference Include="../Wasm.Execution/Wasm.Execution.csproj" />
+  </ItemGroup>
+</Project>

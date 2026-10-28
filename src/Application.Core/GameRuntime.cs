@@ -66,7 +66,7 @@ public static class GameRuntime
             if(string.IsNullOrWhiteSpace(loader.PayloadFormat) || loader.PayloadVersion<1) throw new InvalidDataException("Invalid payload contract");
             try
             {
-                var data=loader.Load(source);
+                var data=loader.Load(source,ContentJson.Copy(selected));
                 if(data.ValueKind is System.Text.Json.JsonValueKind.Undefined or System.Text.Json.JsonValueKind.Null || Encoding.UTF8.GetByteCount(data.GetRawText())>ContentSource.MaxFileBytes)
                     throw new InvalidDataException("Invalid/oversized payload");
                 return new(loader.PayloadFormat,loader.PayloadVersion,data.Clone());

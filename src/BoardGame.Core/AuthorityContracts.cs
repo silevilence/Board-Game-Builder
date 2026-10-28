@@ -2,6 +2,11 @@ using System.Runtime.CompilerServices;
 using BoardGame.Kernel;
 
 [assembly:InternalsVisibleTo("Runtime")]
+[assembly:InternalsVisibleTo("BoardGame.Hosting")]
+[assembly:InternalsVisibleTo("BoardGame.Lua")]
+[assembly:InternalsVisibleTo("BoardGame.Wasm")]
+[assembly:InternalsVisibleTo("BoardGame.Session")]
+[assembly:InternalsVisibleTo("BoardGame.Recording")]
 
 namespace BoardGame.Runtime;
 

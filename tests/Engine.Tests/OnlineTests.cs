@@ -1,5 +1,6 @@
 using BoardGame.Kernel;
 using BoardGame.Networking;
+using BoardGame.Runtime;
 
 namespace Engine.Tests;
 
