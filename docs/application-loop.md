@@ -93,3 +93,9 @@ Editor 的 sessions 插件在工作线程创建内嵌会话，捕获当前模块
 `RenderingPlugin.Backend` 在 CordiSharp 图形宿主作用域发布唯一 `render.backend`；`RenderingHost.StartAsync` 要求恰好一个此能力且作用域正确，安装目录中未选择的后端不会激活。无界面模式没有此要求，也不激活图形插件。选择在启动后固定，切换需关闭旧宿主和视口后重建。运行实例可依赖父图形宿主，关闭单局不释放父宿主或其他视口。
 
 宿主传入图形线程 dispatch，后端、视口、绘制上下文均验证创建线程。绘制上下文只在当前回调有效，不能跨帧保留，也不能在绘制期间重入、释放设备或替换后端。截图使用同一绘制契约及独立目标，提供者必须在失败时恢复原目标。关闭宿主先关闭子运行作用域，再释放剩余视口，最后释放后端；单个资源释放失败仍尝试其他资源并汇总错误。UI 调用异步启动／关闭必须 await，不同步等待自己的 dispatch。
+
+`Rendering.WindowsDX` 实现普通 Windows 后端，明确不支持 NativeAOT；仅依赖通用绘制／资源契约、MonoGame、字体栅格化和 Windows 绘图支持，不引用桌游。`Rendering.Avalonia.PlatformViewport` 负责原生窗口、输入、DPI、镜头和帧调度。同一顶层窗口选择同一后端，每个视口独立创建设备／纹理，尺寸变化只重建设备资源。框架回调通过视口 RuntimeHost 的 render 阶段执行，展示根没有模拟更新贡献。最后一个视口解除关联后异步关闭图形根；原生窗口由 Avalonia 在移除后的调度边界销毁。
+
+现有 `DesktopViewport`／`TableRenderer` 暂作桌游调用的兼容适配：主题、牌桌画布和快捷键留在 View.MonoGame，设备操作已迁出。适配不会让图形后端按主题启用规则；完整桌游 render 与启动组合迁移分别验收。字体类型保留原命名空间及程序集转发。
+
+CordiSharp 0.2.0 的不同根共用 pump。RuntimeHost 将图形 dispatch 放到线程池发起，插件激活和资源释放以 Task 异步等待，避免 pump 同步等待 UI 时阻塞另一个根的同步内容加载。无 dispatch 的准备插件保持原执行方式；异步等待不会跳过资源释放，作用域关闭仍等待全部任务完成。

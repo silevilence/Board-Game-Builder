@@ -2,12 +2,11 @@
   <PropertyGroup><TargetFramework>net10.0-windows</TargetFramework></PropertyGroup>
   <ItemGroup>
     <ProjectReference Include="../View.Abstractions/View.Abstractions.csproj" />
+    <ProjectReference Include="../Rendering.WindowsDX/Rendering.WindowsDX.csproj" />
+    <ProjectReference Include="../Rendering.Avalonia/Rendering.Avalonia.csproj" />
   </ItemGroup>
   <ItemGroup>
-    <PackageReference Include="MonoGame.Framework.WindowsDX" Version="3.8.4.1" />
     <PackageReference Include="Avalonia.Desktop" Version="12.1.1" />
     <PackageReference Include="Avalonia.Themes.Fluent" Version="12.1.1" />
-    <PackageReference Include="System.Drawing.Common" Version="10.0.0" />
-    <PackageReference Include="SkiaSharp" Version="3.119.4" />
   </ItemGroup>
 </Project>

@@ -1,5 +1,5 @@
 using SkiaSharp;
-using BoardGame.Kernel;
+using BoardGame.Resources;
 
 namespace BoardGame.View;
 
@@ -7,10 +7,10 @@ namespace BoardGame.View;
 public sealed class PackagedTypeface : IDisposable
 {
     private SKTypeface? typeface;
-    private ResourcePool? source;
+    private AssetSet? source;
     public string Identity {get;private set;}="";
     public string? Family=>typeface?.FamilyName;
-    public void Configure(ResourcePool resources)
+    public void Configure(AssetSet resources)
     {
         if(ReferenceEquals(source,resources))return;
         var bytes=resources.Font is {} reference?resources.GetFile(reference.Resource):ReadOnlyMemory<byte>.Empty;

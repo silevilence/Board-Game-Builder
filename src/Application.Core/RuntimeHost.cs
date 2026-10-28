@@ -30,7 +30,7 @@ public sealed class RuntimeHost : IDisposable, IAsyncDisposable
     private readonly HostMode mode;
     private readonly RuntimeScope scope;
     private readonly string viewport;
-    private readonly Action<Action> dispatch;
+    private readonly Action<Action>? dispatch;
     private readonly TaskCompletionSource initialized=new(TaskCreationOptions.RunContinuationsAsynchronously);
     private TimeSpan presentationTime;
     private bool rendering;
@@ -42,7 +42,7 @@ public sealed class RuntimeHost : IDisposable, IAsyncDisposable
     public ApplicationFault? RenderFault=>renderFault;
     internal bool IsDisposed=>disposed;
     private RuntimeHost(HostMode mode,RuntimeScope scope,RuntimeHost? parent,string viewport,Action<Action>? dispatch)
-    {this.mode=mode;this.scope=scope;this.parent=parent;this.viewport=viewport;this.dispatch=dispatch ?? (action=>action());}
+    {this.mode=mode;this.scope=scope;this.parent=parent;this.viewport=viewport;this.dispatch=dispatch;}
     public static IReadOnlyList<RuntimePluginDefinition> Validate(RuntimeStartup startup,
         IReadOnlyList<RuntimePluginDefinition> catalog,IEnumerable<string> required,HostMode mode=HostMode.Headless)
     {
@@ -148,10 +148,11 @@ public sealed class RuntimeHost : IDisposable, IAsyncDisposable
             foreach(var plugin in order)
             {
                 var selection=startup.Plugins.Single(p=>p.Id==plugin.Id);
-                var handle=host.root.Inject(plugin.Requires.Select(Key),(context,_)=>
+                var handle=host.root.Inject(plugin.Requires.Select(Key),(context,_)=>ActivateAsync(context));
+                async Task ActivateAsync(Context context)
                 {
                     var scope=new RuntimePluginScope(host,context,plugin,selection.Configuration);
-                    host.dispatch(()=>plugin.Activate(scope));
+                    await host.DispatchAsync(()=>plugin.Activate(scope));
                     foreach(var capability in plugin.Provides)
                     {
                         if(!scope.Published.Contains(capability)) throw new InvalidDataException(plugin.Id+": did not provide "+capability);
@@ -160,8 +161,7 @@ public sealed class RuntimeHost : IDisposable, IAsyncDisposable
                     foreach(var contribution in plugin.Execution.Contributions ?? [])
                         if(!(contribution.Phase==ApplicationPhase.Update?host.updates.ContainsKey(plugin.Id+"/"+contribution.Id):host.renders.ContainsKey(plugin.Id+"/"+contribution.Id)))
                             throw new InvalidDataException(plugin.Id+": did not register "+contribution.Id);
-                    return Task.CompletedTask;
-                });
+                }
                 host.handles.Add(handle);
                 try {await handle.Await().ConfigureAwait(false);}
                 catch(Exception error) {throw new InvalidDataException(plugin.Id+": runtime activation failed: "+error.Message,error);}
@@ -186,7 +186,15 @@ public sealed class RuntimeHost : IDisposable, IAsyncDisposable
         return root.Get<T>(key) ?? parent?.Service<T>(key) ?? throw new InvalidOperationException("Unavailable runtime capability: "+key);
     }
     private bool HasCapability(string key)=>!disposed && (capabilities.Contains(key) || parent?.HasCapability(key)==true);
-    internal void Release(IDisposable resource)=>dispatch(resource.Dispose);
+    // CordiSharp roots share a pump. A synchronous UI dispatch on that pump would block
+    // unrelated content loads when the UI is awaiting another root's initialization.
+    private Task DispatchAsync(Action action)
+    {
+        if(dispatch!=null)return Task.Run(()=>dispatch(action));
+        action();return Task.CompletedTask;
+    }
+    internal void Release(IDisposable resource) {if(dispatch!=null)dispatch(resource.Dispose);else resource.Dispose();}
+    internal Task ReleaseAsync(IDisposable resource)=>DispatchAsync(resource.Dispose);
     internal Action Register(string key,ApplicationUpdate? update,ApplicationRender? render)
     {
         ObjectDisposedException.ThrowIf(disposed,this);
@@ -269,7 +277,7 @@ public sealed class RuntimePluginScope
     public T Own<T>(T resource) where T:IDisposable
     {
         if(host.IsDisposed) {host.Release(resource);throw new ObjectDisposedException(nameof(RuntimePluginScope));}
-        context.Effect(()=>(Action)(()=>host.Release(resource)));return resource;
+        context.Effect(()=>(Func<Task>)(()=>host.ReleaseAsync(resource)));return resource;
     }
     public void Update(string id,ApplicationUpdate callback)=>Register(id,ApplicationPhase.Update,callback,null);
     public void Render(string id,ApplicationRender callback)=>Register(id,ApplicationPhase.Render,null,callback);

@@ -1,0 +1,73 @@
+{
+  "windowsdx": {
+    "success": true,
+    "errors": [],
+    "screenshots": [
+      "windowsdx-contract.0.png",
+      "windowsdx-contract.1.png",
+      "windowsdx-contract.2.png"
+    ],
+    "input": [
+      "down",
+      "up",
+      "a",
+      "cancel",
+      "cancel"
+    ],
+    "devices": 0,
+    "backends": 0,
+    "nativeWindows": 0
+  },
+  "editor": {
+    "title": "Editor viewport probe",
+    "cycles": 3,
+    "failures": []
+  },
+  "showcase": {
+    "success": true,
+    "results": [
+      {
+        "settings": "all presets, last human seat, all CPU, cancel"
+      },
+      {
+        "atlas": true,
+        "faces": 53,
+        "textures": 1
+      },
+      {
+        "preset": "4 人",
+        "finished": true,
+        "renders": 12,
+        "textures": 1
+      },
+      {
+        "preset": "5 人",
+        "finished": true,
+        "renders": 18,
+        "textures": 1
+      },
+      {
+        "preset": "6 人",
+        "finished": true,
+        "renders": 18,
+        "textures": 1
+      },
+      {
+        "mode": "HotSeat",
+        "finished": true,
+        "curtains": 20,
+        "renders": 13
+      },
+      {
+        "mode": "SplitScreen",
+        "finished": true,
+        "curtains": 0,
+        "renders": 16
+      },
+      {
+        "allCpu": true,
+        "observations": 111
+      }
+    ]
+  }
+}

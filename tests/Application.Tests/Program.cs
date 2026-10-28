@@ -1,5 +1,7 @@
 using BoardGame.Runtime;
 
+if(args.Contains("dispatch-isolation")) {await DispatchIsolationTests.Run();return;}
+
 static void Assert(bool condition,string message) {if(!condition) throw new Exception(message);}
 static void Reject(Action action,string reason)
 {
@@ -22,3 +24,4 @@ new ApplicationClockOptions().Validate();
 Console.WriteLine("PASS application contracts and phase ordering");
 await DriverTests.Run();
 ContentTests.Run();
+await DispatchIsolationTests.Run();

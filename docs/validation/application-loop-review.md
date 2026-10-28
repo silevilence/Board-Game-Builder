@@ -72,3 +72,13 @@
 ## 渲染能力前置契约
 
 `Rendering.Tests` 只引用 Rendering.Core，检查通用绘制及宿主程序集没有桌游、MonoGame 或 Avalonia 实现依赖。使用专用图形线程和最小后端验证缺失／重复后端、错误作用域、无界面零后端、跨线程调用、绘制重入、过期绘制上下文、帧内释放拒绝、截图转发、双视口缓存隔离和设备创建失败。真实 RuntimeHost 视口 render 调用通用绘制，关闭运行实例只释放所属视口，父后端与另一视口仍可用；最终关闭无残留，释放顺序正确。本项不宣称 WindowsDX 或 GL 适配完成。
+
+## WindowsDX 与平台视口
+
+`Rendering.WindowsDX.Tests` 实际运行两个原生视口：中文、单图及裁剪／旋转描述绘制与 PNG 截图、WM 鼠标／键盘／失焦输入、三次窗口缩放和重建、启动中取消、设备创建失败及恢复全部通过。检查同一窗口只有一个后端、两个独立设备和纹理缓存；移除一个视口不影响另一个，最终设备／后端／原生窗口计数均为零。截图已人工查看，原始结果及截图路径见 [windowsdx-contract.json](windowsdx-contract.json)。Avalonia 延后销毁原生子窗口，探针在有界等待后核对数量；首次探针缺少 Windows 应用清单，复用项目现有清单后正常创建。
+
+旧 Editor `--smoke` 三轮重建通过。Player `--verify-showcase samples/poker-uno` 的 53 张牌共用一张纹理，4／5／6 人设置及对局、热座、分屏和全 CPU 观察均完成，退出无设备残留。View.Tests 的中文栅格化／UI 字体和分页文档回归通过；WindowsDX 仍明确不支持 NativeAOT。
+
+真实 Player 探针曾停在图集关闭后的同步内容加载。最小 `Application.Tests -- dispatch-isolation` 在修复前稳定失败：图形启动／释放的同步 UI dispatch 阻塞了 CordiSharp 0.2.0 的共享 pump。改为异步等待图形 dispatch 后，最小测试、完整 Application.Tests 与原 Player 探针均通过，临时诊断日志已移除。整解重新构建零警告、零错误。
+
+修复后 `cordi-dispatch application-baseline board-update session-driver runtime-host startup` 全部通过，21 局状态、日志、流程、投影与内容指纹仍匹配最初固定基线。
