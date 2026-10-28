@@ -68,3 +68,7 @@
 `dotnet run --project tests/Resources.Tests` 通过。该可执行项目只引用 Resources.Core，检查资源抽象、实现和 Application.Core 无桌游或 MonoGame 程序集依赖；非桌游内容通过插件读取单图、裁剪／旋转图集和中文字体，验证通配符依赖收集、重复名称、缺件、未知资源、越界枚举及保留入口过滤。删除源目录后，包与快照恢复仍匹配原指纹。资源提供者没有帧回调，定义提供者不解析资源格式。
 
 `resource-font animation-runtime resource-documents atlas resource-plugins runtime-recording author-resources print` 全部通过；`application-baseline` 的 21 局与最初固定摘要一致，未重录。Application.Tests 通过，整解构建零警告、零错误。View.Tests 实际字体栅格化、UI 字形加载、重置／独立释放，以及文档授权投影、分页、刷新、终局和释放通过；此处不替代后续 WindowsDX 通用 render 接入验收。
+
+## 渲染能力前置契约
+
+`Rendering.Tests` 只引用 Rendering.Core，检查通用绘制及宿主程序集没有桌游、MonoGame 或 Avalonia 实现依赖。使用专用图形线程和最小后端验证缺失／重复后端、错误作用域、无界面零后端、跨线程调用、绘制重入、过期绘制上下文、帧内释放拒绝、截图转发、双视口缓存隔离和设备创建失败。真实 RuntimeHost 视口 render 调用通用绘制，关闭运行实例只释放所属视口，父后端与另一视口仍可用；最终关闭无残留，释放顺序正确。本项不宣称 WindowsDX 或 GL 适配完成。
