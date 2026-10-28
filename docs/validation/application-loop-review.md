@@ -44,3 +44,7 @@
 `flow-progression` 只装配内核、流程与测试观察视口，不装配 session、记录或 CPU。通过公开推进契约完成动态席位多次动作及终局，验证空 update 不进入节点、等待时重复推进／投影／render／重建观察视口不增加日志、过期动作拒绝及终局不重复效果。展示只接收绑定席位投影，系统上下文不泄漏。此处使用测试 render 回调，不替代真实图形验收。
 
 `flow-runtime flow-progression flow-systems flow-players flow-protection flow-restoration flow-review` 七组通过，覆盖分支优先级、原子失败、秘密信息、取消／预算、等待与已提交边界恢复及规则互斥。对等待动作校验边界调整后再次运行 progression／players／protection。
+
+## 桌游记录插件与只读回放
+
+`board-recording runtime-recording replay flow-restoration secrets reload` 六组通过。新增用例分别完成 Lua、流程和 WASM 示例后关闭运行实例，再独立创建每席位观察投影，与实时最终投影逐项比较；重复读取和修改返回值不改变回放内容，返回对象不能转换为提交／会话／权威接口。测试未知席位、坏校验和、缺失结构与玩家投影记录误用。现有回归继续覆盖脚本切换、实际随机结果、流程路径、秘密提交及旧日志拒绝语义。

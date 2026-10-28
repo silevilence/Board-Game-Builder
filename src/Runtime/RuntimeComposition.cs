@@ -37,7 +37,7 @@ internal static class RuntimeComposition
         {AuthorityPlugin.Create(Module,seed,restored),FlowRuntimePlugin.Create(Module,cancellation,restored!=null),LuaRuntimePlugins.Rules(Definition,seed),LuaRuntimePlugins.Cpu(Definition),CommandRuleProvider.Plugin,WasmRuntimePlugin.Create(Definition)};
         catalog.Add(DefinitionPlugins.Module(Startup));
         catalog.Add(StateDefinitionLoader.Plugin(Startup));
-        catalog.Add(SessionRecorder.Plugin(Module,recording));
+        catalog.Add(BoardRecordingPlugin.Create(Module,recording));
         catalog.AddRange(ResourcePlugins.Catalog(()=>module?.Resources));
         var capabilities=catalog.Where(p=>startup?.Plugins?.Any(s=>s.Id==p.Id)==true).SelectMany(p=>p.Provides).ToHashSet();
         var hasCpu=capabilities.Contains("cpu");var hasEffects=capabilities.Contains("effects");

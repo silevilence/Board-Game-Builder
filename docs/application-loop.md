@@ -53,3 +53,9 @@ StopAsync 立即拒绝后续输入及推进，取消未完成任务，并等待�
 `FlowRuntimePlugin.Create` 可独立登记规则与 `IFlowProgression`，只依赖桌游权威及事务能力，不依赖 session 或 driver。推进契约位于 BoardGame.Core；会话仅通过该接口协调 Advance／Submit／Resume，Cancel 可并发发出。自动节点的效果及续行仍在同一权威事务内提交，规则控制来源互斥及不支持 WASM 组合的诊断保持原样。
 
 读取投影、render、启动观察视口和空的 update 不推进流程。协调者显式 Advance 后停在玩家等待边界；重复 Advance 不再重复查询等待节点的动作脚本。节点刚进入等待、玩家提交后仍即时验证下一组动作，保留原故障语义。取消、预算暂停及已提交恢复边界须显式 Resume；图形生命周期不能隐式恢复或重开流程。
+
+## 桌游记录与观察回放
+
+`BoardRecordingPlugin.Create` 注册桌游记录能力，只依赖受保护的权威接口。权威内核在事务中生成命令、随机结果和流程续行日志，记录提供者捕获该日志并在脚本切换的同一串行边界记录版本，不依赖事件订阅顺序。通用 Application.Core 不识别这些格式。
+
+可信宿主可调用 `BoardRecordingPlugin.Observe(recording, authorizedSeat)` 得到与实时展示相同的 `ISeatProjection`。它验证并应用已经记录的结果，不启动规则／CPU／WASM／流程推进器；返回对象只保留该席位的投影，每次读取均复制，没有权威或提交接口。席位授权由宿主负责，权威记录包含秘密，不得发送给玩家；联网玩家记录仍通过自己的历史投影读取器处理，不能转换为权威记录。保留原 format 1／2 及显式验证路径，未知格式和损坏数据拒绝。

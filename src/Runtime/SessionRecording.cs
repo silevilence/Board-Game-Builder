@@ -15,6 +15,8 @@ public sealed record SessionRecording(ReplayLog Log,List<ScriptSwitch> Switches,
         :Wire.Json(recording with {Hash=""}));
     public GameEngine Replay()
     {
+        if(Log==null || Switches==null || Versions==null || Switches.Any(s=>s==null) || Versions.Values.Any(v=>v==null))
+            throw new InvalidDataException("Invalid authority recording structure; player projection recordings use their own reader");
         if(Format is not (1 or 2) || Versions.Values.Any(v=>(v.RuntimeIdentity!=null)!=(Format==2))) throw new InvalidDataException("Incompatible recording/runtime identity format");
         if(Switches.Count==0 || Switches[0].AfterCommand!=0 || Switches[0].Fingerprint!=Log.ModuleFingerprint) throw new InvalidDataException("Missing initial script version");
         var boundary=0;

@@ -8,6 +8,7 @@ try
     tests.Add("application-baseline",ApplicationBaselineTests.Run);
     tests.Add("content-discovery",ContentDiscoveryTests.Run);
     tests.Add("board-kernel-plugin",BoardKernelPluginTests.Run);
+    tests.Add("board-recording",BoardRecordingTests.Run);
     tests.Add("lua-executor",LuaExecutorTests.Run);
     tests.Add("wasm-executor",WasmExecutorTests.Run);
     tests.Add("board-actions",BoardActionTests.Run);
