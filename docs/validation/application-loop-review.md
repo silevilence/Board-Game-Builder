@@ -164,3 +164,8 @@ online-capabilities 验证流程卡牌逐步断线／恢复、每席位反复读
 AuthorExports 在 author.core 中提供按作用域登记的无 UI 导出目录，描述身份、版本、平台、依赖、产物、参数、预检和执行；请求携带固定 ProjectView、取消与进度，结果核对来源及产物类型。注册仍归 CordiSharp 效果，活动执行阻止撤销其提供者，没有按类型回退。
 
 author-export-contract 用两种独立提供者验证共同发现、重名拒绝、同时执行、活动撤销保护、停用／重启无重复、取消及来源一致；author-profiles 通过。此契约是 CLI 与 GUI 共用的类型和目录，真实内置提供者、UI 贡献及实际包输出由后续任务验证。
+
+### 独立游戏数据包提供者（2026-10-29）
+- author.export.package 独立提供 project.pack，显式 Includes 保留旧 author.export 调用；运行时通过 IAuthorPackageRuntime 选择正式格式 2／3，不在通用入口解析桌游状态。
+- author-exports、author-profiles、author-export-contract、author-docs 通过；Motion.Authoring.Tests 验证磁盘与 GUI 未保存草稿包、匹配目录加载、无引擎二进制和源文件不变。桌游 module／state 的仅数据包 profile 与停用检查通过。
+- 首轮暂存文件缺 .bgm 后缀导致旧加载器按 JSON 读取，已修正暂存扩展名并重跑；没有改动包协议或放松加载检查。

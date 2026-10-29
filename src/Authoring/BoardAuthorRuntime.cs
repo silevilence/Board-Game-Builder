@@ -3,8 +3,14 @@ using BoardGame.Runtime;
 namespace BoardGame.Authoring;
 
 /// <summary>Legacy board author policy, selected by declared loader identity rather than project name or path.</summary>
-public sealed class BoardAuthorRuntime : IAuthorRuntime
+public sealed class BoardAuthorRuntime : IAuthorPackageRuntime
 {
+    public string Pack(ProjectView view,string destination,CancellationToken cancellation=default)
+    {
+        cancellation.ThrowIfCancellationRequested();using var snapshot=new ProjectSnapshot(view);
+        GamePackage.Pack(snapshot.Directory,destination);
+        return GameRuntime.Load(destination).Fingerprint;
+    }
     public string Id=>"board";
     public static AuthorRuntimes LegacyCatalog(){var catalog=new AuthorRuntimes();catalog.Register(new BoardAuthorRuntime());return catalog;}
     public static AuthorPlugin Plugin=>new("author.runtime.board","1",1,[],["author.runtimes"],scope=>

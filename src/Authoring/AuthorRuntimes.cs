@@ -11,6 +11,10 @@ public interface IAuthorRuntime
     bool Supports(IAuthorFiles files);
     Task<IReadOnlyList<string>> Validate(ProjectView view,string layer,CancellationToken cancellation=default);
 }
+public interface IAuthorPackageRuntime : IAuthorRuntime
+{
+    string Pack(ProjectView view,string destination,CancellationToken cancellation=default);
+}
 public sealed class AuthorRuntimes
 {
     private readonly Dictionary<string,IAuthorRuntime> providers=new(StringComparer.Ordinal);
@@ -30,10 +34,17 @@ public sealed class AuthorRuntimes
     }
     public void ValidateContent(ProjectView view)=>Resolve(view).Validate(view,"content").GetAwaiter().GetResult();
 }
-public sealed class ApplicationAuthorRuntime(string id,ApplicationCatalog catalog) : IAuthorRuntime
+public sealed class ApplicationAuthorRuntime(string id,ApplicationCatalog catalog) : IAuthorPackageRuntime
 {
     public string Id=>id;
     public ApplicationCatalog Catalog=>catalog;
+    public string Pack(ProjectView view,string destination,CancellationToken cancellation=default)
+    {
+        cancellation.ThrowIfCancellationRequested();
+        using var snapshot=new ProjectSnapshot(view);
+        BoardGame.AppRuntime.GamePackage.Pack(snapshot.Directory,destination,catalog.Content);
+        return BoardGame.AppRuntime.GamePackage.Load(destination,catalog.Content).Fingerprint;
+    }
     public bool Supports(IAuthorFiles files)
     {
         var definitions=catalog.Content.Plugins.Where(p=>p.Provides.Contains("definition")).Select(p=>p.Id).ToHashSet(StringComparer.Ordinal);

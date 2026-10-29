@@ -10,6 +10,7 @@ var target=Path.GetFullPath(".scratch/application-loop/motion-author-"+Guid.NewG
 foreach(var file in ProjectPaths.Read("samples/motion-lab"))File.WriteAllBytes(Path.Combine(target,file.Key),file.Value);
 var catalog=AuthorHost.Builtins.Append(MotionAuthorPlugin.Definition).ToArray();
 var profile=AuthorProfiles.Resolve(target,null);
+profile=profile with {Profile=profile.Profile with {Plugins=[..profile.Profile.Plugins,new("author.export.package")]}};
 JsonElement Args(object value)=>JsonSerializer.SerializeToElement(value,AuthorProfiles.Json);
 JsonElement Json(object value)=>Args(value);
 await using(var host=await AuthorHost.Start(profile,catalog))
@@ -23,6 +24,10 @@ await using(var host=await AuthorHost.Start(profile,catalog))
     Check(valid.Success && valid.Checks.Contains("initial-application-update"),string.Join(";",valid.Diagnostics.Select(d=>d.Message)));
     var run=Json(await host.Invoke("run.application",Args(new{ticks=60}),"run"));Check(run.GetProperty("ticks").GetInt64()==60,"Wrong application step count");
     Check(AuthorDocuments.Installed(catalog).Any(d=>d.Topic=="motion" && d.Plugin=="author.motion"),"Provider documentation missing");
+    Check(host.Service<AuthorExports>("author.exports").Items.Single().Id=="game-package","Package provider must work independently");
+    var artifact=(AuthorArtifact)await host.Invoke("project.pack",Args(new{target=target+".bgm"}),"pack");
+    Check(GameRuntime.Load(artifact.Target,new ApplicationCatalog(MotionPlugins.Catalog()).Content).Fingerprint==artifact.Fingerprint,"Nonboard package load failed");
+    using(var zip=System.IO.Compression.ZipFile.OpenRead(artifact.Target))Check(!zip.Entries.Any(e=>e.FullName.EndsWith(".dll") || e.FullName.EndsWith(".exe")),"Data package contains engine binaries");
 }
 var disk=File.ReadAllBytes(Path.Combine(target,"motion.json"));
 using(var docs=new DocumentWorkspace(legacyBoardDefaults:false))
@@ -40,6 +45,11 @@ using(var docs=new DocumentWorkspace(legacyBoardDefaults:false))
     var receipt=(EditReceipt)await host.Invoke("configuration.replace",Args(new{version,configuration=model}),"write");
     Check(receipt.State==EditState.Applied && !receipt.Saved && docs.Dirty,"GUI edit did not stay in memory");
     Check(disk.SequenceEqual(File.ReadAllBytes(Path.Combine(target,"motion.json"))),"GUI edit saved implicitly");
+    var packed=(AuthorArtifact)await host.Invoke("project.pack",Args(new{target=target+"-draft.bgm"}),"draft-pack");
+    var content=GameRuntime.Load(packed.Target,new ApplicationCatalog(MotionPlugins.Catalog()).Content);
+    using(var zip=System.IO.Compression.ZipFile.OpenRead(packed.Target))
+    using(var reader=new StreamReader(zip.GetEntry("motion.json")!.Open()))Check(reader.ReadToEnd().Contains("GUI author motion"),"Export did not use draft");
+    Check(disk.SequenceEqual(File.ReadAllBytes(Path.Combine(target,"motion.json"))),"Export saved draft implicitly");
     var valid=(ValidationResult)await host.Invoke("project.validate",Args(new{}),"validate");Check(valid.Success,"GUI validation failed");
     var rejected=false;try{await host.Invoke("configuration.replace",Args(new{version,configuration=model}),"stale");}catch(AuthorOperationException e) when(e.Code=="project.conflict"){rejected=true;}
     Check(rejected,"Stale configuration overwrite accepted");

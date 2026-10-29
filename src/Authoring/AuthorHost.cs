@@ -8,6 +8,7 @@ public sealed record AuthorPlugin(string Id, string Version, int Api, string[] P
 {
     public AuthorOperationInfo[] Operations { get; init; } = [];
     public AuthorDocument[] Documents { get; init; } = [];
+    public AuthorPluginSelection[] Includes { get; init; } = [];
 }
 
 public sealed class AuthorHost : IAsyncDisposable
@@ -30,7 +31,7 @@ public sealed class AuthorHost : IAsyncDisposable
             new(s.Profile.Project, s.Profile.Name, "disk")))), "Read current disk content and commit guarded changes"),
         FileOperations.Plugin, FormatOperations.Module, FormatOperations.State, FormatOperations.Configuration, ResourceOperations.Plugin,
         BoardMediaOperations.Images,BoardMediaOperations.Tts,BoardMediaOperations.Print,
-        ValidationOperations.Plugin, RunOperations.Plugin, ExportOperations.Plugin, GuiEditMode.Plugin, WorkspaceCoordination.Plugin
+        ValidationOperations.Plugin, RunOperations.Plugin, ExportOperations.Plugin, PackageExporter.Plugin, GuiEditMode.Plugin, WorkspaceCoordination.Plugin
     ];
     public static IReadOnlyList<AuthorPlugin> Validate(AuthorProfile profile, IReadOnlyList<AuthorPlugin> catalog)
     {
@@ -45,6 +46,20 @@ public sealed class AuthorHost : IAsyncDisposable
             if (!selected.TryAdd(plugin.Id, plugin)) throw new InvalidDataException("plugin.duplicate: " + plugin.Id);
         }
         foreach (var core in catalog.Where(p => p.Required)) selected.TryAdd(core.Id, core);
+        var expanded=new HashSet<string>();var expanding=new HashSet<string>();
+        foreach(var plugin in selected.Values.ToArray()) Expand(plugin);
+        void Expand(AuthorPlugin plugin)
+        {
+            if(expanded.Contains(plugin.Id))return;
+            if(!expanding.Add(plugin.Id))throw new InvalidDataException("plugin.bundle-cycle: "+plugin.Id);
+            foreach(var entry in plugin.Includes)
+            {
+                var included=catalog.SingleOrDefault(p=>p.Id==entry.Id) ?? throw new InvalidDataException("plugin.unknown: "+entry.Id);
+                if(entry.Version!=included.Version || entry.Api!=included.Api)throw new InvalidDataException("plugin.version: "+entry.Id);
+                selected.TryAdd(included.Id,included);Expand(included);
+            }
+            expanding.Remove(plugin.Id);expanded.Add(plugin.Id);
+        }
         if (selected.Values.Count(p => p.Provides.Contains("author.mode")) != 1) throw new InvalidDataException("profile.mode: exactly one edit mode is required");
         var providers = new Dictionary<string, AuthorPlugin>();
         foreach (var plugin in selected.Values)

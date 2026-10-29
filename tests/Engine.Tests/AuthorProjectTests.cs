@@ -246,6 +246,15 @@ public static class AuthorProjectTests
                 await host.Invoke("resources.import.image",Args(new {source=Path.GetFullPath("samples/freecell/assets/card_clubs_A.png"),target="assets/card.png",name="card"}),"image");
                 var artifact=(AuthorArtifact)await host.Invoke("project.pack",Args(new {target=Path.Combine(output,format+".bgm")}),"pack");
                 Check.That(GameRuntime.Load(artifact.Target).Fingerprint==artifact.Fingerprint);
+                var isolated=new EffectiveProfile("package-only","test",project,new(1,[new("edit.disk"),new("author.export.package")]));
+                await using(var packageHost=await AuthorHost.Start(isolated))
+                {
+                    Check.That(packageHost.Enabled.SelectMany(p=>p.Operations).Select(o=>o.Id).SequenceEqual(["project.pack"]));
+                    var only=(AuthorArtifact)await packageHost.Invoke("project.pack",Args(new{target=Path.Combine(output,format+"-only.bgm")}),"only");
+                    Check.That(only.Fingerprint==artifact.Fingerprint);
+                }
+                await using(var disabled=await AuthorHost.Start(isolated with{Profile=new(1,[new("edit.disk")])}))
+                    Check.That(disabled.Service<AuthorExports>("author.exports").Items.Count==0);
                 using(var zip=System.IO.Compression.ZipFile.OpenRead(artifact.Target))Check.That(!zip.Entries.Any(e=>e.FullName.Contains(".bgb-author") || e.FullName==AuthorProfiles.ConfigurationFile));
                 Check.Throws(()=>host.Invoke("player.export",Args(new {target=Path.Combine(output,"bad"),player="absent-release"}),"bad").GetAwaiter().GetResult());
                 Check.That(!Directory.Exists(Path.Combine(output,"bad")));

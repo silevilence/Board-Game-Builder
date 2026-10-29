@@ -18,9 +18,8 @@ public static class ExportOperations
     };
     public static AuthorPlugin Plugin => new("author.export", "1", 1, [], ["author.operations"], scope =>
     {
-        scope.Register(new(PackageInfo, call => Export(call, false)));
         scope.Register(new(ExportInfo, call => Export(call, true)));
-    }, "Official game packaging and standalone Player export") { Documents=[AuthorDocuments.Bundled("export","author.export","打包和 Player 导出")], Operations = [PackageInfo, ExportInfo] };
+    }, "Legacy export bundle; includes the independent data package provider") { Includes=[new("author.export.package")], Documents=[AuthorDocuments.Bundled("export","author.export","打包和 Player 导出")], Operations = [ExportInfo] };
     private static Task<object> Export(AuthorCall call, bool player)
     {
         call.Cancellation.ThrowIfCancellationRequested();
