@@ -24,6 +24,11 @@
 - 正常加载使用 `GameRuntime.Load`，打包使用 `GamePackage.Pack`；`DirectoryModule.Load` 和旧 `ModulePackage` 仅用于显式历史解析／迁移，不增加静默回退。
 - 游戏入口为 `game.start.json`。包身份与插件启用配置仅在此声明；定义路径由加载插件配置。参考 [运行插件协议](docs/runtime-plugins.md)。
 - Runtime 允许固定 CordiSharp 核心，与编辑器分离根上下文及插件目录；不得引用 Editor、Editor.Core 或 CordiSharp.Plugins.Avalonia。运行纤程不捕获 UI 同步上下文。
+- Application.Abstractions／Application.Core 是无桌游、无 UI 的小核心；桌游权威、席位、规则、记录与展示放在 BoardGame.* 及显式适配中。依赖改动运行 `scripts/check-boundaries.ps1`，不得把可选能力补回小核心。
+- update 每实例只有一个驱动，render 只读取已发布状态；依赖图和回调顺序分别声明。图形宿主、实例、视口分别管理资源；关闭时取消并等待异步工作。协议见 [应用循环](docs/application-loop.md)。
+- 桌游图形入口必须显式声明 `board.render`，旧工程只通过迁移工具修改；模板不能依靠宿主补默认插件。无界面仍验证所选图形插件身份，但不加载设备实现。
 - 作者结构化功能通过 `IGameAuthorFormat` 工作；不支持的格式保留通用文件编辑与试玩，不在基础文档固定解析 `module.json`。格式面板由子插件上下文释放，跨格式的迟到通知不得读取新文档。
 - 独立作者契约与领域操作位于 Authoring，不引用 Editor/Core 或 Avalonia；Cli 通过作者插件发现操作。领域操作读取 `ProjectView`，通过 `IProjectEditMode` 提交并核对来源／版本，不能绕过编辑模式直接修改源工程。
 - 作者 `author.profile.json` 与运行入口分离。GUI 模式绑定工作区和文档代次，使用 DocumentWorkspace 的草稿及 Undo；校验、运行、导出不隐式保存，连接失败不回退磁盘模式。详见 [作者工具协议](docs/author-cli.md) 和 [ADR-0002](docs/adr/0002-author-project-modes.md)。
+- `author.export.package` 和 `author.export.player` 分别贡献导出方式；CLI／Editor 共用 AuthorExports 元数据与执行契约，UI 不按产物类型硬编码流程。活动导出持有提供者，取消或关闭须等待退出；导出不编译游戏，也不要求作者安装 SDK。
+- Editor 的 `sessions`／`viewports` 是通用应用服务，桌游插件使用 `board.sessions`／`board.viewports`。结构化桌游面板还须检查作者格式的 `board.author-model` 能力；保留 editor-cordis 的子上下文和文档代次保护。

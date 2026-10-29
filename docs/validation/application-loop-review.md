@@ -1,6 +1,6 @@
-# 小核心阶段调度验收
+# 小核心与默认桌游组合验收
 
-日期：2026-10-28。记录已完成任务的独立验收；通用 render、Player／Editor 能力拆分和整组联合审核尚未完成。
+实施记录始于 2026-10-28，最终复核于 2026-10-29。小核心、默认桌游组合、WindowsDX、选择性普通装配、Player／Editor、作者导出及干净 Windows 发行验收已完成。各节保留当时的分项范围；后续节及末尾整体审核说明最终状态。NativeAOT、GL 和外部 .NET 运行插件不在本次完成范围。
 
 - 迁移前基线与兼容矩阵见 [application-compatibility.md](application-compatibility.md)。七个示例、各三个固定种子共 21 局，提取宿主后再次运行 `application-baseline` 全部匹配原摘要。
 - `dotnet run --project tests/Application.Tests` 通过。该项目只引用 Application.Core，检查公共程序集不依赖 Kernel、Kernel.Abstractions、Editor 或 MonoGame。包含显式阶段顺序、独立依赖图、顺序环、跨阶段／作用域错误、纯接口提供者、可变／固定逻辑时间、追赶限额、暂停／单步、输入复制与去重、两视口、绘制故障隔离、准备失败与提交故障的不同展示策略、慢任务关闭后的迟到结果、重复启停、启动失败清理、子作用域初始化中关闭及设备／实例／视口逆序释放。

@@ -1,6 +1,6 @@
 # Board Game Builder
 
-本地单人桌游运行时与 Windows 图形 Player。开发环境为 .NET 10 SDK；导出物自带运行时。
+基于可组合应用循环的游戏作者工具与 Windows 图形 Player，默认提供桌游规则、CPU、记录和展示组合，也支持不依赖桌游状态的实时应用。开发环境为 .NET 10 SDK；独立导出物自带运行时。
 
 Windows x64 工具包从 [GitHub Releases](https://github.com/silevilence/Board-Game-Builder/releases) 下载，包含 Editor、CLI、调试与正式 Player。独立包自带运行依赖；精简包使用兼容系统 Runtime，两者都不要求 SDK。下载校验、目录移动及维护者 tag 自动发布见 [发行说明](docs/releases.md)。
 
@@ -15,11 +15,13 @@ dotnet run --project tests/Engine.Tests -c Release
 dotnet run --project src/Player -- --help
 ```
 
-Kernel.Abstractions 定义数据与运行协议；Kernel 执行权威命令；Modules 提供定义解析与内容校验；Lua 适配规则和决策；Runtime 的独立 CordiSharp 宿主为 Player、试玩和批量验证装配加载器、内核、规则、CPU、扩展、席位及记录能力。Authoring 提供项目视图、作者格式、编辑模式和领域操作，Cli 是其无界面入口。View.Abstractions 和 View.MonoGame 提供投影桌面与输入，Editor.Core 管理作者文档及 GUI 编辑模式，Avalonia Editor 使用独立插件上下文提供制作、两种试玩、调试和导出。
+Application.Abstractions／Application.Core 提供内容、时钟、输入与 update／render 调度，不引用桌游或 UI。BoardGame.* 将 Kernel 权威事务、Lua／WASM 绑定、会话、记录、交互与展示组合成桌游能力；Runtime 保留原桌游门面。Lua.Execution／Wasm.Execution、Resources.*、Rendering.* 提供可独立组合的执行器、资源及绘制能力。Player.Hosting 提供通用窗口，Player.Board 提供桌游开局和席位流程。Authoring 提供项目视图、作者格式、编辑模式及独立导出提供者，Cli 和 Avalonia Editor 使用同一作者操作；Editor.Core 持有文档草稿与 Undo。运行、编辑器和各视口分别持有自己的 CordiSharp 生命周期。
+
+[应用循环与插件开发](docs/application-loop.md) 说明三类作用域、提交边界和宿主驱动。[非桌游最小示例](samples/motion-lab/README.md) 可运行 `dotnet run --project samples/Minimal.Player -- samples/motion-lab`；它的独立发行不含桌游、Lua 或 WASM 实现。
 
 Networking 在 Runtime 外提供身份绑定、投影同步与恢复；无图形界面的 Server 和命令行 NetworkClient 通过 HTTP／HTTPS 协作，沿用相同的运行时、规则及 CPU 能力。Player 和编辑器的本地运行不依赖联机层。[联机说明](docs/networking.md) 包含启动、认证、断线恢复与记录访问约定；跨机人工验收仍待环境。
 
-游戏目录以 `game.start.json` 为入口；它唯一声明包身份与运行插件配置。`definition.module` 加载器使用配置指定的组件定义文件；`definition.state` 支持独立状态格式。[运行插件与迁移协议](docs/runtime-plugins.md) 说明能力、版本及兼容策略；[最小无脚本示例](samples/state-minimal/game.start.json) 不启用 Lua 或 WASM。
+游戏目录以 `game.start.json` 为入口；它唯一声明包身份与运行插件配置。`definition.module` 加载器使用配置指定的组件定义文件；`definition.state` 支持独立状态格式。图形桌游显式选择 `board.render`，规则与展示分别装配。[运行插件与迁移协议](docs/runtime-plugins.md) 说明能力、版本及兼容策略；[最小无脚本桌游示例](samples/state-minimal/game.start.json) 不启用 Lua 或 WASM。已有启动入口但缺少展示声明的桌游，用 `python scripts/migrate-board-presentation.py --project <目录>` 显式迁移后重打包；旧录制保留原快照。
 
 M3.5 验收、整体审核及干净 Windows 检查见 [验证记录](docs/validation/m3.5-review.md)，全部示例入口见 [迁移清单](samples/README.md)。
 

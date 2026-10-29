@@ -4,10 +4,12 @@
 
 ```json
 {"defaultProfile":"disk","profiles":{
-  "disk":{"format":1,"plugins":[{"id":"edit.disk"},{"id":"author.files"},{"id":"author.module"},{"id":"author.state"},{"id":"author.configuration"},{"id":"author.resources"},{"id":"author.validation"},{"id":"author.run"},{"id":"author.export"}]},
-  "gui":{"format":1,"plugins":[{"id":"edit.gui"},{"id":"author.files"},{"id":"author.module"},{"id":"author.state"},{"id":"author.configuration"},{"id":"author.resources"},{"id":"author.validation"},{"id":"author.run"},{"id":"author.export"},{"id":"author.workspace"}]}
+  "disk":{"format":1,"plugins":[{"id":"edit.disk"},{"id":"author.files"},{"id":"author.module"},{"id":"author.state"},{"id":"author.configuration"},{"id":"author.resources"},{"id":"author.validation"},{"id":"author.run"},{"id":"author.export.package"},{"id":"author.export.player"}]},
+  "gui":{"format":1,"plugins":[{"id":"edit.gui"},{"id":"author.files"},{"id":"author.module"},{"id":"author.state"},{"id":"author.configuration"},{"id":"author.resources"},{"id":"author.validation"},{"id":"author.run"},{"id":"author.export.package"},{"id":"author.export.player"},{"id":"author.workspace"}]}
 }}
 ```
+
+旧 author.export 是显式 Includes 组合，引用这两个独立提供者；新增 profile 建议直接选择所需方式。只打包不依赖 Player 提供者，只导出 Player 不依赖数据包提供者。
 
 插件选择省略 version/api 时均为 1。最小必需核心 author.core 由宿主补齐；每个 profile 必须恰好一个编辑模式。模式不会因连接失败而互相回退。插件以完整能力贡献操作，缺少可选插件可通过 `plugins`、`operations`、`describe` 和本地 `docs` 发现。
 

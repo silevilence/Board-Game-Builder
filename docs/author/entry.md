@@ -19,6 +19,8 @@ PowerShell 示例（将 CLI 目录设为当前目录；输出目录选择新的�
 
 `--project` 显式指定目录，允许入口缺失或暂时无效；省略时从当前目录向上查找入口。路径统一为工程内相对路径，JSON 中使用 `/`。可用 `--args-file <文件>` 避免命令行 JSON 转义。
 
-入口格式：`format:1`、游戏 `id`、游戏 `version`、`plugins` 数组。每个插件有 `id`、`version:"1"`、`api:1`、`configuration`。模板声明 definition.module 或 definition.state、kernel、lua.rules、lua.cpu、session.local、recording、resources、resources.images。定义路径在定义插件的 `configuration.path`，脚本在 `configuration.file`。包身份只在入口中声明。
+入口格式：`format:1`、游戏 `id`、游戏 `version`、`plugins` 数组。每个插件有 `id`、`version:"1"`、`api:1`、`configuration`。桌游模板声明 definition.module 或 definition.state、kernel、lua.rules、lua.cpu、session.local、recording、resources、resources.images、board.render。定义路径在定义插件的 `configuration.path`，脚本在 `configuration.file`。包身份只在入口中声明。
+
+这些模板是默认桌游组合，不是小核心对所有游戏的要求。实时应用可由自己的内容、更新和展示提供者组成，无需席位或命令模型；仓库的 samples/motion-lab 展示这种独立组合。桌游格式 2 包和通用内容格式 3 包由匹配的作者运行提供者打包，不静默互转。
 
 作者 profile 属于作者工具配置，见 `docs profile`；它不替代运行插件入口，也不会成为 Player 运行依赖。无效工程仍可读取和修复，只有明确的校验、运行与打包操作才判定可运行性。

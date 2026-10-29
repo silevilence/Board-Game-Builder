@@ -1,6 +1,6 @@
 # 小核心执行契约（版本 1）
 
-`Application.Abstractions` 只包含启动身份及阶段、时钟、输入契约；`Application.Core` 依赖它与固定 CordiSharp 0.2.0。二者不依赖桌游内核、Editor 或图形后端。已有 `RuntimeStartup`／`RuntimePluginSelection` 保持 JSON、命名空间及字段，旧程序集通过类型转发保持引用兼容。通用启动不表示桌游运行门面已经迁移。
+`Application.Abstractions` 只包含启动身份及阶段、时钟、输入契约；`Application.Core` 依赖它与固定 CordiSharp 0.2.0。二者不依赖桌游内核、Editor 或图形后端。已有 `RuntimeStartup`／`RuntimePluginSelection` 保持 JSON、命名空间及字段，旧程序集通过类型转发保持引用兼容。原 Runtime 作为桌游兼容门面委托分离后的实现。
 
 ## 生命周期与作用域
 
@@ -36,7 +36,7 @@ StopAsync 立即拒绝后续输入及推进，取消未完成任务，并等待�
 
 桌游基础提供者位于 `BoardGame.Core`，只依赖 Kernel 与 Application.Core；实体／席位／命令等仍属于 Kernel.Abstractions 的桌游契约，小核心不引用它。权威、流程事务、记录与会话服务要求安装目录授予 `board.authority` 权限；权限不来自启动配置。普通规则、CPU 或展示即使声明依赖也不能取得受保护服务。投影服务使用独立包装，可信适配按已授权席位生成 `ISeatProjection` 后只将它交给展示，包装不实现权威调试接口。`IAuthoritySession` 明确属于可信系统／作者接口，由原 Runtime 程序集转发到 BoardGame.Core。
 
-原 `BoardGame.Runtime.GameRuntime.Load`／`GamePackage.Pack` 保留既有 LoadedModule、桌游快照与 format 2 包的显式适配，不自动升级旧数据；新增传入 `ContentCatalog` 的重载转交上述通用实现。仅依赖小核心的宿主直接引用 `BoardGame.AppRuntime` 门面，既有桌游宿主保留原命名空间。通用加载器不尝试旧桌游解析器；旧桌游调用也不静默解析 format 3。插件作者应显式选择对应数据契约，后续默认桌游组合迁移不能靠伪造桌游数据兼容非桌游内容。
+原 `BoardGame.Runtime.GameRuntime.Load`／`GamePackage.Pack` 保留既有 LoadedModule、桌游快照与 format 2 包的显式适配，不自动升级旧数据；新增传入 `ContentCatalog` 的重载转交上述通用实现。仅依赖小核心的宿主直接引用 `BoardGame.AppRuntime` 门面，既有桌游宿主保留原命名空间。通用加载器不尝试旧桌游解析器；旧桌游调用也不静默解析 format 3。插件作者应显式选择对应数据契约，默认桌游组合不能靠伪造桌游数据兼容非桌游内容。
 
 ## 执行器与桌游绑定
 
@@ -76,7 +76,7 @@ StopAsync 立即拒绝后续输入及推进，取消未完成任务，并等待�
 
 PlayerSession 和 LocalTableSession 直接等待异步入口；CLI 批量、独立命令行、内嵌／外部调试的同步兼容调用最终都进入同一驱动。规则与 CPU 的 Lua 请求接收当前 update 的取消令牌，按调用上下文隔离，取消不污染下一次执行。DisposeAsync 取消正在执行的请求，等待驱动停止后释放插件；同步 Dispose 用于同步所有者。
 
-Editor 的 sessions 插件在工作线程创建内嵌会话，捕获当前模块与文档代次；停止或切换文档取消尚未完成的启动，外部 Player 握手同样可取消并回收进程。调试暂停／单步绑定驱动时钟，观察和面板重建不触发推进。图形线程仍负责现有视口设备调用，WindowsDX render 接入在后续单独迁移。
+Editor 的 board.sessions 插件在工作线程创建内嵌桌游会话，捕获当前模块与文档代次；停止或切换文档取消尚未完成的启动，外部 Player 握手同样可取消并回收进程。调试暂停／单步绑定驱动时钟，观察和面板重建不触发推进。图形线程负责视口设备调用，WindowsDX 通过独立 render 契约绘制，视口不会推进模拟。
 
 ## 独立资源能力
 
@@ -96,7 +96,7 @@ Editor 的 sessions 插件在工作线程创建内嵌会话，捕获当前模块
 
 `Rendering.WindowsDX` 实现普通 Windows 后端，明确不支持 NativeAOT；仅依赖通用绘制／资源契约、MonoGame、字体栅格化和 Windows 绘图支持，不引用桌游。`Rendering.Avalonia.PlatformViewport` 负责原生窗口、输入、DPI、镜头和帧调度。同一顶层窗口选择同一后端，每个视口独立创建设备／纹理，尺寸变化只重建设备资源。框架回调通过视口 RuntimeHost 的 render 阶段执行，展示根没有模拟更新贡献。最后一个视口解除关联后异步关闭图形根；原生窗口由 Avalonia 在移除后的调度边界销毁。
 
-现有 `DesktopViewport`／`TableRenderer` 暂作桌游调用的兼容适配：主题、牌桌画布和快捷键留在 View.MonoGame，设备操作已迁出。适配不会让图形后端按主题启用规则；完整桌游 render 与启动组合迁移分别验收。字体类型保留原命名空间及程序集转发。
+现有 `DesktopViewport`／`TableRenderer` 保留为桌游调用的兼容适配：主题、牌桌画布和快捷键留在 View.MonoGame，设备操作已迁出。适配不会让图形后端按主题启用规则；完整桌游绘制由 board.render 贡献。字体类型保留原命名空间及程序集转发。
 
 CordiSharp 0.2.0 的不同根共用 pump。RuntimeHost 将图形 dispatch 放到线程池发起，插件激活和资源释放以 Task 异步等待，避免 pump 同步等待 UI 时阻塞另一个根的同步内容加载。无 dispatch 的准备插件保持原执行方式；异步等待不会跳过资源释放，作用域关闭仍等待全部任务完成。
 
@@ -124,7 +124,7 @@ FreeCell 原来由 classic 样式硬编码的标题、区域说明和皇冠已�
 
 桌游规则契约位于 BoardGame.Core；Lua／WASM 绑定分别位于 BoardGame.Lua／BoardGame.Wasm；记录和原更新协调器分别位于 BoardGame.Recording／BoardGame.Session。新程序集复用原算法，均无需反向引用默认 Runtime。BoardGame.Hosting 提供可显式组合的普通桌游装配，`definition.board-state` 从已有状态文档解析器生成 format 3 内容，资源由通用 AssetRegistry 加载。无脚本组合不引用 Lua／WASM；脚本组合由宿主另行加入 LuaRuntimePlugins 等获准工厂。
 
-既有 Runtime 是兼容默认组合入口，保留原目录／format 2、PlaySession 与作者调试行为，并转交分离后的实现；它的全量引用不再是新通用宿主的依赖。Player 外壳及发行提供者的迁移由后续任务承接。旧 `SessionRecording.Replay()` 现在由 Runtime 命名空间的扩展适配供应默认目录校验；选择性宿主必须显式传入其快照验证策略。已编译调用者须与本次程序集版本一起重建，不承诺跨版本托管 ABI。记录数据格式、哈希和算法不变。
+既有 Runtime 是兼容默认组合入口，保留原目录／format 2、PlaySession 与作者调试行为，并转交分离后的实现；它的全量引用不再是新通用宿主的依赖。Player.Hosting 与预编译发行服务不反向依赖桌游实现，默认可执行程序显式安装 Player.Board。旧 `SessionRecording.Replay()` 现在由 Runtime 命名空间的扩展适配供应默认目录校验；选择性宿主必须显式传入其快照验证策略。已编译调用者须与本次程序集版本一起重建，不承诺跨版本托管 ABI。记录数据格式、哈希和算法不变。
 
 普通 BoardGame.Hosting 的内容实例固定来源版本，其记录不能替换为另一份内容。当前此入口通过重建实例切换来源；既有默认组合的作者脚本重载仍保持原行为。所有格式迁移均显式选择目录和加载器，不把原 format 2 包交给 format 3 解析器静默转换。
 
@@ -154,7 +154,7 @@ Application.Debug 定义通用作者调试契约；嵌入与独立 Player 共享
 
 `author.core` 提供空的格式、操作及 AuthorRuntimes 注册表；具体提供者通过所属 CordiSharp 作者插件登记。通用 project.validate 只协调文件／配置／依赖／运行层次与来源版本，桌游初始动作、CPU 验证归 BoardAuthorRuntime。ApplicationAuthorRuntime 使用同一获准 ApplicationCatalog，从 ProjectView 文件构建内容并执行一次受控更新；没有唯一匹配提供者时明确拒绝，不尝试桌游解析器。文档目录由每个 AuthorPlugin.Documents 贡献，基础发现不再维护桌游主题映射。
 
-默认 CLI 安装目录包含必需的 author.runtime.board 兼容适配登记，保持既有 format 1 作者 profile 可用；这是获准解析能力，不会给非桌游补装运行插件或创建桌游会话。独立安装目录可以不包含该适配。Motion 作者实现位于 Sample.Motion.Authoring，由 CLI 组合根显式装配，工程 author.profile.json 选择 author.motion；格式读写、校验和固定时间运行均使用相同 ProjectView／IProjectEditMode。此阶段没有将非桌游接入旧桌游导出器，普通导出仍由后续任务验收。
+默认 CLI 安装目录包含必需的 author.runtime.board 兼容适配登记，保持既有 format 1 作者 profile 可用；这是获准解析能力，不会给非桌游补装运行插件或创建桌游会话。独立安装目录可以不包含该适配。Motion 作者实现位于 Sample.Motion.Authoring，由 CLI 组合根显式装配，工程 author.profile.json 选择 author.motion；格式读写、校验和固定时间运行均使用相同 ProjectView／IProjectEditMode。非桌游通过独立作者运行提供者生成 format 3 数据包，并由通用预编译发行服务导出自己的 Player 组合。
 
 真实 Editor 基础文档使用空目录；author.module 和 author.runtime.board 分别登记原 module 作者格式及桌游内容校验，runtime.motion 登记实时运行和内容校验。未登记专用作者格式时保留通用文件编辑、验证与试玩，不能自动获得桌游面板。保存通过文档绑定的运行提供者校验内容，仍使用原版本冲突与编辑模式提交。参数为空的旧 DocumentWorkspace／ModuleDocument 创建接口继续作为显式兼容 API 保留默认桌游目录，生产 Editor 不使用该默认。
 
@@ -171,3 +171,13 @@ AuthorExports 是 CordiSharp 所属注册表；无 UI 的 PackageExporter／Play
 导出选项保存在工作区 ViewState，属于作者视图设置，不进入游戏文件或运行指纹；启停面板／提供者不会清掉配置或文件草稿。缺失所选提供者显示不可用，不自动选择另一种产物。导出捕获 ProjectView 与运行提供者，切换文档取消并忽略迟到通知；取消不发布最终路径。活动提供者不能手动停用，强制关闭则取消并等待完成后释放注册及资源。
 
 普通发行使用 PrecompiledPlayer 校验完整清单、托管依赖和 Windows GUI 入口，再由内容适配器打包。桌游和非桌游使用不同的明确预编译安装组合；非桌游不要求桌游状态、Lua worker 或桌游程序集。
+
+## 贡献与替换入口
+
+可运行的最小实现见 [MotionPlugins.cs](../samples/Sample.Motion/MotionPlugins.cs) 及其 [显式启动配置](../samples/motion-lab/game.start.json)。`motion.definition` 只准备内容；`motion.loop` 声明 update/advance 并在提交动作中发布快照；`motion.view` 提供 `IApplicationView`，由通用视口桥接到 render。资源插件是没有帧回调的纯接口贡献。该示例的状态、输入和目标全部在 Sample.Motion 中，小核心不判断这些语义。
+
+直接贡献回调时，`RuntimePluginDefinition.Execution.Contributions` 必须声明与 `scope.Update(id, callback)` 或 `scope.Render(id, callback)` 一致的名称和阶段。渲染声明 Graphical／Viewport，更新保留 Instance；纯接口只声明 Provides／Requires 并调用 Provide，无需空回调。需要次序时使用 `Before`／`After` 的 `plugin/contribution` 完整键，不用服务依赖顺序代替执行次序。可运行的最小组合与失败示例在 [Application.Tests](../tests/Application.Tests/Program.cs)。
+
+替换实现时，在受信任宿主目录登记新的稳定 ID、版本与契约，启动配置显式选择它，并移除冲突的唯一能力提供者。桌游替换规则仍经 authority 提交；替换展示仍只取得绑定席位投影，不能借 Requires 提升权限。依赖声明改变必须停止并重新装配实例，不能在活动帧中改图。默认 Player 的预编译安装仍绑定 board.render；其他绘制实现须由维护者显式制作匹配的宿主组合，不能仅修改游戏 JSON 就安装代码。
+
+默认桌游配置见 [quick-cards](../samples/quick-cards/game.start.json)，无 Lua／WASM 桌游见 [state-minimal](../samples/state-minimal/game.start.json)。开发使用 .NET 10 SDK；作者和玩家使用预编译产物。当前交付支持 Windows x64／WindowsDX，GL、NativeAOT 和任意外部 .NET 运行插件仍属于 ROADMAP 后续范围。

@@ -34,15 +34,21 @@ TextBox 和原生视口有各自焦点边界，作者命令不得误触发。
 | workspace / panels | base.workspace | 工作区及 Slot，必需 |
 | commands / contributions | base.commands | 命令、菜单和附加步骤目录，必需 |
 | documents | base.documents | 文档、配置草稿、Undo/Redo、选择、未保存协调，必需 |
-| sessions | base.sessions | 种子、席位、CPU 调度、两种 PlaySession 和日志，必需 |
-| viewports | base.viewports | 共用视口工厂；每个控件归所属面板所有，必需 |
+| sessions | base.sessions | ApplicationSessions，通用应用时钟、暂停／单步和两种试玩，必需 |
+| viewports | base.viewports | 通用应用视口工厂；每个控件归所属面板所有，必需 |
+| board.sessions | play.board.sessions | 桌游种子、席位、CPU、IDebugSession 和日志，可选 |
+| board.viewports | board.viewports | 绑定席位的桌游视口，可选 |
 | assemblies | base.assemblies | 受控 DLL 加载及真实回收诊断，必需 |
-| exports | author.export | 导出进度、目录、步骤执行保护，可选 |
+| exports / author.exports | author.export | 通用导出协调、提供者注册表、进度与取消，可选 |
 
 可选功能：author.startup、author.files、author.resources、author.configuration、author.yaml、author.prototypes、author.media、
 author.turns、author.layout、author.scripts、author.flow、play.controls、author.export。
 资源树与检视器使用 documents.Select/SelectionChanged 同步选择，文档 Changed 同步内容。
-脚本和调试通过 sessions 服务，不调用主窗口私有函数。视图释放只取消自身订阅、原生输入和图形资源。
+桌游脚本和调试通过 board.sessions 服务，不调用主窗口私有函数。视图释放只取消自身订阅、原生输入和图形资源。旧扩展改用新能力键并重新构建；示例 Editor.SamplePlugin 已采用这一接口。
+
+`author.export.package`／`author.export.player` 独立登记提供者与命令，参数来自共享 AuthorExportInfo；面板不按产物类型分支。所选方式与参数归文档 ViewState，重建面板不丢设置；缺少所选插件显示不可用。切换文档取消导出并忽略旧代次通知，强制关闭会等待执行退出后释放提供者。
+
+实体、原型、媒介、席位及布局面板要求作者格式显式声明 `board.author-model` 能力，不能仅凭“支持结构化编辑”显示桌游模型面板。通用应用使用 play.application，面板启停不重启 sessions 中的模拟。
 
 任何活动文档、Undo、会话或长操作持有扩展定义的 CLR 对象时，持有者必须取得
 `app.Retain(pluginId, "可读原因")` 并在最后引用释放时 Dispose；也可由插件 `scope.Guard` 注册策略。
@@ -89,7 +95,7 @@ CordiSharp 0.2.0 内层异步入口无法由外层安全中止，不能把超时
 
 ## 流程设计贡献
 
-`author.flow`（实现版本 1，API 1）提供 `flow.author`，依赖 documents、sessions、panels、commands、workspace。
+`author.flow`（实现版本 1，API 1）提供 `flow.author`，依赖 documents、board.sessions、panels、commands、workspace。
 贡献“流程设计”面板及 flow.open/create/validate/play/stop/observe/resume 命令。
 `FlowWorkspace` 通过共享 `IGameAuthorFormat`、`ProjectView` 和 `WorkspaceEditMode` 提交作者操作；
 图、脚本与设计数据不归面板持有。属性和名称字段使用工作区表单，分别检查整个来源版本；
@@ -97,7 +103,7 @@ CordiSharp 0.2.0 内层异步入口无法由外层安全中止，不能把超时
 
 流程面板以独立格式谓词挂在 `FormatPanel` 子 fiber 中，不依赖主定义的作者支持。
 谓词失效后释放控件及订阅，旧格式通知在访问文档前过滤。流程校验同步读取不可变项目视图，
-没有会跨代次覆盖结果的后台校验任务；长时间试玩由基础 sessions 管理，命令执行期间 Guard
+没有会跨代次覆盖结果的后台校验任务；长时间试玩由 board.sessions 管理，命令执行期间 Guard
 阻止插件停用，重建／停用面板不重启已有会话。运行层与 Player 不引用这些能力。
 
 `ExportWorkflow` 通过工作区编辑模式读取一次来源，再物化 `ProjectSnapshot` 用于预检与正式导出。

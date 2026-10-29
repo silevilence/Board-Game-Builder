@@ -1,13 +1,13 @@
 # 小核心迁移基线与兼容矩阵
 
 日期：2026-10-28。迁移前源码：`3e86557b4edcde8286f39617770cb08d0ec1ea5d`。
-本表是 ROADMAP「建立既有功能重构基线与兼容矩阵」的产物，不代表后续迁移或整组验收完成。
+本表最初为 ROADMAP「建立既有功能重构基线与兼容矩阵」产物；2026-10-29 的最终迁移复核、72 组比较、真实图形及干净发行结果见末节和 [联合验收](application-loop-review.md)。下表历史证据列保留初始补验计划，现状以最终复核为准。
 
 ## 行为基线
 
 `tests/Engine.Tests/ApplicationBaselineTests.cs` 从正式入口加载卡牌、六角、群岛、秘密拍卖、UNO、流程卡牌和 WASM 示例，各固定种子 1、7、42。CPU 组合执行实际 CPU，无 CPU 的 WASM 执行首个合法动作。保存内容身份、完整命令日志摘要（含实际动作、随机与流程结果）、终局状态摘要、每步全部席位投影轨迹摘要和最终流程状态摘要；同时核对恢复记录的状态与每席位投影。期望值在 `application-baseline.json`，摘要不包含绝对路径或墙钟时间。
 
-重放比较：`dotnet run --project tests/Engine.Tests -- application-baseline`。`--capture-application-baseline` 仅用于明确建立新基线，不得因迁移测试失败重录来掩盖差异。发生内容身份变化时须先按下面的兼容策略解释，再比较实际语义。最终验收另需卡牌／六角／群岛各 20 种子，当前三种子基线不能替代该门槛。
+重放比较：`dotnet run --project tests/Engine.Tests -- application-baseline`。`--capture-application-baseline` 仅用于明确建立新基线，不得因迁移测试失败重录来掩盖差异。发生内容身份变化时须先按下面的兼容策略解释，再比较实际语义。最终另用 `application-regression` 完成卡牌／六角／群岛各 20 种子，原三种子身份基线保持不变。
 
 | 既有能力 | 迁移归属 | 自动回归入口（Engine.Tests 组名） | 已有实际证据／补验 |
 | --- | --- | --- | --- |
@@ -45,7 +45,7 @@
 | 脚本重载 | 只在安全提交边界切换已验证候选，失败保留旧版本；回放使用实际记录结果 |
 | 类型所在程序集 | 拆分时保留源兼容并声明程序集移动；已有编译插件需重编译或 type-forwarding，不能声称二进制自动兼容 |
 
-2026-10-28 通用载荷补充：Application.Core 的 `BoardGame.Application` 门面新增独立 `application-content` 快照 format 1 与包 format 3；既有桌游门面仍读取原格式、保留原指纹，不静默迁移。通用载荷由版本化 `IContentLoader` 从完整内容字节重建；两种协议通过明确命名空间／ContentCatalog 重载选择，未知版本和跨格式使用均拒绝。该格式新增不表示既有桌游宿主已完成后续迁移。
+2026-10-28 通用载荷补充：Application.Core 的 `BoardGame.AppRuntime` 门面新增独立 `application-content` 快照 format 1 与包 format 3；既有桌游门面仍读取原格式、保留原指纹，不静默迁移。通用载荷由版本化 `IContentLoader` 从完整内容字节重建；两种协议通过明确命名空间／ContentCatalog 重载选择，未知版本和跨格式使用均拒绝。桌游宿主与通用宿主的后续迁移证据分项列在联合验收中。
 
 ## 比较方法与阻塞追踪
 
@@ -57,6 +57,10 @@
 
 失败原子性以失败前后权威状态、随机游标及提交记录比较；重载核对旧脚本继续可用和切换记录；生命周期核对重复启动／停止、启动失败逆序清理、取消后的迟到结果与 worker 退出。迁移后增加受控时间、不同 render 频率、多视口不增加 update 的验证。
 
-本地性能沿用 `latency`：同机 Release 构建 quick-cards seed 42，两次开局，真人动作到 CPU 应答小于 1000 ms；记录每步值及 Lua IPC 时间，避免与并行重负载测试同时测量。方法及历史结果见 m1-latency.md。图形设备、真实输入、干净环境与最终 20 种子验证尚未执行，不以编译通过替代。
+本地性能沿用 `latency`：同机 Release 构建 quick-cards seed 42，两次开局，真人动作到 CPU 应答小于 1000 ms；记录每步值及 Lua IPC 时间，避免与并行重负载测试同时测量。方法及历史结果见 m1-latency.md。最终保留一次 1376.6 ms 冷启动波动，后续连续三轮 24 次操作最大 408.9 ms，门槛不变；不能把后续通过描述成没有发生过超时。
 
-后续 WindowsDX 迁移依赖 ROADMAP「建立渲染能力契约与单后端约束」；最小实时示例还依赖「拆分可选运行插件与普通装配边界」；普通发行回归依赖三项独立导出／Editor 导出任务。这些未完成的范围外依赖需要先交付，不能将其验收自动视为完成。
+## 最终复核（2026-10-29）
+
+WindowsDX 单后端契约、普通可选装配、三个导出任务及本组迁移均已交付。72 组完整语义对照见 [application-semantic-regression.json](application-semantic-regression.json)，异常、授权、脚本、流程与生命周期及性能见 [application-lifecycle-regression.json](application-lifecycle-regression.json)。真实 Motion 和 WindowsDX 多视口、输入、缩放、失败与关闭均释放全部设备／窗口；既有桌游、动画、分页、Editor 和联机真实探针见 [联合验收](application-loop-review.md)。
+
+两轮独立 Windows Sandbox 完成无 SDK 作者创作导出，以及无源码／作者工具／系统 .NET 的桌游与非桌游移动目录图形运行；原始回执见 [application-clean-windows.json](application-clean-windows.json)。普通预编译发行已通过，GL、NativeAOT、跨平台和任意外部 .NET 运行插件仍为 ROADMAP 后续任务，不包含在本次完成结论内。
