@@ -159,3 +159,5 @@ Application.Debug 定义通用作者调试契约；嵌入与独立 Player 共享
 真实 Editor 基础文档使用空目录；author.module 和 author.runtime.board 分别登记原 module 作者格式及桌游内容校验，runtime.motion 登记实时运行和内容校验。未登记专用作者格式时保留通用文件编辑、验证与试玩，不能自动获得桌游面板。保存通过文档绑定的运行提供者校验内容，仍使用原版本冲突与编辑模式提交。参数为空的旧 DocumentWorkspace／ModuleDocument 创建接口继续作为显式兼容 API 保留默认桌游目录，生产 Editor 不使用该默认。
 
 桌游实体／原型、媒介、席位和布局面板要求格式显式声明 `IGameAuthorFormat.Capabilities` 中的 `board.author-model`。通用结构化格式不自动取得桌游模型面板；原 module 提供者声明此能力，state 与非桌游格式按自身模型提供支持。格式子上下文绑定文档代次，切换同格式文档也重建；草稿、选择和 Undo 仍由 documents 持有。
+
+联机客户端的 `OnlinePlayerSession.Projection` 与 `OnlineReplica` 提供 `ISeatProjection`，返回独立复制；身份回放不恢复权威。客户端交互通过仅绑定当前租约的 `IBoardInteractionTarget` 与相同 `board.interaction` 插件解析意图，网络序号和恢复继续由连接门串行管理。观战不装配交互根；这些客户端根不包含模拟更新器。

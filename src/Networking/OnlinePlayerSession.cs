@@ -35,12 +35,28 @@ public sealed class OnlinePlayerSession : IDisposable
     private SeatLease? lease;
     private OnlineReplica? replica;
     private long nextSequence=1;
+    private long inputSequence;
+    private readonly RuntimeHost? inputHost;
+    private readonly IBoardInteraction? interaction;
+    private OnlineReceipt? inputReceipt;
     private bool disposed;
     public bool Connected {get;private set;}
     public OnlineFrame? Frame=>replica?.Frame;
+    public ISeatProjection Projection {get;}
     public OnlinePlayerSession(LoadedModule module,OnlineConnection connection,string identityPath)
     {
         this.connection=connection;identity=OnlineIdentity.For(module);this.identityPath=Path.GetFullPath(identityPath);client=connection.Open();
+        Projection=new RemoteProjection(this);
+        try
+        {
+            // This root has only input binding and intent resolution, no authority or update contribution.
+            if(!connection.Audience)
+            {
+                inputHost=BoardInteractionPlugin.StartAsync(new InputTarget(this)).GetAwaiter().GetResult();
+                interaction=inputHost.Service<IBoardInteraction>(BoardInteractionPlugin.Capability);
+            }
+        }
+        catch {client.Dispose();throw;}
     }
     public async Task ConnectAsync()
     {
@@ -75,6 +91,7 @@ public sealed class OnlinePlayerSession : IDisposable
     private async Task Read()
     {
         var frame=(await client.SendAsync(lease!.Token,new(OnlineOperations.Frame),lifetime.Token).ConfigureAwait(false)).Frame!;
+        lifetime.Token.ThrowIfCancellationRequested();
         replica!.Apply(frame);await Save().ConfigureAwait(false);
     }
     public Task RefreshAsync()=>Run(async ()=> {RequireConnection();await Read().ConfigureAwait(false);});
@@ -84,14 +101,33 @@ public sealed class OnlinePlayerSession : IDisposable
         await Run(async ()=>
         {
             RequireConnection();
-            var frame=Frame!;
-            if(frame.Revision!=revision || !frame.Started || frame.Closed || frame.View.Ended || frame.Actions.Count==0)
-            {receipt=new(nextSequence,nextSequence,new(0,false,"stale-or-inactive"),frame);return;}
-            var command=PlayerSession.Resolve(frame.Actions,intent);
-            receipt=(await client.SendAsync(lease!.Token,new(OnlineOperations.Submit,Proposal:new(nextSequence,revision,lease.Seat,command)),lifetime.Token).ConfigureAwait(false)).Receipt!;
-            nextSequence=receipt.NextSequence;replica!.Apply(receipt.Frame);await Save().ConfigureAwait(false);
+            inputReceipt=null;
+            var result=interaction==null?new CommandResult(0,false,"audience-read-only"):
+                await interaction.SubmitAsync(++inputSequence,revision,intent,lifetime.Token).ConfigureAwait(false);
+            receipt=inputReceipt ?? new(nextSequence,nextSequence,result,Frame!);
         }).ConfigureAwait(false);
         return receipt!;
+    }
+    private sealed class RemoteProjection(OnlinePlayerSession owner):ISeatProjection
+    {
+        public SeatView View()=>Wire.Copy(owner.Frame?.View ?? throw new OnlineException("disconnected"));
+    }
+    private sealed class InputTarget(OnlinePlayerSession owner):IBoardInteractionTarget
+    {
+        public InteractionFrame Read()
+        {
+            var frame=owner.Frame!;
+            return new(frame.Revision,frame.Actions,owner.Connected && !owner.disposed && frame.Started && !frame.Closed && frame.Fault==null && !frame.View.Ended && frame.Actions.Count>0);
+        }
+        public async Task<CommandResult> SubmitAsync(long revision,Command command,CancellationToken cancellation)
+        {
+            // Called under the connection gate: lease sequence, recovery and frame publication stay serialized.
+            var receipt=(await owner.client.SendAsync(owner.lease!.Token,new(OnlineOperations.Submit,
+                Proposal:new(owner.nextSequence,revision,owner.lease.Seat,command)),cancellation).ConfigureAwait(false)).Receipt!;
+            cancellation.ThrowIfCancellationRequested();
+            owner.nextSequence=receipt.NextSequence;owner.replica!.Apply(receipt.Frame);
+            await owner.Save().ConfigureAwait(false);owner.inputReceipt=receipt;return receipt.Result;
+        }
     }
     public async Task<OnlineRecording> RecordingAsync()
     {
@@ -115,5 +151,5 @@ public sealed class OnlinePlayerSession : IDisposable
         finally {gate.Release();}
     }
     private Task Save()=>OnlineIdentityFile.SaveAsync(identityPath,new(connection.Server,identity,lease!,Frame?.Revision ?? -1),lifetime.Token);
-    public void Dispose() {if(disposed)return;disposed=true;Connected=false;lifetime.Cancel();client.Dispose();}
+    public void Dispose() {if(disposed)return;disposed=true;Connected=false;lifetime.Cancel();client.Dispose();inputHost?.Dispose();}
 }

@@ -150,3 +150,11 @@ documents、animation-author、七项 flow-editor 回归及 review-followup 通�
 board-author-media 覆盖 GUI 未保存定义、整组 Undo／Redo、磁盘不变、预览版本冲突、旧文档代次拒绝、无格式支持拒绝，以及独立作者宿主的 TTS 导入和 PDF 输出；GUI 与磁盘拼版每张图像字节一致。image-import、tts-import、print、atlas、author-resources、author-profiles、author-operations、author-cli、author-docs 回归通过。
 
 实际 Editor M3 探针完成图片、TTS、打印各三轮重载／停用，字段改变后的旧预览拒绝、一次撤销、三个 PDF 输出及独立 WASM 运行均通过；拼版截图已查看。结果见 [author-media-probes.json](author-media-probes.json)。Editor 和 Engine.Tests 构建零警告零错误。
+
+## 联机与观战能力接入（2026-10-29）
+
+OnlinePlayerSession 经 board.interaction 和绑定连接身份的提交目标发送命令，保持连接门、服务器序号及恢复时序；客户端输入根不包含权威或 update 贡献。公共观战不装配提交能力。现场和身份回放都能提供复制隔离的 ISeatProjection，图形窗口消费该投影；服务器继续经唯一 PlaySession 驱动推进，deps.json 不含展示或 Avalonia，Runtime 不引用 Networking。
+
+online-capabilities 验证流程卡牌逐步断线／恢复、每席位反复读取和篡改返回投影仍不推进流程或改写原记录，最终身份回放成功。全部既有 online-identity、identity-persistence、ordering、reconnect、audience、secrets、http、processes、faults、review、client-review、followup、cursor 及 local-table 通过；UNO 4／5／6 人均完成混合 CPU、两个真人、观战与两种恢复。
+
+真实 Release Player 的两个真人视口与观战窗口完成 quick-cards、本人回合断线恢复和身份记录回放，三个视口均有实际帧。原始结果见 [network-capability-probes.json](network-capability-probes.json)。首次自制 GUI 探针配置误加 p3，被服务器正确拒绝；按实际两个席位纠正配置后通过，未更改服务器校验。Server、NetworkClient、Player 的 Release 构建零警告零错误。

@@ -7,6 +7,7 @@ try
 {
     tests.Add("application-baseline",ApplicationBaselineTests.Run);
     tests.Add("board-author-media",BoardMediaTests.Run);
+    tests.Add("online-capabilities",OnlineCapabilityTests.Run);
     tests.Add("content-discovery",ContentDiscoveryTests.Run);
     tests.Add("board-kernel-plugin",BoardKernelPluginTests.Run);
     tests.Add("board-recording",BoardRecordingTests.Run);
