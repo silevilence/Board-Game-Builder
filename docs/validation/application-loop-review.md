@@ -185,3 +185,13 @@ author-export-contract 用两种独立提供者验证共同发现、重名拒绝
 - GameAuthorFormats 共用模板、runtime_startup.py、build-poker-uno.py 以及 TestModules／FlowTests 图形发行夹具已同步。纯无界面隔离测试保留其明确的无展示组合。迁移脚本仅在作者显式调用时修改指定目录，重复执行／检查不改内容。
 - application-migration 验证所有桌游目录、包、作者校验；author-templates 验证 module／state 创建与完成对局；真实 Editor runtime-documents 验证新模板与替代格式试玩；Motion.Authoring.Tests 通过。原 application-baseline.json 未改，21 场原身份完整基线匹配。
 - 图形 Player／普通导出要求匹配的显式展示声明；无界面主机只验证元数据，不加载绘制实现。旧记录仍配套原身份恢复，图形迁移说明见 application-compatibility.md。扩展 20 种子语义比较已加入独立 application-regression，作为下一项验收执行。
+
+## 最终语义与生命周期回归（2026-10-29）
+
+`application-regression` 全部 72 组新旧对照通过：quick-cards／hex-skirmish／island-settlers 各种子 1～20，拍卖／UNO／流程／WASM 各种子 1、7、42。每组验证完整录制链及回放，再比较提交、效果、权威状态、逐步各席位投影、流程及步数。原 21 组身份基线继续匹配，未改期望值。原始结果见 [application-semantic-regression.json](application-semantic-regression.json)。
+
+FreeCell 20 次发牌／回放、既有 seed 1 的 94 步合法通关及快捷键通过；嵌入、外部 Player、交互适配和回放结果一致。非法命令、可见性、秘密提交、事务、Lua／CPU／重载／worker 超限、WASM 隔离、流程保护与恢复、update／session-driver／记录／联机投影回归通过。修正两处调度测试的观察视口夹具，显式替换新模板的 board.render；不向无 GPU 测试补装真实设备，也未削弱生产图形依赖检查。外部模式首次指向旧 Release Player，重建依赖后通过。
+
+通用及选择性程序集的架构测试全部通过。实际 Motion.ViewTests 复测一个独立窗口、两个嵌入视口、持续键盘输入、失焦取消、暂停绘制、单步、关闭其中一个视口、重复启动和加载中关闭；WindowsDX.Tests 复测中文绘制、纹理、输入、尺寸变化及失败清理。最终 devices／backends／nativeWindows 全部为零；Presentation.Avalonia.Tests 的分页、替换拒绝及释放通过。证据见 [application-lifecycle-regression.json](application-lifecycle-regression.json)。
+
+同机 Release 性能门槛仍为 1000 ms。首次最终测量有一次 1376.6 ms，Lua CPU 调用峰值 1211.9 ms（包含进程启动）；保留失败，未声称已证明其外部原因，也未修改实现或门槛。检查后连续三轮独立执行、六个新对局共 24 次操作全部通过，最大 408.9 ms。干净 Sandbox 图形首轮耗时较高，属于发行兼容验证，不充当同机性能数据；冷启动仍有环境波动风险。

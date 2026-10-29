@@ -87,7 +87,8 @@ public static class BoardUpdateTests
             var projection=scope.Service<IBoardProjectionSource>("projection").ForSeat("p1");
             scope.Render("draw",_=>{projection.View();draws++;});
         }) {Permissions=[AuthorityPlugin.Access],Execution=new(HostMode.Graphical,RuntimeScope.Viewport,[new("draw",ApplicationPhase.Render)])};
-        var startup=module.RuntimeIdentity!.Startup with {Plugins=[..module.RuntimeIdentity.Startup.Plugins,new("observer","1",1,JsonSerializer.SerializeToElement(new{}))]};
+        // The observer replaces the normal installed board viewport for this scheduler test.
+        var startup=module.RuntimeIdentity!.Startup with {Plugins=[..module.RuntimeIdentity.Startup.Plugins.Where(p=>p.Id!=BoardRenderContract.Id),new("observer","1",1,JsonSerializer.SerializeToElement(new{}))]};
         var catalog=RuntimeComposition.Catalog(module,42,controllers,500,startup).Concat([observer]).ToArray();
         using var host=await RuntimeHost.StartScopedAsync(startup,catalog,["session"],HostMode.Graphical);
         using var first=await RuntimeHost.StartScopedAsync(startup,catalog,[],HostMode.Graphical,RuntimeScope.Viewport,host,"first");
@@ -150,7 +151,8 @@ public static class BoardUpdateTests
         var observer=new RuntimePluginDefinition("observer","1",1,[],[],scope=>scope.Render("draw",_=>
         {Check.That(session!.ExportAuthorityLog().EntryCount==0,"Render saw uncommitted candidate");renders++;}))
             {Execution=new(HostMode.Graphical,RuntimeScope.Viewport,[new("draw",ApplicationPhase.Render)])};
-        var startup=module.RuntimeIdentity!.Startup with {Plugins=[..module.RuntimeIdentity.Startup.Plugins,
+        // This viewport deliberately observes the commit boundary without a GPU or board renderer.
+        var startup=module.RuntimeIdentity!.Startup with {Plugins=[..module.RuntimeIdentity.Startup.Plugins.Where(p=>p.Id!=BoardRenderContract.Id),
             new("guard","1",1,JsonSerializer.SerializeToElement(new{})),new("observer","1",1,JsonSerializer.SerializeToElement(new{}))]};
         var catalog=RuntimeComposition.Catalog(module,42,controllers,500,startup).Concat([guard,observer]).ToArray();
         using var host=await RuntimeHost.StartScopedAsync(startup,catalog,["session"],HostMode.Graphical);
