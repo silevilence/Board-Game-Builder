@@ -174,3 +174,8 @@ author-export-contract 用两种独立提供者验证共同发现、重名拒绝
 - author.export.player 独立提供 player.export，旧 author.export 显式引用两个普通提供者；默认 profile 改为分别启用。PrecompiledPlayer 只负责清单、文件、托管依赖和图形入口，内容协议由作者运行时提供。
 - 实际构建 artifacts/application-loop-player 与 artifacts/application-loop-minimal-player-verified。export、export-large-package、export-linked-root、export-dependencies、flow-delivery、author-exports 通过；包含缺依赖、目录链接、篡改、取消及大包验证。仅 Player profile 无需包提供者。
 - Motion.Authoring.Tests 从非桌游内容导出；目录无 BoardGame.*、Kernel、Runtime、Modules、Lua、WASM 实现。Play.exe 从临时工作目录启动，真实 HWND 键盘输入两次到达目标，绘制后关闭，设备与原生窗口均归零；证据 .scratch/application-loop/minimal-standalone-export.json。干净 Windows 属最终发行回归，尚未标记完成。
+
+### Editor 提供者发现与独立贡献（2026-10-29）
+- Editor 零警告构建；真实 --verify-export 通过 14 项检查，记录 docs/validation/export-provider-probes.json。分别仅启用 Player／数据包、同时启用、三个启停周期、命令移除、CLI 描述一致、缺插件保留配置均通过。
+- 两种产物来自同一未保存草稿，源文件未变。活动导出拒绝停用，附加步骤受保护；切换文档取消且没有迟到状态串用，强制关闭等待取消并释放提供者。快照文件占用时产物有效、警告明确且状态恢复。
+- 已检查实际导出面板截图 .scratch/application-loop/export-providers-afb210704791457ea9e589f31abbea43/providers.png。

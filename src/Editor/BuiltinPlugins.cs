@@ -96,9 +96,10 @@ public static class BuiltinPlugins
             scope.Service<PanelContributions>("panels").Register(scope,"author.tts","TTS 导入",()=>FormatPanel.Board(scope,s=>new TtsImportPanel(s)))));
         app.Install(new("author.print",1,[],["documents","commands","panels"],scope=>
             scope.Service<PanelContributions>("panels").Register(scope,"author.print","打印拼版",()=>FormatPanel.Board(scope,s=>new PrintPanel(s)))));
-        app.Install(new("author.export",1,["exports"],["documents","contributions","panels","workspace"],scope=>
+        app.Install(new("author.export",1,["exports","author.exports"],["documents","contributions","panels","workspace"],scope=>
         {
-            var workflow=new ExportWorkflow(scope.Service<DocumentWorkspace>("documents"),scope.Service<EditorContributions>("contributions"));scope.Provide("exports",workflow);
+            var providers=new BoardGame.Authoring.AuthorExports();scope.Provide("author.exports",providers);
+            var workflow=new ExportWorkflow(scope.Service<DocumentWorkspace>("documents"),scope.Service<EditorContributions>("contributions"),providers);scope.OwnAsync(workflow);scope.Provide("exports",workflow);
             scope.Guard(()=>workflow.Running?"导出正在执行，请等待完成":null);
             scope.Own(app.BeforeShutdown(()=>
             {
@@ -106,6 +107,18 @@ public static class BuiltinPlugins
                 return Task.FromResult(!workflow.Running);
             }));
             scope.Service<PanelContributions>("panels").Register(scope,"author.export","独立导出",()=>new ExportPanel(scope));
+        }));
+        ExportProvider(new BoardGame.Authoring.PlayerExporter(),new Dictionary<string,string>{["player"]=EditorPaths.ReleasePlayer,["target"]=EditorPaths.InWorkspace("artifacts/export-game")});
+        ExportProvider(new BoardGame.Authoring.PackageExporter(),new Dictionary<string,string>{["target"]=EditorPaths.InWorkspace("artifacts/game.bgm")});
+        void ExportProvider(BoardGame.Authoring.IAuthorExporter provider,IReadOnlyDictionary<string,string> defaults)=>app.Install(new(provider.Info.Plugin,1,[],["exports","author.exports","documents","commands"],scope=>
+        {
+            var workflow=scope.Service<ExportWorkflow>("exports");var documents=scope.Service<DocumentWorkspace>("documents");
+            scope.OwnAsync(workflow.RegisterProvider(provider));
+            scope.Guard(()=>workflow.ActiveProvider==provider.Info.Id?"导出正在执行，请等待完成":null);
+            void Defaults()=>workflow.Defaults(provider.Info.Id,defaults);
+            documents.Replaced+=Defaults;scope.Own(new Cleanup(()=>documents.Replaced-=Defaults));Defaults();
+            scope.Service<EditorCommands>("commands").Register(scope,new(provider.Info.Operation.Id,provider.Info.Title,async()=>
+            {workflow.Selected=provider.Info.Id;await workflow.Run(true);},()=>documents.Current!=null && !workflow.Running));
         }));
         void Panel(string id,string title,Func<EditorPluginScope,Control> factory)=>app.Install(new(id,1,[],["documents","panels"],scope=>
             scope.Service<PanelContributions>("panels").Register(scope,id,title,()=>id=="author.resources"?factory(scope):id=="author.yaml"?new FormatPanel(scope,factory):FormatPanel.Board(scope,factory))));

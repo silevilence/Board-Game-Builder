@@ -47,7 +47,8 @@ internal static class ToolkitVerification
                     sessions.Stop();
                 }
                 var exports=host.Application.Service<ExportWorkflow>("exports");
-                Check(File.Exists(Path.Combine(exports.ReleasePath,"release.json")),"Bundled formal Player located");
+                exports.Selected="player-directory";
+                Check(File.Exists(Path.Combine(exports.Parameter(exports.Selected,"player"),"release.json")),"Bundled formal Player located");
                 exports.Destination=Path.Combine(output,"game");
                 Check(await exports.Run(true),"Formal export: "+exports.Progress);
                 Check(File.Exists(Path.Combine(exports.Destination,"Play.exe")),"Independent game entry");
