@@ -158,3 +158,9 @@ OnlinePlayerSession 经 board.interaction 和绑定连接身份的提交目标�
 online-capabilities 验证流程卡牌逐步断线／恢复、每席位反复读取和篡改返回投影仍不推进流程或改写原记录，最终身份回放成功。全部既有 online-identity、identity-persistence、ordering、reconnect、audience、secrets、http、processes、faults、review、client-review、followup、cursor 及 local-table 通过；UNO 4／5／6 人均完成混合 CPU、两个真人、观战与两种恢复。
 
 真实 Release Player 的两个真人视口与观战窗口完成 quick-cards、本人回合断线恢复和身份记录回放，三个视口均有实际帧。原始结果见 [network-capability-probes.json](network-capability-probes.json)。首次自制 GUI 探针配置误加 p3，被服务器正确拒绝；按实际两个席位纠正配置后通过，未更改服务器校验。Server、NetworkClient、Player 的 Release 构建零警告零错误。
+
+## 独立导出提供者契约（2026-10-29）
+
+AuthorExports 在 author.core 中提供按作用域登记的无 UI 导出目录，描述身份、版本、平台、依赖、产物、参数、预检和执行；请求携带固定 ProjectView、取消与进度，结果核对来源及产物类型。注册仍归 CordiSharp 效果，活动执行阻止撤销其提供者，没有按类型回退。
+
+author-export-contract 用两种独立提供者验证共同发现、重名拒绝、同时执行、活动撤销保护、停用／重启无重复、取消及来源一致；author-profiles 通过。此契约是 CLI 与 GUI 共用的类型和目录，真实内置提供者、UI 贡献及实际包输出由后续任务验证。
