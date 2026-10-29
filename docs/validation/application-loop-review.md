@@ -195,3 +195,13 @@ FreeCell 20 次发牌／回放、既有 seed 1 的 94 步合法通关及快捷�
 通用及选择性程序集的架构测试全部通过。实际 Motion.ViewTests 复测一个独立窗口、两个嵌入视口、持续键盘输入、失焦取消、暂停绘制、单步、关闭其中一个视口、重复启动和加载中关闭；WindowsDX.Tests 复测中文绘制、纹理、输入、尺寸变化及失败清理。最终 devices／backends／nativeWindows 全部为零；Presentation.Avalonia.Tests 的分页、替换拒绝及释放通过。证据见 [application-lifecycle-regression.json](application-lifecycle-regression.json)。
 
 同机 Release 性能门槛仍为 1000 ms。首次最终测量有一次 1376.6 ms，Lua CPU 调用峰值 1211.9 ms（包含进程启动）；保留失败，未声称已证明其外部原因，也未修改实现或门槛。检查后连续三轮独立执行、六个新对局共 24 次操作全部通过，最大 408.9 ms。干净 Sandbox 图形首轮耗时较高，属于发行兼容验证，不充当同机性能数据；冷启动仍有环境波动风险。
+
+## 最终作者与普通发行回归（2026-10-29）
+
+前述真实 Editor／CLI 创建、文件及结构化编辑、图片／TTS 导入、流程画布、动画／文档、Undo、草稿试玩、外部 Player、打印及独立两种导出结果共同覆盖作者链路；操作使用捕获的 ProjectView，源工程没有被校验或导出隐式保存。全解 Release 构建零警告、零错误。Launcher.Tests 复查内容清单、共享组件、并发取消、导入／事务恢复、修复卸载、作者版本选择绑定及固定版本技能共存，全部通过。
+
+以 `03bcca1` 的正式 Player、最小 Player 和自包含作者工具，在两个新建的 Windows Sandbox 中执行 [validate-application-loop-windows.ps1](../../scripts/validate-application-loop-windows.ps1)。网络关闭；两个环境均为 Windows 10.0.26100，dotnet 命令及 x64／x86 系统 .NET 路径均不存在。第一轮 Editor 实际完成图片导入撤销、创建编辑保存重开、嵌入及外部对局和正式导出；CLI 分别校验、打包、导出 quick-cards 和 motion-lab。非桌游产物枚举确认没有桌游、Lua 或 WASM 二进制。
+
+第二轮只映射第一轮成品和证据目录，没有源码及作者安装。完整目录移动至带空格和中文的新路径，原位置不存在；quick-cards 图形操作完成两局，motion-lab 两次原生键盘输入到达目标并输出实际绘制截图，最终设备／原生窗口归零。两个 GUI 进程成功退出，全程每 50 ms 的可见控制台枚举未发现新控制台；预编译清单同时校验 GUI PE 子系统。结果及各项原始回执见 [application-clean-windows.json](application-clean-windows.json)。
+
+开始时系统只允许一个 Sandbox，经用户明确授权关闭既有实例后重新创建；新环境默认 Restricted 导致首次脚本未执行，另经明确授权仅两个验收 PowerShell 进程使用 RemoteSigned。没有修改宿主或持久策略。两轮结束由脚本正常关闭各自 Sandbox。没有把隐藏 PATH 的本机运行当作干净环境，也没有用 AOT 研究替代普通发行验证。

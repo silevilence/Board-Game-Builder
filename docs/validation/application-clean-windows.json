@@ -1,0 +1,388 @@
+{
+  "date": "2026-10-29",
+  "commit": "03bcca1766659702e14c8242807136d6a336010d",
+  "author": {
+    "result": {
+      "stage": "Author",
+      "environment": {
+        "runtime": false,
+        "runtimeX86": false,
+        "os": "Microsoft Windows NT 10.0.26100.0",
+        "dotnet": false
+      },
+      "checks": [
+        "No SDK or system .NET",
+        "No new visible console window: C:\\Application Check/Author Kit/editor/Editor.exe",
+        "GUI exit: C:\\Application Check/Author Kit/editor/Editor.exe",
+        "GUI report: C:\\Application Check/Editor Checks/editor.json",
+        "CLI project.validate C:\\Application Check/Board Project",
+        "CLI project.pack C:\\Application Check/Board Project",
+        "CLI player.export C:\\Application Check/Board Project",
+        "CLI project.validate C:\\Application Check/Motion Project",
+        "CLI project.pack C:\\Application Check/Motion Project",
+        "CLI player.export C:\\Application Check/Motion Project",
+        "Nonboard product excludes board/script runtimes"
+      ],
+      "success": true
+    },
+    "editor": {
+      "success": true,
+      "checks": [
+        "Image import through editor commands",
+        "Import Undo",
+        "Create, edit, save and reopen",
+        "Bundled debug Player located",
+        "Start embedded session: ",
+        "Complete embedded game",
+        "Start external session: ",
+        "Complete external game",
+        "Bundled formal Player located",
+        "Formal export: 导出完成：C:\\Application Check\\Editor Checks\\game。包含预编译 Player 和运行依赖，双击 Play.exe 运行；导出无需 SDK。  来源版本 F40A6AC0；工程草稿未保存。",
+        "Independent game entry"
+      ],
+      "error": null
+    },
+    "directory": "C:\\code\\dotnet\\Board-Game-Builder\\.scratch\\application-loop\\sandbox-author-393929f8492d42bbb8828203ba61f76f"
+  },
+  "player": {
+    "result": {
+      "stage": "Player",
+      "environment": {
+        "runtime": false,
+        "runtimeX86": false,
+        "os": "Microsoft Windows NT 10.0.26100.0",
+        "dotnet": false
+      },
+      "checks": [
+        "No SDK or system .NET",
+        "No author installation mapped",
+        "Verified move stays inside validation workspace",
+        "Original installation location absent",
+        "No author tools in player products",
+        "No new visible console window: C:\\Application Check\\Moved 中文/Board/Play.exe",
+        "GUI exit: C:\\Application Check\\Moved 中文/Board/Play.exe",
+        "GUI report: C:\\Evidence/board-gui.json",
+        "No new visible console window: C:\\Application Check\\Moved 中文/Motion/Play.exe",
+        "GUI exit: C:\\Application Check\\Moved 中文/Motion/Play.exe",
+        "GUI report: C:\\Evidence/motion-gui.json"
+      ],
+      "success": true
+    },
+    "board": {
+      "success": true,
+      "games": 2,
+      "inputCounts": {
+        "action": 8
+      },
+      "interactionMs": [
+        9601.4565,
+        1456.0697,
+        159.6238,
+        195.0671,
+        111.1349,
+        1561.6174,
+        175.5866,
+        128.3248
+      ],
+      "view": {
+        "seat": "p1",
+        "seats": [
+          {
+            "id": "p1",
+            "team": "red",
+            "controller": "human"
+          },
+          {
+            "id": "p2",
+            "team": "blue",
+            "controller": "cpu"
+          }
+        ],
+        "currentSeat": "p2",
+        "phase": "play",
+        "turn": 5,
+        "ended": true,
+        "winners": [
+          "p2"
+        ],
+        "entities": [
+          {
+            "id": "card-02",
+            "owner": "p1",
+            "container": "table",
+            "isContainer": false,
+            "count": 0,
+            "faceUp": true,
+            "face": "Power 2",
+            "x": 0,
+            "y": 0,
+            "properties": {
+              "value": 2
+            },
+            "contents": [],
+            "resource": null
+          },
+          {
+            "id": "card-03",
+            "owner": "p1",
+            "container": "table",
+            "isContainer": false,
+            "count": 0,
+            "faceUp": true,
+            "face": "Power 3",
+            "x": 0,
+            "y": 0,
+            "properties": {
+              "value": 3
+            },
+            "contents": [],
+            "resource": null
+          },
+          {
+            "id": "card-04",
+            "owner": "p1",
+            "container": "table",
+            "isContainer": false,
+            "count": 0,
+            "faceUp": true,
+            "face": "Power 4",
+            "x": 0,
+            "y": 0,
+            "properties": {
+              "value": 4
+            },
+            "contents": [],
+            "resource": null
+          },
+          {
+            "id": "card-05",
+            "owner": "p2",
+            "container": "table",
+            "isContainer": false,
+            "count": 0,
+            "faceUp": true,
+            "face": "Power 5",
+            "x": 0,
+            "y": 0,
+            "properties": {
+              "value": 5
+            },
+            "contents": [],
+            "resource": null
+          },
+          {
+            "id": "card-06",
+            "owner": "p1",
+            "container": "hand-p1",
+            "isContainer": false,
+            "count": 0,
+            "faceUp": false,
+            "face": "Power 6",
+            "x": 0,
+            "y": 0,
+            "properties": {
+              "value": 6
+            },
+            "contents": [],
+            "resource": null
+          },
+          {
+            "id": "card-09",
+            "owner": "p1",
+            "container": "hand-p1",
+            "isContainer": false,
+            "count": 0,
+            "faceUp": false,
+            "face": "Power 3",
+            "x": 0,
+            "y": 0,
+            "properties": {
+              "value": 3
+            },
+            "contents": [],
+            "resource": null
+          },
+          {
+            "id": "card-10",
+            "owner": "p1",
+            "container": "hand-p1",
+            "isContainer": false,
+            "count": 0,
+            "faceUp": false,
+            "face": "Power 4",
+            "x": 0,
+            "y": 0,
+            "properties": {
+              "value": 4
+            },
+            "contents": [],
+            "resource": null
+          },
+          {
+            "id": "card-11",
+            "owner": "p2",
+            "container": "table",
+            "isContainer": false,
+            "count": 0,
+            "faceUp": true,
+            "face": "Power 5",
+            "x": 0,
+            "y": 0,
+            "properties": {
+              "value": 5
+            },
+            "contents": [],
+            "resource": null
+          },
+          {
+            "id": "card-12",
+            "owner": "p2",
+            "container": "table",
+            "isContainer": false,
+            "count": 0,
+            "faceUp": true,
+            "face": "Power 6",
+            "x": 0,
+            "y": 0,
+            "properties": {
+              "value": 6
+            },
+            "contents": [],
+            "resource": null
+          },
+          {
+            "id": "deck",
+            "owner": null,
+            "container": null,
+            "isContainer": true,
+            "count": 1,
+            "faceUp": true,
+            "face": null,
+            "x": 0,
+            "y": 0,
+            "properties": {},
+            "contents": [],
+            "resource": null
+          },
+          {
+            "id": "hand-p1",
+            "owner": "p1",
+            "container": null,
+            "isContainer": true,
+            "count": 3,
+            "faceUp": true,
+            "face": null,
+            "x": 0,
+            "y": 0,
+            "properties": {},
+            "contents": [
+              "card-06",
+              "card-09",
+              "card-10"
+            ],
+            "resource": null
+          },
+          {
+            "id": "hand-p2",
+            "owner": "p2",
+            "container": null,
+            "isContainer": true,
+            "count": 2,
+            "faceUp": true,
+            "face": null,
+            "x": 0,
+            "y": 0,
+            "properties": {},
+            "contents": [],
+            "resource": null
+          },
+          {
+            "id": "match",
+            "owner": null,
+            "container": null,
+            "isContainer": false,
+            "count": 0,
+            "faceUp": true,
+            "face": null,
+            "x": 0,
+            "y": 0,
+            "properties": {
+              "initialHand": 3,
+              "rounds": 3
+            },
+            "contents": [],
+            "resource": null
+          },
+          {
+            "id": "score-p1",
+            "owner": null,
+            "container": null,
+            "isContainer": false,
+            "count": 0,
+            "faceUp": true,
+            "face": null,
+            "x": 0,
+            "y": 0,
+            "properties": {
+              "score": 9
+            },
+            "contents": [],
+            "resource": null
+          },
+          {
+            "id": "score-p2",
+            "owner": null,
+            "container": null,
+            "isContainer": false,
+            "count": 0,
+            "faceUp": true,
+            "face": null,
+            "x": 0,
+            "y": 0,
+            "properties": {
+              "score": 16
+            },
+            "contents": [],
+            "resource": null
+          },
+          {
+            "id": "table",
+            "owner": null,
+            "container": null,
+            "isContainer": true,
+            "count": 6,
+            "faceUp": true,
+            "face": null,
+            "x": 0,
+            "y": 0,
+            "properties": {},
+            "contents": [
+              "card-02",
+              "card-12",
+              "card-04",
+              "card-05",
+              "card-03",
+              "card-11"
+            ],
+            "resource": null
+          }
+        ],
+        "layout": null
+      }
+    },
+    "directory": "C:\\code\\dotnet\\Board-Game-Builder\\.scratch\\application-loop\\sandbox-player-5540b1e176e8470091eabed9c4407a05",
+    "motion": {
+      "success": true,
+      "errors": [],
+      "checks": [
+        "native-input-target-render-close-0",
+        "native-input-target-render-close-1"
+      ],
+      "devices": 0,
+      "nativeWindows": 0
+    }
+  },
+  "scriptSha256": "33F3916D86A74B76FF31EA3D9C18340F621F6F505DA37D28DA609DF7FD21FFF5",
+  "executionPolicy": "User authorized RemoteSigned for these two isolated validation processes only",
+  "network": "Disabled; second guest maps only exported products and evidence"
+}
