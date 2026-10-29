@@ -3,8 +3,15 @@ using BoardGame.Runtime;
 namespace BoardGame.Authoring;
 
 /// <summary>Legacy board author policy, selected by declared loader identity rather than project name or path.</summary>
-public sealed class BoardAuthorRuntime : IAuthorPackageRuntime
+public sealed class BoardAuthorRuntime : IAuthorPackageRuntime,IAuthorPlayerRuntime
 {
+    public void PreflightPlayer(string release,ProjectView view,CancellationToken cancellation)
+    {cancellation.ThrowIfCancellationRequested();using var snapshot=new ProjectSnapshot(view);_=PlayerDistribution.Preflight(release,snapshot.Directory);}
+    public string ExportPlayer(string release,ProjectView view,string target,AuthorExportRequest request)=>ExportSnapshots.Use(view,request,snapshot=>
+    {
+        PlayerDistribution.Export(release,snapshot.Directory,target,path=>request.AdditionalSteps?.Invoke(snapshot.Directory,path),request.Progress,cancellation:request.Cancellation);
+        return GameRuntime.Load(Path.Combine(target,"game.bgm")).Fingerprint;
+    });
     public string Pack(ProjectView view,string destination,CancellationToken cancellation=default)
     {
         cancellation.ThrowIfCancellationRequested();using var snapshot=new ProjectSnapshot(view);

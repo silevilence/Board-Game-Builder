@@ -11,7 +11,7 @@ public static class AuthorProfiles
     public const string ConfigurationFile = "author.profile.json";
     public static readonly JsonSerializerOptions Json = new(JsonSerializerDefaults.Web)
     { WriteIndented = true, UnmappedMemberHandling = System.Text.Json.Serialization.JsonUnmappedMemberHandling.Disallow };
-    public static AuthorProfile Default => new(1, [new("edit.disk"), new("author.files"), new("author.module"), new("author.state"), new("author.configuration"), new("author.resources"), new("author.validation"), new("author.run"), new("author.export"), new("author.workspace")]);
+    public static AuthorProfile Default => new(1, [new("edit.disk"), new("author.files"), new("author.module"), new("author.state"), new("author.configuration"), new("author.resources"), new("author.validation"), new("author.run"), new("author.export.package"), new("author.export.player"), new("author.workspace")]);
     private sealed record Configuration(string? DefaultProfile, Dictionary<string, AuthorProfile>? Profiles);
 
     public static string Locate(string? explicitPath, string currentDirectory)

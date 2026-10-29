@@ -169,3 +169,8 @@ author-export-contract 用两种独立提供者验证共同发现、重名拒绝
 - author.export.package 独立提供 project.pack，显式 Includes 保留旧 author.export 调用；运行时通过 IAuthorPackageRuntime 选择正式格式 2／3，不在通用入口解析桌游状态。
 - author-exports、author-profiles、author-export-contract、author-docs 通过；Motion.Authoring.Tests 验证磁盘与 GUI 未保存草稿包、匹配目录加载、无引擎二进制和源文件不变。桌游 module／state 的仅数据包 profile 与停用检查通过。
 - 首轮暂存文件缺 .bgm 后缀导致旧加载器按 JSON 读取，已修正暂存扩展名并重跑；没有改动包协议或放松加载检查。
+
+### 独立预编译 Player 提供者（2026-10-29）
+- author.export.player 独立提供 player.export，旧 author.export 显式引用两个普通提供者；默认 profile 改为分别启用。PrecompiledPlayer 只负责清单、文件、托管依赖和图形入口，内容协议由作者运行时提供。
+- 实际构建 artifacts/application-loop-player 与 artifacts/application-loop-minimal-player-verified。export、export-large-package、export-linked-root、export-dependencies、flow-delivery、author-exports 通过；包含缺依赖、目录链接、篡改、取消及大包验证。仅 Player profile 无需包提供者。
+- Motion.Authoring.Tests 从非桌游内容导出；目录无 BoardGame.*、Kernel、Runtime、Modules、Lua、WASM 实现。Play.exe 从临时工作目录启动，真实 HWND 键盘输入两次到达目标，绘制后关闭，设备与原生窗口均归零；证据 .scratch/application-loop/minimal-standalone-export.json。干净 Windows 属最终发行回归，尚未标记完成。

@@ -31,7 +31,7 @@ public sealed class AuthorHost : IAsyncDisposable
             new(s.Profile.Project, s.Profile.Name, "disk")))), "Read current disk content and commit guarded changes"),
         FileOperations.Plugin, FormatOperations.Module, FormatOperations.State, FormatOperations.Configuration, ResourceOperations.Plugin,
         BoardMediaOperations.Images,BoardMediaOperations.Tts,BoardMediaOperations.Print,
-        ValidationOperations.Plugin, RunOperations.Plugin, ExportOperations.Plugin, PackageExporter.Plugin, GuiEditMode.Plugin, WorkspaceCoordination.Plugin
+        ValidationOperations.Plugin, RunOperations.Plugin, ExportOperations.Plugin, PackageExporter.Plugin, PlayerExporter.Plugin, GuiEditMode.Plugin, WorkspaceCoordination.Plugin
     ];
     public static IReadOnlyList<AuthorPlugin> Validate(AuthorProfile profile, IReadOnlyList<AuthorPlugin> catalog)
     {

@@ -34,10 +34,26 @@ public sealed class AuthorRuntimes
     }
     public void ValidateContent(ProjectView view)=>Resolve(view).Validate(view,"content").GetAwaiter().GetResult();
 }
-public sealed class ApplicationAuthorRuntime(string id,ApplicationCatalog catalog) : IAuthorPackageRuntime
+public sealed class ApplicationAuthorRuntime(string id,ApplicationCatalog catalog) : IAuthorPackageRuntime,IAuthorPlayerRuntime
 {
     public string Id=>id;
     public ApplicationCatalog Catalog=>catalog;
+    public void PreflightPlayer(string release,ProjectView view,CancellationToken cancellation)
+    {cancellation.ThrowIfCancellationRequested();using var snapshot=new ProjectSnapshot(view);_=PrecompiledPlayer.Preflight(release,PlayerSource(snapshot.Directory));}
+    public string ExportPlayer(string release,ProjectView view,string target,AuthorExportRequest request)=>ExportSnapshots.Use(view,request,snapshot=>
+    {
+        var source=PlayerSource(snapshot.Directory);
+        PrecompiledPlayer.Export(release,source,target,path=>request.AdditionalSteps?.Invoke(snapshot.Directory,path),request.Progress,request.Cancellation);
+        return source.Fingerprint;
+    });
+    private PlayerPackageSource PlayerSource(string directory)
+    {
+        var content=BoardGame.AppRuntime.GameRuntime.Load(directory,catalog.Content);
+        return new(content.Identity.Startup,3,content.Fingerprint,p=>BoardGame.AppRuntime.GamePackage.Pack(directory,p,catalog.Content),
+            p=>BoardGame.AppRuntime.GamePackage.Load(p,catalog.Content).Fingerprint,[],
+            "Windows x64\r\n双击 Play.exe 运行。无需作者工具、SDK 或系统 .NET。需要 Direct3D 11 图形设备。\r\n",
+            new{content.Identity.Startup.Id,content.Identity.Startup.Version,content.Fingerprint});
+    }
     public string Pack(ProjectView view,string destination,CancellationToken cancellation=default)
     {
         cancellation.ThrowIfCancellationRequested();

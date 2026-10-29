@@ -261,7 +261,9 @@ public static class AuthorProjectTests
                 if(format=="module" && Environment.GetEnvironmentVariable("BGB_TEST_RELEASE") is { } release)
                 {
                     var game=Path.Combine(output,"standalone");
-                    await host.Invoke("player.export",Args(new {target=game,player=Path.GetFullPath(release)}),"export");
+                      await using var playerHost=await AuthorHost.Start(new("player-only","test",project,new(1,[new("edit.disk"),new("author.export.player")])));
+                      Check.That(playerHost.Service<AuthorExports>("author.exports").Items.Single().Id=="player-directory");
+                      await playerHost.Invoke("player.export",Args(new {target=game,player=Path.GetFullPath(release)}),"export");
                     Check.That(File.Exists(Path.Combine(game,"Play.exe")) && !File.Exists(Path.Combine(game,"Authoring.dll")));
                     var start=new System.Diagnostics.ProcessStartInfo(Path.Combine(game,"Play.exe")){UseShellExecute=false,CreateNoWindow=true,WorkingDirectory=game};
                     foreach(var value in new[]{"batch",Path.Combine(game,"game.bgm"),"--count","1","--out",Path.Combine(output,"batch")})start.ArgumentList.Add(value);

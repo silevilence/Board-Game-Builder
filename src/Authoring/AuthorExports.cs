@@ -6,7 +6,7 @@ public sealed record AuthorExportInfo(string Id,string Plugin,string Version,int
     string Description,string[] Platforms,string[] Dependencies,AuthorOperationInfo Operation);
 public sealed record AuthorExportCheck(ProjectSource Source,string Provider,bool Available,IReadOnlyList<AuthorDiagnostic> Diagnostics);
 public sealed record AuthorExportRequest(ProjectView View,AuthorRuntimes Runtimes,JsonElement Arguments,
-    CancellationToken Cancellation=default,IProgress<string>? Progress=null,Action<string,string>? AdditionalSteps=null);
+    CancellationToken Cancellation=default,IProgress<string>? Progress=null,Action<string,string>? AdditionalSteps=null,Action<string>? Warning=null);
 public interface IAuthorExporter
 {
     AuthorExportInfo Info {get;}

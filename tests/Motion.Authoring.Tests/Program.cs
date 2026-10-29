@@ -29,6 +29,18 @@ await using(var host=await AuthorHost.Start(profile,catalog))
     Check(GameRuntime.Load(artifact.Target,new ApplicationCatalog(MotionPlugins.Catalog()).Content).Fingerprint==artifact.Fingerprint,"Nonboard package load failed");
     using(var zip=System.IO.Compression.ZipFile.OpenRead(artifact.Target))Check(!zip.Entries.Any(e=>e.FullName.EndsWith(".dll") || e.FullName.EndsWith(".exe")),"Data package contains engine binaries");
 }
+if(Environment.GetEnvironmentVariable("BGB_TEST_MINIMAL_RELEASE") is {} minimalRelease)
+{
+    var playerProfile=profile with{Profile=profile.Profile with{Plugins=[..profile.Profile.Plugins.Where(p=>p.Id!="author.export.package"),new("author.export.player")]}};
+    await using var playerHost=await AuthorHost.Start(playerProfile,catalog);
+    Check(playerHost.Service<AuthorExports>("author.exports").Items.Single().Id=="player-directory","Player provider depends on package provider");
+    var standalone=(AuthorArtifact)await playerHost.Invoke("player.export",Args(new{target=target+"-standalone",player=Path.GetFullPath(minimalRelease)}),"standalone");
+    Check(File.Exists(Path.Combine(standalone.Target,"Play.exe")),"No graphical standalone entry");
+    var binaries=Directory.GetFiles(standalone.Target,"*.dll",SearchOption.AllDirectories).Select(Path.GetFileName).ToArray();
+    Check(!binaries.Any(p=>p!.StartsWith("BoardGame.") || p!.StartsWith("Kernel") || p is "Runtime.dll" or "Modules.dll" or "Lua.Execution.dll" or "MoonSharp.Interpreter.dll" or "wasmtime.dll"),"Nonboard Player contains board dependencies");
+    Check(GameRuntime.Load(Path.Combine(standalone.Target,"game.bgm"),new ApplicationCatalog(MotionPlugins.Catalog()).Content).Fingerprint==standalone.Fingerprint,"Standalone package mismatch");
+    Console.WriteLine("Standalone: "+standalone.Target);
+}
 var disk=File.ReadAllBytes(Path.Combine(target,"motion.json"));
 using(var docs=new DocumentWorkspace(legacyBoardDefaults:false))
 {
