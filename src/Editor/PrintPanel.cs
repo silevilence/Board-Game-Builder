@@ -1,3 +1,4 @@
+using BoardGame.Authoring;
 using Avalonia;
 using Avalonia.Controls;
 using Avalonia.Media;
@@ -11,7 +12,7 @@ public sealed class PrintPanel : UserControl,IDisposable
     private readonly List<Bitmap> images=[];
     public PrintPanel(EditorPluginScope scope)
     {
-        const string key="打印拼版";var documents=scope.Service<DocumentWorkspace>("documents");var commands=scope.Service<EditorCommands>("commands");
+        const string key="打印拼版";var documents=scope.Service<DocumentWorkspace>("documents");var author=new AuthorImportWorkspace(documents);var commands=scope.Service<EditorCommands>("commands");
         var selected=new TextBox {AcceptsReturn=true,Height=90,PlaceholderText="所选卡牌 ID，每行一个"};
         var width=new TextBox {Width=75};var height=new TextBox {Width=75};var margin=new TextBox {Width=75};var gap=new TextBox {Width=75};
         var duplex=new ComboBox {ItemsSource=new[] {"none","long-edge","short-edge"},Width=140};var destination=new TextBox {PlaceholderText="新 PDF 文件路径"};
@@ -24,7 +25,7 @@ public sealed class PrintPanel : UserControl,IDisposable
             try
             {
                 if(documents.Current is not {} doc) return;
-                var fields=Wire.Read<string[]>(documents.Form(key,()=>Wire.Json(new[] {string.Join("\n",doc.Snapshot().Initial.Entities.Values.Where(e=>!e.IsContainer && e.Faces.Count>0).Select(e=>e.Id)),"63","88","10","3","long-edge",""})).Text);
+                var fields=Wire.Read<string[]>(documents.Form(key,()=>Wire.Json(new[] {string.Join("\n",BoardPrintSource.Load(author.View()).Initial.Entities.Values.Where(e=>!e.IsContainer && e.Faces.Count>0).Select(e=>e.Id)),"63","88","10","3","long-edge",""})).Text);
                 selected.Text=fields[0];width.Text=fields[1];height.Text=fields[2];margin.Text=fields[3];gap.Text=fields[4];duplex.SelectedItem=fields[5];destination.Text=fields[6];
             }
             finally {loading=false;}
@@ -38,8 +39,8 @@ public sealed class PrintPanel : UserControl,IDisposable
             try
             {
                 double Parse(TextBox field)=>double.Parse(field.Text ?? "",CultureInfo.InvariantCulture);
-                plan=PrintLayout.Create(documents.Current!.Snapshot(),(selected.Text ?? "").Split('\n',StringSplitOptions.RemoveEmptyEntries|StringSplitOptions.TrimEntries),new(Parse(width),Parse(height),Parse(margin),Parse(gap),duplex.SelectedItem as string ?? "long-edge"));
-                revision=documents.Current.Revision;previewFields=Fields();var number=0;
+                plan=PrintLayout.Create(BoardPrintSource.Load(author.View()),(selected.Text ?? "").Split('\n',StringSplitOptions.RemoveEmptyEntries|StringSplitOptions.TrimEntries),new(Parse(width),Parse(height),Parse(margin),Parse(gap),duplex.SelectedItem as string ?? "long-edge"));
+                revision=author.View().Source.Version;previewFields=Fields();var number=0;
                 foreach(var page in plan.Pages)
                 {
                     pages.Children.Add(new TextBlock {Text=$"第 {++number} 页 · {(page[0].Back?"背面":"正面")}"});
@@ -60,7 +61,7 @@ public sealed class PrintPanel : UserControl,IDisposable
         {
             try
             {
-                if(plan==null || revision!=documents.Current?.Revision || previewFields!=Fields()) throw new InvalidOperationException("配置或文档已改变，请重新预览");
+                if(plan==null || revision!=author.View().Source.Version || previewFields!=Fields()) throw new InvalidOperationException("配置或文档已改变，请重新预览");
                 PrintLayout.Export(plan,destination.Text ?? "");status.Text="PDF 已导出："+destination.Text;documents.DiscardForm(key);plan=null;
             }
             catch(Exception error) {status.Text=error.Message;}

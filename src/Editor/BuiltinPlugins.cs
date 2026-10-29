@@ -91,11 +91,11 @@ public static class BuiltinPlugins
         Panel("author.turns","席位与阶段",scope=>new TurnPanel(scope));
         Panel("author.extensions","WASM 媒介",scope=>new ExtensionPanel(scope));
         app.Install(new("author.images",1,[],["documents","commands","panels"],scope=>
-            scope.Service<PanelContributions>("panels").Register(scope,"author.images","图片与卡图导入",()=>new FormatPanel(scope,s=>new ImageImportPanel(s)))));
+            scope.Service<PanelContributions>("panels").Register(scope,"author.images","图片与卡图导入",()=>FormatPanel.Board(scope,s=>new ImageImportPanel(s)))));
         app.Install(new("author.tts",1,[],["documents","commands","panels"],scope=>
-            scope.Service<PanelContributions>("panels").Register(scope,"author.tts","TTS 导入",()=>new FormatPanel(scope,s=>new TtsImportPanel(s)))));
+            scope.Service<PanelContributions>("panels").Register(scope,"author.tts","TTS 导入",()=>FormatPanel.Board(scope,s=>new TtsImportPanel(s)))));
         app.Install(new("author.print",1,[],["documents","commands","panels"],scope=>
-            scope.Service<PanelContributions>("panels").Register(scope,"author.print","打印拼版",()=>new FormatPanel(scope,s=>new PrintPanel(s)))));
+            scope.Service<PanelContributions>("panels").Register(scope,"author.print","打印拼版",()=>FormatPanel.Board(scope,s=>new PrintPanel(s)))));
         app.Install(new("author.export",1,["exports"],["documents","contributions","panels","workspace"],scope=>
         {
             var workflow=new ExportWorkflow(scope.Service<DocumentWorkspace>("documents"),scope.Service<EditorContributions>("contributions"));scope.Provide("exports",workflow);

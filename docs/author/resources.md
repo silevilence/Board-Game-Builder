@@ -24,3 +24,9 @@ source 可为文件或目录；pattern 支持 `*`、`?`、`**`。目录省略 pa
 
 `resources.animations` 的配置、作者操作和预览见 `bgb.exe docs animation`。字体／动画声明不能使用图片的自动移动命令；调整路径时需同步修改显式配置并重新校验。
 `resources.documents` 可声明侧边分页文档及公开状态绑定，详见 `bgb docs documents`。
+
+## 桌游图片、TTS 与打印
+
+作者 profile 可分别选择 `author.images`、`author.tts`、`author.print`（版本 1、API 1）。它们独立提供 `board.import.images`、`board.import.tts`、`board.print`；用 CLI 操作发现查询参数。图片／TTS 另需匹配作者格式且声明 `board.author-model`，不对任意 JSON 格式猜测实体结构。打印消费桌游内容及其资源，当前图像处理支持 Windows。
+
+GUI 和 CLI 使用同一 ProjectView 和共享算法。导入同时提交定义、资源文件及 game.start.json 声明，GUI 不隐式保存，可整体撤销；旧预览或工作区代次不匹配时重新预览。打印使用当前文件草稿，输出 PDF 不保存工程。旧作者 profile 不自动增加这些操作，需显式启用对应插件。

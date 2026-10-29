@@ -5,7 +5,7 @@ using System.Runtime.Versioning;
 using System.Text;
 using BoardGame.Kernel;
 
-namespace BoardGame.Editor;
+namespace BoardGame.Authoring;
 
 public sealed record PrintOptions(double CardWidth=63,double CardHeight=88,double Margin=10,double Gap=3,string Duplex="long-edge",double PageWidth=210,double PageHeight=297);
 public sealed record PrintPlacement(string Entity,bool Back,double X,double Y,double Width,double Height,byte[] Image,int PixelWidth,int PixelHeight);

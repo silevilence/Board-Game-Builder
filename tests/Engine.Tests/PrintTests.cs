@@ -1,3 +1,4 @@
+using BoardGame.Authoring;
 using BoardGame.Editor;
 namespace Engine.Tests;
 public static class PrintTests

@@ -1,3 +1,4 @@
+using BoardGame.Authoring;
 using Avalonia.Controls;
 using Avalonia.Media.Imaging;
 using BoardGame.Kernel;
@@ -10,11 +11,11 @@ public sealed class ImageImportPanel : UserControl,IDisposable
     public ImageImportPanel(EditorPluginScope scope)
     {
         const string key="图片导入";
-        var documents=scope.Service<DocumentWorkspace>("documents");var commands=scope.Service<EditorCommands>("commands");
+        var documents=scope.Service<DocumentWorkspace>("documents");var author=new AuthorImportWorkspace(documents);var commands=scope.Service<EditorCommands>("commands");
         var path=new TextBox {PlaceholderText="图片文件路径"};var prefix=new TextBox {PlaceholderText="资源名称前缀"};
         var rows=new TextBox {Width=90};var columns=new TextBox {Width=90};var cloth=new CheckBox {Content="桌布（不切分）"};
         var report=new TextBlock {TextWrapping=Avalonia.Media.TextWrapping.Wrap};var images=new WrapPanel();
-        ImportPreview? preview=null;ModuleDocument? previewDocument=null;string? previewFields=null;var loading=false;
+        BoardImportPreview? preview=null;ModuleDocument? previewDocument=null;string? previewFields=null;var loading=false;
         string Fields()=>Wire.Json(new[] {path.Text ?? "",prefix.Text ?? "",rows.Text ?? "",columns.Text ?? "",cloth.IsChecked==true?"true":"false"});
         void Refresh()
         {
@@ -37,7 +38,7 @@ public sealed class ImageImportPanel : UserControl,IDisposable
         Register("images.preview","预览图片／卡图导入",()=>
         {
             preview=null;Dispose();images.Children.Clear();
-            preview=ImageImport.Preview(documents.Current!,path.Text ?? "",prefix.Text ?? "",int.Parse(rows.Text ?? ""),int.Parse(columns.Text ?? ""),cloth.IsChecked==true);
+            preview=BoardImageImport.Preview(author.Source(),path.Text ?? "",prefix.Text ?? "",int.Parse(rows.Text ?? ""),int.Parse(columns.Text ?? ""),cloth.IsChecked==true);
             previewDocument=documents.Current;previewFields=Fields();
             report.Text=string.Join("\n",preview.Report)+"\n确认后点击应用；命名冲突不会覆盖现有内容。";
             foreach(var file in preview.Files.Take(200))
@@ -50,7 +51,7 @@ public sealed class ImageImportPanel : UserControl,IDisposable
         {
             var selected=preview ?? throw new InvalidOperationException("请先预览");
             if(!ReferenceEquals(previewDocument,documents.Current) || previewFields!=Fields()) throw new InvalidOperationException("输入或文档已改变，请重新预览；草稿已保留。");
-            documents.ApplyForm(key,selected.Apply);preview=null;report.Text="已导入；一次撤销可移除所有新增资源与卡牌。";
+            author.Apply(key,selected);preview=null;report.Text="已导入；一次撤销可移除所有新增资源与卡牌。";
         },()=>preview!=null && documents.Current!=null);
         var show=new Button {Content="预览切分"};var apply=new Button {Content="应用导入"};var discard=new Button {Content="放弃输入"};
         show.Click+=async (_,_)=>await commands.Execute("images.preview");apply.Click+=async (_,_)=>await commands.Execute("images.apply");

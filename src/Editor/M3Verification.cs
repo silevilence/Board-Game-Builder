@@ -53,7 +53,7 @@ internal static class M3Verification
                         await Task.Delay(150);
                         using var screenshot=new RenderTargetBitmap(new(1400,900));screenshot.Render(host.Window);screenshot.Save(output+".png",PngBitmapEncoderOptions.Default);
                     }
-                    docs.Current.Undo();if(docs.Current.Snapshot().Resources!.Images.Count!=0) throw new Exception("Import Undo failed");
+                    docs.Undo();if(docs.Current.Snapshot().Resources!.Images.Count!=0) throw new Exception("Import Undo failed");
                     await app.Disable("author.images");
                     if(panels.Count!=baseline || commands.Items.Any(c=>c.Id.StartsWith("images."))) throw new Exception("Image registration leaked");
                 }
@@ -65,7 +65,7 @@ internal static class M3Verification
                     if(docs.Current!.Snapshot().Resources!.Images.Count!=0 || !docs.HasPendingForms) throw new Exception("Stale TTS preview consumed newer fields");
                     docs.EditForm("TTS 导入",Wire.Json(new[] {"samples/tts-subset/save.json","tts"}));await commands.Execute("tts.apply");
                     if(docs.Current!.Snapshot().Resources!.Images.Count!=5) throw new Exception("TTS UI conversion failed");
-                    docs.Current.Undo();await app.Disable("author.tts");
+                    docs.Undo();await app.Disable("author.tts");
                     if(panels.Count!=baseline || commands.Items.Any(c=>c.Id.StartsWith("tts."))) throw new Exception("TTS contributions leaked");
                 }
                 TtsImport.Preview(docs.Current!,"samples/tts-subset/save.json","print").Apply(docs.Current!);

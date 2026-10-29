@@ -1,3 +1,4 @@
+using BoardGame.Authoring;
 using Avalonia.Controls;
 using BoardGame.Kernel;
 namespace BoardGame.Editor;
@@ -6,9 +7,9 @@ public sealed class TtsImportPanel : UserControl
 {
     public TtsImportPanel(EditorPluginScope scope)
     {
-        const string key="TTS 导入";var documents=scope.Service<DocumentWorkspace>("documents");var commands=scope.Service<EditorCommands>("commands");
+        const string key="TTS 导入";var documents=scope.Service<DocumentWorkspace>("documents");var author=new AuthorImportWorkspace(documents);var commands=scope.Service<EditorCommands>("commands");
         var path=new TextBox {PlaceholderText="TTS JSON 存档路径"};var prefix=new TextBox {PlaceholderText="对象名称前缀"};
-        var report=new TextBox {IsReadOnly=true,AcceptsReturn=true,MinHeight=350};ImportPreview? preview=null;var loading=false;
+        var report=new TextBox {IsReadOnly=true,AcceptsReturn=true,MinHeight=350};BoardImportPreview? preview=null;var loading=false;
         ModuleDocument? previewDocument=null;string? previewFields=null;
         string Fields()=>Wire.Json(new[] {path.Text ?? "",prefix.Text ?? ""});
         void Refresh()
@@ -21,13 +22,13 @@ public sealed class TtsImportPanel : UserControl
         commands.Register(scope,new("tts.preview","预览 TTS 转换",()=>
         {
             preview=null;
-            try {preview=TtsImport.Preview(documents.Current!,path.Text ?? "",prefix.Text ?? "");previewDocument=documents.Current;previewFields=Fields();report.Text=string.Join("\n",preview.Report)+"\n\n新增文件：\n"+string.Join("\n",preview.Files.Keys);}
+            try {preview=BoardTtsImport.Preview(author.Source(),path.Text ?? "",prefix.Text ?? "");previewDocument=documents.Current;previewFields=Fields();report.Text=string.Join("\n",preview.Report)+"\n\n新增文件：\n"+string.Join("\n",preview.Files.Keys);}
             catch(Exception error) {report.Text=error.Message;}
             return Task.CompletedTask;
         },()=>documents.Current!=null));
         commands.Register(scope,new("tts.apply","应用 TTS 转换",()=>
         {
-            try {var selected=preview ?? throw new InvalidOperationException("请先预览");if(!ReferenceEquals(previewDocument,documents.Current) || previewFields!=Fields()) throw new InvalidOperationException("输入或文档已改变，请重新预览；草稿已保留。");documents.ApplyForm(key,selected.Apply);preview=null;report.Text+="\n转换已应用，可一次撤销。";}
+            try {var selected=preview ?? throw new InvalidOperationException("请先预览");if(!ReferenceEquals(previewDocument,documents.Current) || previewFields!=Fields()) throw new InvalidOperationException("输入或文档已改变，请重新预览；草稿已保留。");author.Apply(key,selected);preview=null;report.Text+="\n转换已应用，可一次撤销。";}
             catch(Exception error) {report.Text=error.Message;}
             return Task.CompletedTask;
         },()=>documents.Current!=null && preview!=null));

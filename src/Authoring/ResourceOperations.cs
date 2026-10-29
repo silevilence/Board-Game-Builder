@@ -8,6 +8,12 @@ namespace BoardGame.Authoring;
 
 public static class ResourceOperations
 {
+    public static JsonObject AddImages(JsonObject startup,IReadOnlyDictionary<string,string> images)
+    {
+        _=Ensure(startup,"resources");var config=Ensure(startup,"resources.images");
+        foreach(var image in images) config["sources"]!.AsArray().Add(new JsonObject {["path"]=image.Value,["name"]=image.Key});
+        return startup;
+    }
     private static AuthorOperationInfo ImportInfo(string kind) => new("resources.import." + kind, "author.resources",
         kind == "image" ? "Import PNG/JPEG/GIF/BMP without changing pixels; reject existing paths and resource names" : "Import TexturePacker JSON Hash and its meta.image together; frame names use the supplied prefix",
         new() { ["source"] = new("string", true, "External source file"), ["target"] = new("string", true, "New relative project file"),

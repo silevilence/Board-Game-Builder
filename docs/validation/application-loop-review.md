@@ -142,3 +142,11 @@ CLI 首次运行发现本地输出目录中 2026-10-10 的 Author.SamplePlugin.d
 实际 Editor 的 foundation、runtime-documents、flow 和 animation 探针全部通过。覆盖无效字段和面板重建、非桌游结构化格式、同格式文档替换时旧通知隔离、流程连线／属性／作者轨迹、真人／CPU 与全 CPU 终局、动画撤销／保存重开及两次预览释放。动画探针耗时较长但在原 180 秒限额内完成，未增加超时或修改断言；截图已检查。原始结果见 [structured-panel-probes.json](structured-panel-probes.json)。
 
 documents、animation-author、七项 flow-editor 回归及 review-followup 通过。旧 review-followup 固定插件总数未跟随后续能力增长，改为检查必需兼容身份；同时恢复独立状态解析器在结构错误中的 `$.state` 路径，保留原诊断断言。Editor 构建零警告零错误。导入／打印和后续任务尚未验收。
+
+## 共享导入与打印作者插件（2026-10-29）
+
+图片切分、TTS 转换和 PDF 拼版算法迁到 Authoring，程序集没有 Editor 或 Avalonia 引用。GUI 从含文件草稿的 ProjectView 创建预览，经 WorkspaceEditMode 提交定义、文件及启动资源声明；CLI 独立作者插件复用相同实现。旧 ModuleDocument 导入接口仅保留显式兼容适配。
+
+board-author-media 覆盖 GUI 未保存定义、整组 Undo／Redo、磁盘不变、预览版本冲突、旧文档代次拒绝、无格式支持拒绝，以及独立作者宿主的 TTS 导入和 PDF 输出；GUI 与磁盘拼版每张图像字节一致。image-import、tts-import、print、atlas、author-resources、author-profiles、author-operations、author-cli、author-docs 回归通过。
+
+实际 Editor M3 探针完成图片、TTS、打印各三轮重载／停用，字段改变后的旧预览拒绝、一次撤销、三个 PDF 输出及独立 WASM 运行均通过；拼版截图已查看。结果见 [author-media-probes.json](author-media-probes.json)。Editor 和 Engine.Tests 构建零警告零错误。

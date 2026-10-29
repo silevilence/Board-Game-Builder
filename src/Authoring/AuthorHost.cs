@@ -28,7 +28,9 @@ public sealed class AuthorHost : IAsyncDisposable
         BoardAuthorRuntime.Plugin,
         new("edit.disk", "1", 1, ["author.mode"], [], s => s.Provide("author.mode", s.Own(new DiskEditMode(
             new(s.Profile.Project, s.Profile.Name, "disk")))), "Read current disk content and commit guarded changes"),
-        FileOperations.Plugin, FormatOperations.Module, FormatOperations.State, FormatOperations.Configuration, ResourceOperations.Plugin, ValidationOperations.Plugin, RunOperations.Plugin, ExportOperations.Plugin, GuiEditMode.Plugin, WorkspaceCoordination.Plugin
+        FileOperations.Plugin, FormatOperations.Module, FormatOperations.State, FormatOperations.Configuration, ResourceOperations.Plugin,
+        BoardMediaOperations.Images,BoardMediaOperations.Tts,BoardMediaOperations.Print,
+        ValidationOperations.Plugin, RunOperations.Plugin, ExportOperations.Plugin, GuiEditMode.Plugin, WorkspaceCoordination.Plugin
     ];
     public static IReadOnlyList<AuthorPlugin> Validate(AuthorProfile profile, IReadOnlyList<AuthorPlugin> catalog)
     {
