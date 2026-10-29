@@ -22,3 +22,14 @@
 `Editor.SamplePlugin` 是编辑器扩展，不是游戏运行插件；`tts-subset` 是导入来源，不直接作为游戏启动。导入使用新建游戏模板，再通过作者格式接口写入实体／资源，生成的游戏同样可试玩和导出。资源生成脚本共同使用 `scripts/runtime_startup.py` 输出新入口，避免重建资源后退回旧格式。
 
 旧作者目录请执行 `Player migrate <旧目录> <新目录>`，再 `Player pack <新目录> <新文件.bgm>`。旧 `.bgm`、无身份快照与旧录制不自动转换；参见 [兼容策略](../docs/runtime-plugins.md)。
+
+## 全示例发行验收
+
+在仓库根目录执行以下命令。第一项遍历所有桌游入口与人数预设，检查目录／包的完整终局、状态和录制回放；第二项在 Windows 图形桌面依次打开全部游戏的目录和包，操作开局／牌桌或实时输入，并检查关闭后的图形资源释放。
+
+```powershell
+dotnet run --project tests/Engine.Tests -c Release -- samples-release
+dotnet run --project tests/Player.Hosting.Tests -c Release -- --samples .scratch/samples-gui/report.json
+```
+
+作者扩展、编辑器扩展、最小 Player 和 TTS 导入分别验证；V0.4.0 的覆盖范围与结果见 [发行验收记录](../docs/validation/v0.4.0-samples.md)。这些检查覆盖列出的完整路径，不代表穷举所有种子和用户操作。

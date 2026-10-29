@@ -4,13 +4,15 @@
 
 ## 开始游戏
 
-从仓库根目录运行本次完整发行版：
+从仓库根目录开发运行：
 
 ```powershell
-artifacts/cursed-investigators/board-v13/player/Player.exe gui samples/cursed-investigators
+dotnet run --project src/Player -c Release -- gui samples/cursed-investigators
 ```
 
 独立导出目录双击 `Play.exe`，无需源码、PDF、下载目录、编辑器或 .NET SDK。导出方法见 [CLI 使用说明](CLI-USAGE.md)。
+
+使用 V0.4.0 工具包时，将上述命令换成工具包目录中的 `player/Player.exe gui <本示例绝对路径>`；不再依赖开发过程中临时的 board-v13 产物。
 
 打开后依次进入 **标题 → 模式 → 人物 → 职业 → 开始游戏**。模式可选标准单人／两局战役，并可启用初学者；人物和职业显示牌面预览，可返回上一步修改，默认利兰＋灵异调查员。点击“开始游戏”才洗牌发牌。对局结束后可先翻阅日志，再点击“返回标题”开始新调查，上局状态不会带入。
 

@@ -52,6 +52,8 @@ public sealed class MinimalPlayerProbe : Avalonia.Application
                 if(window.Error!=null)throw new Exception(window.Error);
                 checks.Add("native-input-target-render-close-"+cycle);
             }
+            // Avalonia destroys native child windows on a later dispatcher turn after Closed.
+            await Until(()=>WindowsDxBackend.LiveDevices==0 && WindowsDxBackend.LiveBackends==0 && PlatformViewport.LiveNativeWindows==0,"Graphics resources retained after window disposal");
         }
         catch(Exception error){errors.Add(error.ToString());}
         finally

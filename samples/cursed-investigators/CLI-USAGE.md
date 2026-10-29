@@ -1,5 +1,7 @@
 # 发布 CLI 使用说明
 
+V0.4.0 使用当前工具包根目录中的 `bgb.exe`。例如解压至 `C:\Tools\Board-Game-Builder-V0.4.0` 后，将下方 `$bgb` 设为该目录的绝对路径；旧版本目录只用于记录历史创作证据。
+
 本例先编译当时最新源码的完整本地发行物，再使用其中 `bgb.exe` 创作和验证。CLI 没有新增命令；作者领域能力通过既有插件操作发现机制提供。
 
 ## 发行物
@@ -23,7 +25,7 @@
 命令在前，`--project` 等选项在后。以下从仓库根目录执行；导出目标必须不存在：
 
 ```powershell
-$bgb = './artifacts/cursed-investigators/board-v13/bgb.exe'
+$bgb = 'C:/Tools/Board-Game-Builder-V0.4.0/bgb.exe'
 & $bgb operations --project samples/cursed-investigators
 & $bgb describe files.write --project samples/cursed-investigators
 python samples/cursed-investigators/tools/build-project.py .scratch/cursed-edits.json

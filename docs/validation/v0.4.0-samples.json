@@ -1,0 +1,377 @@
+{
+  "editorPlugin": {
+    "success": true,
+    "errors": [],
+    "devices": 0
+  },
+  "version": "0.4.0",
+  "success": true,
+  "minimalPlayer": {
+    "success": true,
+    "errors": [],
+    "checks": [
+      "native-input-target-render-close-0",
+      "native-input-target-render-close-1"
+    ],
+    "devices": 0,
+    "nativeWindows": 0
+  },
+  "graphical": {
+    "success": true,
+    "completed": [
+      {
+        "sample": "cursed-investigators",
+        "source": "directory",
+        "frames": 20,
+        "kind": "board-action",
+        "devices": 0,
+        "backends": 0,
+        "nativeWindows": 0
+      },
+      {
+        "sample": "cursed-investigators",
+        "source": "package",
+        "frames": 23,
+        "kind": "board-action",
+        "devices": 0,
+        "backends": 0,
+        "nativeWindows": 0
+      },
+      {
+        "sample": "flow-cards",
+        "source": "directory",
+        "frames": 30,
+        "kind": "board-action",
+        "devices": 0,
+        "backends": 0,
+        "nativeWindows": 0
+      },
+      {
+        "sample": "flow-cards",
+        "source": "package",
+        "frames": 29,
+        "kind": "board-action",
+        "devices": 0,
+        "backends": 0,
+        "nativeWindows": 0
+      },
+      {
+        "sample": "flow-minimal",
+        "source": "directory",
+        "frames": 3,
+        "kind": "board-action",
+        "devices": 0,
+        "backends": 0,
+        "nativeWindows": 0
+      },
+      {
+        "sample": "flow-minimal",
+        "source": "package",
+        "frames": 3,
+        "kind": "board-action",
+        "devices": 0,
+        "backends": 0,
+        "nativeWindows": 0
+      },
+      {
+        "sample": "freecell",
+        "source": "directory",
+        "frames": 4,
+        "kind": "board-action",
+        "devices": 0,
+        "backends": 0,
+        "nativeWindows": 0
+      },
+      {
+        "sample": "freecell",
+        "source": "package",
+        "frames": 4,
+        "kind": "board-action",
+        "devices": 0,
+        "backends": 0,
+        "nativeWindows": 0
+      },
+      {
+        "sample": "hex-skirmish",
+        "source": "directory",
+        "frames": 3,
+        "kind": "board-action",
+        "devices": 0,
+        "backends": 0,
+        "nativeWindows": 0
+      },
+      {
+        "sample": "hex-skirmish",
+        "source": "package",
+        "frames": 4,
+        "kind": "board-action",
+        "devices": 0,
+        "backends": 0,
+        "nativeWindows": 0
+      },
+      {
+        "sample": "island-settlers",
+        "source": "directory",
+        "frames": 3,
+        "kind": "hotseat-handoff-and-action",
+        "devices": 0,
+        "backends": 0,
+        "nativeWindows": 0
+      },
+      {
+        "sample": "island-settlers",
+        "source": "package",
+        "frames": 3,
+        "kind": "hotseat-handoff-and-action",
+        "devices": 0,
+        "backends": 0,
+        "nativeWindows": 0
+      },
+      {
+        "sample": "motion-lab",
+        "source": "directory",
+        "frames": 80,
+        "kind": "continuous-input-target",
+        "devices": 0,
+        "backends": 0,
+        "nativeWindows": 0
+      },
+      {
+        "sample": "motion-lab",
+        "source": "package",
+        "frames": 81,
+        "kind": "continuous-input-target",
+        "devices": 0,
+        "backends": 0,
+        "nativeWindows": 0
+      },
+      {
+        "sample": "poker-uno",
+        "source": "directory",
+        "frames": 5,
+        "kind": "board-action",
+        "devices": 0,
+        "backends": 0,
+        "nativeWindows": 0
+      },
+      {
+        "sample": "poker-uno",
+        "source": "package",
+        "frames": 4,
+        "kind": "board-action",
+        "devices": 0,
+        "backends": 0,
+        "nativeWindows": 0
+      },
+      {
+        "sample": "quick-cards",
+        "source": "directory",
+        "frames": 4,
+        "kind": "board-action",
+        "devices": 0,
+        "backends": 0,
+        "nativeWindows": 0
+      },
+      {
+        "sample": "quick-cards",
+        "source": "package",
+        "frames": 4,
+        "kind": "board-action",
+        "devices": 0,
+        "backends": 0,
+        "nativeWindows": 0
+      },
+      {
+        "sample": "sealed-auction",
+        "source": "directory",
+        "frames": 4,
+        "kind": "board-action",
+        "devices": 0,
+        "backends": 0,
+        "nativeWindows": 0
+      },
+      {
+        "sample": "sealed-auction",
+        "source": "package",
+        "frames": 4,
+        "kind": "board-action",
+        "devices": 0,
+        "backends": 0,
+        "nativeWindows": 0
+      },
+      {
+        "sample": "state-minimal",
+        "source": "directory",
+        "frames": 3,
+        "kind": "board-action",
+        "devices": 0,
+        "backends": 0,
+        "nativeWindows": 0
+      },
+      {
+        "sample": "state-minimal",
+        "source": "package",
+        "frames": 3,
+        "kind": "board-action",
+        "devices": 0,
+        "backends": 0,
+        "nativeWindows": 0
+      },
+      {
+        "sample": "wasm-counter",
+        "source": "directory",
+        "frames": 5,
+        "kind": "board-action",
+        "devices": 0,
+        "backends": 0,
+        "nativeWindows": 0
+      },
+      {
+        "sample": "wasm-counter",
+        "source": "package",
+        "frames": 4,
+        "kind": "board-action",
+        "devices": 0,
+        "backends": 0,
+        "nativeWindows": 0
+      }
+    ]
+  },
+  "date": "2026-10-29",
+  "headless": {
+    "success": true,
+    "version": "0.4.0.0",
+    "results": [
+      {
+        "sample": "cursed-investigators",
+        "preset": null,
+        "source": "samples\\cursed-investigators",
+        "fingerprint": "A29D6FEDB2D9E6B38EC3C76E17EFB552FC58FE429E74FFAA54CD4376132EE33F",
+        "steps": 369,
+        "stateHash": "F191C0D56ADCEBE611AE8F44CE7F1AD90C7E91F84366D92703AA4691019E4D84",
+        "ended": true,
+        "replayEqual": true
+      },
+      {
+        "sample": "flow-cards",
+        "preset": null,
+        "source": "samples\\flow-cards",
+        "fingerprint": "A10EDDECEB9DD2E998AB1A59334D1B7AC4F5EED14406A28AD738881B07BDA749",
+        "steps": 6,
+        "stateHash": "A196D670C56FD72A651F29E27B4D62B989E4E70BE14DBCF795FCB1A365E0D41B",
+        "ended": true,
+        "replayEqual": true
+      },
+      {
+        "sample": "flow-minimal",
+        "preset": null,
+        "source": "samples\\flow-minimal",
+        "fingerprint": "1896F395DD7FBD78EB8F97D174FA4E03B887DEF6DFFC88709E6680F2C0D96081",
+        "steps": 0,
+        "stateHash": "3DDECCC2350744C51949DA3C542A83941FF7806ABD0A9474F8C6E8FAC13C6D37",
+        "ended": true,
+        "replayEqual": true
+      },
+      {
+        "sample": "freecell",
+        "preset": null,
+        "source": "samples\\freecell",
+        "fingerprint": "5AB875D5CCFE76AC52DFA764DFBB0DBD2935DBD55BFC50FB98E77D06ACCCBEE6",
+        "steps": 94,
+        "stateHash": "07BDFBCC0DF80797799B90DF7C459B6BD11C775C3E5B34324CCCF783743A7E73",
+        "ended": true,
+        "replayEqual": true
+      },
+      {
+        "sample": "hex-skirmish",
+        "preset": null,
+        "source": "samples\\hex-skirmish",
+        "fingerprint": "21E105F1CE4566430E3FDE4DB7C3DB47A426860CF3AEBE5C5EB8A013765AB8E4",
+        "steps": 31,
+        "stateHash": "39EFECD5CCE911F2F76AFFA69E8671FE2F5D3D95BD9D2C25CCE85706EEF3748B",
+        "ended": true,
+        "replayEqual": true
+      },
+      {
+        "sample": "island-settlers",
+        "preset": null,
+        "source": "samples\\island-settlers",
+        "fingerprint": "F37CBFB451E33847F77340D5C22AFAF277F50CD3329A599820C428AD528EA940",
+        "steps": 194,
+        "stateHash": "2BF791B8CA00DC74680A6398490BC849B08E4DD7AC1457CEF885AA6AC35D59AA",
+        "ended": true,
+        "replayEqual": true
+      },
+      {
+        "sample": "poker-uno",
+        "preset": "4 人",
+        "source": "samples\\poker-uno",
+        "fingerprint": "C5D53CB40ED88D81BF9B4C2B8BBD06F25C80B6B66748D098D116496941E16429",
+        "steps": 32,
+        "stateHash": "39EE445C6B6BC36528CC314213293178A98207C3A6AA8BEB6CCD77FAEDC6F814",
+        "ended": true,
+        "replayEqual": true
+      },
+      {
+        "sample": "poker-uno",
+        "preset": "5 人",
+        "source": "samples\\poker-uno",
+        "fingerprint": "EEF4B8391A6701FC2D8CB5B0ACCC7A6ACCAE27087BD774E2CF22B392B5A45827",
+        "steps": 46,
+        "stateHash": "27AA4A4E8DCEB4F570FA8B470491417404ECDD3D332EB01DC7E16942D6AAAE44",
+        "ended": true,
+        "replayEqual": true
+      },
+      {
+        "sample": "poker-uno",
+        "preset": "6 人",
+        "source": "samples\\poker-uno",
+        "fingerprint": "CBE4EF38459615588CADD0E4933A979208A3F78C486F97FA7DBA505A66D2AB1F",
+        "steps": 48,
+        "stateHash": "927010504D58524629A6C6F3075E0B98C899C245AF2A7F861F449F1F7C13EBD1",
+        "ended": true,
+        "replayEqual": true
+      },
+      {
+        "sample": "quick-cards",
+        "preset": null,
+        "source": "samples\\quick-cards",
+        "fingerprint": "208823BCDBCB94CF45D3FEBF4588BBC82B604746212CBC6B31A9BB706714C783",
+        "steps": 7,
+        "stateHash": "1821882BB47F2D18B6905DF64383BB3C6D4E485B457D69E9377B7594284BCB18",
+        "ended": true,
+        "replayEqual": true
+      },
+      {
+        "sample": "sealed-auction",
+        "preset": null,
+        "source": "samples\\sealed-auction",
+        "fingerprint": "391613C0AD741A645C216D226599B86FA5A296A86260041659B9B72A4185148B",
+        "steps": 7,
+        "stateHash": "F31036B84FC2397C30541C6E3D208985425EA71322944A6D12CE0BE45347D02B",
+        "ended": true,
+        "replayEqual": true
+      },
+      {
+        "sample": "state-minimal",
+        "preset": null,
+        "source": "samples\\state-minimal",
+        "fingerprint": "C8226775468913BFE3E7209C644614D2B8AAFAE73F4F1B586A2A70F88F7644E6",
+        "steps": 1,
+        "stateHash": "81F4576E90723F2B5CB310D728C7D784B81FCE1C2FDB210A631DA8EBBBF8A091",
+        "ended": true,
+        "replayEqual": true
+      },
+      {
+        "sample": "wasm-counter",
+        "preset": null,
+        "source": "samples\\wasm-counter",
+        "fingerprint": "D276205B63E7E55BD5418C8BCB27108004D9CD131A4ECBCA3BF8735D07ED55C4",
+        "steps": 3,
+        "stateHash": "C5526CDF47AB00E537407166EEBD66002C6897511613A5AD82D0CE4E0C385534",
+        "ended": true,
+        "replayEqual": true
+      }
+    ]
+  }
+}

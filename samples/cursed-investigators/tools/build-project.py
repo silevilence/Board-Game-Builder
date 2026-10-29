@@ -127,6 +127,7 @@ images += [dict(path='assets/table/tabletop.png',name='tabletop')]
 images += [dict(path=a['path'],name=a['id']) for a in json.loads((ROOT/'assets/table/manifest.json').read_text())['abilities']]
 startup=dict(format=1,id='cursed-investigators',version='1.0.0',plugins=[plugin('kernel'),plugin('definition.state',{'path':'position.json'}),plugin('flow',{'path':'flow.json','maxAutomaticSteps':64}),plugin('lua.cpu',{'file':'game.lua'}),plugin('session.local'),plugin('recording'),plugin('resources',{'sources':[{'path':'presentation.json','name':'player.presentation'},{'path':'assets/icons/kenney-board-game-icons/LICENSE.txt','name':'kenney.license'}]}),plugin('resources.images',{'sources':images}),plugin('resources.font',{'path':'assets/fonts/noto-sans-cjk-sc/NotoSansCJKsc-Regular.otf','license':'assets/fonts/noto-sans-cjk-sc/LICENSE.txt'}),plugin('resources.animations',{'path':'animations.json'})])
 startup['plugins'].append(plugin('resources.documents',{'path':'documents.json'}))
+startup['plugins'].append(plugin('board.render'))
 nodes=[dict(id='start',kind='start'),dict(id='win',kind='end',winners=['p1']),dict(id='loss',kind='end',winners=[])]
 edges=[dict(id='begin',**{'from':'start','to':'configure'})]
 routes={

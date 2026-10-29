@@ -10,13 +10,14 @@ using BoardGame.Rendering;
 using BoardGame.View;
 using Sample.Motion;
 
-Probe.Output=Path.GetFullPath(args.FirstOrDefault() ?? ".scratch/application-loop/player-host.json");
+Probe.AllSamples=args.FirstOrDefault()=="--samples";
+Probe.Output=Path.GetFullPath((Probe.AllSamples?args.ElementAtOrDefault(1):args.FirstOrDefault()) ?? ".scratch/application-loop/player-host.json");
 AppBuilder.Configure<Probe>().UsePlatformDetect().StartWithClassicDesktopLifetime([]);
 return Probe.Failed?1:0;
 
 public sealed class Probe : Avalonia.Application
 {
-    public static string Output="";public static bool Failed;
+    public static string Output="";public static bool Failed,AllSamples;
     public override void Initialize()=>Styles.Add(new FluentTheme());
     public override void OnFrameworkInitializationCompleted()
     {
@@ -41,6 +42,12 @@ public sealed class Probe : Avalonia.Application
             var motionCatalog=new ApplicationCatalog(MotionPlugins.Catalog());
             var motion=new ApplicationPlayerProvider(motionCatalog,graphics).Contribution();var board=BoardPlayerProvider.Contribution();
             var catalog=new PlayerCatalog([board,motion]);
+            if(AllSamples)
+            {
+                await SamplesVerification.Run(catalog,motionCatalog,Output);
+                checks.Add("all-sample-directories-and-packages-render-interact-and-close");
+                return;
+            }
             var forbidden=new[]{"Kernel", "BoardGame.Core", "Runtime", "Player.Board", "Sample.Motion"};
             Check(!typeof(PlayerCatalog).Assembly.GetReferencedAssemblies().Any(a=>forbidden.Contains(a.Name)),"Generic Player references an implementation");
             Directory.CreateDirectory(Path.GetDirectoryName(Output)!);
