@@ -205,3 +205,13 @@ FreeCell 20 次发牌／回放、既有 seed 1 的 94 步合法通关及快捷�
 第二轮只映射第一轮成品和证据目录，没有源码及作者安装。完整目录移动至带空格和中文的新路径，原位置不存在；quick-cards 图形操作完成两局，motion-lab 两次原生键盘输入到达目标并输出实际绘制截图，最终设备／原生窗口归零。两个 GUI 进程成功退出，全程每 50 ms 的可见控制台枚举未发现新控制台；预编译清单同时校验 GUI PE 子系统。结果及各项原始回执见 [application-clean-windows.json](application-clean-windows.json)。
 
 开始时系统只允许一个 Sandbox，经用户明确授权关闭既有实例后重新创建；新环境默认 Restricted 导致首次脚本未执行，另经明确授权仅两个验收 PowerShell 进程使用 RemoteSigned。没有修改宿主或持久策略。两轮结束由脚本正常关闭各自 Sandbox。没有把隐藏 PATH 的本机运行当作干净环境，也没有用 AOT 研究替代普通发行验证。
+
+## 整组审核与完成结论（2026-10-29）
+
+按 ROADMAP 逐项复核 28 个任务及必要前置：小核心不引用桌游或 UI；初始化依赖与回调顺序分离；单实例单驱动、多视口只读；准备／提交、取消／迟到结果与三类作用域清理有对应测试。桌游权威、随机、秘密信息、规则和记录约束继续由桌游组合承担。核查通用内容与桌游包的显式入口、模板和迁移清单，没有恢复静默旧格式解析或游戏专用宿主分支。
+
+作者端核查 CordiSharp 所属贡献、格式能力／文档代次、ProjectView 来源、草稿与 Undo、独立导出注册及活动租约；发行端核查正式 GUI 清单、文件哈希、依赖闭包、内容指纹、暂存发布与取消。原基线文件和初始设计历史文档无差异。更新的本地文档链接全部有效，作者文档随 CLI 内容复制／Authoring 嵌入资源发布，`author-docs`、`author-templates`、`application-migration` 复测通过。
+
+最后一轮 `packages export-dependencies runtime-host startup definition-plugins runtime-recording runtime-entry alternative-definition` 全部通过；CursedInvestigators.Tests 的九组真实规则用例通过，View.Tests 的中文字体、授权分页、刷新和释放通过。`dotnet build BoardGameBuilder.slnx -c Release --no-restore` 零警告、零错误；更新后的 `scripts/check-boundaries.ps1` 对全部 src 项目执行明确依赖白名单且拒绝未声明项目，检查通过。没有遗留本任务的 Lua／Player／测试进程，Sandbox 列表为空。
+
+结论：本组可标记完成，无剩余代码或验收阻塞。本地提交，未推送。首次性能冷启动超预算已保留，其后连续三轮通过既有门槛；不保证任意环境冷启动耗时。WindowsDX 普通发行的结论不外推至 GL、NativeAOT、跨系统发布、任意外部 .NET 插件或实时联机。未来这些扩展继续按独立 ROADMAP 条目实施。

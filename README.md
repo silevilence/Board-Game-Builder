@@ -25,6 +25,8 @@ Networking 在 Runtime 外提供身份绑定、投影同步与恢复；无图形
 
 M3.5 验收、整体审核及干净 Windows 检查见 [验证记录](docs/validation/m3.5-review.md)，全部示例入口见 [迁移清单](samples/README.md)。
 
+小核心与默认桌游组合的当前交付见 [联合验收](docs/validation/application-loop-review.md)：72 组语义对照、真实多视口／编辑器／玩家交互，以及两轮无 SDK／系统 .NET 的干净 Windows 导出运行。
+
 旧目录须显式转换到新目录：`dotnet run --project src/Player -- migrate <旧目录> <新目录>`。旧 `.bgm` 须从原始目录迁移后重新打包，正常加载不会自动回退旧格式。
 
 ```powershell
