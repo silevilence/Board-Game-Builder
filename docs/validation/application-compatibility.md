@@ -49,6 +49,12 @@
 
 ## 比较方法与阻塞追踪
 
+2026-10-29 显式展示声明迁移：全部 11 个桌游示例、新建模板和共用生成器追加 `board.render` 版本 1／API 1／空配置；实时示例保持独立组合。迁移清单 [application-entry-migration.json](application-entry-migration.json) 保存各旧入口原文和新入口哈希。加载器不会自动添加此插件。旧入口、包和录制仍可按原指纹无界面加载／回放；新图形试玩与 Player 导出要求作者明确声明展示实现，缺声明会提示执行 `python scripts/migrate-board-presentation.py --project <目录>`，不修改旧输入。仅编辑目录后重新打包，新包不能冒充旧录制的内容版本。
+
+无界面目录只持有 `BoardRenderContract` 元数据，图形作用域的激活入口明确要求绑定安装实现，服务器不会加载绘制程序集。图形 Player 使用真实 `BoardRenderPlugin`，作者布局预览可显式使用宿主自己的预览组合；预览不是游戏运行配置。基础 backend 仍由已验证的宿主安装组合固定为 WindowsDX，此次不开放 GL 或运行中切换。
+
+原始 application-baseline.json 未改动。`application-baseline` 用清单中的原始入口重建相同内容，再逐字段核对原基线；`application-regression` 分别验证新旧完整录制的哈希链／回放，然后比较提交、效果、状态、投影、流程和步数。声明变化会改变内容指纹及日志头派生哈希，不能据此跳过规则语义比较。
+
 失败原子性以失败前后权威状态、随机游标及提交记录比较；重载核对旧脚本继续可用和切换记录；生命周期核对重复启动／停止、启动失败逆序清理、取消后的迟到结果与 worker 退出。迁移后增加受控时间、不同 render 频率、多视口不增加 update 的验证。
 
 本地性能沿用 `latency`：同机 Release 构建 quick-cards seed 42，两次开局，真人动作到 CPU 应答小于 1000 ms；记录每步值及 Lua IPC 时间，避免与并行重负载测试同时测量。方法及历史结果见 m1-latency.md。图形设备、真实输入、干净环境与最终 20 种子验证尚未执行，不以编译通过替代。

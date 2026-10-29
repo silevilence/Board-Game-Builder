@@ -1,8 +1,56 @@
-{"format":1,"id":"flow-cards","version":"1","plugins":[
-  {"id":"kernel","version":"1","api":1,"configuration":{}},
-  {"id":"definition.module","version":"1","api":1,"configuration":{"path":"module.json"}},
-  {"id":"flow","version":"1","api":1,"configuration":{"path":"flow.json","maxAutomaticSteps":64}},
-  {"id":"lua.cpu","version":"1","api":1,"configuration":{"file":"cpu.lua"}},
-  {"id":"session.local","version":"1","api":1,"configuration":{}},
-  {"id":"recording","version":"1","api":1,"configuration":{}}
-]}
+{
+  "format": 1,
+  "id": "flow-cards",
+  "version": "1",
+  "plugins": [
+    {
+      "id": "kernel",
+      "version": "1",
+      "api": 1,
+      "configuration": {}
+    },
+    {
+      "id": "definition.module",
+      "version": "1",
+      "api": 1,
+      "configuration": {
+        "path": "module.json"
+      }
+    },
+    {
+      "id": "flow",
+      "version": "1",
+      "api": 1,
+      "configuration": {
+        "path": "flow.json",
+        "maxAutomaticSteps": 64
+      }
+    },
+    {
+      "id": "lua.cpu",
+      "version": "1",
+      "api": 1,
+      "configuration": {
+        "file": "cpu.lua"
+      }
+    },
+    {
+      "id": "session.local",
+      "version": "1",
+      "api": 1,
+      "configuration": {}
+    },
+    {
+      "id": "recording",
+      "version": "1",
+      "api": 1,
+      "configuration": {}
+    },
+    {
+      "id": "board.render",
+      "version": "1",
+      "api": 1,
+      "configuration": {}
+    }
+  ]
+}

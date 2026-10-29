@@ -13,6 +13,8 @@ public sealed class DebugPlayerWindow : Window
         var root=new DockPanel(); DockPanel.SetDock(status,Dock.Top); root.Children.Add(status); root.Children.Add(table); Content=root;
         Opened+=(_,_)=>_ = Task.Run(()=> {
             DebugTransport.Serve((reply,module)=>Dispatcher.UIThread.Post(()=> {
+                try {_=BoardRenderContract.Require(module.RuntimeIdentity!.Startup);}
+                catch(Exception error){status.Text=error.Message;return;}
                 table.Show(TableScene.From(reply.Frame.View,module.Resources));
                 status.Text=$"编辑器控制 · 席位 {reply.Frame.View.Seat} · {reply.Frame.View.Phase} · 命令 {reply.Frame.Revision}";
             })); Dispatcher.UIThread.Post(Close);

@@ -34,7 +34,7 @@ internal static class RuntimeComposition
         GameDefinition Definition()=>RuntimeDefinition.From(Module());
         RuntimeStartup Startup()=>startup ?? throw new InvalidOperationException("Startup configuration is required to activate this capability");
         var catalog=new List<RuntimePluginDefinition>
-        {AuthorityPlugin.Create(Module,seed,restored),FlowRuntimePlugin.Create(Module,cancellation,restored!=null),LuaRuntimePlugins.Rules(Definition,seed),LuaRuntimePlugins.Cpu(Definition),CommandRuleProvider.Plugin,WasmRuntimePlugin.Create(Definition)};
+        {AuthorityPlugin.Create(Module,seed,restored),FlowRuntimePlugin.Create(Module,cancellation,restored!=null),LuaRuntimePlugins.Rules(Definition,seed),LuaRuntimePlugins.Cpu(Definition),CommandRuleProvider.Plugin,WasmRuntimePlugin.Create(Definition),BoardRenderContract.Description};
         catalog.Add(DefinitionPlugins.Module(Startup));
         catalog.Add(StateDefinitionLoader.Plugin(Startup));
         catalog.Add(BoardRecordingPlugin.Create(Module,recording));

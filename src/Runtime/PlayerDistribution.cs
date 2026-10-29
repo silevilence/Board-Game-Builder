@@ -14,6 +14,7 @@ public static class PlayerDistribution
     private static PlayerPackageSource Source(string directory)
     {
         var module=GameRuntime.Load(directory);
+        _=BoardRenderContract.Require(module.RuntimeIdentity!.Startup);
         string[] required=["Runtime.dll","Modules.dll","Kernel.dll","Kernel.Abstractions.dll",
             ..RuntimeContent.NeedsLua(module)?new[]{"worker/Lua.exe","worker/coreclr.dll"}:[],
             ..module.RuntimePlugins is {Count:>0}?new[]{"Wasmtime.Dotnet.dll","wasmtime.dll"}:[]];

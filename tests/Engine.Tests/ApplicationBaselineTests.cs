@@ -21,7 +21,8 @@ public static class ApplicationBaselineTests
         foreach(var sample in new[]{"quick-cards","hex-skirmish","island-settlers","sealed-auction","poker-uno","flow-cards","wasm-counter"})
         foreach(uint seed in new uint[]{1,7,42})
         {
-            var module=GameRuntime.Load("samples/"+sample);
+            // Preserve the original content identity. Explicit entry migration is verified separately.
+            var module=ApplicationMigrationTests.Legacy(sample);
             var hasCpu=module.RuntimeIdentity!.Startup.Plugins.Any(p=>p.Id=="lua.cpu");
             using var session=new PlaySession(module,seed,module.Initial.Seats.ToDictionary(s=>s.Id,_=>hasCpu?"cpu":"human"));
             List<string> projections=[];

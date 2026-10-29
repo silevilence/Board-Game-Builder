@@ -10,7 +10,7 @@ def write_game(root, module):
     def select(plugin, configuration=None):
         startup['plugins'].append({'id': plugin, 'version': '1', 'api': 1, 'configuration': configuration or {}})
 
-    for plugin in ('kernel', 'session.local', 'recording'):
+    for plugin in ('kernel', 'session.local', 'recording', 'board.render'):
         select(plugin)
     select('definition.module', {'path': 'module.json'})
     select('lua.rules', {'file': definition.pop('rules')})

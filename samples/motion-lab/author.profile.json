@@ -8,7 +8,9 @@
         {"id":"author.files"},
         {"id":"author.motion"},
         {"id":"author.configuration"},
-        {"id":"author.validation"}
+        {"id":"author.validation"},
+        {"id":"author.export.package"},
+        {"id":"author.export.player"}
       ]
     }
   }

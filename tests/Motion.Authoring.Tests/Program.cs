@@ -10,7 +10,7 @@ var target=Path.GetFullPath(".scratch/application-loop/motion-author-"+Guid.NewG
 foreach(var file in ProjectPaths.Read("samples/motion-lab"))File.WriteAllBytes(Path.Combine(target,file.Key),file.Value);
 var catalog=AuthorHost.Builtins.Append(MotionAuthorPlugin.Definition).ToArray();
 var profile=AuthorProfiles.Resolve(target,null);
-profile=profile with {Profile=profile.Profile with {Plugins=[..profile.Profile.Plugins,new("author.export.package")]}};
+profile=profile with {Profile=profile.Profile with {Plugins=profile.Profile.Plugins.Where(p=>p.Id!="author.export.player").ToArray()}};
 JsonElement Args(object value)=>JsonSerializer.SerializeToElement(value,AuthorProfiles.Json);
 JsonElement Json(object value)=>Args(value);
 await using(var host=await AuthorHost.Start(profile,catalog))

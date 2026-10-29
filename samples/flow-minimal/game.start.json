@@ -1,7 +1,47 @@
-{"format":1,"id":"flow-minimal","version":"1","plugins":[
-  {"id":"kernel","version":"1","api":1,"configuration":{}},
-  {"id":"definition.state","version":"1","api":1,"configuration":{"path":"position.json"}},
-  {"id":"flow","version":"1","api":1,"configuration":{"path":"flow.json"}},
-  {"id":"session.local","version":"1","api":1,"configuration":{}},
-  {"id":"recording","version":"1","api":1,"configuration":{}}
-]}
+{
+  "format": 1,
+  "id": "flow-minimal",
+  "version": "1",
+  "plugins": [
+    {
+      "id": "kernel",
+      "version": "1",
+      "api": 1,
+      "configuration": {}
+    },
+    {
+      "id": "definition.state",
+      "version": "1",
+      "api": 1,
+      "configuration": {
+        "path": "position.json"
+      }
+    },
+    {
+      "id": "flow",
+      "version": "1",
+      "api": 1,
+      "configuration": {
+        "path": "flow.json"
+      }
+    },
+    {
+      "id": "session.local",
+      "version": "1",
+      "api": 1,
+      "configuration": {}
+    },
+    {
+      "id": "recording",
+      "version": "1",
+      "api": 1,
+      "configuration": {}
+    },
+    {
+      "id": "board.render",
+      "version": "1",
+      "api": 1,
+      "configuration": {}
+    }
+  ]
+}

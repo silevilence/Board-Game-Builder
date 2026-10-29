@@ -179,3 +179,9 @@ author-export-contract 用两种独立提供者验证共同发现、重名拒绝
 - Editor 零警告构建；真实 --verify-export 通过 14 项检查，记录 docs/validation/export-provider-probes.json。分别仅启用 Player／数据包、同时启用、三个启停周期、命令移除、CLI 描述一致、缺插件保留配置均通过。
 - 两种产物来自同一未保存草稿，源文件未变。活动导出拒绝停用，附加步骤受保护；切换文档取消且没有迟到状态串用，强制关闭等待取消并释放提供者。快照文件占用时产物有效、警告明确且状态恢复。
 - 已检查实际导出面板截图 .scratch/application-loop/export-providers-afb210704791457ea9e589f31abbea43/providers.png。
+
+### 示例与模板显式组合（2026-10-29）
+- git 跟踪的全部 12 个运行入口已盘点：11 个桌游显式声明 board.render，1 个实时入口不变；原入口与换行归一后的新文本 SHA-256 保存于 application-entry-migration.json。历史证据中的录制／快照保留原身份，不改写。
+- GameAuthorFormats 共用模板、runtime_startup.py、build-poker-uno.py 以及 TestModules／FlowTests 图形发行夹具已同步。纯无界面隔离测试保留其明确的无展示组合。迁移脚本仅在作者显式调用时修改指定目录，重复执行／检查不改内容。
+- application-migration 验证所有桌游目录、包、作者校验；author-templates 验证 module／state 创建与完成对局；真实 Editor runtime-documents 验证新模板与替代格式试玩；Motion.Authoring.Tests 通过。原 application-baseline.json 未改，21 场原身份完整基线匹配。
+- 图形 Player／普通导出要求匹配的显式展示声明；无界面主机只验证元数据，不加载绘制实现。旧记录仍配套原身份恢复，图形迁移说明见 application-compatibility.md。扩展 20 种子语义比较已加入独立 application-regression，作为下一项验收执行。

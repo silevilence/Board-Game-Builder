@@ -63,6 +63,7 @@ public sealed class BoardSessionController : IDisposable
             if(!Supports(documents.Current))throw new InvalidOperationException("此工程没有桌游运行能力，请使用应用试玩。");
             if(!uint.TryParse(Seed,out var seed)) throw new InvalidDataException("种子必须是无符号整数");
             documents.ApplyDrafts();Module=documents.Current?.Snapshot() ?? throw new InvalidOperationException("请打开模块");SyncSeats(Module);
+            _=BoardRenderContract.Require(Module.RuntimeIdentity!.Startup);
             SourceView = new(new(documents.Current!.DirectoryPath!, "editor.session", "gui", documents.WorkspaceId, documents.Generation), documents.Current.CopyFiles());
             var controllers=CpuSeats.ToDictionary(p=>p.Key,p=>p.Value?"cpu":"human");
             var observer=Module.Initial.Seats.FirstOrDefault(s=>controllers[s.Id]=="human")?.Id ?? Module.Initial.Seats[0].Id;

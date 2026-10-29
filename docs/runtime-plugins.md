@@ -47,6 +47,7 @@
 | wasm | effects；`extensions` 含 id/version/api/kind/file/sha256/permissions |
 | session.local | session；空配置，按实际组合依赖 CPU／扩展／flow |
 | recording | recording；空配置，依赖 authority |
+| board.render | 图形视口作用域，提供桌游 draw 回调；空配置，依赖宿主绑定的 board.visual-source 与 render.target |
 
 完整最小配置见 `samples/state-minimal/game.start.json`；Lua 示例见 `samples/quick-cards/game.start.json`；WASM 见 `samples/wasm-counter/game.start.json`。新增内置实现使用 `RuntimePluginDefinition` 声明 Provides/Requires，在 `RuntimeComposition.Catalog` 注册，通过 scope 获取声明服务和提供能力，资源通过 `scope.Own` 归属 effect。不得订阅事件来决定权威命令次序。目录加载器提供 `GameDefinition` 与内容依赖；获准目录保持静态，不承诺运行时任意第三方插件发现。
 

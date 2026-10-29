@@ -19,7 +19,7 @@ public static class BoardRenderPlugin
     public const string Source="board.visual-source";
     public static RuntimePluginDefinition Input(IBoardVisualSource source)=>new("board.visual-input","1",1,[Source],[],scope=>scope.Provide(Source,source))
         {Execution=new(HostMode.Graphical,RuntimeScope.Viewport)};
-    public static RuntimePluginDefinition Create()=>new("board.render","1",1,["board.render"],[Source,"render.target"],scope=>
+    public static RuntimePluginDefinition Create()=>BoardRenderContract.Description with {Activate=scope=>
     {
         var source=scope.Service<IBoardVisualSource>(Source);var target=scope.Service<IDrawingTarget>("render.target");
         scope.Provide("board.render",new object());
@@ -38,5 +38,5 @@ public static class BoardRenderPlugin
                     }
             });
         });
-    }) {Execution=new(HostMode.Graphical,RuntimeScope.Viewport,[new("draw",ApplicationPhase.Render)])};
+    }};
 }

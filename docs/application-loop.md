@@ -164,6 +164,8 @@ Application.Debug 定义通用作者调试契约；嵌入与独立 Player 共享
 
 ## 普通导出提供者
 
+默认桌游示例、CLI／GUI 新建模板显式选择 `board.render`；其余规则、CPU、资源插件按示例实际需要保留。渲染元数据放在 BoardGame.Core，真实绘制在 BoardGame.Presentation，实例无界面 update 会排除视口插件。图形入口绑定已安装实现，缺声明或版本不匹配明确拒绝。旧内容只在作者显式运行 `scripts/migrate-board-presentation.py --project <目录>` 后改变身份；旧录制继续配套旧入口／快照使用，详见兼容矩阵。
+
 AuthorExports 是 CordiSharp 所属注册表；无 UI 的 PackageExporter／PlayerExporter 分别提供 project.pack／player.export，Editor 相同 ID 的独立插件登记相同描述和命令。author.export 在 Editor 只持有通用面板与协调服务，面板按提供者元数据生成参数，不按产物类型分支。旧 CLI author.export 是显式组合引用；两个新插件无需相互依赖。
 
 导出选项保存在工作区 ViewState，属于作者视图设置，不进入游戏文件或运行指纹；启停面板／提供者不会清掉配置或文件草稿。缺失所选提供者显示不可用，不自动选择另一种产物。导出捕获 ProjectView 与运行提供者，切换文档取消并忽略迟到通知；取消不发布最终路径。活动提供者不能手动停用，强制关闭则取消并等待完成后释放注册及资源。

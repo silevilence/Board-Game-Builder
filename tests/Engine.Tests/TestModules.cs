@@ -37,7 +37,7 @@ public static class TestModules
     public static LoadedModule LuaGame(GameState state,string rules,string cpu)
     {
         var selections=new List<RuntimePluginSelection>();
-        foreach(var id in new[]{"kernel","session.local","recording"}) selections.Add(Select(id,new {}));
+        foreach(var id in new[]{"kernel","session.local","recording","board.render"}) selections.Add(Select(id,new {}));
         selections.Add(Select("definition.state",new {path="position.json"}));
         selections.Add(Select("lua.rules",new {file="rules.lua"}));
         selections.Add(Select("lua.cpu",new {file="cpu.lua"}));

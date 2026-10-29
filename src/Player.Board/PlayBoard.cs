@@ -9,7 +9,7 @@ namespace BoardGame.Player;
 
 public sealed class PlayBoard : UserControl,IDisposable
 {
-    private readonly InteractiveTable table=new();
+    private readonly InteractiveTable table;
     private readonly StackPanel actions=new() { Spacing=8, Margin=new Thickness(12) };
     private readonly TextBlock status=new() { TextWrapping=TextWrapping.Wrap, Margin=new Thickness(12), FontSize=16 };
     private readonly CheckBox sound=new() { Content="操作音效",IsChecked=false };
@@ -45,6 +45,7 @@ public sealed class PlayBoard : UserControl,IDisposable
     public event Action<string>? HostShortcut;
     public PlayBoard(PlayerSession session,LoadedModule module,bool showActions=true)
     {
+        table=new(BoardRenderContract.Require(module.RuntimeIdentity!.Startup));
         this.session=session; this.module=module;
         controlFont=new(this,module.Resources);
         documents=new(module.Resources ?? ResourcePool.Empty);

@@ -50,7 +50,7 @@ for count in (4, 5, 6):
           'runtimeFiles': ['assets/License.txt', 'README.md'], 'entities': entities})
 
 plugins = [{'id': key, 'version': '1', 'api': 1, 'configuration': config} for key, config in (
-    ('kernel', {}), ('session.local', {}), ('recording', {}),
+    ('kernel', {}), ('session.local', {}), ('recording', {}), ('board.render', {}),
     ('definition.module', {'path': 'module-4.json', 'presets': {f'{n} 人': f'module-{n}.json' for n in (4, 5, 6)}}),
     ('resources', {'sources': [{'path': 'player.json', 'name': 'player.presentation'}]}),
     ('resources.texturepacker', {'sources': [{'path': 'assets', 'pattern': '*.json'}]}),

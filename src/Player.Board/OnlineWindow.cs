@@ -15,7 +15,7 @@ internal sealed class OnlineWindow : Window
 {
     private readonly LoadedModule module;
     private readonly OnlinePlayerSession session;
-    private readonly InteractiveTable table=new();
+    private readonly InteractiveTable table;
     private readonly StackPanel actions=new() {Spacing=8,Margin=new Thickness(12)};
     private readonly TextBlock status=new() {TextWrapping=TextWrapping.Wrap,Margin=new Thickness(12),FontSize=16};
     private readonly DispatcherTimer timer=new() {Interval=TimeSpan.FromMilliseconds(350)};
@@ -35,6 +35,7 @@ internal sealed class OnlineWindow : Window
     });
     public OnlineWindow(LoadedModule module,OnlinePlayerSession session)
     {
+        table=new(BoardRenderContract.Require(module.RuntimeIdentity!.Startup));
         this.module=module;this.session=session;
         Title=PlayerPresentation.Read(module).Title+" · 联机 · "+session.Frame!.View.Seat;Width=1300;Height=850;MinWidth=800;MinHeight=600;
         var controls=new WrapPanel {Margin=new Thickness(8)};
@@ -108,7 +109,7 @@ internal sealed class OnlineReplayWindow : Window
         if(record.Identity!=OnlineIdentity.For(module))throw new OnlineException("version-mismatch");
         _=record.Replay();
         Title="身份记录 · "+record.Seat;Width=1150;Height=800;
-        var table=new InteractiveTable {InputEnabled=false};
+        var table=new InteractiveTable(BoardRenderContract.Require(module.RuntimeIdentity!.Startup)) {InputEnabled=false};
         var slider=new Slider {Minimum=0,Maximum=record.Frames.Count-1,TickFrequency=1,IsSnapToTickEnabled=true};
         var label=new TextBlock {Margin=new Thickness(10)};
         void Show()

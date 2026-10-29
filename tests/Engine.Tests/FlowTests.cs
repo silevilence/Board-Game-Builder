@@ -20,7 +20,7 @@ public static class FlowTests
                 ["private"]=new(){Id="private",Visibility="hidden",Properties=new(StringComparer.Ordinal){{"value",42}}} }};
         var plugins=new List<RuntimePluginSelection>();
         void Add(string id,object config)=>plugins.Add(new(id,"1",1,JsonSerializer.SerializeToElement(config)));
-        foreach(var id in new[]{"kernel","session.local","recording"}) Add(id,new {});
+        foreach(var id in new[]{"kernel","session.local","recording","board.render"}) Add(id,new {});
         Add("definition.state",new {path="position.json"});Add("flow",new {path="flow.json",maxAutomaticSteps=budget});
         if(scripts?.ContainsKey("cpu.lua")==true) Add("lua.cpu",new{file="cpu.lua"});
         File.WriteAllText(Path.Combine(directory,GameRuntime.Entry),Wire.Json(new RuntimeStartup(1,"flow-fixture","1",plugins)));

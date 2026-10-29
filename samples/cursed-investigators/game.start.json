@@ -396,6 +396,12 @@
       "configuration": {
         "path": "documents.json"
       }
+    },
+    {
+      "id": "board.render",
+      "version": "1",
+      "api": 1,
+      "configuration": {}
     }
   ]
 }

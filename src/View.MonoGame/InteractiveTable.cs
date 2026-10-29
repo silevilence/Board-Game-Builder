@@ -25,10 +25,10 @@ public sealed class InteractiveTable : UserControl, IDisposable
     public event Action? SelectionChanged;
     public event Action<string>? Shortcut;
     public event Action<string>? RenderingError;
-    public InteractiveTable()
+    public InteractiveTable(BoardGame.Kernel.RuntimePluginSelection? renderer=null)
     {
         RuntimePluginDefinition[] plugins=[BoardRenderPlugin.Input(new VisualSource(_=>ReadVisual())),BoardRenderPlugin.Create()];
-        viewport=new(new ViewportComposition(plugins.Select(p=>new BoardGame.Kernel.RuntimePluginSelection(p.Id,p.Version,p.Api,JsonSerializer.SerializeToElement(new{}))).ToArray(),plugins));
+        viewport=new(new ViewportComposition(plugins.Select(p=>p.Id==BoardRenderContract.Id?renderer ?? BoardRenderContract.Selection:new BoardGame.Kernel.RuntimePluginSelection(p.Id,p.Version,p.Api,JsonSerializer.SerializeToElement(new{}))).ToArray(),plugins));
         var zoomIn=new Button {Content="放大 +"}; var zoomOut=new Button {Content="缩小 −"};
         zoomIn.Click+=(_,_)=>viewport.ChangeZoom(1.1f); zoomOut.Click+=(_,_)=>viewport.ChangeZoom(1/1.1f);
         controls.Children.Add(zoomIn); controls.Children.Add(zoomOut);

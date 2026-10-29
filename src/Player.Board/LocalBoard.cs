@@ -74,7 +74,7 @@ public sealed class LocalBoard : UserControl,IDisposable
                 button.Click+=async (_,_)=>await Run(async ()=> {await session.SubmitAsync(frame.Revision,seat.View.Seat,new("action",Action:offer.Id));});
                 controls.Children.Add(button);
             }
-            var table=new InteractiveTable {InputEnabled=!seat.Cpu && !seat.View.Ended && seat.Fault==null && seat.Actions.Count>0};tables.Add(table);
+            var table=new InteractiveTable(BoardRenderContract.Require(module.RuntimeIdentity!.Startup)) {InputEnabled=!seat.Cpu && !seat.View.Ended && seat.Fault==null && seat.Actions.Count>0};tables.Add(table);
             table.Show(TableScene.From(seat.View,module.Resources));panel.Children.Add(table);
             table.Gesture+=g=>_=Run(async ()=> {await session.SubmitAsync(frame.Revision,seat.View.Seat,new(g.Kind,g.Entity,g.Target,g.X,g.Y));});
             table.RenderingError+=error=> {RenderingFailure=error;Clear();header.Children.Add(new TextBlock {Text=error});session.Dispose();};
