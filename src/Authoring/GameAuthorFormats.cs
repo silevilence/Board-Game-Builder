@@ -9,6 +9,8 @@ namespace BoardGame.Authoring;
 public interface IGameAuthorFormat
 {
     string DefinitionPath {get;}
+    // Structured data alone does not imply the module author model (entities/prototypes/layouts).
+    IReadOnlySet<string> Capabilities => new HashSet<string>();
     JsonObject Read(IAuthorFiles document);
     string Serialize(IAuthorFiles document,JsonObject configuration);
 }
@@ -18,6 +20,8 @@ public sealed record GameAuthorFormatProvider(string LoaderId,string Version,int
 // Per-workspace author support. Runtime loader availability does not imply a matching editor.
 public sealed class GameAuthorFormats
 {
+    public const string BoardModel = "board.author-model";
+    public long Revision { get; private set; }
     private readonly Dictionary<(string Id,string Version,int Api),GameAuthorFormatProvider> providers=new();
     public event Action? Changed;
     public GameAuthorFormats(bool includeDefault=true)
@@ -29,11 +33,12 @@ public sealed class GameAuthorFormats
     {
         var key=(provider.LoaderId,provider.Version,provider.Api);
         if(!providers.TryAdd(key,provider)) throw new InvalidOperationException("Duplicate author format provider: "+provider.LoaderId);
-        Changed?.Invoke();
-        return new Registration(()=> {if(providers.Remove(key)) Changed?.Invoke();});
+        Revision++;Changed?.Invoke();
+        return new Registration(()=> {if(providers.Remove(key)) {Revision++;Changed?.Invoke();}});
     }
     private sealed record ModuleJson(string DefinitionPath) : IGameAuthorFormat
     {
+        public IReadOnlySet<string> Capabilities => new HashSet<string> { BoardModel };
         public JsonObject Read(IAuthorFiles document)=>JsonNode.Parse(document.Text(DefinitionPath))!.AsObject();
         public string Serialize(IAuthorFiles document,JsonObject configuration)=>configuration.ToJsonString(new(){WriteIndented=true});
     }

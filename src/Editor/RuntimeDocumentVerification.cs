@@ -1,5 +1,7 @@
 using Avalonia.Controls;
 using BoardGame.Kernel;
+using BoardGame.Authoring;
+using System.Text.Json.Nodes;
 
 namespace BoardGame.Editor;
 
@@ -32,6 +34,31 @@ internal static class RuntimeDocumentVerification
                 await app.Reload("author.configuration").WaitAsync(TimeSpan.FromSeconds(20));Trace("wait configuration");await WaitFor<ConfigurationPanel>();
                 if(!documents.Draft(definition).Dirty) throw new Exception("Draft lost during format panel rebuild");
                 documents.DiscardDraft(definition);
+                // A real structured non-board format must not acquire board editors.
+                using(var format=documents.AuthorFormats.Register(new("motion.definition","1",1,p=>new MotionFormat(p.Configuration.GetProperty("path").GetString()!))))
+                {
+                    documents.Set(ModuleDocument.Open("samples/motion-lab"));
+                    await ((FormatPanel)Panel("author.configuration")).Ready;
+                    foreach(var id in new[]{"author.media","author.turns"})
+                    {
+                        var wrapper=(FormatPanel)Panel(id);await wrapper.Ready;
+                        if(wrapper.Content is not TextBlock) throw new Exception("Non-board format mounted "+id);
+                    }
+                    if(!documents.Current.SupportsStructuredEditing || documents.Current.SupportsAuthorCapability(GameAuthorFormats.BoardModel)) throw new Exception("Author model capabilities confused");
+                    if(((FormatPanel)Panel("author.configuration")).Content is not ConfigurationPanel) throw new Exception("Generic configuration unavailable");
+                }
+                documents.Set(ModuleDocument.Create());await WaitFor<ConfigurationPanel>();
+                EditorPluginScope? captured=null;var notifications=0;
+                app.Install(new("probe.document-child",1,[],["documents","panels"],scope=>
+                    scope.Service<PanelContributions>("panels").Register(scope,"probe.document-child","文档代次探针",()=>new FormatPanel(scope,child=>
+                    {captured=child;child.OnDocumentChanged(()=>notifications++);return new TextBlock();}))));
+                await app.Enable("probe.document-child");await ((FormatPanel)Panel("probe.document-child")).Ready;
+                var oldScope=captured!;var oldNotifications=notifications;
+                documents.Set(ModuleDocument.Create());
+                if(oldScope.Document!=null || notifications!=oldNotifications) throw new Exception("Old child observed new document before disposal");
+                await ((FormatPanel)Panel("probe.document-child")).Ready;
+                if(ReferenceEquals(oldScope,captured)) throw new Exception("Same-format document reused its old child");
+                await app.Disable("probe.document-child");
                 for(var i=0;i<3;i++)
                 {
                     Trace("cycle "+i+" switch alternate");
@@ -70,5 +97,10 @@ internal static class RuntimeDocumentVerification
             }
         };
         return host.Window;
+    }
+    private sealed record MotionFormat(string DefinitionPath):IGameAuthorFormat
+    {
+        public JsonObject Read(IAuthorFiles files)=>JsonNode.Parse(files.Text(DefinitionPath))!.AsObject();
+        public string Serialize(IAuthorFiles files,JsonObject configuration)=>configuration.ToJsonString();
     }
 }

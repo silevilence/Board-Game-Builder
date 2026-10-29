@@ -205,6 +205,7 @@ public sealed class EditorPluginScope
     private readonly CancellationTokenSource cancellation;
     private bool requiresStructuredFormat;
     private Func<bool>? formatAvailable;
+    private long? documentGeneration;
     internal EditorPluginScope(EditorApplication application,Context context,EditorPluginDefinition definition,CancellationToken parent=default)
     {
         this.application=application;Context=context;this.definition=definition;
@@ -254,14 +255,21 @@ public sealed class EditorPluginScope
     public EditorPluginScope ForContext(Context context,bool requiresStructuredFormat=false)=>ForContext(context,requiresStructuredFormat,null);
     public EditorPluginScope ForContext(Context context,bool requiresStructuredFormat,Func<bool>? formatAvailable)
     {Cancellation.ThrowIfCancellationRequested();return new(application,context,definition,Cancellation) {requiresStructuredFormat=requiresStructuredFormat,formatAvailable=formatAvailable};}
+    public EditorPluginScope ForDocumentContext(Context context,bool requiresStructuredFormat,Func<bool>? formatAvailable)
+    {
+        var child=ForContext(context,requiresStructuredFormat,formatAvailable);
+        child.documentGeneration=Service<DocumentWorkspace>("documents").Generation;
+        return child;
+    }
+    private bool CurrentGeneration=>documentGeneration==null || Service<DocumentWorkspace>("documents").Generation==documentGeneration;
     public ModuleDocument? Document
     {
-        get {var document=Service<DocumentWorkspace>("documents").Current;return requiresStructuredFormat && document?.SupportsStructuredEditing!=true || formatAvailable?.Invoke()==false?null:document;}
+        get {var document=Service<DocumentWorkspace>("documents").Current;return !CurrentGeneration || requiresStructuredFormat && document?.SupportsStructuredEditing!=true || formatAvailable?.Invoke()==false?null:document;}
     }
     public void OnDocumentChanged(Action action)
     {
         var documents=Service<DocumentWorkspace>("documents");
-        void Refresh() {if(!Cancellation.IsCancellationRequested && formatAvailable?.Invoke()!=false && (!requiresStructuredFormat || documents.Current?.SupportsStructuredEditing==true)) action();}
+        void Refresh() {if(!Cancellation.IsCancellationRequested && CurrentGeneration && formatAvailable?.Invoke()!=false && (!requiresStructuredFormat || documents.Current?.SupportsStructuredEditing==true)) action();}
         documents.Changed+=Refresh;
         Own(new Cleanup(()=>documents.Changed-=Refresh));
     }

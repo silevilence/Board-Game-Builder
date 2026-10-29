@@ -14,7 +14,7 @@ public sealed class ResourcePanel : UserControl
             tree.Items.Clear();if(documents.Current is not {} doc) return;
             var files=new TreeViewItem {Header="模块文件",IsExpanded=true};
             foreach(var path in doc.Paths) files.Items.Add(new TreeViewItem {Header=path});tree.Items.Add(files);
-            if(!doc.SupportsStructuredEditing) return;
+            if(!doc.SupportsAuthorCapability(BoardGame.Authoring.GameAuthorFormats.BoardModel)) return;
             foreach(var group in new[]{"resources","entities","prototypes"})
             {
                 var branch=new TreeViewItem {Header=group,IsExpanded=true};

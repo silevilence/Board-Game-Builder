@@ -71,11 +71,11 @@ public static class BuiltinPlugins
             }
         });
         app.Install(new("author.layout",1,[],["documents","board.viewports","panels"],scope=>
-            scope.Service<PanelContributions>("panels").Register(scope,"author.layout","布局视口",()=>new FormatPanel(scope,s=>new LayoutPanel(s)))));
+            scope.Service<PanelContributions>("panels").Register(scope,"author.layout","布局视口",()=>FormatPanel.Board(scope,s=>new LayoutPanel(s)))));
         app.Install(new("play.controls",1,[],["documents","board.sessions","board.viewports","panels"],scope=>
             scope.Service<PanelContributions>("panels").Register(scope,"play.controls","桌游试玩与调试",()=>new FormatPanel(scope,s=>new PlayPanel(s),()=>BoardSessionController.Supports(scope.Document)))));
         app.Install(new("author.scripts",1,[],["documents","board.sessions","panels"],scope=>
-            scope.Service<PanelContributions>("panels").Register(scope,"author.scripts","Lua 脚本",()=>new ScriptPanel(scope))));
+            scope.Service<PanelContributions>("panels").Register(scope,"author.scripts","Lua 脚本",()=>new FormatPanel(scope,s=>new ScriptPanel(s),()=>BoardSessionController.Supports(scope.Document)))));
         app.Install(FlowEditorPlugin.Definition);
         app.Install(AnimationEditorPlugin.Definition);
         app.Install(new("author.configuration",1,[],["documents","panels"],scope=>
@@ -108,7 +108,7 @@ public static class BuiltinPlugins
             scope.Service<PanelContributions>("panels").Register(scope,"author.export","独立导出",()=>new ExportPanel(scope));
         }));
         void Panel(string id,string title,Func<EditorPluginScope,Control> factory)=>app.Install(new(id,1,[],["documents","panels"],scope=>
-            scope.Service<PanelContributions>("panels").Register(scope,id,title,()=>id=="author.resources"?factory(scope):new FormatPanel(scope,factory))));
+            scope.Service<PanelContributions>("panels").Register(scope,id,title,()=>id=="author.resources"?factory(scope):id=="author.yaml"?new FormatPanel(scope,factory):FormatPanel.Board(scope,factory))));
         app.Install(new("base.plugins",1,[],["panels","workspace","assemblies"],scope=>
         {
             var list=new StackPanel {Spacing=8};

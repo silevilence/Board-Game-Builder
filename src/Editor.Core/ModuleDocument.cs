@@ -37,6 +37,7 @@ public sealed class ModuleDocument : IAuthorFiles
     public JsonObject Startup=>JsonNode.Parse(Text(GameRuntime.Entry))!.AsObject();
     public IGameAuthorFormat? AuthorFormat=>AuthorFormats.Resolve(this);
     public bool SupportsStructuredEditing=>AuthorFormat!=null;
+    public bool SupportsAuthorCapability(string capability)=>AuthorFormat?.Capabilities.Contains(capability)==true;
     public string DefinitionPath=>(AuthorFormat ?? throw new InvalidOperationException("此定义格式没有专用作者界面；请使用文件编辑与试玩。")).DefinitionPath;
     public JsonObject Configuration=>(AuthorFormat ?? throw new InvalidOperationException("此定义格式没有专用作者界面；请使用文件编辑与试玩。")).Read(this);
     public string? ScriptPath(string plugin)=>Startup["plugins"]!.AsArray().FirstOrDefault(p=>p!["id"]!.GetValue<string>()==plugin)?["configuration"]?["file"]?.GetValue<string>();

@@ -22,8 +22,13 @@ public static class BoardStateDocument
                     if(resource.Value is not JsonValue value || !value.TryGetValue<string>(out _))throw new InvalidDataException("$.resources."+resource.Key+": expected path");
                 if(resources.Count>0)throw new InvalidDataException("$.resources: migrate definition resources to game.start.json resource plugins");
             }
-            var state=root["state"]!.Deserialize<GameState>(Wire.Options) ?? throw new InvalidDataException("required object");
-            StateValidation.Validate(state);return state;
+            try
+            {
+                var state=root["state"]!.Deserialize<GameState>(Wire.Options) ?? throw new InvalidDataException("required object");
+                StateValidation.Validate(state);return state;
+            }
+            catch(Exception error) when(error is not OutOfMemoryException)
+            {throw new InvalidDataException("$.state: "+error.Message,error);}
         }
         catch(Exception error) when(error is not OutOfMemoryException)
         {throw new InvalidDataException(location+": "+error.Message,error);}

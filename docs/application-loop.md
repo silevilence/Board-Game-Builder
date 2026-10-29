@@ -157,3 +157,5 @@ Application.Debug 定义通用作者调试契约；嵌入与独立 Player 共享
 默认 CLI 安装目录包含必需的 author.runtime.board 兼容适配登记，保持既有 format 1 作者 profile 可用；这是获准解析能力，不会给非桌游补装运行插件或创建桌游会话。独立安装目录可以不包含该适配。Motion 作者实现位于 Sample.Motion.Authoring，由 CLI 组合根显式装配，工程 author.profile.json 选择 author.motion；格式读写、校验和固定时间运行均使用相同 ProjectView／IProjectEditMode。此阶段没有将非桌游接入旧桌游导出器，普通导出仍由后续任务验收。
 
 真实 Editor 基础文档使用空目录；author.module 和 author.runtime.board 分别登记原 module 作者格式及桌游内容校验，runtime.motion 登记实时运行和内容校验。未登记专用作者格式时保留通用文件编辑、验证与试玩，不能自动获得桌游面板。保存通过文档绑定的运行提供者校验内容，仍使用原版本冲突与编辑模式提交。参数为空的旧 DocumentWorkspace／ModuleDocument 创建接口继续作为显式兼容 API 保留默认桌游目录，生产 Editor 不使用该默认。
+
+桌游实体／原型、媒介、席位和布局面板要求格式显式声明 `IGameAuthorFormat.Capabilities` 中的 `board.author-model`。通用结构化格式不自动取得桌游模型面板；原 module 提供者声明此能力，state 与非桌游格式按自身模型提供支持。格式子上下文绑定文档代次，切换同格式文档也重建；草稿、选择和 Undo 仍由 documents 持有。

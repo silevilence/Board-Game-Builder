@@ -134,3 +134,11 @@ Motion.Authoring.Tests 通过独立提供者的格式读写、文档发现、运
 真实 Editor—CLI 连接探针在原桌游工作流之外，追加实时工程：无专用 Editor 格式仍保留文件编辑，CLI 配置写入仅修改草稿；校验、12 次固定更新及嵌入试玩读取同一草稿版本，Undo／Redo 和显式保存通过。原连接的导入撤销、未保存打包、外部冲突协调及三次连接重启继续通过，最终插件 effects 为零。foundation、runtime-documents 实际探针通过；author-contract、author-profiles、author-operations、author-validation、author-docs、author-workspace、author-cli、author-templates、author-connections、author-connection-lifetime 和 documents 回归通过。全解构建零警告零错误。
 
 CLI 首次运行发现本地输出目录中 2026-10-10 的 Author.SamplePlugin.dll 仍依赖旧 Authoring 1.0.0.0；保留副本到 .scratch/application-loop/Author.SamplePlugin.before-author-refactor.dll 后，以当前样例工程重建产物替换该开发输出，两文件 SHA-256 一致。没有放宽插件版本检查或增加加载回退。证据见 [author-capability-probes.json](author-capability-probes.json)。按用户后续要求，本条提交后停止；后续结构化面板、导入打印、联网、模板迁移、普通导出及整体验收尚未完成，不勾选。
+
+## 结构化面板与流程作者工具（2026-10-29）
+
+桌游模型面板现在要求作者格式显式声明 `board.author-model`；通用配置、YAML 和文件编辑仍接受其他作者格式。FormatPanel 按文档代次、格式目录版本及定义路径重建子上下文，旧子上下文在异步清理前就停止读取新文档。规则／CPU 编辑也进入格式子上下文；流程、动画继续使用已有共享领域操作及版本化工作区。
+
+实际 Editor 的 foundation、runtime-documents、flow 和 animation 探针全部通过。覆盖无效字段和面板重建、非桌游结构化格式、同格式文档替换时旧通知隔离、流程连线／属性／作者轨迹、真人／CPU 与全 CPU 终局、动画撤销／保存重开及两次预览释放。动画探针耗时较长但在原 180 秒限额内完成，未增加超时或修改断言；截图已检查。原始结果见 [structured-panel-probes.json](structured-panel-probes.json)。
+
+documents、animation-author、七项 flow-editor 回归及 review-followup 通过。旧 review-followup 固定插件总数未跟随后续能力增长，改为检查必需兼容身份；同时恢复独立状态解析器在结构错误中的 `$.state` 路径，保留原诊断断言。Editor 构建零警告零错误。导入／打印和后续任务尚未验收。
