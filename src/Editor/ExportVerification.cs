@@ -25,6 +25,7 @@ internal static class ExportVerification
                 string expected;
                 using(var preview=new BoardGame.Authoring.ProjectSnapshot(view)) expected=BoardGame.Runtime.GameRuntime.Load(preview.Directory).Fingerprint;
                 var workflow=app.Service<ExportWorkflow>("exports");workflow.Selected="player-directory";workflow.SetParameter(workflow.Selected,"player",release);workflow.Destination=Path.Combine(Path.GetFullPath(output),"export");
+                view=documents.AuthorView(new(sourceDocument.DirectoryPath!,"editor.export","gui",documents.WorkspaceId,documents.Generation));
                 var commands=app.Service<EditorCommands>("commands");
                 foreach(var info in workflow.Providers.Items)
                     if(!AuthorHost.Builtins.Single(p=>p.Id==info.Plugin).Operations.Any(o=>Wire.Json(o)==Wire.Json(info.Operation)))throw new Exception("CLI/GUI export descriptions differ");

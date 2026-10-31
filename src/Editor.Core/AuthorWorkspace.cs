@@ -39,7 +39,7 @@ public sealed partial class DocumentWorkspace
     }
     public ProjectView AuthorView(ProjectIdentity identity, bool checkExternal = true) => CaptureAuthorView(identity, checkExternal, false);
     // Read-only previews may show applied content while fields remain uncommitted.
-    internal ProjectView PreviewAuthorView(ProjectIdentity identity) => CaptureAuthorView(identity, true, true);
+    public ProjectView PreviewAuthorView(ProjectIdentity identity) => CaptureAuthorView(identity, true, true);
     private ProjectView CaptureAuthorView(ProjectIdentity identity, bool checkExternal, bool allowPendingForms)
     {
         CheckIdentity(identity);

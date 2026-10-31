@@ -12,6 +12,7 @@ public static class GameRuntime
     public static BoardGame.AppRuntime.GameContent Load(string source,BoardGame.AppRuntime.ContentCatalog catalog,string? preset)=>
         BoardGame.AppRuntime.GameRuntime.Load(source,catalog,preset);
     public static SortedDictionary<string,string> PluginVersions=>new(RuntimeComposition.Catalog().ToDictionary(p=>p.Id,p=>p.Version),StringComparer.Ordinal);
+    public static IReadOnlyList<RuntimePluginDefinition> Describe(RuntimeStartup startup)=>RuntimeComposition.Catalog(startup:startup);
     public static RuntimeStartup ReadStartup(string directory,IReadOnlyList<RuntimePluginDefinition>? approvedPlugins=null)
     {
         if(!File.Exists(Path.Combine(directory,Entry))) throw new InvalidDataException(Entry+": missing startup entry; explicitly migrate the legacy game package");

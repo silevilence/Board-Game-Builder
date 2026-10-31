@@ -15,20 +15,36 @@ public sealed class ExportWorkflow : IAsyncDisposable
     public AuthorExports Providers {get;}
     public long Generation=>documents.Generation;
     public string? ActiveProvider {get;private set;}
-    public string Selected {get=>documents.ViewState.GetValueOrDefault("export.selected","");set {documents.ViewState["export.selected"]=value;Changed?.Invoke();}}
+    public string Selected
+    {
+        get {try{return PublicationEditing.Read(documents)["selected"]?.GetValue<string>() ?? documents.ViewState.GetValueOrDefault("export.selected","");}catch{return documents.ViewState.GetValueOrDefault("export.selected","");}}
+        set {PublicationEditing.Edit(documents,s=>s["selected"]=value);Changed?.Invoke();}
+    }
     public string Destination {get=>Parameter(Selected,"target");set=>SetParameter(Selected,"target",value);}
     public string Progress {get;private set;}="";
     public bool Running {get;private set;}
     public ProjectSource? Source {get;private set;}
     public event Action? Changed;
     public ExportWorkflow(DocumentWorkspace documents,EditorContributions contributions,AuthorExports providers)
-    {this.documents=documents;this.contributions=contributions;Providers=providers;providers.Changed+=Refresh;documents.Replaced+=Replaced;}
-    public string Parameter(string provider,string key)=>documents.ViewState.GetValueOrDefault("export."+provider+"."+key,"");
-    public void SetParameter(string provider,string key,string value) {documents.ViewState["export."+provider+"."+key]=value;}
+    {this.documents=documents;this.contributions=contributions;Providers=providers;providers.Changed+=Refresh;documents.Replaced+=Replaced;documents.Changed+=Refresh;}
+    public string Parameter(string provider,string key)
+    {
+        try
+        {
+            var value=PublicationEditing.Read(documents)["providers"]?[provider]?[key];
+            if(value!=null)return value is JsonValue scalar && scalar.TryGetValue<string>(out var text)?text:value.ToJsonString();
+        }
+        catch{}
+        return documents.ViewState.GetValueOrDefault("export."+provider+"."+key,"");
+    }
+    public void SetParameter(string provider,string key,string value)=>PublicationEditing.Edit(documents,s=>
+    {
+        var providers=s["providers"]!.AsObject();if(providers[provider]==null)providers[provider]=new JsonObject();providers[provider]![key]=value;
+    });
     public void Defaults(string provider,IReadOnlyDictionary<string,string> values)
     {
         foreach(var entry in values)documents.ViewState.TryAdd("export."+provider+"."+entry.Key,entry.Value);
-        if(Selected.Length==0)Selected=provider;
+        documents.ViewState.TryAdd("export.selected",provider);Changed?.Invoke();
     }
     public void Cancel()=>cancellation?.Cancel();
     private void Replaced(){Cancel();Progress="";Source=null;Refresh();}
@@ -48,6 +64,7 @@ public sealed class ExportWorkflow : IAsyncDisposable
         bool Current()=>generation==documents.Generation && currentOperation==operation;
         try
         {
+            _=PublicationEditing.Read(documents); // Invalid author settings are preserved and block execution.
             var info=Providers.Items.SingleOrDefault(p=>p.Id==id) ?? throw new InvalidOperationException("提供者未启用："+id+"；配置已保留。");
             var arguments=new JsonObject();
             foreach(var parameter in info.Operation.Parameters)
@@ -97,5 +114,5 @@ public sealed class ExportWorkflow : IAsyncDisposable
         }
     }
     public async ValueTask DisposeAsync()
-    {Cancel();if(pending!=null)await pending;Providers.Changed-=Refresh;documents.Replaced-=Replaced;}
+    {Cancel();if(pending!=null)await pending;Providers.Changed-=Refresh;documents.Replaced-=Replaced;documents.Changed-=Refresh;}
 }
