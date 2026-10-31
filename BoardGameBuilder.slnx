@@ -9,6 +9,7 @@
   <Folder Name="/src/">
     <Project Path="src/Application.Abstractions/Application.Abstractions.csproj" />
     <Project Path="src/Application.Core/Application.Core.csproj" />
+    <Project Path="src/Runtime.Plugins/Runtime.Plugins.csproj" />
     <Project Path="src/Presentation.Core/Presentation.Core.csproj" />
     <Project Path="src/Presentation.Avalonia/Presentation.Avalonia.csproj" />
     <Project Path="src/BoardGame.Core/BoardGame.Core.csproj" />
@@ -51,6 +52,7 @@
     <Project Path="src/View.MonoGame/View.MonoGame.csproj" />
   </Folder>
   <Folder Name="/tests/">
+    <Project Path="tests/Runtime.Plugins.Tests/Runtime.Plugins.Tests.csproj" />
     <Project Path="tests/Application.Tests/Application.Tests.csproj" />
     <Project Path="tests/Motion.Authoring.Tests/Motion.Authoring.Tests.csproj" />
     <Project Path="tests/Motion.Tests/Motion.Tests.csproj" />

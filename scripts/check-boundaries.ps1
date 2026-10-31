@@ -2,6 +2,7 @@ $ErrorActionPreference = 'Stop'
 $allowed = @{
  'Application.Abstractions' = @(); 'Application.Core' = @('Application.Abstractions')
  'Application.Debug' = @('Application.Core')
+ 'Runtime.Plugins' = @('Application.Core')
  'Resources.Abstractions' = @(); 'Resources.Core' = @('Resources.Abstractions','Application.Core')
  'Kernel.Abstractions' = @('Application.Abstractions','Resources.Abstractions')
  'Kernel' = @('Kernel.Abstractions'); 'Modules' = @('Kernel.Abstractions')
