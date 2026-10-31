@@ -10,9 +10,14 @@ public static class AuthorRuntimePlugins
 {
     public static string DirectoryPath=>Path.GetFullPath(Environment.GetEnvironmentVariable("BGB_RUNTIME_PLUGIN_STORE") ??
         Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.LocalApplicationData),"BoardGameBuilder","runtime-plugins"));
-    public static PluginStore CreateStore()=>new(DirectoryPath,"win-x64",
-        [typeof(IApplicationView).Assembly,typeof(IDraw2D).Assembly,typeof(AssetSet).Assembly,typeof(AssetRegistry).Assembly,
-            typeof(BoardGame.Kernel.GameState).Assembly,typeof(IAuthoritySession).Assembly,typeof(IGameSession).Assembly]);
+    public static PluginStore CreateStore()
+    {
+        var store=new PluginStore(DirectoryPath,"win-x64",
+            [typeof(IApplicationView).Assembly,typeof(IDraw2D).Assembly,typeof(AssetSet).Assembly,typeof(AssetRegistry).Assembly,
+                typeof(BoardGame.Kernel.GameState).Assembly,typeof(IAuthoritySession).Assembly,typeof(IGameSession).Assembly]);
+        _=store.RegisterBuiltins("author.fixed",BoardGame.Runtime.GameRuntime.Describe(new(1,"metadata","1",[])));
+        return store;
+    }
     private static AuthorOperationInfo Operation(string id,string description,Dictionary<string,AuthorParameter> parameters,string[] effects)=>
         new(id,"author.runtime.plugins",description,parameters,new(){["type"]="object"},[],effects){ReadsProject=false};
     private static AuthorOperationInfo List=>Operation("runtime.plugins.list","Inspect explicitly installed runtime implementations and compatibility declarations",new(),[]);
@@ -46,7 +51,7 @@ public static class AuthorRuntimePlugins
     {
         var store=CreateStore();scope.Provide("author.runtime-plugins",store);
         scope.Register(new(List,_=>Task.FromResult<object>(new{directory=DirectoryPath,plugins=store.Installed()})));
-        scope.Register(new(Import,call=>Task.FromResult<object>(store.Import(call.String("package"),call.Arguments.TryGetProperty("replace",out var replace) && replace.GetBoolean()))));
+        scope.Register(new(Import,call=>Task.FromResult<object>(store.Import(call.String("package"),call.Arguments.TryGetProperty("replace",out var replace) && replace.GetBoolean(),call.Cancellation))));
         scope.Register(new(Remove,call=>{store.Remove(call.String("id"),call.String("version"));return Task.FromResult<object>(new{removed=true});}));
     },"Explicit runtime implementation installation; separate from game enablement") {Operations=[List,Import,Remove]};
     public static AuthorPlugin RuntimePlugin=>new("author.runtime.external","1",1,[],["author.runtime-plugins","author.runtimes"],scope=>

@@ -110,6 +110,23 @@ public static class BuiltinPlugins
         }));
         app.Install(new("author.files",1,[],["documents","panels"],scope=>
             scope.Service<PanelContributions>("panels").Register(scope,"author.files","游戏文件",()=>new GameFilePanel(scope))));
+        app.Install(new("author.runtime.management",1,["runtime.management"],["runtime.plugins","runtime.catalog","runtime.configuration","documents","panels","commands"],scope=>
+        {
+            var management=new RuntimePluginManagement(scope.Service<BoardGame.Plugins.PluginStore>("runtime.plugins"),scope.Service<BoardGame.Authoring.AuthorRuntimeCatalog>("runtime.catalog"));
+            scope.Provide("runtime.management",management);scope.OwnAsync(management);
+            var commands=scope.Service<EditorCommands>("commands");var documents=scope.Service<DocumentWorkspace>("documents");var configuration=scope.Service<RuntimeConfiguration>("runtime.configuration");
+            commands.Register(scope,new("runtime.plugins.import","导入运行插件",()=>management.Import(false),()=>!management.Busy && management.PackagePath.Length>0));
+            commands.Register(scope,new("runtime.plugins.replace","替换运行插件版本",()=>management.Import(true),()=>!management.Busy && management.PackagePath.Length>0));
+            commands.Register(scope,new("runtime.plugins.remove","移除运行插件版本",()=>management.Remove(management.Selection!),()=>!management.Busy && management.Selection!=null));
+            commands.Register(scope,new("runtime.plugins.enable","启用所选运行插件",()=>
+            {
+                configuration.Select(configuration.Available().Single(p=>p.Manifest?.Fingerprint==management.Selection!.Fingerprint));return Task.CompletedTask;
+            },()=>!management.Busy && management.Selection!=null && documents.Current!=null));
+            commands.Register(scope,new("runtime.plugins.cancel","取消插件安装操作",management.CancelAndWait,()=>management.Busy));
+            management.Changed+=commands.Refresh;scope.Own(new Cleanup(()=>management.Changed-=commands.Refresh));
+            scope.Own(app.BeforeShutdown(async()=>{await management.CancelAndWait();return true;}));
+            scope.Service<PanelContributions>("panels").Register(scope,"author.runtime.management","运行插件管理",()=>new RuntimePluginManagementPanel(scope));
+        }));
         Panel("author.resources","资源树",scope=>new ResourcePanel(scope));
         Panel("author.yaml","模块 YAML",scope=>new ConfigurationPanel(scope,yaml:true));
         Panel("author.prototypes","原型与实例",scope=>new AuthorPanel(scope));

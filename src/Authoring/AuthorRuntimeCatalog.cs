@@ -11,10 +11,13 @@ public sealed class AuthorRuntimeCatalog(PluginStore store)
 {
     private readonly Dictionary<string,Func<RuntimeStartup,IReadOnlyList<RuntimePluginDefinition>>> sources=new(StringComparer.Ordinal);
     public event Action? Changed;
+    public void Refresh()=>Changed?.Invoke();
     public IDisposable Register(string id,Func<RuntimeStartup,IReadOnlyList<RuntimePluginDefinition>> source)
     {
-        if(!sources.TryAdd(id,source))throw new InvalidOperationException("Duplicate runtime metadata provider: "+id);
-        Changed?.Invoke();return new AuthorCleanup(()=>{sources.Remove(id);Changed?.Invoke();});
+        if(sources.ContainsKey(id))throw new InvalidOperationException("Duplicate runtime metadata provider: "+id);
+        var registration=store.RegisterBuiltins("metadata."+id,source(new(1,"metadata","1",[])));
+        sources.Add(id,source);
+        Changed?.Invoke();return new AuthorCleanup(()=>{sources.Remove(id);registration.Dispose();Changed?.Invoke();});
     }
     public IReadOnlyList<AuthorRuntimeImplementation> Read(RuntimeStartup startup)
     {

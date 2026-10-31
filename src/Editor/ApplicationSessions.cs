@@ -113,6 +113,7 @@ public sealed class ApplicationSessions : IAsyncDisposable
         async Task Release(){try{await previous!.DisposeAsync();}finally{previousImports?.Dispose();}}
         Changed?.Invoke();
     }
+    public async Task StopAsync(){Stop();await pending;await operations;await shutdown;}
     public async ValueTask DisposeAsync()
     {documents.Replaced-=Stop;Stop();await pending;await operations;await shutdown;Changed=null;catalogs.Clear();}
 }

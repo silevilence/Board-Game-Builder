@@ -16,6 +16,14 @@ var external=Manifest("sample.counter") with {Entry=new("Runtime.SamplePlugin.dl
     Execution=new(HostMode.All,RuntimeScope.Instance,[new("tick",ApplicationPhase.Update)]),Files=[new("Runtime.SamplePlugin.dll",hash,"implementation")]};
 File.WriteAllText(Path.Combine(package,PluginManifest.FileName),external.Write());
 var store=new PluginStore(Path.Combine(workspace,"installed"),"win-x64");
+using(var cancellation=new CancellationTokenSource())
+{
+    cancellation.Cancel();
+    try{store.Import(package,cancellation:cancellation.Token);throw new Exception("Cancelled import installed a package");}catch(OperationCanceledException){checks++;}
+    Check(store.Installed().Count==0,"Cancelled import changed installation");
+}
+using(var fixedCatalog=store.RegisterBuiltins("probe",[new("sample.counter","1",1,["sample.counter"],[],_=>{})]))
+    Reject(()=>store.Import(package),"Registered fixed implementation overwritten","built-in");
 store.Import(package);Check(store.Installed().Count==1,"Import did not register implementation");
 var generated=StaticRegistration.Generate([new(external,package)],"win-x64",HostMode.Headless);
 Check(generated.References.Count==1 && generated.NativeFiles.Count==0 && generated.Source.Contains("global::@Example.@RuntimePlugin.@Factory.@Create()",StringComparison.Ordinal),"Static selection differs from imported factory");
@@ -37,6 +45,17 @@ using(var lease=store.Acquire(external.Id,external.Version))
     try{store.Import(package,true);throw new Exception("Active implementation replaced");}catch(InvalidOperationException){checks++;}
 }
 store.Remove(external.Id,external.Version);Check(store.Installed().Count==0,"Removed implementation still installed");
+var fixedService=new object();var hostPlugin=new RuntimePluginDefinition("sample.host","1",1,["sample.host"],[],s=>s.Provide("sample.host",fixedService));
+var consumer=external with {Id="sample.consumer",Entry=external.Entry with {Type="Example.RuntimePlugin.HostServiceConsumer"},Provides=[new("sample.consumer",1)],Requires=[new("sample.host",1)],Execution=new()};
+File.WriteAllText(Path.Combine(package,PluginManifest.FileName),consumer.Write());
+using(var fixedCatalog=store.RegisterBuiltins("host",[hostPlugin]))
+{
+    store.Import(package);using var lease=store.Acquire(consumer.Id,consumer.Version);var plugin=lease.Plugin.Bind(null);
+    var configuration=System.Text.Json.JsonSerializer.SerializeToElement(new{});
+    await using var host=await RuntimeHost.StartAsync(new(1,"consumer","1",[new(hostPlugin.Id,"1",1,configuration),new(plugin.Id,"1",1,configuration,plugin.Implementation)]),[hostPlugin,plugin],[]);
+    Check(ReferenceEquals(host.Service<object>("sample.consumer"),fixedService),"Imported plugin did not consume fixed host contract");
+}
+store.Remove(consumer.Id,consumer.Version);
 var badEntry=external with {Entry=external.Entry with {Method="Missing"}};
 File.WriteAllText(Path.Combine(package,PluginManifest.FileName),badEntry.Write());
 Reject(()=>store.Import(package),"Missing entry accepted","factory must be");

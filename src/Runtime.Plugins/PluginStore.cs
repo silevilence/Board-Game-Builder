@@ -18,6 +18,7 @@ public sealed class PluginStore
     private readonly Dictionary<string,int> active=new(StringComparer.Ordinal);
     private readonly Assembly[] shared;
     private readonly PluginManifest[] builtins;
+    private readonly Dictionary<string,RuntimePluginDefinition[]> builtinSources=new(StringComparer.Ordinal);
     public string DirectoryPath=>root;
     private static readonly HashSet<string> platformAssemblies=((string?)AppContext.GetData("TRUSTED_PLATFORM_ASSEMBLIES") ?? "")
         .Split(Path.PathSeparator,StringSplitOptions.RemoveEmptyEntries)
@@ -36,19 +37,35 @@ public sealed class PluginStore
         lock(gate)return Directory.GetDirectories(root).Where(d=>!Path.GetFileName(d).StartsWith('.'))
             .Select(d=>ReadVerified(d)).OrderBy(m=>m.Id,StringComparer.Ordinal).ThenBy(m=>m.Version,StringComparer.Ordinal).ToArray();
     }
-    [RequiresUnreferencedCode("Ordinary plugin import inspects a publisher's explicitly selected assembly.")]
-    [RequiresDynamicCode("Unknown managed assemblies cannot be imported into a NativeAOT process.")]
-    public PluginManifest Import(string packageDirectory,bool replace=false)
+    public IDisposable RegisterBuiltins(string owner,IEnumerable<RuntimePluginDefinition> definitions)
     {
         lock(gate)
         {
-            var source=Path.GetFullPath(packageDirectory);var manifest=ReadVerified(source);
+            var values=definitions.Select(p=>p with {Provides=p.Provides.ToArray(),Requires=p.Requires.ToArray()}).ToArray();
+            if(Installed().Any(m=>values.Any(p=>p.Id==m.Id)))throw new InvalidDataException("Installed external identity conflicts with a fixed host implementation");
+            if(!builtinSources.TryAdd(owner,values))throw new InvalidOperationException("Duplicate fixed runtime catalog owner: "+owner);
+            return new BuiltinRegistration(()=>{lock(gate)builtinSources.Remove(owner);});
+        }
+    }
+    private sealed class BuiltinRegistration(Action release):IDisposable
+    {
+        private Action? cleanup=release;
+        public void Dispose()=>Interlocked.Exchange(ref cleanup,null)?.Invoke();
+    }
+    [RequiresUnreferencedCode("Ordinary plugin import inspects a publisher's explicitly selected assembly.")]
+    [RequiresDynamicCode("Unknown managed assemblies cannot be imported into a NativeAOT process.")]
+    public PluginManifest Import(string packageDirectory,bool replace=false,CancellationToken cancellation=default)
+    {
+        lock(gate)
+        {
+            cancellation.ThrowIfCancellationRequested();var source=Path.GetFullPath(packageDirectory);var manifest=ReadVerified(source);
             if(!manifest.Targets.Contains(target,StringComparer.Ordinal))throw new InvalidDataException(manifest.Id+": unsupported target "+target);
-            if(builtins.Any(b=>b.Id==manifest.Id))throw new InvalidDataException(manifest.Id+": conflicts with a built-in implementation");
+            var fixedDefinitions=builtinSources.Values.SelectMany(p=>p).ToArray();
+            if(builtins.Any(b=>b.Id==manifest.Id) || fixedDefinitions.Any(p=>p.Id==manifest.Id))throw new InvalidDataException(manifest.Id+": conflicts with a built-in implementation");
             var available=builtins.Concat(Installed().Where(m=>m.Id!=manifest.Id || m.Version!=manifest.Version)).Append(manifest).ToArray();
-            foreach(var dependency in manifest.Requires)
-                if(!available.Any(m=>m.Execution.Scope<=manifest.Execution.Scope && m.Provides.Any(p=>p.Name==dependency.Name && p.Api==dependency.Api)))
-                    throw new InvalidDataException(manifest.Id+": missing compatible installed capability "+dependency.Name);
+            var missing=manifest.Requires.Where(dependency=>!available.Any(m=>m.Execution.Scope<=manifest.Execution.Scope && m.Provides.Any(p=>p.Name==dependency.Name && p.Api==dependency.Api)) &&
+                !fixedDefinitions.Any(p=>p.Execution.Scope<=manifest.Execution.Scope && dependency.Api==1 && p.Provides.Contains(dependency.Name))).ToArray();
+            if(missing.Length>0)throw new InvalidDataException(manifest.Id+": missing compatible installed capability "+string.Join(", ",missing.Select(p=>$"{p.Name}@{p.Api}")));
             var key=Key(manifest.Id,manifest.Version);var destination=Path.Combine(root,key);
             if(active.GetValueOrDefault(key)>0)throw new InvalidOperationException(manifest.Id+": implementation is in use");
             if(Directory.Exists(destination) && !replace)throw new InvalidDataException(manifest.Id+": implementation already installed; replacement must be explicit");
@@ -59,12 +76,14 @@ public sealed class PluginStore
                 File.WriteAllText(Path.Combine(stage,PluginManifest.FileName),manifest.Write());
                 foreach(var item in manifest.Files)
                 {
+                    cancellation.ThrowIfCancellationRequested();
                     var output=Inside(stage,item.Path);Directory.CreateDirectory(Path.GetDirectoryName(output)!);
                     using var input=File.OpenRead(Inside(source,item.Path));using var copy=File.Create(output);input.CopyTo(copy);
                 }
                 // Verify the copied bytes, so a changing import source cannot bypass hashes.
                 _=ReadVerified(stage);
                 using(var candidate=Load(stage,manifest,()=>{}))_=candidate.Plugin.Bind(null);
+                cancellation.ThrowIfCancellationRequested();
                 if(Directory.Exists(destination))Directory.Move(destination,backup);
                 try{Directory.Move(stage,destination);}
                 catch{if(Directory.Exists(backup))Directory.Move(backup,destination);throw;}

@@ -17,6 +17,7 @@ public sealed class MotionAuthorPlugin : IAuthorPluginPackage
     public static AuthorPlugin Definition=>new("author.motion","1",1,[],["author.formats","author.runtimes","author.operations","author.runtime-plugins"],scope=>
     {
         var catalog=new ApplicationCatalog(MotionPlugins.Catalog());
+        scope.Own(scope.Service<BoardGame.Plugins.PluginStore>("author.runtime-plugins").RegisterBuiltins("author.motion",catalog.Content.Plugins));
         scope.Own(scope.Service<GameAuthorFormats>("author.formats").Register(AuthorFormat));
         var runtime=new ApplicationAuthorRuntime("motion",catalog,scope.Service<BoardGame.Plugins.PluginStore>("author.runtime-plugins"));
         scope.Own(scope.Service<AuthorRuntimes>("author.runtimes").Register(runtime));
