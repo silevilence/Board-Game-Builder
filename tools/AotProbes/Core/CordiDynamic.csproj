@@ -1,0 +1,8 @@
+<Project Sdk="Microsoft.NET.Sdk">
+  <PropertyGroup><OutputType>Exe</OutputType><EnableDefaultCompileItems>false</EnableDefaultCompileItems></PropertyGroup>
+  <ItemGroup>
+    <Compile Include="Program.Dynamic.cs" />
+    <PackageReference Include="CordiSharp" Version="[0.2.0]" ExcludeAssets="analyzers" Condition="'$(ProbeCordiSharpProject)' == ''" />
+    <ProjectReference Include="$(ProbeCordiSharpProject)" Condition="'$(ProbeCordiSharpProject)' != ''" />
+  </ItemGroup>
+</Project>

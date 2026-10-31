@@ -1,0 +1,62 @@
+{
+  "success": false,
+  "fingerprint": "",
+  "dynamicCodeSupported": false,
+  "os": "Microsoft Windows 10.0.26200",
+  "checks": [
+    {
+      "name": "content-package-snapshot-restore-update",
+      "passed": false,
+      "detail": "System.InvalidOperationException: Reflection-based serialization has been disabled for this application. Either use the source generator APIs or explicitly configure the \u0027JsonSerializerOptions.TypeInfoResolver\u0027 property.\r\n   at System.Text.Json.ThrowHelper.ThrowInvalidOperationException_JsonSerializerIsReflectionDisabled() \u002B 0x2b\r\n   at System.Text.Json.JsonSerializerOptions.ConfigureForJsonSerializer() \u002B 0x31\r\n   at System.Text.Json.JsonSerializer.GetTypeInfo(JsonSerializerOptions, Type) \u002B 0x2a\r\n   at System.Text.Json.JsonSerializer.GetTypeInfo[T](JsonSerializerOptions) \u002B 0x25\r\n   at CordiSharp.Events.EventsService.On(Context, String, Object, EventOptions, Boolean) \u002B 0x173\r\n   at CordiSharp.Events.EventsService..ctor(Context) \u002B 0xca\r\n   at CordiSharp.Context.Create() \u002B 0x1a9\r\n   at BoardGame.Runtime.RuntimeHost..ctor(HostMode, RuntimeScope, RuntimeHost, String, Action\u00601) \u002B 0x1c\r\n   at BoardGame.Runtime.RuntimeHost.\u003CStartCore\u003Ed__31.MoveNext() \u002B 0x1b5\r\n--- End of stack trace from previous location ---\r\n   at BoardGame.AppRuntime.GameRuntime.\u003C\u003Ec__DisplayClass5_0.\u003CBuild\u003Eg__Prepare|2(RuntimeStartup) \u002B 0x186\r\n   at BoardGame.AppRuntime.GameRuntime.Build(ContentSource, ContentCatalog, String) \u002B 0x245\r\n   at BoardGame.AppRuntime.GameRuntime.Load(String, ContentCatalog, String) \u002B 0x1f6\r\n   at Program.\u003C\u003Ec__DisplayClass0_0.\u003C\u003C\u003CMain\u003E$\u003Eb__7\u003Ed.MoveNext() \u002B 0x143\r\n--- End of stack trace from previous location ---\r\n   at Program.\u003C\u003Ec__DisplayClass0_0.\u003C\u003C\u003CMain\u003E$\u003Eg__Case|2\u003Ed.MoveNext() \u002B 0x73"
+    },
+    {
+      "name": "snapshot-content-tamper-rejected",
+      "passed": false,
+      "detail": "System.InvalidOperationException: Reflection-based serialization has been disabled for this application. Either use the source generator APIs or explicitly configure the \u0027JsonSerializerOptions.TypeInfoResolver\u0027 property.\r\n   at System.Text.Json.ThrowHelper.ThrowInvalidOperationException_JsonSerializerIsReflectionDisabled() \u002B 0x2b\r\n   at System.Text.Json.JsonSerializerOptions.ConfigureForJsonSerializer() \u002B 0x31\r\n   at System.Text.Json.JsonSerializer.GetTypeInfo(JsonSerializerOptions, Type) \u002B 0x2a\r\n   at System.Text.Json.JsonSerializer.GetTypeInfo[T](JsonSerializerOptions) \u002B 0x25\r\n   at CordiSharp.Events.EventsService.On(Context, String, Object, EventOptions, Boolean) \u002B 0x173\r\n   at CordiSharp.Events.EventsService..ctor(Context) \u002B 0xca\r\n   at CordiSharp.Context.Create() \u002B 0x1a9\r\n   at BoardGame.Runtime.RuntimeHost..ctor(HostMode, RuntimeScope, RuntimeHost, String, Action\u00601) \u002B 0x1c\r\n   at BoardGame.Runtime.RuntimeHost.\u003CStartCore\u003Ed__31.MoveNext() \u002B 0x1b5\r\n--- End of stack trace from previous location ---\r\n   at BoardGame.AppRuntime.GameRuntime.\u003C\u003Ec__DisplayClass5_0.\u003CBuild\u003Eg__Prepare|2(RuntimeStartup) \u002B 0x186\r\n   at BoardGame.AppRuntime.GameRuntime.Build(ContentSource, ContentCatalog, String) \u002B 0x245\r\n   at BoardGame.AppRuntime.GameRuntime.Load(String, ContentCatalog, String) \u002B 0x1f6\r\n   at Program.\u003C\u003Ec__DisplayClass0_0.\u003C\u003CMain\u003E$\u003Eb__8() \u002B 0x4d\r\n   at Program.\u003C\u003Ec__DisplayClass0_0.\u003C\u003C\u003CMain\u003E$\u003Eg__Case|2\u003Ed.MoveNext() \u002B 0xd3"
+    },
+    {
+      "name": "duplicate-and-unknown-json-rejected",
+      "passed": true,
+      "detail": ""
+    },
+    {
+      "name": "catalog-identity-revalidation",
+      "passed": false,
+      "detail": "System.InvalidOperationException: Reflection-based serialization has been disabled for this application. Either use the source generator APIs or explicitly configure the \u0027JsonSerializerOptions.TypeInfoResolver\u0027 property.\r\n   at System.Text.Json.ThrowHelper.ThrowInvalidOperationException_JsonSerializerIsReflectionDisabled() \u002B 0x2b\r\n   at System.Text.Json.JsonSerializerOptions.ConfigureForJsonSerializer() \u002B 0x31\r\n   at System.Text.Json.JsonSerializer.GetTypeInfo(JsonSerializerOptions, Type) \u002B 0x2a\r\n   at System.Text.Json.JsonSerializer.GetTypeInfo[T](JsonSerializerOptions) \u002B 0x25\r\n   at CordiSharp.Events.EventsService.On(Context, String, Object, EventOptions, Boolean) \u002B 0x173\r\n   at CordiSharp.Events.EventsService..ctor(Context) \u002B 0xca\r\n   at CordiSharp.Context.Create() \u002B 0x1a9\r\n   at BoardGame.Runtime.RuntimeHost..ctor(HostMode, RuntimeScope, RuntimeHost, String, Action\u00601) \u002B 0x1c\r\n   at BoardGame.Runtime.RuntimeHost.\u003CStartCore\u003Ed__31.MoveNext() \u002B 0x1b5\r\n--- End of stack trace from previous location ---\r\n   at BoardGame.AppRuntime.GameRuntime.\u003C\u003Ec__DisplayClass5_0.\u003CBuild\u003Eg__Prepare|2(RuntimeStartup) \u002B 0x186\r\n   at BoardGame.AppRuntime.GameRuntime.Build(ContentSource, ContentCatalog, String) \u002B 0x245\r\n   at BoardGame.AppRuntime.GameRuntime.Load(String, ContentCatalog, String) \u002B 0x1f6\r\n   at Program.\u003C\u003Ec__DisplayClass0_0.\u003C\u003C\u003CMain\u003E$\u003Eb__10\u003Ed.MoveNext() \u002B 0x4d\r\n--- End of stack trace from previous location ---\r\n   at Program.\u003C\u003Ec__DisplayClass0_0.\u003C\u003C\u003CMain\u003E$\u003Eg__Case|2\u003Ed.MoveNext() \u002B 0x73"
+    },
+    {
+      "name": "activation-failure-cleanup",
+      "passed": false,
+      "detail": "System.InvalidOperationException: Reflection-based serialization has been disabled for this application. Either use the source generator APIs or explicitly configure the \u0027JsonSerializerOptions.TypeInfoResolver\u0027 property.\r\n   at System.Text.Json.ThrowHelper.ThrowInvalidOperationException_JsonSerializerIsReflectionDisabled() \u002B 0x2b\r\n   at System.Text.Json.JsonSerializerOptions.ConfigureForJsonSerializer() \u002B 0x31\r\n   at System.Text.Json.JsonSerializer.GetTypeInfo(JsonSerializerOptions, Type) \u002B 0x2a\r\n   at System.Text.Json.JsonSerializer.GetTypeInfo[T](JsonSerializerOptions) \u002B 0x25\r\n   at CordiSharp.Events.EventsService.On(Context, String, Object, EventOptions, Boolean) \u002B 0x173\r\n   at CordiSharp.Events.EventsService..ctor(Context) \u002B 0xca\r\n   at CordiSharp.Context.Create() \u002B 0x1a9\r\n   at BoardGame.Runtime.RuntimeHost..ctor(HostMode, RuntimeScope, RuntimeHost, String, Action\u00601) \u002B 0x1c\r\n   at BoardGame.Runtime.RuntimeHost.\u003CStartCore\u003Ed__31.MoveNext() \u002B 0x1b5\r\n--- End of stack trace from previous location ---\r\n   at Program.\u003C\u003Ec.\u003C\u003C\u003CMain\u003E$\u003Eb__0_11\u003Ed.MoveNext() \u002B 0x10d\r\n--- End of stack trace from previous location ---\r\n   at Program.\u003C\u003Ec__DisplayClass0_0.\u003C\u003C\u003CMain\u003E$\u003Eg__Case|2\u003Ed.MoveNext() \u002B 0x73"
+    },
+    {
+      "name": "close-cancels-and-awaits-update",
+      "passed": false,
+      "detail": "System.InvalidOperationException: Reflection-based serialization has been disabled for this application. Either use the source generator APIs or explicitly configure the \u0027JsonSerializerOptions.TypeInfoResolver\u0027 property.\r\n   at System.Text.Json.ThrowHelper.ThrowInvalidOperationException_JsonSerializerIsReflectionDisabled() \u002B 0x2b\r\n   at System.Text.Json.JsonSerializerOptions.ConfigureForJsonSerializer() \u002B 0x31\r\n   at System.Text.Json.JsonSerializer.GetTypeInfo(JsonSerializerOptions, Type) \u002B 0x2a\r\n   at System.Text.Json.JsonSerializer.GetTypeInfo[T](JsonSerializerOptions) \u002B 0x25\r\n   at CordiSharp.Events.EventsService.On(Context, String, Object, EventOptions, Boolean) \u002B 0x173\r\n   at CordiSharp.Events.EventsService..ctor(Context) \u002B 0xca\r\n   at CordiSharp.Context.Create() \u002B 0x1a9\r\n   at BoardGame.Runtime.RuntimeHost..ctor(HostMode, RuntimeScope, RuntimeHost, String, Action\u00601) \u002B 0x1c\r\n   at BoardGame.Runtime.RuntimeHost.\u003CStartCore\u003Ed__31.MoveNext() \u002B 0x1b5\r\n--- End of stack trace from previous location ---\r\n   at Program.\u003C\u003Ec.\u003C\u003C\u003CMain\u003E$\u003Eb__0_12\u003Ed.MoveNext() \u002B 0x1ab\r\n--- End of stack trace from previous location ---\r\n   at Program.\u003C\u003Ec__DisplayClass0_0.\u003C\u003C\u003CMain\u003E$\u003Eg__Case|2\u003Ed.MoveNext() \u002B 0x73"
+    }
+  ],
+  "nativeModules": [
+    "C:\\code\\dotnet\\Board-Game-Builder\\artifacts\\native-aot\\core\\candidate-diagnostic\\Core.AotProbe.exe",
+    "C:\\WINDOWS\\SYSTEM32\\ntdll.dll",
+    "C:\\WINDOWS\\System32\\KERNEL32.DLL",
+    "C:\\WINDOWS\\System32\\KERNELBASE.dll",
+    "C:\\WINDOWS\\SYSTEM32\\apphelp.dll",
+    "C:\\WINDOWS\\System32\\ADVAPI32.dll",
+    "C:\\WINDOWS\\System32\\msvcrt.dll",
+    "C:\\WINDOWS\\System32\\sechost.dll",
+    "C:\\WINDOWS\\System32\\RPCRT4.dll",
+    "C:\\WINDOWS\\System32\\ole32.dll",
+    "C:\\WINDOWS\\System32\\msvcp_win.dll",
+    "C:\\WINDOWS\\System32\\ucrtbase.dll",
+    "C:\\WINDOWS\\System32\\GDI32.dll",
+    "C:\\WINDOWS\\SYSTEM32\\bcrypt.dll",
+    "C:\\WINDOWS\\System32\\win32u.dll",
+    "C:\\WINDOWS\\System32\\gdi32full.dll",
+    "C:\\WINDOWS\\System32\\USER32.dll",
+    "C:\\WINDOWS\\System32\\combase.dll",
+    "C:\\WINDOWS\\System32\\IMM32.DLL",
+    "C:\\WINDOWS\\SYSTEM32\\kernel.appcore.dll",
+    "C:\\WINDOWS\\System32\\bcryptPrimitives.dll",
+    "C:\\WINDOWS\\SYSTEM32\\icu.dll"
+  ]
+}

@@ -1,0 +1,7 @@
+  正在确定要还原的项目…
+  已还原 C:\code\dotnet\Board-Game-Builder\.scratch\native-aot-cordisharp\patched-v4\CordiSharp.Patched.csproj (用时 150 毫秒)。
+  已还原 C:\code\dotnet\Board-Game-Builder\tools\AotProbes\Core\Core.csproj (用时 382 毫秒)。
+  CordiSharp.Patched -> C:\code\dotnet\Board-Game-Builder\artifacts\native-aot\core\build-patched-v4\bin\CordiSharp.Patched\release\CordiSharp.dll
+  Core -> C:\code\dotnet\Board-Game-Builder\artifacts\native-aot\core\build-patched-v4\bin\Core\release_win-x64\Core.AotProbe.dll
+  Generating native code
+  Core -> C:\code\dotnet\Board-Game-Builder\artifacts\native-aot\core\patched-v4\

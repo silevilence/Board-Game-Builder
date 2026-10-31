@@ -1,0 +1,9 @@
+PASS rules-actions: [{"id":"start","label":"\u6D17\u724C\u5E76\u53D1\u724C","command":{"kind":"start"}}]
+PASS rules-decide: {"allowed":true,"reason":"","commands":[{"kind":"shuffle","entity":"deck"},{"kind":"draw","entity":"deck","target":"hand-p1"},{"kind":"draw","entity":"deck","target":"hand-p2"},{"kind":"phase","phase":"play"}]}
+PASS cpu-seeded: {"kind":"play","entity":"b"}
+PASS flow-seat: "p1"
+PASS flow-judge: {"result":"again"}
+PASS flow-next: {"commands":[{"kind":"draw","entity":"deck","target":"hand-p1"},{"kind":"next","phase":"play"}]}
+PASS instruction-budget: instruction-budget.lua:run: instruction-budget.lua:run: Lua instruction budget exceeded.
+PASS pre-cancelled request
+RESULT failures=0; mode=explicit-worker

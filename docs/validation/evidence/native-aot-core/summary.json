@@ -1,0 +1,16 @@
+{
+  "sdk": "10.0.112",
+  "baselineJit": true,
+  "baselineFingerprint": "B787CFD05C2852A6086A0EB1AC0762AF259AAE7ACBE40F5E36028B79BF4878A8",
+  "jsonCandidateJit": true,
+  "jsonCandidateFingerprint": "B787CFD05C2852A6086A0EB1AC0762AF259AAE7ACBE40F5E36028B79BF4878A8",
+  "patchedNative": true,
+  "patchedNativeFingerprint": "B787CFD05C2852A6086A0EB1AC0762AF259AAE7ACBE40F5E36028B79BF4878A8",
+  "patchedNativeChecks": 6,
+  "nativeDynamicCode": false,
+  "nativeExit": "0",
+  "nativeBuildExit": "0",
+  "nativeBytes": 4781056,
+  "nativeSha256": "63333128446193424E7C1EB9F904FCC00D5A1EB389AEBF8B2231B1EF38EA3B1E",
+  "upstreamArchiveSha256": "917DF179E460C799FDD0F083071223EE622E4CD16E3036BF1108130314D35A27"
+}

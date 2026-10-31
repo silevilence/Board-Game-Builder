@@ -1,0 +1,32 @@
+[
+  {
+    "file": "Events/EventsService.cs",
+    "originalSha256": "f21fb79885ce2545811abb8a8d639a066ca15145b61f6b8e7341562da325ec94",
+    "patchedSha256": "7c4f16e25d326508cb2b1f39d029d8dc7cc611f05ff85a1a74e55fc48f0c0d57"
+  },
+  {
+    "file": "Fiber.cs",
+    "originalSha256": "31c978ba6c8db29663c1de9636dbda8160075aa886216ff003b4d82181daedc5",
+    "patchedSha256": "761a7291c72248befccf9602b2125e82495d57686aaaa6eb478e685babb8ddc6"
+  },
+  {
+    "file": "Internal/StaticJson.cs",
+    "originalSha256": null,
+    "patchedSha256": "512b83094cea2dbffd67105ef5c22b1e26d406a64872c90e2a3dbe3b27ab7857"
+  },
+  {
+    "file": "Logger/LoggerService.cs",
+    "originalSha256": "5539a455677923d7457378f02f974a5fd3dfc05143d8bd1370b841a37d14a379",
+    "patchedSha256": "fceaeb0e35ee4b3632460ec72eb8dbd6c33cda5eada10a5d76a6c56e171b6b4a"
+  },
+  {
+    "file": "ReflectService.cs",
+    "originalSha256": "298cd2df1c8f12d85270edcd60f171a2c36179cc880024186a4c42cdab4d6699",
+    "patchedSha256": "cb933f2f0b68546c7b68927b5938e299792025b8665fd01538e2c21228a9fdd5"
+  },
+  {
+    "file": "Registry/RegistryService.cs",
+    "originalSha256": "45b974940c71c23177d045354e9da7992cce8bf1e84be7baaa62a4cc2c8dc31a",
+    "patchedSha256": "3d3d323d7efa1e19dd08931924c2b72b41417dc2822e736e76b10baaafa88bb7"
+  }
+]

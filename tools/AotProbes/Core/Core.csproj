@@ -1,0 +1,17 @@
+<Project Sdk="Microsoft.NET.Sdk">
+  <PropertyGroup>
+    <OutputType>Exe</OutputType>
+    <AssemblyName>Core.AotProbe</AssemblyName>
+    <PublishAot>true</PublishAot>
+    <IsAotCompatible Condition="'$(PublishAot)' == 'true'">true</IsAotCompatible>
+    <EnableDefaultCompileItems>false</EnableDefaultCompileItems>
+  </PropertyGroup>
+  <ItemGroup>
+    <Compile Include="Program.cs" />
+    <Compile Include="../../../src/Application.Abstractions/*.cs" Link="Production/Abstractions/%(Filename)%(Extension)" />
+    <Compile Include="../../../src/Application.Core/*.cs" Link="Production/Core/%(Filename)%(Extension)" Condition="'$(ProbeCoreSources)' == ''" />
+    <Compile Include="$(ProbeCoreSources)/*.cs" Link="Candidate/%(Filename)%(Extension)" Condition="'$(ProbeCoreSources)' != ''" />
+    <PackageReference Include="CordiSharp" Version="[0.2.0]" ExcludeAssets="analyzers" Condition="'$(ProbeCordiSharpProject)' == ''" />
+    <ProjectReference Include="$(ProbeCordiSharpProject)" Condition="'$(ProbeCordiSharpProject)' != ''" />
+  </ItemGroup>
+</Project>

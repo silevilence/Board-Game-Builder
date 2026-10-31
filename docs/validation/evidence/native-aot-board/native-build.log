@@ -1,0 +1,5 @@
+  正在确定要还原的项目…
+  已还原 C:\code\dotnet\Board-Game-Builder\tools\AotProbes\Board\Board.csproj (用时 344 毫秒)。
+  Board -> C:\code\dotnet\Board-Game-Builder\artifacts\native-aot\board\verified\native-build\bin\Board\release_win-x64\Board.AotProbe.dll
+  Generating native code
+  Board -> C:\code\dotnet\Board-Game-Builder\artifacts\native-aot\board\verified\native\

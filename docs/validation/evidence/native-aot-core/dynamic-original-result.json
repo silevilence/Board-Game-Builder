@@ -1,0 +1,40 @@
+{
+  "success": true,
+  "checks": [
+    {
+      "name": "class-plugin-reflection",
+      "passed": true,
+      "detail": ""
+    },
+    {
+      "name": "duck-typed-apply",
+      "passed": true,
+      "detail": ""
+    },
+    {
+      "name": "typed-delegate-config",
+      "passed": true,
+      "detail": ""
+    },
+    {
+      "name": "object-delegate-disposer",
+      "passed": true,
+      "detail": ""
+    },
+    {
+      "name": "typed-task-effect",
+      "passed": true,
+      "detail": ""
+    },
+    {
+      "name": "anonymous-logger-intercept",
+      "passed": true,
+      "detail": ""
+    },
+    {
+      "name": "json-effect-label-escaping",
+      "passed": true,
+      "detail": ""
+    }
+  ]
+}

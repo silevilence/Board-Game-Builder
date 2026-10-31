@@ -1,0 +1,18 @@
+<Project Sdk="Microsoft.NET.Sdk">
+  <PropertyGroup>
+    <OutputType>Exe</OutputType>
+    <PublishAot>true</PublishAot>
+    <TrimmerSingleWarn>false</TrimmerSingleWarn>
+    <IlcTreatWarningsAsErrors>true</IlcTreatWarningsAsErrors>
+    <ILLinkTreatWarningsAsErrors>true</ILLinkTreatWarningsAsErrors>
+  </PropertyGroup>
+  <ItemGroup>
+    <PackageReference Include="MoonSharp" Version="2.0.0" />
+    <Compile Include="../../../src/Application.Abstractions/SeededRandom.cs" Link="Production/SeededRandom.cs" />
+    <Compile Include="../../../src/Lua.Execution/LuaProcessSession.cs" Link="Production/LuaProcessSession.cs" />
+    <Compile Include="../../../src/Lua.Execution/LuaProtocol.cs" Link="Production/LuaProtocol.cs" />
+    <Content Include="../../../samples/quick-cards/rules.lua" Link="samples/quick-cards/rules.lua" CopyToOutputDirectory="PreserveNewest" />
+    <Content Include="../../../samples/quick-cards/cpu.lua" Link="samples/quick-cards/cpu.lua" CopyToOutputDirectory="PreserveNewest" />
+    <Content Include="../../../samples/flow-cards/turn.lua" Link="samples/flow-cards/turn.lua" CopyToOutputDirectory="PreserveNewest" />
+  </ItemGroup>
+</Project>

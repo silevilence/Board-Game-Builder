@@ -1,0 +1,21 @@
+<Project Sdk="Microsoft.NET.Sdk">
+  <PropertyGroup>
+    <OutputType>Exe</OutputType>
+    <AssemblyName>Board.AotProbe</AssemblyName>
+    <PublishAot>true</PublishAot>
+    <IlcTreatWarningsAsErrors>true</IlcTreatWarningsAsErrors>
+    <ILLinkTreatWarningsAsErrors>true</ILLinkTreatWarningsAsErrors>
+    <TrimmerSingleWarn>false</TrimmerSingleWarn>
+    <EnableDefaultCompileItems>false</EnableDefaultCompileItems>
+  </PropertyGroup>
+  <ItemGroup>
+    <Compile Include="Program.cs" />
+    <ProjectReference Include="../../../src/BoardGame.Hosting/BoardGame.Hosting.csproj" Condition="'$(BoardSources)' == ''" />
+  </ItemGroup>
+  <ItemGroup Condition="'$(BoardSources)' != ''">
+    <Compile Include="$(BoardSources)/**/*.cs" />
+    <Compile Remove="$(BoardSources)/**/TypeForwards.cs" />
+    <Compile Include="WireStatic.cs" />
+    <Reference Include="CordiSharp"><HintPath>$(CordiSharpCandidate)</HintPath></Reference>
+  </ItemGroup>
+</Project>

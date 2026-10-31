@@ -1,0 +1,62 @@
+{
+  "success": true,
+  "fingerprint": "B787CFD05C2852A6086A0EB1AC0762AF259AAE7ACBE40F5E36028B79BF4878A8",
+  "dynamicCodeSupported": false,
+  "os": "Microsoft Windows 10.0.26100",
+  "checks": [
+    {
+      "name": "content-package-snapshot-restore-update",
+      "passed": true,
+      "detail": ""
+    },
+    {
+      "name": "snapshot-content-tamper-rejected",
+      "passed": true,
+      "detail": ""
+    },
+    {
+      "name": "duplicate-and-unknown-json-rejected",
+      "passed": true,
+      "detail": ""
+    },
+    {
+      "name": "catalog-identity-revalidation",
+      "passed": true,
+      "detail": ""
+    },
+    {
+      "name": "activation-failure-cleanup",
+      "passed": true,
+      "detail": ""
+    },
+    {
+      "name": "close-cancels-and-awaits-update",
+      "passed": true,
+      "detail": ""
+    }
+  ],
+  "nativeModules": [
+    "C:\\ProbeInput\\core-v4\\Core.AotProbe.exe",
+    "C:\\Windows\\SYSTEM32\\ntdll.dll",
+    "C:\\Windows\\System32\\KERNEL32.DLL",
+    "C:\\Windows\\System32\\KERNELBASE.dll",
+    "C:\\Windows\\SYSTEM32\\apphelp.dll",
+    "C:\\Windows\\System32\\ADVAPI32.dll",
+    "C:\\Windows\\System32\\msvcrt.dll",
+    "C:\\Windows\\System32\\sechost.dll",
+    "C:\\Windows\\System32\\RPCRT4.dll",
+    "C:\\Windows\\System32\\ole32.dll",
+    "C:\\Windows\\System32\\msvcp_win.dll",
+    "C:\\Windows\\System32\\ucrtbase.dll",
+    "C:\\Windows\\System32\\GDI32.dll",
+    "C:\\Windows\\System32\\win32u.dll",
+    "C:\\Windows\\System32\\gdi32full.dll",
+    "C:\\Windows\\System32\\USER32.dll",
+    "C:\\Windows\\System32\\combase.dll",
+    "C:\\Windows\\SYSTEM32\\bcrypt.dll",
+    "C:\\Windows\\System32\\IMM32.DLL",
+    "C:\\Windows\\SYSTEM32\\kernel.appcore.dll",
+    "C:\\Windows\\System32\\bcryptPrimitives.dll",
+    "C:\\Windows\\SYSTEM32\\icu.dll"
+  ]
+}

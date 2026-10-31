@@ -1,0 +1,26 @@
+  正在确定要还原的项目…
+  已还原 C:\code\dotnet\Board-Game-Builder\src\BoardGame.Recording\BoardGame.Recording.csproj (用时 415 毫秒)。
+  已还原 C:\code\dotnet\Board-Game-Builder\src\BoardGame.Core\BoardGame.Core.csproj (用时 407 毫秒)。
+  已还原 C:\code\dotnet\Board-Game-Builder\src\BoardGame.Hosting\BoardGame.Hosting.csproj (用时 420 毫秒)。
+  已还原 C:\code\dotnet\Board-Game-Builder\src\Kernel\Kernel.csproj (用时 388 毫秒)。
+  已还原 C:\code\dotnet\Board-Game-Builder\src\Application.Abstractions\Application.Abstractions.csproj (用时 371 毫秒)。
+  已还原 C:\code\dotnet\Board-Game-Builder\tools\AotProbes\Board\Board.csproj (用时 418 毫秒)。
+  已还原 C:\code\dotnet\Board-Game-Builder\src\Modules\Modules.csproj (用时 415 毫秒)。
+  已还原 C:\code\dotnet\Board-Game-Builder\src\Resources.Core\Resources.Core.csproj (用时 406 毫秒)。
+  已还原 C:\code\dotnet\Board-Game-Builder\src\Resources.Abstractions\Resources.Abstractions.csproj (用时 367 毫秒)。
+  已还原 C:\code\dotnet\Board-Game-Builder\src\BoardGame.Session\BoardGame.Session.csproj (用时 421 毫秒)。
+  已还原 C:\code\dotnet\Board-Game-Builder\src\Kernel.Abstractions\Kernel.Abstractions.csproj (用时 388 毫秒)。
+  已还原 C:\code\dotnet\Board-Game-Builder\src\Application.Core\Application.Core.csproj (用时 406 毫秒)。
+  Resources.Abstractions -> C:\code\dotnet\Board-Game-Builder\artifacts\native-aot\board\verified\baseline-build\bin\Resources.Abstractions\release\Resources.Abstractions.dll
+  Application.Abstractions -> C:\code\dotnet\Board-Game-Builder\artifacts\native-aot\board\verified\baseline-build\bin\Application.Abstractions\release\Application.Abstractions.dll
+  Kernel.Abstractions -> C:\code\dotnet\Board-Game-Builder\artifacts\native-aot\board\verified\baseline-build\bin\Kernel.Abstractions\release\Kernel.Abstractions.dll
+  Application.Core -> C:\code\dotnet\Board-Game-Builder\artifacts\native-aot\board\verified\baseline-build\bin\Application.Core\release\Application.Core.dll
+  Modules -> C:\code\dotnet\Board-Game-Builder\artifacts\native-aot\board\verified\baseline-build\bin\Modules\release\Modules.dll
+  Kernel -> C:\code\dotnet\Board-Game-Builder\artifacts\native-aot\board\verified\baseline-build\bin\Kernel\release\Kernel.dll
+  Resources.Core -> C:\code\dotnet\Board-Game-Builder\artifacts\native-aot\board\verified\baseline-build\bin\Resources.Core\release\Resources.Core.dll
+  BoardGame.Core -> C:\code\dotnet\Board-Game-Builder\artifacts\native-aot\board\verified\baseline-build\bin\BoardGame.Core\release\BoardGame.Core.dll
+  BoardGame.Recording -> C:\code\dotnet\Board-Game-Builder\artifacts\native-aot\board\verified\baseline-build\bin\BoardGame.Recording\release\BoardGame.Recording.dll
+  BoardGame.Session -> C:\code\dotnet\Board-Game-Builder\artifacts\native-aot\board\verified\baseline-build\bin\BoardGame.Session\release\BoardGame.Session.dll
+  BoardGame.Hosting -> C:\code\dotnet\Board-Game-Builder\artifacts\native-aot\board\verified\baseline-build\bin\BoardGame.Hosting\release\BoardGame.Hosting.dll
+  Board -> C:\code\dotnet\Board-Game-Builder\artifacts\native-aot\board\verified\baseline-build\bin\Board\release_win-x64\Board.AotProbe.dll
+  Board -> C:\code\dotnet\Board-Game-Builder\artifacts\native-aot\board\verified\baseline\
