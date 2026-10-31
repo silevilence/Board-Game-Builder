@@ -7,6 +7,7 @@ namespace BoardGame.View;
 public class InteractiveBoard : UserControl, IDisposable
 {
     private readonly BoardViewport viewport;
+    public PlatformViewport Surface=>viewport;
     private readonly TableInteraction input=new();
     private TableScene scene=new([],BoardGame.Kernel.ResourcePool.Empty);
     private readonly SceneAnimationPlayer animation=new();

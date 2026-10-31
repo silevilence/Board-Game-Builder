@@ -62,7 +62,7 @@ public sealed class AnimationPanel : UserControl
                 using var snapshot=new ProjectSnapshot(view,new Dictionary<string,byte[]?>{[AnimationOperations.Path(view)]=Encoding.UTF8.GetBytes(AnimationFile.Write(definition))});
                 var module=GameRuntime.Load(snapshot.Directory);
                 var scene=TableScene.From(new GameEngine(module.Initial).Project(module.Initial.Seats[0].Id),module.Resources);
-                var table=new InteractiveTable{InputEnabled=false};PreviewTable=table;host.Content=table;
+                var table=scope.Service<BoardViewports>("board.viewports").Create(scope);table.InputEnabled=false;PreviewTable=table;host.Content=table;
                 table.RenderingError+=message=> {status.Text=message;Stop();};
                 table.Show(scene with {AnimationCues=definition.Clips.ToDictionary(c=>c.Id,c=>c.Id==selected?1:0)});
                 status.Text="只读预览 · "+selected;
@@ -75,7 +75,7 @@ public sealed class AnimationPanel : UserControl
 
 public static class AnimationEditorPlugin
 {
-    public static EditorPluginDefinition Definition=>new("author.animation",1,["animation.author"],["documents","panels","commands"],scope=>
+    public static EditorPluginDefinition Definition=>new("author.animation",1,["animation.author"],["documents","panels","commands","board.viewports"],scope=>
     {
         var documents=scope.Service<DocumentWorkspace>("documents");var workspace=new AnimationWorkspace(documents);scope.Provide("animation.author",workspace);
         var commands=scope.Service<EditorCommands>("commands");

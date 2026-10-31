@@ -97,7 +97,7 @@ public sealed partial class DocumentWorkspace : IDisposable
     public void Undo()
     {
         if(UndoAuthor()) return;
-        var pending=AllDrafts.LastOrDefault(d=>d.Dirty);
+        var pending=AllDrafts.LastOrDefault(d=>d.CanUndo);
         if(pending!=null) {pending.Undo();Changed?.Invoke();} else Current?.Undo();
     }
     public void Redo()
@@ -106,7 +106,7 @@ public sealed partial class DocumentWorkspace : IDisposable
         var pending=AllDrafts.LastOrDefault(d=>d.CanRedo);
         if(pending!=null) {pending.Redo();Changed?.Invoke();} else Current?.Redo();
     }
-    public bool CanUndo=>authorUndo.Count>0 || Current?.CanUndo==true || AllDrafts.Any(d=>d.Dirty);
+    public bool CanUndo=>authorUndo.Count>0 || Current?.CanUndo==true || AllDrafts.Any(d=>d.CanUndo);
     public bool CanRedo=>authorRedo.Count>0 || Current?.CanRedo==true || AllDrafts.Any(d=>d.CanRedo);
     public async Task<bool> CanLeave(Func<Task<UnsavedChoice>> choose)
     {
@@ -141,6 +141,7 @@ public sealed class DocumentDraft(string path,string baseline,string text,bool y
     public string Baseline { get; private set; }=baseline;
     public string Text { get; private set; }=text;
     public bool Dirty=>Text!=accepted;
+    public bool CanUndo=>undo.Count>0;
     public bool CanRedo=>redo.Count>0;
     public void Edit(string value) {if(value==Text)return;undo.Push(Text);redo.Clear();Text=value;}
     public void Undo() {if(undo.Count==0)return;redo.Push(Text);Text=undo.Pop();}

@@ -20,7 +20,7 @@ public static class GameRuntime
         if(text.Length>1024*1024) throw new InvalidDataException(Entry+": size limit exceeded");
         using var json=JsonDocument.Parse(text);CheckObject(json.RootElement,["format","id","version","plugins"],Entry);
         foreach(var selection in json.RootElement.GetProperty("plugins").EnumerateArray())
-            CheckObject(selection,["id","version","api","configuration"],Entry+".plugins");
+            CheckObject(selection,["id","version","api","configuration","implementation"],Entry+".plugins");
         return ValidateStartup(Wire.Read<RuntimeStartup>(text),approvedPlugins);
     }
     internal static IReadOnlyList<RuntimePluginDefinition> Catalog(RuntimeStartup startup,IReadOnlyList<RuntimePluginDefinition>? approvedPlugins=null)=>

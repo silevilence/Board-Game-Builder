@@ -23,7 +23,7 @@ internal static class Program
             var installation=pluginOption<0?PlayerRuntimePlugins.Open(typeof(BoardGame.Resources.AssetRegistry).Assembly):
                 new BoardGame.Plugins.PluginStore(args[pluginOption+1],"win-x64",[typeof(IApplicationView).Assembly,typeof(IDraw2D).Assembly,
                     typeof(BoardGame.Resources.AssetSet).Assembly,typeof(BoardGame.Resources.AssetRegistry).Assembly]);
-            return ViewportApp.Run("",[],()=>new ApplicationDebugWindow(new ApplicationCatalog(MotionPlugins.Catalog()),graphics,installation));
+            return ViewportApp.Run("",[],()=>new ApplicationDebugWindow(new ApplicationCatalog(MotionPlugins.Catalog()),graphics,installation,Backends()));
         }
         if(args.FirstOrDefault()=="--editor-debug")
         {
@@ -40,10 +40,11 @@ internal static class Program
             if(launch.Module==null && File.Exists(bundled))launch=launch with {Module=bundled};
             var backend=WindowsDxBackend.Plugin();
             var graphics=new GraphicsConfiguration(new(1,"graphics","1",[new(backend.Id,backend.Version,backend.Api,JsonSerializer.SerializeToElement(new{}))]),[backend]);
-            return PlayerApplication.Run(new PlayerCatalog([BoardPlayerProvider.Contribution(),new ApplicationPlayerProvider(new ApplicationCatalog(MotionPlugins.Catalog()),graphics,PlayerRuntimePlugins.Open(typeof(BoardGame.Resources.AssetRegistry).Assembly)).Contribution()]),launch);
+            return PlayerApplication.Run(new PlayerCatalog([BoardPlayerProvider.Contribution(),new ApplicationPlayerProvider(new ApplicationCatalog(MotionPlugins.Catalog()),graphics,PlayerRuntimePlugins.Open(typeof(BoardGame.Resources.AssetRegistry).Assembly),Backends()).Contribution()]),launch);
         }
         if(args.Length>0 && args[0]=="viewport") return ViewportApp.Run("Board Game Builder — Player viewport probe",args[1..]);
         if(args.Length==2 && args[0]=="table") return ViewportApp.Run("",[],()=>TablePreview.Create(args[1]));
         return PlayerCli.Run(args);
     }
+    private static GraphicsBackendPackages Backends()=>new(WindowsDxBackend.Plugin,Path.Combine(AppContext.BaseDirectory,"backends","desktopgl"));
 }

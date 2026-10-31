@@ -1,0 +1,6 @@
+<Project Sdk="Microsoft.NET.Sdk">
+  <ItemGroup>
+    <ProjectReference Include="../Rendering.Core/Rendering.Core.csproj" />
+    <ProjectReference Include="../Runtime.Plugins/Runtime.Plugins.csproj" />
+  </ItemGroup>
+</Project>

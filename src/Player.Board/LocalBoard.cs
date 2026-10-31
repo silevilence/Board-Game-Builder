@@ -9,6 +9,8 @@ public sealed class LocalBoard : UserControl,IDisposable
 {
     private readonly LocalTableSession session;
     private readonly LoadedModule module;
+    private readonly BoardGame.Rendering.GraphicsConfiguration? graphics;
+    public Task Shutdown {get;private set;}=Task.CompletedTask;
     private readonly PackagedControlFont controlFont;
     private readonly StackPanel header=new() {Spacing=8};
     private readonly Grid views=new();
@@ -21,21 +23,21 @@ public sealed class LocalBoard : UserControl,IDisposable
     internal int RenderedFrames=>tables.Sum(t=>t.RenderedFrames);
     internal string? RenderingFailure {get;private set;}
     internal bool ActionsVisible=>showActions;
-    public static async Task<LocalBoard> Create(LoadedModule module,uint seed,IReadOnlyDictionary<string,string> controllers,LocalTableMode mode,bool showActions=true)
+    public static async Task<LocalBoard> Create(LoadedModule module,uint seed,IReadOnlyDictionary<string,string> controllers,LocalTableMode mode,bool showActions=true,BoardGame.Rendering.GraphicsConfiguration? graphics=null)
     {
         var session=await Task.Run(()=>new LocalTableSession(module,seed,controllers,mode));
-        try {return new(module,session,showActions);}catch {session.Dispose();throw;}
+        try {return new(module,session,showActions,graphics);}catch {session.Dispose();throw;}
     }
-    private LocalBoard(LoadedModule module,LocalTableSession session,bool showActions)
+    private LocalBoard(LoadedModule module,LocalTableSession session,bool showActions,BoardGame.Rendering.GraphicsConfiguration? graphics)
     {
-        this.module=module;this.session=session;this.showActions=showActions;
+        this.module=module;this.session=session;this.showActions=showActions;this.graphics=graphics;
         controlFont=new(this,module.Resources);
         var root=new DockPanel();DockPanel.SetDock(header,Dock.Top);root.Children.Add(header);root.Children.Add(views);Content=root;
         Refresh();
     }
     private void Clear()
     {
-        foreach(var table in tables) {table.InputEnabled=false;table.Show(new([],BoardGame.Kernel.ResourcePool.Empty));table.Dispose();}
+        foreach(var table in tables) {table.InputEnabled=false;table.Show(new([],BoardGame.Kernel.ResourcePool.Empty));table.Dispose();Shutdown=Task.WhenAll(Shutdown,table.Shutdown);}
         tables.Clear();sidebars.Clear();views.Children.Clear();views.ColumnDefinitions.Clear();views.RowDefinitions.Clear();header.Children.Clear();
     }
     private void Refresh()
@@ -74,7 +76,9 @@ public sealed class LocalBoard : UserControl,IDisposable
                 button.Click+=async (_,_)=>await Run(async ()=> {await session.SubmitAsync(frame.Revision,seat.View.Seat,new("action",Action:offer.Id));});
                 controls.Children.Add(button);
             }
-            var table=new InteractiveTable(BoardRenderContract.Require(module.RuntimeIdentity!.Startup)) {InputEnabled=!seat.Cpu && !seat.View.Ended && seat.Fault==null && seat.Actions.Count>0};tables.Add(table);
+            var renderer=BoardRenderContract.Require(module.RuntimeIdentity!.Startup);
+            var table=graphics==null?new InteractiveTable(renderer):new InteractiveTable(graphics,renderer);
+            table.InputEnabled=!seat.Cpu && !seat.View.Ended && seat.Fault==null && seat.Actions.Count>0;tables.Add(table);
             table.Show(TableScene.From(seat.View,module.Resources));panel.Children.Add(table);
             table.Gesture+=g=>_=Run(async ()=> {await session.SubmitAsync(frame.Revision,seat.View.Seat,new(g.Kind,g.Entity,g.Target,g.X,g.Y));});
             table.RenderingError+=error=> {RenderingFailure=error;Clear();header.Children.Add(new TextBlock {Text=error});session.Dispose();};

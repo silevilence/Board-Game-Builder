@@ -8,7 +8,7 @@ namespace BoardGame.Player;
 
 public sealed class ApplicationDebugWindow : Window
 {
-    public ApplicationDebugWindow(ApplicationCatalog catalog,GraphicsConfiguration graphics,PluginStore? installation=null)
+    public ApplicationDebugWindow(ApplicationCatalog catalog,GraphicsConfiguration graphics,PluginStore? installation=null,GraphicsBackendPackages? backends=null)
     {
         Title="Player · 应用调试";Width=900;Height=600;
         Content=new TextBlock{Text="等待作者应用快照…",Margin=new(24)};
@@ -18,14 +18,16 @@ public sealed class ApplicationDebugWindow : Window
         {
             ApplicationViewport? viewport=null;
             PluginCatalogLease? imported=null;
+            GraphicsBackendLease? backendLease=null;
+            var selectedGraphics=graphics;var approved=GraphicsBackendContract.Extend(catalog);
             try
             {
-                await Task.Run(()=>ApplicationDebugProtocol.Serve(catalog,async instance=>
+                await Task.Run(()=>ApplicationDebugProtocol.Serve(approved,async instance=>
                 {
                     await Dispatcher.UIThread.InvokeAsync(()=>
                     {
                         lifetime.Token.ThrowIfCancellationRequested();
-                        viewport=new(graphics,instance);Content=viewport;
+                        viewport=new(selectedGraphics,instance);Content=viewport;
                         Title=instance.Service<IApplicationView>(ApplicationViewPlugin.Capability).Description.Title+" · 作者调试";
                     });
                     var rendered=false;
@@ -41,8 +43,14 @@ public sealed class ApplicationDebugWindow : Window
                     if(!rendered)throw new TimeoutException("Debug Player viewport did not render");
                 },lifetime.Token,snapshot=>
                 {
-                    imported=installation?.Open(snapshot.Identity.Startup,catalog);
-                    return imported?.Catalog ?? catalog;
+                    var startup=snapshot.Identity.Startup;
+                    if(startup.Plugins.Any(p=>GraphicsBackendContract.Descriptions.Any(d=>d.Id==p.Id)))
+                    {
+                        backendLease=(backends ?? throw new InvalidDataException("This debug host has no selectable backend distribution")).Open(startup);
+                        selectedGraphics=new(backendLease.Startup,[backendLease.Definition]);
+                    }
+                    imported=installation?.Open(startup,approved);
+                    return imported?.Catalog ?? approved;
                 },async()=>
                 {
                     var previous=viewport;
@@ -57,6 +65,7 @@ public sealed class ApplicationDebugWindow : Window
             {
                 viewport?.Dispose();Content=null;if(viewport!=null)await viewport.Shutdown;
                 imported?.Dispose();
+                backendLease?.Dispose();
                 finished=true;lifetime.Dispose();Close();
             }
         };

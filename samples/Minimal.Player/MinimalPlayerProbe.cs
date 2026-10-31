@@ -36,7 +36,8 @@ public sealed class MinimalPlayerProbe : Avalonia.Application
         try
         {
             Directory.CreateDirectory(Path.GetDirectoryName(output)!);
-            var catalog=new PlayerCatalog([new ApplicationPlayerProvider(new ApplicationCatalog(MotionPlugins.Catalog()),graphics).Contribution()]);
+            var catalog=new PlayerCatalog([new ApplicationPlayerProvider(new ApplicationCatalog(MotionPlugins.Catalog()),graphics,
+                backends:new(WindowsDxBackend.Plugin,Path.Combine(AppContext.BaseDirectory,"backends","desktopgl"))).Contribution()]);
             for(var cycle=0;cycle<2;cycle++)
             {
                 await using var lease=await catalog.OpenAsync(source,new(source));var window=(ApplicationWindow)lease.Window;

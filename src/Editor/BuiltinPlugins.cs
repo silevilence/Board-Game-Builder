@@ -47,21 +47,28 @@ public static class BuiltinPlugins
             scope.Provide("runtime.plugins",BoardGame.Authoring.AuthorRuntimePlugins.CreateStore()),true));
         app.Install(new("runtime.catalog",1,["runtime.catalog"],["runtime.plugins"],scope=>
             scope.Provide("runtime.catalog",new BoardGame.Authoring.AuthorRuntimeCatalog(scope.Service<BoardGame.Plugins.PluginStore>("runtime.plugins"))),true));
-        app.Install(new("base.sessions",1,["sessions"],["documents","runtime.plugins"],scope=>
+        app.Install(new("base.sessions",1,["sessions"],["documents","runtime.plugins","viewports"],scope=>
         {
-            var sessions=new ApplicationSessions(scope.Service<DocumentWorkspace>("documents"),scope.Service<BoardGame.Plugins.PluginStore>("runtime.plugins"));
+            var sessions=new ApplicationSessions(scope.Service<DocumentWorkspace>("documents"),scope.Service<BoardGame.Plugins.PluginStore>("runtime.plugins"),scope.Service<EditorViewports>("viewports").RequireCurrent);
             scope.OwnAsync(sessions);scope.Provide("sessions",sessions);
         },true));
-        app.Install(new("base.viewports",1,["viewports"],["runtime.catalog"],scope=>
+        app.Install(new("base.viewports",1,["viewports"],["runtime.catalog","documents","commands"],scope=>
         {
-            scope.Provide("viewports",EditorViewports.WindowsDx());
-            scope.Own(scope.Service<BoardGame.Authoring.AuthorRuntimeCatalog>("runtime.catalog").Register("graphics.windowsdx",_=>[BoardGame.Rendering.WindowsDxBackend.Plugin()]));
+            var views=new EditorViewports(scope.Service<DocumentWorkspace>("documents"),new(BoardGame.Rendering.WindowsDxBackend.Plugin,
+                Path.Combine(AppContext.BaseDirectory,"backends","desktopgl")));
+            scope.Provide("viewports",views);scope.OwnAsync(views);
+            var commands=scope.Service<EditorCommands>("commands");
+            commands.Register(scope,new("graphics.rebuild","应用后端并重建视口",views.Apply,()=>!views.Busy && scope.Service<DocumentWorkspace>("documents").Current!=null));
+            commands.Register(scope,new("graphics.cancel","取消图形重建",views.CancelAndWait,()=>views.Busy));
+            views.Changed+=commands.Refresh;scope.Own(new Cleanup(()=>views.Changed-=commands.Refresh));
+            scope.Own(app.BeforeShutdown(async()=>{await views.CancelAndWait();return true;}));
+            scope.Own(scope.Service<BoardGame.Authoring.AuthorRuntimeCatalog>("runtime.catalog").Register("graphics",_=>BoardGame.Rendering.GraphicsBackendContract.Descriptions));
         },true));
-        app.Install(new("play.board.sessions",1,["board.sessions"],["documents"],scope=>
+        app.Install(new("play.board.sessions",1,["board.sessions"],["documents","viewports"],scope=>
         {
-            var sessions=new BoardSessionController(scope.Service<DocumentWorkspace>("documents"));scope.Own(sessions);scope.Provide("board.sessions",sessions);
+            var sessions=new BoardSessionController(scope.Service<DocumentWorkspace>("documents"),scope.Service<EditorViewports>("viewports").RequireCurrent);scope.Own(sessions);scope.Provide("board.sessions",sessions);
         }));
-        app.Install(new("board.viewports",1,["board.viewports"],[],scope=>scope.Provide("board.viewports",new BoardViewports())));
+        app.Install(new("board.viewports",1,["board.viewports"],["viewports"],scope=>scope.Provide("board.viewports",new BoardViewports(scope.Service<EditorViewports>("viewports")))));
         app.Install(new("runtime.motion",1,[],["sessions","documents","runtime.plugins","runtime.catalog"],scope=>
         {
             var catalog=new BoardGame.AppRuntime.ApplicationCatalog(Sample.Motion.MotionPlugins.Catalog());
@@ -100,7 +107,7 @@ public static class BuiltinPlugins
         app.Install(AnimationEditorPlugin.Definition);
         app.Install(new("author.configuration",1,[],["documents","panels"],scope=>
             scope.Service<PanelContributions>("panels").Register(scope,"author.configuration","模块配置",()=>new FormatPanel(scope,s=>new ConfigurationPanel(s)))));
-        app.Install(new("author.startup",1,["runtime.configuration"],["documents","panels","runtime.catalog","sessions","board.sessions"],scope=>
+        app.Install(new("author.startup",1,["runtime.configuration"],["documents","panels","runtime.catalog","sessions","board.sessions","viewports","commands"],scope=>
         {
             var documents=scope.Service<DocumentWorkspace>("documents");
             var configuration=new RuntimeConfiguration(documents,scope.Service<BoardGame.Authoring.AuthorRuntimeCatalog>("runtime.catalog"),scope.Service<ApplicationSessions>("sessions"),scope.Service<BoardSessionController>("board.sessions"));

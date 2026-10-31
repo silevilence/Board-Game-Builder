@@ -19,6 +19,10 @@ public sealed partial class PlayerWindow : Window
     private LoadedModule? module;
     private PlayBoard? board;
     private LocalBoard? localBoard;
+    private BoardGraphics? graphics;
+    private Task graphicsShutdown=Task.CompletedTask;
+    private bool closedGraphics;
+    private bool closingGraphics;
     private readonly ComboBox mode=new() {Width=130,ItemsSource=new[] {"单人 + CPU","本地热座","同屏分视角","全 CPU 观战"},SelectedIndex=0};
     private readonly TextBox localHumans=new() {Width=140,PlaceholderText="真人席位，如 p1,p2"};
     private int generation;
@@ -48,7 +52,11 @@ public sealed partial class PlayerWindow : Window
         menuBar.Child=PlayerMenu();
         var root=new DockPanel(); DockPanel.SetDock(menuBar,Dock.Top); DockPanel.SetDock(top,Dock.Top); DockPanel.SetDock(message,Dock.Top); root.Children.Add(menuBar); root.Children.Add(top); root.Children.Add(message); root.Children.Add(play); Content=root;
         SetShell(this.shell);
-        Closed+=(_,_)=> { generation++; board?.Dispose();localBoard?.Dispose(); };
+        Closing+=async(_,e)=>
+        {
+            if(closedGraphics)return;e.Cancel=true;if(closingGraphics)return;closingGraphics=true;generation++;
+            await ReleaseBoards();graphics?.Dispose();graphics=null;closedGraphics=true;Close();
+        };
         TableKeyInput.Attach(this,key=>
         {
             if(key is "new-game" or "restart" or "choose-seed" || board==null && localBoard==null && key=="confirm") _=HostKey(key);
@@ -73,8 +81,7 @@ public sealed partial class PlayerWindow : Window
     }
     private async Task Load()
     {
-        var current=++generation; board?.Dispose(); board=null; play.Content=null; module=null; activeSeed=null; start.IsEnabled=false;
-        localBoard?.Dispose();localBoard=null;
+        var current=++generation;await ReleaseBoards();graphics?.Dispose();graphics=null;module=null;activeSeed=null;start.IsEnabled=false;
         var location=path.Text ?? ""; message.Text="正在加载模块…";
         gameMenu.IsEnabled=false;viewMenu.IsEnabled=false;
         presentation=new();classic=false;ApplyTheme();Title="Board Game Builder · 本地 Player";
@@ -82,6 +89,7 @@ public sealed partial class PlayerWindow : Window
         {
             var loaded=await Task.Run(()=>GameRuntime.Load(location));
             if(current!=generation) return;
+            graphics=new(loaded.RuntimeIdentity!.Startup);
             presentation=PlayerPresentation.Read(loaded);
             if(presentation.Width is {} preferredWidth)Width=Math.Min(preferredWidth,(Screens.Primary?.WorkingArea.Width ?? preferredWidth)/RenderScaling);
             if(presentation.Height is {} preferredHeight)Height=Math.Min(preferredHeight,(Screens.Primary?.WorkingArea.Height ?? preferredHeight)/RenderScaling);
@@ -105,19 +113,18 @@ public sealed partial class PlayerWindow : Window
         try {setup=ReadSetup();}
         catch(InvalidDataException e) {message.IsVisible=true;message.Text=e.Message;return;}
         var value=setup.Seed;
-        var current=++generation; var loaded=module; board?.Dispose(); board=null; play.Content=null; activeSeed=null;UpdateTitle();start.IsEnabled=false; message.Text="正在开始新对局…";
-        localBoard?.Dispose();localBoard=null;
+        var current=++generation; var loaded=module;await ReleaseBoards();activeSeed=null;UpdateTitle();start.IsEnabled=false; message.Text="正在开始新对局…";
         try
         {
             if(setup.Mode>0)
             {
-                var created=await LocalBoard.Create(loaded,value,loaded.Initial.Seats.ToDictionary(s=>s.Id,s=>setup.Humans.Contains(s.Id)?"human":"cpu"),setup.Mode==2?LocalTableMode.SplitScreen:LocalTableMode.HotSeat,presentation.ShowActions);
+                var created=await LocalBoard.Create(loaded,value,loaded.Initial.Seats.ToDictionary(s=>s.Id,s=>setup.Humans.Contains(s.Id)?"human":"cpu"),setup.Mode==2?LocalTableMode.SplitScreen:LocalTableMode.HotSeat,presentation.ShowActions,graphics?.Configuration);
                 if(current!=generation) {created.Dispose();return;}localBoard=created;
                 play.Content=localBoard;activeSeed=value;SetShell(shell);UpdateTitle();message.Text="热座交接请移开视线；同屏各视口显示其控制席位。";await localBoard.PumpCpu();return;
             }
             var session=await PlayerSession.CreateAsync(loaded,value,human);
             if(current!=generation) { session.Stop(); return; }
-            activeSeed=value; board=new(session,loaded,presentation.ShowActions); board.HostShortcut+=key=>_=HostKey(key); play.Content=board;
+            activeSeed=value; board=new(session,loaded,presentation.ShowActions,graphics?.Configuration); board.HostShortcut+=key=>_=HostKey(key); play.Content=board;
             SetShell(shell);UpdateTitle();
             message.Text=classic?"点牌再点目标 / 拖动 · 双击快速移牌 · 按住右键看牌 · 中键或空白处右拖平移 · H 提示 · F2 新局 / F3 开局设置 / Ctrl+R 重开"
                 :"双击对象或点击可用动作 · 滚轮缩放 · 中键平移 · F2 新局 / F3 种子 / Ctrl+R 重开";
@@ -125,6 +132,12 @@ public sealed partial class PlayerWindow : Window
         }
         catch(Exception e) { if(current==generation) {message.IsVisible=true; message.Text="无法开始："+e.Message;} }
         finally { if(current==generation) start.IsEnabled=true; }
+    }
+    private async Task ReleaseBoards()
+    {
+        var oldBoard=board;board=null;var oldLocal=localBoard;localBoard=null;
+        oldBoard?.Dispose();oldLocal?.Dispose();play.Content=null;
+        graphicsShutdown=Task.WhenAll(graphicsShutdown,oldBoard?.Shutdown ?? Task.CompletedTask,oldLocal?.Shutdown ?? Task.CompletedTask);await graphicsShutdown;
     }
     private async Task Smoke(string output,string? actionsFile=null)
     {

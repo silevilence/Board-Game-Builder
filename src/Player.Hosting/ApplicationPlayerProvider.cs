@@ -8,7 +8,7 @@ using BoardGame.Kernel;
 
 namespace BoardGame.Player;
 
-public sealed class ApplicationPlayerProvider(ApplicationCatalog catalog,GraphicsConfiguration graphics,PluginStore? installation=null) : IPlayerProvider
+public sealed class ApplicationPlayerProvider(ApplicationCatalog catalog,GraphicsConfiguration graphics,PluginStore? installation=null,GraphicsBackendPackages? backends=null) : IPlayerProvider
 {
     public bool Supports(PlayerSource source)
     {
@@ -27,18 +27,26 @@ public sealed class ApplicationPlayerProvider(ApplicationCatalog catalog,Graphic
     {
         if(launch.Actions!=null || launch.Smoke!=null)throw new InvalidDataException("This Player capability does not support board action probes");
         PluginCatalogLease? lease=null;
+        GraphicsBackendLease? backendLease=null;
         try
         {
+            var approved=GraphicsBackendContract.Extend(catalog);
+            var header=source.Snapshot?source.Header.GetProperty("identity").GetProperty("startup"):source.Header;
+            var startup=header.Deserialize<RuntimeStartup>(new JsonSerializerOptions{PropertyNameCaseInsensitive=true}) ?? throw new InvalidDataException("Missing application startup");
+            var selectedGraphics=graphics;
+            if(startup.Plugins.Any(p=>GraphicsBackendContract.Descriptions.Any(d=>d.Id==p.Id)))
+            {
+                backendLease=(backends ?? throw new InvalidDataException("This host has no selectable backend distribution")).Open(startup);
+                selectedGraphics=new(backendLease.Startup,[backendLease.Definition]);
+            }
             if(installation!=null)
             {
-                var header=source.Snapshot?source.Header.GetProperty("identity").GetProperty("startup"):source.Header;
-                var startup=header.Deserialize<RuntimeStartup>(new JsonSerializerOptions{PropertyNameCaseInsensitive=true}) ?? throw new InvalidDataException("Missing application startup");
-                lease=installation.Open(startup,catalog);
+                lease=installation.Open(startup,approved);
             }
-            var window=new ApplicationWindow(lease?.Catalog ?? catalog,graphics,source.Path);
-            window.Closed+=(_,_)=>lease?.Dispose();return window;
+            var window=new ApplicationWindow(lease?.Catalog ?? approved,selectedGraphics,source.Path);
+            window.Closed+=(_,_)=>{lease?.Dispose();backendLease?.Dispose();};return window;
         }
-        catch{lease?.Dispose();throw;}
+        catch{lease?.Dispose();backendLease?.Dispose();throw;}
     }
     public PlayerContribution Contribution(string id="player.application")=>new(new(id,"1.0.0",1,[id],[],scope=>scope.Provide(id,this)),id);
 }

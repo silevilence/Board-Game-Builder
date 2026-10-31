@@ -26,6 +26,11 @@ Check(!missingBackend.Available && missingBackend.Diagnostics.Any(d=>d.Message.C
 var missingTools=await registry.Preflight("native-directory",request with {Arguments=Arguments("missing-tools",Path.Combine(output,"missing-dotnet.exe"))});
 Check(!missingTools.Available && missingTools.Diagnostics.Any(d=>d.Code=="toolchain.sdk"),"Missing compiler accepted");
 var ready=await registry.Preflight("native-directory",request);Check(ready.Available,string.Join("; ",ready.Diagnostics.Select(d=>d.Message)));
+var pinned=JsonNode.Parse(files[GameRuntime.Entry]!)!.AsObject();
+pinned["plugins"]!.AsArray().Single(p=>p!["id"]!.GetValue<string>()=="render.desktopgl")!["implementation"]=BoardGame.Publishing.RuntimeSdk.Open(sdk).Plugins.Single(p=>p.Input.Manifest.Id=="render.desktopgl").Input.Manifest.Fingerprint;
+var pinnedFiles=files.ToDictionary(p=>p.Key,p=>p.Value);pinnedFiles[GameRuntime.Entry]=Encoding.UTF8.GetBytes(pinned.ToJsonString());
+var pinnedCheck=await registry.Preflight("native-directory",request with {View=new ProjectView(view.Source.Identity,pinnedFiles!)});
+Check(pinnedCheck.Available,"Pinned SDK graphics identity was replaced by inactive host metadata");
 if(args.Contains("--native"))
 {
     using var cancellation=new CancellationTokenSource(TimeSpan.FromMinutes(3));var canceledAtCompile=false;

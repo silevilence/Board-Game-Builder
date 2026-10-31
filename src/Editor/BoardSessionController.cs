@@ -9,6 +9,7 @@ namespace BoardGame.Editor;
 public sealed class BoardSessionController : IDisposable
 {
     private readonly DocumentWorkspace documents;
+    private readonly Action<RuntimeStartup>? requireGraphics;
     private readonly DispatcherTimer timer=new() {Interval=TimeSpan.FromMilliseconds(100)};
     private IDebugSession? session;
     private CancellationTokenSource? starting;
@@ -32,9 +33,9 @@ public sealed class BoardSessionController : IDisposable
     public bool AuthorityLog { get; set; }
     public string LogPath { get; set; }=EditorPaths.InWorkspace("artifacts/debug-session.json");
     public event Action? Changed;
-    public BoardSessionController(DocumentWorkspace documents)
+    public BoardSessionController(DocumentWorkspace documents,Action<RuntimeStartup>? requireGraphics=null)
     {
-        this.documents=documents;documents.Replaced+=DocumentChanged;
+        this.documents=documents;this.requireGraphics=requireGraphics;documents.Replaced+=DocumentChanged;
         timer.Tick+=async (_,_)=> {if(Frame is {Cpu:true,View.Ended:false,Fault:null,Paused:false,IsReplay:false} && !Busy) await Send(new("cpu",Frame.Revision));};
         DocumentChanged();
     }
@@ -64,6 +65,7 @@ public sealed class BoardSessionController : IDisposable
             if(!uint.TryParse(Seed,out var seed)) throw new InvalidDataException("种子必须是无符号整数");
             documents.ApplyDrafts();Module=documents.Current?.Snapshot() ?? throw new InvalidOperationException("请打开模块");SyncSeats(Module);
             _=BoardRenderContract.Require(Module.RuntimeIdentity!.Startup);
+            if(!External)requireGraphics?.Invoke(Module.RuntimeIdentity.Startup);
             SourceView = new(new(documents.Current!.DirectoryPath!, "editor.session", "gui", documents.WorkspaceId, documents.Generation), documents.Current.CopyFiles());
             var controllers=CpuSeats.ToDictionary(p=>p.Key,p=>p.Value?"cpu":"human");
             var observer=Module.Initial.Seats.FirstOrDefault(s=>controllers[s.Id]=="human")?.Id ?? Module.Initial.Seats[0].Id;

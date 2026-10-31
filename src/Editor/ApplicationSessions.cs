@@ -11,6 +11,7 @@ public sealed class ApplicationSessions : IAsyncDisposable
 {
     private readonly DocumentWorkspace documents;
     private readonly PluginStore? installation;
+    private readonly Action<BoardGame.Kernel.RuntimeStartup>? requireGraphics;
     private readonly HashSet<string> externalCatalogs=new(StringComparer.Ordinal);
     private PluginCatalogLease? imported;
     private readonly Dictionary<string,ApplicationCatalog> catalogs=new(StringComparer.Ordinal);
@@ -30,14 +31,14 @@ public sealed class ApplicationSessions : IAsyncDisposable
     public string Executable {get;set;}=EditorPaths.DebugPlayer;
     public int? ExternalProcessId=>(session as ExternalApplicationDebugSession)?.ProcessId;
     public event Action? Changed;
-    public ApplicationSessions(DocumentWorkspace documents,PluginStore? installation=null)
+    public ApplicationSessions(DocumentWorkspace documents,PluginStore? installation=null,Action<BoardGame.Kernel.RuntimeStartup>? requireGraphics=null)
     {
-        this.documents=documents;this.installation=installation;documents.Replaced+=Stop;
+        this.documents=documents;this.installation=installation;this.requireGraphics=requireGraphics;documents.Replaced+=Stop;
         timer.Tick+=async(_,_)=>{if(!Busy && Active)await Send("status");};
     }
     public IDisposable Register(string id,ApplicationCatalog catalog,bool importedDefinitions=false)
     {
-        if(!catalogs.TryAdd(id,catalog))throw new InvalidOperationException("Duplicate application catalog: "+id);
+        if(!catalogs.TryAdd(id,BoardGame.Rendering.GraphicsBackendContract.Extend(catalog)))throw new InvalidOperationException("Duplicate application catalog: "+id);
         if(importedDefinitions)externalCatalogs.Add(id);
         Changed?.Invoke();
         return new Cleanup(()=>{if(activeCatalog==id)Stop();catalogs.Remove(id);externalCatalogs.Remove(id);Changed?.Invoke();});
@@ -69,6 +70,7 @@ public sealed class ApplicationSessions : IAsyncDisposable
             var doc=documents.Current ?? throw new InvalidOperationException("请打开工程");
             var source=new ProjectView(new(doc.DirectoryPath ?? "", "editor.application", "gui",documents.WorkspaceId,documents.Generation),doc.CopyFiles());
             var startup=System.Text.Json.JsonSerializer.Deserialize<BoardGame.Kernel.RuntimeStartup>(source.Text(BoardGame.AppRuntime.GameRuntime.Entry),AuthorProfiles.Json)!;
+            if(!External)requireGraphics?.Invoke(startup);
             lease=installation?.Open(startup,selected[0].Value);var catalog=lease?.Catalog ?? selected[0].Value;
             var content=await Task.Run(()=>BoardGame.AppRuntime.GameRuntime.LoadFiles(source.CopyFiles(),catalog.Content),cancellation);
             cancellation.ThrowIfCancellationRequested();

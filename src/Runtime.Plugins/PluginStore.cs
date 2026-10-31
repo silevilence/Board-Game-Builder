@@ -20,10 +20,26 @@ public sealed class PluginStore
     private readonly PluginManifest[] builtins;
     private readonly Dictionary<string,RuntimePluginDefinition[]> builtinSources=new(StringComparer.Ordinal);
     public string DirectoryPath=>root;
-    private static readonly HashSet<string> platformAssemblies=((string?)AppContext.GetData("TRUSTED_PLATFORM_ASSEMBLIES") ?? "")
-        .Split(Path.PathSeparator,StringSplitOptions.RemoveEmptyEntries)
-        .Where(p=>string.Equals(Path.GetDirectoryName(p),Path.TrimEndingDirectorySeparator(System.Runtime.InteropServices.RuntimeEnvironment.GetRuntimeDirectory()),StringComparison.OrdinalIgnoreCase))
-        .Select(Path.GetFileNameWithoutExtension).OfType<string>().ToHashSet(StringComparer.OrdinalIgnoreCase);
+    private static readonly HashSet<string> platformAssemblies=FrameworkAssemblies();
+    private static HashSet<string> FrameworkAssemblies()
+    {
+        var result=new HashSet<string>(StringComparer.OrdinalIgnoreCase){"System.Private.CoreLib"};
+        var runtime=Path.TrimEndingDirectorySeparator(System.Runtime.InteropServices.RuntimeEnvironment.GetRuntimeDirectory());
+        if(!string.Equals(runtime,Path.TrimEndingDirectorySeparator(AppContext.BaseDirectory),StringComparison.OrdinalIgnoreCase))
+            foreach(var path in ((string?)AppContext.GetData("TRUSTED_PLATFORM_ASSEMBLIES") ?? "").Split(Path.PathSeparator,StringSplitOptions.RemoveEmptyEntries))
+                if(string.Equals(Path.GetDirectoryName(path),runtime,StringComparison.OrdinalIgnoreCase))result.Add(Path.GetFileNameWithoutExtension(path));
+        // Self-contained apps put their own assemblies next to CoreCLR. Only runtime-pack entries are framework code.
+        foreach(var path in ((string?)AppContext.GetData("APP_CONTEXT_DEPS_FILES") ?? "").Split(';',StringSplitOptions.RemoveEmptyEntries))
+        {
+            if(!File.Exists(path))continue;
+            using var json=System.Text.Json.JsonDocument.Parse(File.ReadAllText(path));
+            if(!json.RootElement.TryGetProperty("targets",out var targets))continue;
+            foreach(var target in targets.EnumerateObject())foreach(var library in target.Value.EnumerateObject())
+                if(library.Name.StartsWith("runtimepack.Microsoft.NETCore.App.Runtime.",StringComparison.Ordinal) && library.Value.TryGetProperty("runtime",out var files))
+                    foreach(var file in files.EnumerateObject())result.Add(Path.GetFileNameWithoutExtension(file.Name));
+        }
+        return result;
+    }
     public PluginStore(string directory,string target,IEnumerable<Assembly>? sharedContracts=null,IEnumerable<PluginManifest>? builtinManifests=null)
     {
         root=Path.GetFullPath(directory);this.target=target;
@@ -109,6 +125,19 @@ public sealed class PluginStore
                 active[key]=active.GetValueOrDefault(key)+1;return lease;
             }
             catch{held.Dispose();throw;}
+        }
+    }
+    /// <summary>Load a host-selected, verified distribution package without registering it in a user installation.</summary>
+    [RequiresUnreferencedCode("Explicit distribution factory entry.")]
+    [RequiresDynamicCode("Ordinary isolated backend loading.")]
+    public PluginLease AcquirePackage(string directory,string expectedId)
+    {
+        lock(gate)
+        {
+            var path=Path.GetFullPath(directory);var manifest=ReadVerified(path);
+            if(manifest.Id!=expectedId || !manifest.Targets.Contains(target,StringComparer.Ordinal))throw new InvalidDataException("Incompatible host distribution package: "+expectedId);
+            var held=Hold([new(manifest,path)]);
+            try{return Load(path,manifest,held.Dispose);}catch{held.Dispose();throw;}
         }
     }
     /// <summary>One approved selected set shares dependency identities and retains all versions together.</summary>
@@ -353,13 +382,19 @@ internal sealed class PackageLoadContext : AssemblyLoadContext
     {
         var contract=shared.SingleOrDefault(a=>a.GetName().Name==name.Name);
         if(contract!=null)return contract;
+        if(managed.TryGetValue(name.Name!,out var file))return LoadManaged(file.Path);
         if(PluginStore.Framework(name.Name!))return null;
-        if(!managed.TryGetValue(name.Name!,out var file))throw new FileNotFoundException("Unapproved plugin assembly: "+name.Name);
-        return LoadManaged(file.Path);
+        throw new FileNotFoundException("Unapproved plugin assembly: "+name.Name);
     }
     protected override nint LoadUnmanagedDll(string name)
     {
-        if(!native.TryGetValue(Path.GetFileNameWithoutExtension(name),out var file))throw new DllNotFoundException("Unapproved plugin native dependency: "+name);
+        if(!native.TryGetValue(Path.GetFileNameWithoutExtension(name),out var file))
+        {
+            // Platform APIs are resolved only from Windows' system directory, never a working directory or PATH.
+            if(OperatingSystem.IsWindows() && Path.GetFileName(name)==name && new[]{"user32","gdi32","kernel32","opengl32","ole32","winmm","imm32","shell32"}.Contains(Path.GetFileNameWithoutExtension(name),StringComparer.OrdinalIgnoreCase))
+                return LoadUnmanagedDllFromPath(Path.Combine(Environment.SystemDirectory,Path.GetFileNameWithoutExtension(name)+".dll"));
+            throw new DllNotFoundException("Unapproved plugin native dependency: "+name);
+        }
         return LoadUnmanagedDllFromPath(file.Path);
     }
 }

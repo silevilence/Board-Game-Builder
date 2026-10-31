@@ -55,7 +55,7 @@ public sealed partial class PlayerWindow
     }
     private void Stop()
     {
-        generation++;localBoard?.Dispose();localBoard=null;board?.Dispose();board=null;play.Content=null;activeSeed=null;
+        generation++;_=ReleaseBoards();activeSeed=null;
         message.Text="对局已结束。可从游戏菜单重新开始或调整开局设置。";message.IsVisible=true;start.IsEnabled=module!=null;UpdateTitle();
     }
     private GameSetup ReadSetup()=>GameSetup.Parse(module!,seed.Text,mode.SelectedIndex,mode.SelectedIndex==0

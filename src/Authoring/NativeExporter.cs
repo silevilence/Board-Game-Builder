@@ -62,7 +62,7 @@ public sealed class NativeExporter : IAuthorExporter
         var additional=new List<ApprovedApplicationPlugin>();
         // Validate graphics identities/configuration without opening a device in an author/export process.
         // Active instance code always comes from the already approved author runtime.
-        foreach(var selection in startup.Plugins.Where(p=>definitions.All(d=>d.Id!=p.Id)))
+        foreach(var selection in startup.Plugins.Where(p=>definitions.All(d=>d.Id!=p.Id || d.Implementation!=p.Implementation)))
         {
             var candidate=sdk.Plugins.SingleOrDefault(p=>p.Input.Manifest.Id==selection.Id && p.Input.Manifest.Version==selection.Version && p.Input.Manifest.Api==selection.Api);
             if(candidate==null)continue;

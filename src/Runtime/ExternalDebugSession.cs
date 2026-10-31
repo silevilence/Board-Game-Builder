@@ -51,24 +51,25 @@ public sealed class ExternalDebugSession : IDebugSession
     public void Dispose()
     {
         if(disposed) return; disposed=true;
-        try { if(!process.HasExited) process.Kill(true); } catch(InvalidOperationException) {} finally {process.Dispose();}
+        try { if(!process.HasExited){process.StandardInput.Close();if(!process.WaitForExit(3000))process.Kill(true);} } catch(InvalidOperationException) {} finally {process.Dispose();}
     }
 }
 
 public static class DebugTransport
 {
     // Anonymous inherited stdio only: no listener, address, network or game synchronization.
-    public static void Serve(Action<DebugReply,LoadedModule>? update=null)
+    public static void Serve(Action<DebugReply,LoadedModule>? update=null,CancellationToken cancellation=default)
     {
         try
         {
-            var line=Console.ReadLine() ?? throw new EndOfStreamException("Missing local debug handshake");
+            string? Read()=>Console.In.ReadLineAsync(cancellation).AsTask().GetAwaiter().GetResult();
+            var line=Read() ?? throw new EndOfStreamException("Missing local debug handshake");
             if(line.Length>32_000_000) throw new InvalidDataException("Debug handshake too large");
             var start=Wire.Read<DebugStart>(line); if(start.Api!=1) throw new InvalidDataException("Debug API mismatch");
             if(start.Module.Fingerprint!=BoardGame.Modules.ModuleSnapshot.Fingerprint(start.Module)) throw new InvalidDataException("Module fingerprint mismatch");
             using var session=new DebugSession(start.Module,start.Seed,start.Controllers,start.Observer);
             Reply(session.Handle(new("frame")));
-            while((line=Console.ReadLine())!=null)
+            while((line=Read())!=null)
             {
                 try { if(line.Length>32_000_000) throw new InvalidDataException("Debug request too large"); Reply(session.Handle(Wire.Read<DebugRequest>(line))); }
                 catch(Exception e) { Console.WriteLine(Wire.Json(new DebugEnvelope(null,e.Message))); Console.Out.Flush(); }

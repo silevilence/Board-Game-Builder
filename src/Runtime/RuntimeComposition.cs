@@ -39,6 +39,7 @@ internal static class RuntimeComposition
         catalog.Add(StateDefinitionLoader.Plugin(Startup));
         catalog.Add(BoardRecordingPlugin.Create(Module,recording));
         catalog.AddRange(ResourcePlugins.Catalog(()=>module?.Resources));
+        catalog.AddRange(BoardGame.Rendering.GraphicsBackendContract.Descriptions);
         var capabilities=catalog.Where(p=>startup?.Plugins?.Any(s=>s.Id==p.Id)==true).SelectMany(p=>p.Provides).ToHashSet();
         var hasCpu=capabilities.Contains("cpu");var hasEffects=capabilities.Contains("effects");
         var hasFlow=capabilities.Contains("flow");

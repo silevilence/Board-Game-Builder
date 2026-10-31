@@ -52,6 +52,7 @@
     <Project Path="src/Resources.Core/Resources.Core.csproj" />
     <Project Path="src/Rendering.Abstractions/Rendering.Abstractions.csproj" />
     <Project Path="src/Rendering.Core/Rendering.Core.csproj" />
+    <Project Path="src/Rendering.Hosting/Rendering.Hosting.csproj" />
     <Project Path="src/Rendering.WindowsDX/Rendering.WindowsDX.csproj" />
     <Project Path="src/Rendering.Avalonia/Rendering.Avalonia.csproj" />
     <Project Path="src/Toolkit.Entry/Toolkit.Entry.csproj" />
@@ -94,6 +95,7 @@
     <Project Path="tests/View.Tests/View.Tests.csproj" />
   </Folder>
   <Folder Name="/tools/">
+    <Project Path="tools/GraphicsBackendPack/GraphicsBackendPack.csproj" />
     <Project Path="tools/NativeSdk/NativeSdk.csproj" />
   </Folder>
 </Solution>

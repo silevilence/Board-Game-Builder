@@ -49,10 +49,11 @@ public sealed class AuthorRuntimes
 public sealed class ApplicationAuthorRuntime(string id,ApplicationCatalog catalog,PluginStore? installation=null,bool importedDefinitions=false) : IAuthorPackageRuntime,IAuthorPlayerRuntime,IAuthorApplicationRuntime
 {
     public string Id=>id;
-    public ApplicationCatalog Catalog=>catalog;
+    public ApplicationCatalog Catalog=>BoardGame.Rendering.GraphicsBackendContract.Extend(catalog);
     public AuthorApplicationLease Open(ProjectView view,IEnumerable<ApprovedApplicationPlugin>? additional=null)
     {
-        var selected=additional==null?catalog:catalog.Extend(additional);
+        var selected=BoardGame.Rendering.GraphicsBackendContract.Extend(additional==null?catalog:
+            catalog.Extend(additional.Where(p=>catalog.Content.Plugins.All(c=>c.Id!=p.Bind(null).Id))));
         return new(selected,installation?.Open(JsonSerializer.Deserialize<RuntimeStartup>(view.Text(BoardGame.AppRuntime.GameRuntime.Entry),AuthorProfiles.Json) ?? throw new InvalidDataException("Invalid startup"),selected));
     }
     public void PreflightPlayer(string release,ProjectView view,CancellationToken cancellation)
@@ -71,8 +72,8 @@ public sealed class ApplicationAuthorRuntime(string id,ApplicationCatalog catalo
     {
         var content=BoardGame.AppRuntime.GameRuntime.Load(directory,catalog.Content);
         return new(content.Identity.Startup,3,content.Fingerprint,p=>BoardGame.AppRuntime.GamePackage.Pack(directory,p,catalog.Content),
-            p=>BoardGame.AppRuntime.GamePackage.Load(p,catalog.Content).Fingerprint,[],
-            "Windows x64\r\n双击 Play.exe 运行。无需作者工具、SDK 或系统 .NET。需要 Direct3D 11 图形设备。\r\n",
+            p=>BoardGame.AppRuntime.GamePackage.Load(p,catalog.Content).Fingerprint,BoardGame.Rendering.GraphicsBackendContract.DistributionFiles(content.Identity.Startup),
+            "Windows x64\r\n双击 Play.exe 运行。无需作者工具、SDK 或系统 .NET。"+BoardGame.Rendering.GraphicsBackendContract.PlatformRequirements(content.Identity.Startup)+"\r\n",
             JsonSerializer.SerializeToElement(new{content.Identity.Startup.Id,content.Identity.Startup.Version,content.Fingerprint},AuthorProfiles.Json));
     }
     public string Pack(ProjectView view,string destination,CancellationToken cancellation=default)

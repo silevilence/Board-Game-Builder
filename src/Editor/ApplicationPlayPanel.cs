@@ -36,7 +36,7 @@ public sealed class ApplicationPlayPanel : UserControl,IAsyncDisposable
             (sessions.SourceView is {} source?$"\n试玩来源版本：{source.Source.Version}（当前内存快照，未保存）":"");
         if(ReferenceEquals(instance,sessions.Instance))return;
         ReleaseViewport();instance=sessions.Instance;
-        if(instance!=null){viewport=views.Create(instance);viewport.ApplicationError+=error=>{sessions.Stop();status.Text=error;};content.Content=viewport;}
+        if(instance!=null){viewport=views.Create(instance);viewport.ApplicationError+=error=>status.Text="图形故障："+error+"；运行实例保留，可停止或重建视口。";content.Content=viewport;}
     }
     private void ReleaseViewport()
     {if(viewport!=null){viewport.Dispose();shutdown=Task.WhenAll(shutdown,viewport.Shutdown);viewport=null;}content.Content=null;}

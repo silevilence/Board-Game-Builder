@@ -43,9 +43,11 @@ public sealed class PlayBoard : UserControl,IDisposable
     internal bool PresentationBusy=>table.AnimationBusy;
     internal void SaveImage(string path)=>table.SaveImage(path);
     public event Action<string>? HostShortcut;
-    public PlayBoard(PlayerSession session,LoadedModule module,bool showActions=true)
+    public Task Shutdown=>table.Shutdown;
+    public PlayBoard(PlayerSession session,LoadedModule module,bool showActions=true,BoardGame.Rendering.GraphicsConfiguration? graphics=null)
     {
-        table=new(BoardRenderContract.Require(module.RuntimeIdentity!.Startup));
+        var renderer=BoardRenderContract.Require(module.RuntimeIdentity!.Startup);
+        table=graphics==null?new(renderer):new(graphics,renderer);
         this.session=session; this.module=module;
         controlFont=new(this,module.Resources);
         documents=new(module.Resources ?? ResourcePool.Empty);

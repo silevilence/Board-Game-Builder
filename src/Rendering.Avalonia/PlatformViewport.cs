@@ -16,7 +16,11 @@ public class PlatformViewport : NativeControlHost, IDisposable
     public nint NativeHandle=>handle;
     private RenderViewport? surface;
     private RuntimeHost? renderScope;
-    private readonly GraphicsConfiguration configuration;
+    private GraphicsConfiguration configuration;
+    private Task attachment=Task.CompletedTask;
+    public event Action? Disposed;
+    public event Action? GraphicsChanged;
+    public string? ActiveBackend=>renderScope==null?null:configuration.Startup.Plugins.Single().Id;
     private readonly ViewportComposition? presentation;
     private readonly DrawingTarget drawing=new();
     private GraphicsWindowHost? graphicsHost;
@@ -104,14 +108,14 @@ public class PlatformViewport : NativeControlHost, IDisposable
         if(disposed) return;disposed=true;
         CancelInput();
         inputRoot?.RemoveHandler(PointerWheelChangedEvent,RootWheel); inputRoot=null;
-        timer.Stop(); ReleaseGraphics();ReleaseAttachment(); Paint=null; Input=null; UsesSecondaryPointer=null; KeyPressed=null;KeyChanged=null;
+        timer.Stop(); ReleaseGraphics();ReleaseAttachment(); Paint=null; Input=null; UsesSecondaryPointer=null; KeyPressed=null;KeyChanged=null;Disposed?.Invoke();Disposed=null;GraphicsChanged=null;
     }
     protected override void OnAttachedToVisualTree(Avalonia.VisualTreeAttachmentEventArgs e)
     {
         base.OnAttachedToVisualTree(e);
         inputRoot=TopLevel.GetTopLevel(this);
         inputRoot?.AddHandler(PointerWheelChangedEvent,RootWheel,RoutingStrategies.Tunnel);
-        AttachGraphics();
+        attachment=AttachGraphics();
     }
     private void RootWheel(object? sender,PointerWheelEventArgs e)
     {
@@ -126,7 +130,18 @@ public class PlatformViewport : NativeControlHost, IDisposable
         inputRoot?.RemoveHandler(PointerWheelChangedEvent,RootWheel); inputRoot=null;
         timer.Stop(); ReleaseGraphics();ReleaseAttachment(); base.OnDetachedFromVisualTree(e);
     }
-    private async void AttachGraphics()
+    public async Task SuspendGraphics()
+    {
+        CancelInput();timer.Stop();ReleaseGraphics();ReleaseAttachment();await Shutdown;
+    }
+    public Task ResumeGraphics(GraphicsConfiguration next)
+    {
+        ObjectDisposedException.ThrowIf(disposed,this);
+        if(graphicsHost!=null)throw new InvalidOperationException("Release the previous graphics host before rebinding");
+        configuration=next with {Startup=next.Startup with {Plugins=next.Startup.Plugins.Select(p=>p with {Configuration=p.Configuration.Clone()}).ToList()},Catalog=next.Catalog.ToArray()};
+        Error=null;return inputRoot==null?Task.CompletedTask:attachment=AttachGraphics();
+    }
+    private async Task AttachGraphics()
     {
         var current=++generation;
         try
@@ -146,7 +161,7 @@ public class PlatformViewport : NativeControlHost, IDisposable
             var next=await RuntimeHost.StartScopedAsync(startup,[..configuration.Catalog,target,..content.Catalog],[],HostMode.Graphical,
                 RuntimeScope.Viewport,instance,dispatch:GraphicsWindowHost.Dispatch);
             if(disposed || current!=generation) {await next.DisposeAsync();return;}
-            renderScope=next;lastFrame=clock.Elapsed;timer.Start();
+            renderScope=next;lastFrame=clock.Elapsed;timer.Start();GraphicsChanged?.Invoke();
         }
         catch(Exception error) {if(!disposed && current==generation) {Error=error.Message;timer.Stop();Input?.Invoke("error",0,0);}}
     }
@@ -154,7 +169,8 @@ public class PlatformViewport : NativeControlHost, IDisposable
     {
         generation++;
         var scope=renderScope;renderScope=null;var owner=graphicsHost;graphicsHost=null;
-        Shutdown=Task.WhenAll(Shutdown,CloseAsync(scope,owner));
+        Shutdown=Task.WhenAll(Shutdown,CloseAsync(scope,owner),attachment);
+        GraphicsChanged?.Invoke();
     }
     private async Task CloseAsync(RuntimeHost? scope,GraphicsWindowHost? owner)
     {

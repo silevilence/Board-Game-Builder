@@ -1,0 +1,7 @@
+<Project Sdk="Microsoft.NET.Sdk">
+  <PropertyGroup><OutputType>Exe</OutputType><TargetFramework>net10.0-windows</TargetFramework></PropertyGroup>
+  <ItemGroup>
+    <ProjectReference Include="../../src/Rendering.DesktopGL/Rendering.DesktopGL.csproj" />
+    <ProjectReference Include="../../src/Runtime.Plugins/Runtime.Plugins.csproj" />
+  </ItemGroup>
+</Project>

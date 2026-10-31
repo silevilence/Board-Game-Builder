@@ -3,6 +3,7 @@
     <ProjectReference Include="../BoardGame.Session/BoardGame.Session.csproj" />
     <ProjectReference Include="../BoardGame.Interaction/BoardGame.Interaction.csproj" />
     <ProjectReference Include="../Application.Core/Application.Core.csproj" />
+    <ProjectReference Include="../Rendering.Core/Rendering.Core.csproj" />
     <ProjectReference Include="../Resources.Core/Resources.Core.csproj" />
     <ProjectReference Include="../BoardGame.Core/BoardGame.Core.csproj" />
     <ProjectReference Include="../BoardGame.Wasm/BoardGame.Wasm.csproj" />

@@ -5,6 +5,7 @@ internal static class Program
     [STAThread] private static int Main(string[] args)
     {
         if(args.FirstOrDefault()=="--smoke") return ViewportApp.Run("Editor viewport probe",args);
+        if(args.Length==4 && args[0]=="--verify-backends") return ViewportApp.Run("",[],()=>BackendVerification.Create(args[1],args[2],args[3]));
         if(args.Length==3 && args[0]=="--verify-runtime-management") return ViewportApp.Run("",[],()=>RuntimePluginManagementVerification.Create(args[1],args[2]));
         if(args.Length==3 && args[0]=="--verify-runtime-configuration") return ViewportApp.Run("",[],()=>RuntimeConfigurationVerification.Create(args[1],args[2]));
         if(args.Length==4 && args[0]=="--verify-external-runtime") return ViewportApp.Run("",[],()=>ExternalRuntimeVerification.Create(args[1],args[2],args[3]));
