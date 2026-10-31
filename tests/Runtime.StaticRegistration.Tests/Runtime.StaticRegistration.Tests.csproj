@@ -1,0 +1,8 @@
+<Project Sdk="Microsoft.NET.Sdk">
+  <PropertyGroup><OutputType>Exe</OutputType></PropertyGroup>
+  <ItemGroup>
+    <ProjectReference Include="../../src/Runtime.Plugins/Runtime.Plugins.csproj" />
+    <ProjectReference Include="../../src/BoardGame.Hosting/BoardGame.Hosting.csproj" />
+    <ProjectReference Include="../../samples/Runtime.SamplePlugin/Runtime.SamplePlugin.csproj" />
+  </ItemGroup>
+</Project>

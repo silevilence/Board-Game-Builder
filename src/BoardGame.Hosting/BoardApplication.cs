@@ -19,16 +19,24 @@ public sealed class BoardApplication(uint seed=1,IReadOnlyDictionary<string,stri
     private Binding Bound(GameContent content)=>bindings.GetValue(content,CreateBinding);
     public IEnumerable<ApprovedApplicationPlugin> Plugins()
     {
-        yield return new(content=>DefinitionPlugin());
+        yield return DefinitionFactory();
         foreach(var descriptor in AssetPlugins.Catalog())
         {
             var id=descriptor.Id;
+            if(id=="resources"){yield return ResourceFactory();continue;}
             yield return new(content=>AssetPlugins.Catalog(()=>content==null?null:Bound(content).Module.Resources).Single(p=>p.Id==id));
         }
-        yield return new(content=>AuthorityPlugin.Create(()=>Bound(Required(content)).Module,seed));
-        yield return new(_=>CommandRulesPlugin.Create());
-        yield return new(content=>RecordingPlugin.Create(()=>Bound(Required(content)).Module,value=>Bound(Required(content)).Policy.Validate(value)));
-        yield return new(content=>
+        yield return AuthorityFactory();
+        yield return RulesFactory();
+        yield return RecordingFactory();
+        yield return SessionFactory();
+    }
+    public ApprovedApplicationPlugin DefinitionFactory()=>new(_=>DefinitionPlugin());
+    public ApprovedApplicationPlugin ResourceFactory()=>new(content=>AssetPlugins.Resources(()=>content==null?null:Bound(content).Module.Resources));
+    public ApprovedApplicationPlugin AuthorityFactory()=>new(content=>AuthorityPlugin.Create(()=>Bound(Required(content)).Module,seed));
+    public ApprovedApplicationPlugin RulesFactory()=>new(_=>CommandRulesPlugin.Create());
+    public ApprovedApplicationPlugin RecordingFactory()=>new(content=>RecordingPlugin.Create(()=>Bound(Required(content)).Module,value=>Bound(Required(content)).Policy.Validate(value)));
+    public ApprovedApplicationPlugin SessionFactory()=>new(content=>
         {
             var module=content==null?null:Bound(content).Module;
             if(module!=null && controllers?.Any(p=>!module.Initial.Seats.Any(s=>s.Id==p.Key) || p.Value is not ("human" or "cpu"))==true)
@@ -38,7 +46,6 @@ public sealed class BoardApplication(uint seed=1,IReadOnlyDictionary<string,stri
             return BoardSessionPlugin.Create(()=>Bound(Required(content)).Module,seed,control,maxSteps,
                 new(value=>Bound(Required(content)).Policy.Validate(value),_=>[]),selected.Contains("lua.cpu") || control?.Values.Contains("cpu")==true,selected.Contains("wasm"));
         });
-    }
     private static GameContent Required(GameContent? content)=>content ?? throw new InvalidOperationException("Runtime content is required");
     private static Binding CreateBinding(GameContent content)
     {

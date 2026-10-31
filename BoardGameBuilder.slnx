@@ -52,6 +52,7 @@
     <Project Path="src/View.MonoGame/View.MonoGame.csproj" />
   </Folder>
   <Folder Name="/tests/">
+    <Project Path="tests/Runtime.StaticRegistration.Tests/Runtime.StaticRegistration.Tests.csproj" />
     <Project Path="tests/Runtime.PluginImport.Tests/Runtime.PluginImport.Tests.csproj" />
     <Project Path="tests/Runtime.Plugins.Tests/Runtime.Plugins.Tests.csproj" />
     <Project Path="tests/Application.Tests/Application.Tests.csproj" />
