@@ -1,0 +1,65 @@
+{
+  "success": true,
+  "native": "C:\\code\\dotnet\\Board-Game-Builder\\artifacts\\native-aot\\publishing\\1b7dc27226424a58a8b10a2db7b5efab\\\u4E2D\u6587 \u7A7A\u683C native",
+  "build": {
+    "Success": true,
+    "Directory": "C:\\code\\dotnet\\Board-Game-Builder\\artifacts\\native-aot\\publishing\\1b7dc27226424a58a8b10a2db7b5efab\\\u4E2D\u6587 \u7A7A\u683C native",
+    "Log": "C:\\code\\dotnet\\Board-Game-Builder\\artifacts\\native-aot\\publishing\\1b7dc27226424a58a8b10a2db7b5efab\\logs\\e1ccddd3fb0c4aa69fdeebb8eb5f9280\\build.log",
+    "Diagnostics": [],
+    "Duration": "00:00:14.4170407"
+  },
+  "failure": {
+    "Success": false,
+    "Directory": null,
+    "Log": "C:\\code\\dotnet\\Board-Game-Builder\\artifacts\\native-aot\\publishing\\1b7dc27226424a58a8b10a2db7b5efab\\logs\\56961d7880664c869f06a2a6d29819a5\\build.log",
+    "Diagnostics": [
+      {
+        "Code": "build.failed",
+        "Stage": "build",
+        "Message": "NativeAOT compiler/linker failed (exit 1); inspect C:\\code\\dotnet\\Board-Game-Builder\\artifacts\\native-aot\\publishing\\1b7dc27226424a58a8b10a2db7b5efab\\logs\\56961d7880664c869f06a2a6d29819a5\\build.log"
+      },
+      {
+        "Code": "build.compiler",
+        "Stage": "build",
+        "Message": "C:\\Users\\silev\\AppData\\Local\\Temp\\bgb-native-build-56961d7880664c869f06a2a6d29819a5\\Program.cs(8,76): error CS0117: \u201CHeadlessEntry\u201D\u672A\u5305\u542B\u201CMissingEntry\u201D\u7684\u5B9A\u4E49 [C:\\Users\\silev\\AppData\\Local\\Temp\\bgb-native-build-56961d7880664c869f06a2a6d29819a5\\Game.csproj]"
+      }
+    ],
+    "Duration": "00:00:05.4921695"
+  },
+  "incompatible": {
+    "Success": false,
+    "Directory": null,
+    "Log": "C:\\code\\dotnet\\Board-Game-Builder\\artifacts\\native-aot\\publishing\\1b7dc27226424a58a8b10a2db7b5efab\\logs\\c6160f9d50bc4a12b610695bdf74cf23\\build.log",
+    "Diagnostics": [
+      {
+        "Code": "build.failed",
+        "Stage": "build",
+        "Message": "NativeAOT compiler/linker failed (exit 1); inspect C:\\code\\dotnet\\Board-Game-Builder\\artifacts\\native-aot\\publishing\\1b7dc27226424a58a8b10a2db7b5efab\\logs\\c6160f9d50bc4a12b610695bdf74cf23\\build.log"
+      },
+      {
+        "Code": "build.compiler",
+        "Stage": "build",
+        "Message": "sample.counter: C:\\code\\dotnet\\Board-Game-Builder\\samples\\Runtime.SamplePlugin\\HeadlessEntry.cs(12): Trim analysis error IL2026: Example.RuntimePlugin.HeadlessEntry.ReflectionOnly(ApprovedApplicationPlugin[],String,String): Using member \u0027System.Reflection.Assembly.LoadFrom(String)\u0027 which has \u0027RequiresUnreferencedCodeAttribute\u0027 can break functionality when trimming application code. Types and members the loaded assembly depends on might be removed. [C:\\Users\\silev\\AppData\\Local\\Temp\\bgb-native-build-c6160f9d50bc4a12b610695bdf74cf23\\Game.csproj]"
+      },
+      {
+        "Code": "build.compiler",
+        "Stage": "build",
+        "Message": "sample.counter: C:\\code\\dotnet\\Board-Game-Builder\\samples\\Runtime.SamplePlugin\\HeadlessEntry.cs(12): Trim analysis error IL2026: Example.RuntimePlugin.HeadlessEntry.ReflectionOnly(ApprovedApplicationPlugin[],String,String): Using member \u0027System.Reflection.Assembly.GetTypes()\u0027 which has \u0027RequiresUnreferencedCodeAttribute\u0027 can break functionality when trimming application code. Types might be removed. [C:\\Users\\silev\\AppData\\Local\\Temp\\bgb-native-build-c6160f9d50bc4a12b610695bdf74cf23\\Game.csproj]"
+      }
+    ],
+    "Duration": "00:00:11.4746026"
+  },
+  "cancelled": {
+    "Success": false,
+    "Directory": null,
+    "Log": "C:\\code\\dotnet\\Board-Game-Builder\\artifacts\\native-aot\\publishing\\1b7dc27226424a58a8b10a2db7b5efab\\logs\\4256a33ba26742c197242e0b4cd1198d\\build.log",
+    "Diagnostics": [
+      {
+        "Code": "build.cancelled",
+        "Stage": "cancel",
+        "Message": "Native build cancelled; subprocesses were stopped and no release was published"
+      }
+    ],
+    "Duration": "00:00:06.3679074"
+  }
+}

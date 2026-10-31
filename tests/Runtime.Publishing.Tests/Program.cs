@@ -21,7 +21,7 @@ try
     catch(InvalidDataException error){Check(error.Message.Contains("differs"),"Binary identity not checked");}
 }
 finally{Directory.Delete(missing,true);}
-if(args.Length>0)Check(BuiltinScriptSupport.NativeFiles("wasm","1",1,"win-x64",args[0]).Single().Role=="native","Verified runtime not collected");
+if(args.FirstOrDefault(a=>!a.StartsWith("--",StringComparison.Ordinal)) is {} wasmDirectory)Check(BuiltinScriptSupport.NativeFiles("wasm","1",1,"win-x64",wasmDirectory).Single().Role=="native","Verified runtime not collected");
 Console.WriteLine("PASS script support declarations: fixed version/target, indirect flow dependency, no managed worker fallback, missing native library");
-PlannerTests.Run();
+PlannerTests.Run(args.Contains("--native")?NativeBuildTests.Run:null);
 BoardPlannerTests.Run();

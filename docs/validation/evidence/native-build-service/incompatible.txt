@@ -1,0 +1,10 @@
+[toolchain] Checking Windows x64 native toolchain
+[inputs] Copying and verifying selected runtime inputs
+[build] Publishing with SDK 10.0.112, NativeAOT 10.0.12, linker C:\Program Files\Microsoft Visual Studio\18\Community\VC/Tools/MSVC\14.51.36231\bin/Hostx64/x64/link.exe
+[build]   正在确定要还原的项目…
+[build]   已还原 C:\Users\silev\AppData\Local\Temp\bgb-native-build-c6160f9d50bc4a12b610695bdf74cf23\Game.csproj (用时 244 毫秒)。
+[build]   Game -> C:\Users\silev\AppData\Local\Temp\bgb-native-build-c6160f9d50bc4a12b610695bdf74cf23\bin\Release\net10.0-windows\win-x64\Play.dll
+[build]   Generating native code
+[build] C:\code\dotnet\Board-Game-Builder\samples\Runtime.SamplePlugin\HeadlessEntry.cs(12): Trim analysis error IL2026: Example.RuntimePlugin.HeadlessEntry.ReflectionOnly(ApprovedApplicationPlugin[],String,String): Using member 'System.Reflection.Assembly.LoadFrom(String)' which has 'RequiresUnreferencedCodeAttribute' can break functionality when trimming application code. Types and members the loaded assembly depends on might be removed. [C:\Users\silev\AppData\Local\Temp\bgb-native-build-c6160f9d50bc4a12b610695bdf74cf23\Game.csproj]
+[build] C:\code\dotnet\Board-Game-Builder\samples\Runtime.SamplePlugin\HeadlessEntry.cs(12): Trim analysis error IL2026: Example.RuntimePlugin.HeadlessEntry.ReflectionOnly(ApprovedApplicationPlugin[],String,String): Using member 'System.Reflection.Assembly.GetTypes()' which has 'RequiresUnreferencedCodeAttribute' can break functionality when trimming application code. Types might be removed. [C:\Users\silev\AppData\Local\Temp\bgb-native-build-c6160f9d50bc4a12b610695bdf74cf23\Game.csproj]
+[build] C:\Users\silev\.nuget\packages\microsoft.dotnet.ilcompiler\10.0.12\build\Microsoft.NETCore.Native.targets(330,5): error MSB3073: 命令“"C:\Users\silev\.nuget\packages\runtime.win-x64.microsoft.dotnet.ilcompiler\10.0.12\tools\\ilc" @"obj\Release\net10.0-windows\win-x64\native\Play.ilc.rsp"”已退出，代码为 -1。 [C:\Users\silev\AppData\Local\Temp\bgb-native-build-c6160f9d50bc4a12b610695bdf74cf23\Game.csproj]

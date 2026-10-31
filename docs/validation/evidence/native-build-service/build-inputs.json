@@ -1,0 +1,69 @@
+{
+  "target": "win-x64",
+  "mode": "Headless",
+  "sourceFingerprint": "1C818D42A5F15EE4B8925954F65B8E8FF9E49401E5E13B4962CA5C346671108F",
+  "plugins": [
+    {
+      "id": "sample.counter",
+      "version": "1",
+      "fingerprint": "ffb460ef7b8fc6894486df0fe853a5ecb1f771828ae6a84ce41acac2f3972dc3"
+    },
+    {
+      "id": "sample.definition",
+      "version": "1",
+      "fingerprint": "adad5676abcd1bf95eafe9812c97f4ade6cb49808276ed7256c6cb57c1bc7a1b"
+    }
+  ],
+  "runtime": [
+    {
+      "path": "runtime/Application.Abstractions.dll",
+      "sha256": "61e505b82b2bc070195858f70984ebbcbd4972d1a0d9308b7b44866c992df643",
+      "role": "managed",
+      "owner": "shared"
+    },
+    {
+      "path": "runtime/Application.Core.dll",
+      "sha256": "6052d9d7673841e866523df86d8202ffed6ba8b576a0222b6f7282a5b5a557be",
+      "role": "managed",
+      "owner": "shared"
+    },
+    {
+      "path": "runtime/CordiSharp.dll",
+      "sha256": "5e35e62dfb20a0eb140767b64d2c289ed030ed9898aa45fdccc8fad87681cec7",
+      "role": "managed",
+      "owner": "shared"
+    },
+    {
+      "path": "runtime/Runtime.Plugins.dll",
+      "sha256": "15860dd5cfb0d0e7e2dbe3e145dcb763193f8f56e55c6dc8ba25064ef4c0036a",
+      "role": "managed",
+      "owner": "shared"
+    },
+    {
+      "path": "runtime/Runtime.SamplePlugin.dll",
+      "sha256": "10cc094790fed51972b20e4ec3ad1f945e464f65d4f98cf2fb5b919c385d59f7",
+      "role": "implementation",
+      "owner": "sample.counter"
+    }
+  ],
+  "content": [
+    {
+      "path": "content/default.json",
+      "sha256": "48208f9428d64634bd8e28ff345bf0eab60d53c18fa2fbdb0b9bc1e84df2b5f6",
+      "role": "content",
+      "owner": "game"
+    },
+    {
+      "path": "content/game.start.json",
+      "sha256": "d6d2d0afa57a620c891f795b0643b0f6b5f6f3623bf8e65b82e03700d382a1b1",
+      "role": "content",
+      "owner": "game"
+    },
+    {
+      "path": "content/other.json",
+      "sha256": "49c987621f206f09e5fbe23b516b55a36f838cb14867961f1d84a554d3a35b6b",
+      "role": "content",
+      "owner": "game"
+    }
+  ]
+}

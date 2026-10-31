@@ -1,0 +1,43 @@
+{
+  "format": 1,
+  "target": "win-x64",
+  "sourceFingerprint": "1C818D42A5F15EE4B8925954F65B8E8FF9E49401E5E13B4962CA5C346671108F",
+  "title": "\u539F\u751F\u8BA1\u6570\u6837\u4F8B",
+  "version": "1",
+  "sdk": "10.0.112",
+  "runtime": "10.0.12",
+  "compiler": "C:\\Program Files\\Microsoft Visual Studio\\18\\Community\\VC/Tools/MSVC\\14.51.36231\\bin/Hostx64/x64/cl.exe",
+  "linker": "C:\\Program Files\\Microsoft Visual Studio\\18\\Community\\VC/Tools/MSVC\\14.51.36231\\bin/Hostx64/x64/link.exe",
+  "windowsSdk": "10.0.26100.0",
+  "compilerVersion": "19.51.36246.0",
+  "linkerVersion": "14.51.36246.0",
+  "strictWarnings": true,
+  "durationMs": 14349,
+  "files": [
+    {
+      "path": "Play.exe",
+      "bytes": 5925888,
+      "sha256": "814cc35ce340f892ab8b38ec0a82095a12ed9cd3e3d567a6ef355b24acae9857"
+    },
+    {
+      "path": "build-inputs.json",
+      "bytes": 2099,
+      "sha256": "19f0a8ce0825f19621bc93c4102539c31b003bd9f0d9b9d7f5e116a44a7042ee"
+    },
+    {
+      "path": "content/default.json",
+      "bytes": 11,
+      "sha256": "48208f9428d64634bd8e28ff345bf0eab60d53c18fa2fbdb0b9bc1e84df2b5f6"
+    },
+    {
+      "path": "content/game.start.json",
+      "bytes": 635,
+      "sha256": "d6d2d0afa57a620c891f795b0643b0f6b5f6f3623bf8e65b82e03700d382a1b1"
+    },
+    {
+      "path": "content/other.json",
+      "bytes": 11,
+      "sha256": "49c987621f206f09e5fbe23b516b55a36f838cb14867961f1d84a554d3a35b6b"
+    }
+  ]
+}

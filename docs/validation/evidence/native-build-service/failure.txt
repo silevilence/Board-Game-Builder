@@ -1,0 +1,6 @@
+[toolchain] Checking Windows x64 native toolchain
+[inputs] Copying and verifying selected runtime inputs
+[build] Publishing with SDK 10.0.112, NativeAOT 10.0.12, linker C:\Program Files\Microsoft Visual Studio\18\Community\VC/Tools/MSVC\14.51.36231\bin/Hostx64/x64/link.exe
+[build]   正在确定要还原的项目…
+[build]   已还原 C:\Users\silev\AppData\Local\Temp\bgb-native-build-56961d7880664c869f06a2a6d29819a5\Game.csproj (用时 253 毫秒)。
+[build] C:\Users\silev\AppData\Local\Temp\bgb-native-build-56961d7880664c869f06a2a6d29819a5\Program.cs(8,76): error CS0117: “HeadlessEntry”未包含“MissingEntry”的定义 [C:\Users\silev\AppData\Local\Temp\bgb-native-build-56961d7880664c869f06a2a6d29819a5\Game.csproj]

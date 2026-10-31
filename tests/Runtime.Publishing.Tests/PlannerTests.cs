@@ -10,7 +10,7 @@ using BoardGame.Runtime;
 
 internal static class PlannerTests
 {
-    internal static void Run()
+    internal static void Run(Func<PublicationPlan,Task>? native=null)
     {
         var directory=Path.Combine(Path.GetTempPath(),"publication-plan-"+Guid.NewGuid().ToString("N"));Directory.CreateDirectory(directory);
         try
@@ -48,6 +48,7 @@ internal static class PlannerTests
             var canceled=Path.Combine(directory,"canceled");
             try{PublicationInputs.Create(plan,canceled,new CancellationToken(true)).GetAwaiter().GetResult();throw new Exception("Cancellation ignored");}catch(OperationCanceledException){}
             Check(!Directory.Exists(canceled),"Canceled input directory survived");
+            native?.Invoke(plan).GetAwaiter().GetResult();
             Check(plan.Selected.Count==2 && plan.Registration.Source.Contains("Example.@RuntimePlugin.@Document"),"Static factory missing");
             Check(!plan.Files.Any(f=>f.Name.StartsWith("BoardGame.",StringComparison.Ordinal) || f.Name.Contains("Lua") || f.Name.Contains("Wasm") || f.Name.Contains("Editor")),"Optional implementation leaked into minimal plan");
             Reject(()=>Plan([available[0]]),"missing");
