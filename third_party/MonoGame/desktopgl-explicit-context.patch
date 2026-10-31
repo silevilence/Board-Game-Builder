@@ -1,0 +1,262 @@
+diff --git a/MonoGame.Framework/Graphics/GraphicsDevice.cs b/MonoGame.Framework/Graphics/GraphicsDevice.cs
+index 35662be8..246df5da 100644
+--- a/MonoGame.Framework/Graphics/GraphicsDevice.cs
++++ b/MonoGame.Framework/Graphics/GraphicsDevice.cs
+@@ -289,11 +289,22 @@ namespace Microsoft.Xna.Framework.Graphics
+             Adapter = adapter;
+             PresentationParameters = presentationParameters;
+             _graphicsProfile = graphicsProfile;
+-            Setup();
+-            GraphicsCapabilities = new GraphicsCapabilities();
+-            GraphicsCapabilities.Initialize(this);
+-
+-            Initialize();
++            try
++            {
++                Setup();
++                GraphicsCapabilities = new GraphicsCapabilities();
++                GraphicsCapabilities.Initialize(this);
++                Initialize();
++            }
++            catch
++            {
++#if DESKTOPGL
++                // A failed constructor must not strand a native context without an owner.
++                if (Context != null) Context.Dispose();
++                Context = null;
++#endif
++                throw;
++            }
+         }
+ 
+         /// <summary>
+@@ -322,11 +333,22 @@ namespace Microsoft.Xna.Framework.Graphics
+             _graphicsProfile = graphicsProfile;
+             UseHalfPixelOffset = preferHalfPixelOffset;
+             PresentationParameters = presentationParameters;
+-            Setup();
+-            GraphicsCapabilities = new GraphicsCapabilities();
+-            GraphicsCapabilities.Initialize(this);
+-
+-            Initialize();
++            try
++            {
++                Setup();
++                GraphicsCapabilities = new GraphicsCapabilities();
++                GraphicsCapabilities.Initialize(this);
++                Initialize();
++            }
++            catch
++            {
++#if DESKTOPGL
++                // A failed constructor must not strand a native context without an owner.
++                if (Context != null) Context.Dispose();
++                Context = null;
++#endif
++                throw;
++            }
+         }
+ 
+         private void Setup()
+@@ -669,6 +691,9 @@ namespace Microsoft.Xna.Framework.Graphics
+             {
+                 if (disposing)
+                 {
++#if DESKTOPGL
++                    MakeCurrent();
++#endif
+                     // Dispose of all remaining graphics resources before disposing of the graphics device
+                     lock (_resourcesLock)
+                     {
+@@ -1278,8 +1303,8 @@ namespace Microsoft.Xna.Framework.Graphics
+                 throw new ArgumentOutOfRangeException("primitiveCount");
+ 
+             if (vertexDeclaration == null)
+-                throw new ArgumentNullException("vertexDeclaration");
+-
++                throw new ArgumentNullException("vertexDeclaration");
++
+             if (vertexDeclaration.VertexStride < ReflectionHelpers.FastSizeOf<T>())
+                 throw new ArgumentOutOfRangeException("vertexDeclaration", "Vertex stride of vertexDeclaration should be at least as big as the stride of the actual vertices.");
+ 
+diff --git a/MonoGame.Framework/Platform/Graphics/GraphicsAdapter.Legacy.cs b/MonoGame.Framework/Platform/Graphics/GraphicsAdapter.Legacy.cs
+index 934f0d41..baa13678 100644
+--- a/MonoGame.Framework/Platform/Graphics/GraphicsAdapter.Legacy.cs
++++ b/MonoGame.Framework/Platform/Graphics/GraphicsAdapter.Legacy.cs
+@@ -56,6 +56,13 @@ namespace Microsoft.Xna.Framework.Graphics
+         }
+ #elif DESKTOPGL
+         int _displayIndex;
++        private IntPtr _sdlWindow;
++        /// <summary>Creates a display adapter for an explicitly owned SDL window.</summary>
++        public static GraphicsAdapter FromSdlWindow(IntPtr window)
++        {
++            if (window == IntPtr.Zero) throw new ArgumentException("SDL window is required", nameof(window));
++            return new GraphicsAdapter { _sdlWindow = window };
++        }
+ #else
+         internal GraphicsAdapter()
+         {
+@@ -105,7 +112,7 @@ namespace Microsoft.Xna.Framework.Graphics
+                 View view = ((AndroidGameWindow)Game.Instance.Window).GameView;
+                 return new DisplayMode(view.Width, view.Height, SurfaceFormat.Color);
+ #elif DESKTOPGL
+-                var displayIndex = Sdl.Display.GetWindowDisplayIndex(SdlGameWindow.Instance.Handle);
++                var displayIndex = Sdl.Display.GetWindowDisplayIndex(_sdlWindow != IntPtr.Zero ? _sdlWindow : SdlGameWindow.Instance.Handle);
+ 
+                 Sdl.Display.Mode mode;
+                 Sdl.Display.GetCurrentDisplayMode(displayIndex, out mode);
+@@ -328,7 +335,7 @@ namespace Microsoft.Xna.Framework.Graphics
+             {
+                 bool displayChanged = false;
+ #if DESKTOPGL
+-                var displayIndex = Sdl.Display.GetWindowDisplayIndex (SdlGameWindow.Instance.Handle);
++                var displayIndex = Sdl.Display.GetWindowDisplayIndex(_sdlWindow != IntPtr.Zero ? _sdlWindow : SdlGameWindow.Instance.Handle);
+                 displayChanged = displayIndex != _displayIndex;
+ #endif
+                 if (_supportedDisplayModes == null || displayChanged)
+diff --git a/MonoGame.Framework/Platform/Graphics/GraphicsContext.SDL.cs b/MonoGame.Framework/Platform/Graphics/GraphicsContext.SDL.cs
+index 7d86a903..bf881272 100644
+--- a/MonoGame.Framework/Platform/Graphics/GraphicsContext.SDL.cs
++++ b/MonoGame.Framework/Platform/Graphics/GraphicsContext.SDL.cs
+@@ -1,4 +1,4 @@
+-﻿// MonoGame - Copyright (C) MonoGame Foundation, Inc
++// MonoGame - Copyright (C) MonoGame Foundation, Inc
+ // This file is subject to the terms and conditions defined in
+ // file 'LICENSE.txt', which is part of this source code package.
+ 
+@@ -32,7 +32,7 @@ namespace MonoGame.OpenGL
+ 
+ 		public bool IsCurrent
+ 		{
+-			get { return true; }
++			get { return !_disposed && Sdl.GL.GetCurrentContext() == _context; }
+ 		}
+ 
+         public GraphicsContext(IWindowInfo info)
+@@ -46,6 +46,8 @@ namespace MonoGame.OpenGL
+             Sdl.GL.SetAttribute(Sdl.GL.Attribute.ContextFlags, 1); // 1 = SDL_GL_CONTEXT_DEBUG_FLAG
+ #endif
+             _context = Sdl.GL.CreateContext(_winHandle);
++            if (_context == IntPtr.Zero)
++                throw new InvalidOperationException("SDL GL context creation failed: " + Sdl.GetError());
+ 
+             // GL entry points must be loaded after the GL context creation, otherwise some Windows drivers will return only GL 1.3 compatible functions
+             try
+@@ -54,10 +56,18 @@ namespace MonoGame.OpenGL
+             }
+             catch (EntryPointNotFoundException)
+             {
++                Sdl.GL.DeleteContext(_context);
++                _context = IntPtr.Zero;
+                 throw new PlatformNotSupportedException(
+                     "MonoGame requires OpenGL 3.0 compatible drivers, or either ARB_framebuffer_object or EXT_framebuffer_object extensions. " +
+                     "Try updating your graphics drivers.");
+             }
++            catch
++            {
++                Sdl.GL.DeleteContext(_context);
++                _context = IntPtr.Zero;
++                throw;
++            }
+         }
+ 
+         public void MakeCurrent(IWindowInfo info)
+@@ -66,7 +76,8 @@ namespace MonoGame.OpenGL
+                 return;
+             
+             SetWindowHandle(info);
+-            Sdl.GL.MakeCurrent(_winHandle, _context);
++            if (Sdl.GL.MakeCurrent(_winHandle, _context) != 0)
++                throw new InvalidOperationException("SDL GL MakeCurrent failed: " + Sdl.GetError());
+         }
+ 
+         public void SwapBuffers()
+@@ -82,7 +93,9 @@ namespace MonoGame.OpenGL
+             if (_disposed)
+                 return;
+ 
+-            GraphicsDevice.DisposeContext(_context);
++            // The owner explicitly disposes on the graphics thread before destroying its SDL window.
++            Microsoft.Xna.Framework.Threading.EnsureUIThread();
++            Sdl.GL.DeleteContext(_context);
+             _context = IntPtr.Zero;
+             _disposed = true;
+         }
+diff --git a/MonoGame.Framework/Platform/Graphics/GraphicsDevice.OpenGL.cs b/MonoGame.Framework/Platform/Graphics/GraphicsDevice.OpenGL.cs
+index 7ec0ce4c..21e030f1 100644
+--- a/MonoGame.Framework/Platform/Graphics/GraphicsDevice.OpenGL.cs
++++ b/MonoGame.Framework/Platform/Graphics/GraphicsDevice.OpenGL.cs
+@@ -113,13 +113,13 @@ namespace Microsoft.Xna.Framework.Graphics
+         private ShaderProgramCache _programCache;
+         private ShaderProgram _shaderProgram = null;
+ 
+-        static readonly float[] _posFixup = new float[4];
++        readonly float[] _posFixup = new float[4];
+ 
+-        private static BufferBindingInfo[] _bufferBindingInfos;
+-        private static int _activeBufferBindingInfosCount;
+-        private static bool[] _newEnabledVertexAttributes;
+-        internal static readonly List<int> _enabledVertexAttributes = new List<int>();
+-        internal static bool _attribsDirty;
++        private BufferBindingInfo[] _bufferBindingInfos;
++        private int _activeBufferBindingInfosCount;
++        private bool[] _newEnabledVertexAttributes;
++        internal readonly List<int> _enabledVertexAttributes = new List<int>();
++        internal bool _attribsDirty;
+ 
+         internal FramebufferHelper framebufferHelper;
+ 
+@@ -241,11 +241,22 @@ namespace Microsoft.Xna.Framework.Graphics
+             SetVertexAttributeArray(_newEnabledVertexAttributes);
+         }
+ 
++#if DESKTOPGL
++        /// <summary>Makes this device current on its owning graphics thread before resource or draw operations.</summary>
++        public void MakeCurrent()
++        {
++            Threading.EnsureUIThread();
++            if (IsDisposed || Context == null || Context.IsDisposed)
++                throw new ObjectDisposedException(nameof(GraphicsDevice));
++            Context.MakeCurrent(new WindowInfo(PresentationParameters.DeviceWindowHandle));
++        }
++#endif
++
+         private void PlatformSetup()
+         {
+             _programCache = new ShaderProgramCache(this);
+ #if DESKTOPGL || ANGLE
+-            var windowInfo = new WindowInfo(SdlGameWindow.Instance.Handle);
++            var windowInfo = new WindowInfo(PresentationParameters.DeviceWindowHandle);
+ 
+             if (Context == null || Context.IsDisposed)
+             {
+@@ -1274,7 +1285,7 @@ namespace Microsoft.Xna.Framework.Graphics
+         internal void OnPresentationChanged()
+         {
+ #if DESKTOPGL || ANGLE
+-            Context.MakeCurrent(new WindowInfo(SdlGameWindow.Instance.Handle));
++            Context.MakeCurrent(new WindowInfo(PresentationParameters.DeviceWindowHandle));
+             Context.SwapInterval = PresentationParameters.PresentationInterval.GetSwapInterval();
+ #endif
+ 
+diff --git a/MonoGame.Framework/Platform/GraphicsDeviceManager.SDL.cs b/MonoGame.Framework/Platform/GraphicsDeviceManager.SDL.cs
+index 45441b79..18ad4837 100644
+--- a/MonoGame.Framework/Platform/GraphicsDeviceManager.SDL.cs
++++ b/MonoGame.Framework/Platform/GraphicsDeviceManager.SDL.cs
+@@ -1,4 +1,4 @@
+-﻿// MonoGame - Copyright (C) MonoGame Foundation, Inc
++// MonoGame - Copyright (C) MonoGame Foundation, Inc
+ // This file is subject to the terms and conditions defined in
+ // file 'LICENSE.txt', which is part of this source code package.
+ 
+@@ -49,7 +49,8 @@ namespace Microsoft.Xna.Framework
+                 Sdl.GL.SetAttribute(Sdl.GL.Attribute.MultiSampleSamples, presentationParameters.MultiSampleCount);
+             }
+ 
+-            ((SdlGameWindow)SdlGameWindow.Instance).CreateWindow();
++            ((SdlGameWindow)_game.Window).CreateWindow();
++            presentationParameters.DeviceWindowHandle = _game.Window.Handle;
+         }
+     }
+ }

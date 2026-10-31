@@ -1,0 +1,1 @@
+dynamicCode=False; os=Microsoft Windows NT 10.0.26100.0; framework=.NET 10.0.12

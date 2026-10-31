@@ -1,0 +1,18 @@
+<Project Sdk="Microsoft.NET.Sdk">
+  <PropertyGroup>
+    <OutputType>Exe</OutputType>
+    <PublishAot>true</PublishAot>
+    <AssemblyName>AotProbe.GlEmbedded</AssemblyName>
+    <AllowUnsafeBlocks>true</AllowUnsafeBlocks>
+  </PropertyGroup>
+  <ItemGroup>
+    <Compile Remove="GameRegression/**" />
+    <Reference Include="MonoGame.Framework">
+      <HintPath>../../../artifacts/native-aot/monogame/MonoGame.Framework.dll</HintPath>
+    </Reference>
+    <PackageReference Include="MonoGame.Library.SDL" Version="2.32.2.1" />
+    <PackageReference Include="SkiaSharp" Version="3.119.4" />
+    <Content Include="../../../samples/motion-lab/marker.png" Link="marker.png" CopyToOutputDirectory="PreserveNewest" />
+    <Content Include="../../../samples/cursed-investigators/assets/fonts/noto-sans-cjk-sc/NotoSansCJKsc-Regular.otf" Link="font.otf" CopyToOutputDirectory="PreserveNewest" />
+  </ItemGroup>
+</Project>

@@ -1,0 +1,23 @@
+dynamicCodeSupported=False
+PASS non-GL window rejected without a current context
+PASS pass=0: two embedded SDL windows; routed HWND mouse events; thread guard; 48 alternating frames; resize; first disposed; survivor rendered
+native resources after pass=0: GDI=13, USER=9
+PASS pass=1: two embedded SDL windows; routed HWND mouse events; thread guard; 48 alternating frames; resize; first disposed; survivor rendered
+native resources after pass=1: GDI=13, USER=9
+PASS pass=2: two embedded SDL windows; routed HWND mouse events; thread guard; 48 alternating frames; resize; first disposed; survivor rendered
+native resources after pass=2: GDI=13, USER=9
+PASS pass=3: two embedded SDL windows; routed HWND mouse events; thread guard; 48 alternating frames; resize; first disposed; survivor rendered
+native resources after pass=3: GDI=13, USER=9
+PASS pass=4: two embedded SDL windows; routed HWND mouse events; thread guard; 48 alternating frames; resize; first disposed; survivor rendered
+native resources after pass=4: GDI=13, USER=9
+PASS pass=5: two embedded SDL windows; routed HWND mouse events; thread guard; 48 alternating frames; resize; first disposed; survivor rendered
+native resources after pass=5: GDI=13, USER=9
+PASS pass=6: two embedded SDL windows; routed HWND mouse events; thread guard; 48 alternating frames; resize; first disposed; survivor rendered
+native resources after pass=6: GDI=13, USER=9
+PASS pass=7: two embedded SDL windows; routed HWND mouse events; thread guard; 48 alternating frames; resize; first disposed; survivor rendered
+native resources after pass=7: GDI=13, USER=9
+PASS pass=8: two embedded SDL windows; routed HWND mouse events; thread guard; 48 alternating frames; resize; first disposed; survivor rendered
+native resources after pass=8: GDI=13, USER=9
+PASS pass=9: two embedded SDL windows; routed HWND mouse events; thread guard; 48 alternating frames; resize; first disposed; survivor rendered
+native resources after pass=9: GDI=13, USER=9
+PASS owned surfaces returned to zero after every cycle

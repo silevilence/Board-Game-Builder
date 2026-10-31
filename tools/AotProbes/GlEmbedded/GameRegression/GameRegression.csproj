@@ -1,0 +1,19 @@
+<Project Sdk="Microsoft.NET.Sdk">
+  <PropertyGroup>
+    <OutputType>Exe</OutputType>
+    <PublishAot>true</PublishAot>
+    <AssemblyName>AotProbe.GlGameRegression</AssemblyName>
+  </PropertyGroup>
+  <ItemGroup>
+    <Compile Include="../../Gl/Program.cs" Link="Program.cs" />
+    <Reference Include="MonoGame.Framework">
+      <HintPath>../../../../artifacts/native-aot/monogame/MonoGame.Framework.dll</HintPath>
+    </Reference>
+    <PackageReference Include="MonoGame.Library.SDL" Version="2.32.2.1" />
+    <PackageReference Include="MonoGame.Library.OpenAL" Version="1.24.3.2" />
+    <PackageReference Include="NVorbis" Version="0.10.4" />
+    <PackageReference Include="SkiaSharp" Version="3.119.4" />
+    <Content Include="../../../../samples/motion-lab/marker.png" Link="marker.png" CopyToOutputDirectory="PreserveNewest" />
+    <Content Include="../../../../samples/cursed-investigators/assets/fonts/noto-sans-cjk-sc/NotoSansCJKsc-Regular.otf" Link="font.otf" CopyToOutputDirectory="PreserveNewest" />
+  </ItemGroup>
+</Project>

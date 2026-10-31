@@ -1,0 +1,1 @@
+PASS: three create/draw/resize/dispose cycles; inspect PNG and interactive input separately.

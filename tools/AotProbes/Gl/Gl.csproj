@@ -1,0 +1,13 @@
+<Project Sdk="Microsoft.NET.Sdk">
+  <PropertyGroup>
+    <OutputType>Exe</OutputType>
+    <PublishAot>true</PublishAot>
+    <AssemblyName>AotProbe.Gl</AssemblyName>
+  </PropertyGroup>
+  <ItemGroup>
+    <PackageReference Include="MonoGame.Framework.DesktopGL" Version="3.8.4.1" />
+    <PackageReference Include="SkiaSharp" Version="3.119.4" />
+    <Content Include="../../../samples/motion-lab/marker.png" Link="marker.png" CopyToOutputDirectory="PreserveNewest" />
+    <Content Include="../../../samples/cursed-investigators/assets/fonts/noto-sans-cjk-sc/NotoSansCJKsc-Regular.otf" Link="font.otf" CopyToOutputDirectory="PreserveNewest" />
+  </ItemGroup>
+</Project>

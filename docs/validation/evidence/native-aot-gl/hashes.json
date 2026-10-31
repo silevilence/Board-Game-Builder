@@ -1,0 +1,66 @@
+{
+  "monogameCommit": "f34200720b558125964273fd3e7ab44cde0b0429",
+  "excluded": "PDB debug symbols",
+  "files": [
+    {
+      "path": "gl/AotProbe.Gl.exe",
+      "sha256": "6DB6FF9DD5C1A934533119CE02716BA312588083A8900A14D32F0B774F6E183E",
+      "size": 3712000
+    },
+    {
+      "path": "gl/font.otf",
+      "sha256": "2C76254F6FC379FDDFCE0A7E84FB5385BB135D3E399294F6EEB6680D0365B74B",
+      "size": 16437364
+    },
+    {
+      "path": "gl/libSkiaSharp.dll",
+      "sha256": "7DEC3BA900AB353491E6446F0083739924C6F8DD668832E2F09D38EBFFDBBE1C",
+      "size": 11628896
+    },
+    {
+      "path": "gl/marker.png",
+      "sha256": "35E4D21AFD558DBDAED09DC47806BF3C85A96054209A3A9F4B6BDF43803001DF",
+      "size": 178
+    },
+    {
+      "path": "gl/openal.dll",
+      "sha256": "C517A16A6C8A02F0D662C77B81079E2443EA1BF690A48EAF1995F008F4EEEF02",
+      "size": 1737216
+    },
+    {
+      "path": "gl/SDL2.dll",
+      "sha256": "F8AB6A41AE9FF682A2B5482414F73979BC1A29EABB14DA21FC7AE35090B5DEC9",
+      "size": 1679360
+    },
+    {
+      "path": "gl-embedded/AotProbe.GlEmbedded.exe",
+      "sha256": "D10F9AB8496A73CE472EAACE408F52FE52731200134A814867E5C001A0ACDF27",
+      "size": 2835968
+    },
+    {
+      "path": "gl-embedded/font.otf",
+      "sha256": "2C76254F6FC379FDDFCE0A7E84FB5385BB135D3E399294F6EEB6680D0365B74B",
+      "size": 16437364
+    },
+    {
+      "path": "gl-embedded/libSkiaSharp.dll",
+      "sha256": "7DEC3BA900AB353491E6446F0083739924C6F8DD668832E2F09D38EBFFDBBE1C",
+      "size": 11628896
+    },
+    {
+      "path": "gl-embedded/marker.png",
+      "sha256": "35E4D21AFD558DBDAED09DC47806BF3C85A96054209A3A9F4B6BDF43803001DF",
+      "size": 178
+    },
+    {
+      "path": "gl-embedded/SDL2.dll",
+      "sha256": "F8AB6A41AE9FF682A2B5482414F73979BC1A29EABB14DA21FC7AE35090B5DEC9",
+      "size": 1679360
+    }
+  ],
+  "monogame": "3.8.4.1",
+  "imageSha256": "A1C745438E1F5542C6BC95739574ACBFEA09E9E669D741A96AEABE64E4F76163",
+  "source": "artifacts/native-aot/clean-input (Sandbox read-only mapped input)",
+  "embeddedPatchSha256": "EFD828319E991EA2F27E4CB9C005F2A294744407E3ABBF2AC1DF8EDD81600BB6",
+  "date": "2026-10-31"
+}
