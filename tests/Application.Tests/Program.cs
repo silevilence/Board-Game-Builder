@@ -1,6 +1,7 @@
 using BoardGame.Runtime;
 
 if(args.Contains("dispatch-isolation")) {await DispatchIsolationTests.Run();return;}
+if(args.Contains("preparation-isolation")) {await PreparationIsolationTests.Run();return;}
 
 static void Assert(bool condition,string message) {if(!condition) throw new Exception(message);}
 static void Reject(Action action,string reason)
@@ -25,3 +26,4 @@ Console.WriteLine("PASS application contracts and phase ordering");
 await DriverTests.Run();
 ContentTests.Run();
 await DispatchIsolationTests.Run();
+await PreparationIsolationTests.Run();

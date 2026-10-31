@@ -1,0 +1,8 @@
+<Project Sdk="Microsoft.NET.Sdk">
+  <PropertyGroup><TargetFramework>net10.0-windows</TargetFramework></PropertyGroup>
+  <ItemGroup>
+    <ProjectReference Include="../Player.Native/Player.Native.csproj" />
+    <ProjectReference Include="../BoardGame.Hosting/BoardGame.Hosting.csproj" />
+    <ProjectReference Include="../BoardGame.Avalonia/BoardGame.Avalonia.csproj" />
+  </ItemGroup>
+</Project>

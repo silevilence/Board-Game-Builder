@@ -28,10 +28,11 @@ public class InteractiveBoard : UserControl, IDisposable
     public event Action? SelectionChanged;
     public event Action<string>? Shortcut;
     public event Action<string>? RenderingError;
-    public InteractiveBoard(GraphicsConfiguration graphics,BoardGame.Kernel.RuntimePluginSelection? renderer=null)
+    public InteractiveBoard(GraphicsConfiguration graphics,BoardGame.Kernel.RuntimePluginSelection? renderer=null,ViewportComposition? approved=null)
     {
         RuntimePluginDefinition[] plugins=[BoardRenderPlugin.Input(new VisualSource(_=>ReadVisual())),BoardRenderPlugin.Create()];
-        viewport=new(graphics,new ViewportComposition(plugins.Select(p=>p.Id==BoardRenderContract.Id?renderer ?? BoardRenderContract.Selection:new BoardGame.Kernel.RuntimePluginSelection(p.Id,p.Version,p.Api,BoardGame.Kernel.RuntimeConfiguration.Empty)).ToArray(),plugins));
+        viewport=new(graphics,approved ?? new ViewportComposition(plugins.Select(p=>p.Id==BoardRenderContract.Id?renderer ?? BoardRenderContract.Selection:new BoardGame.Kernel.RuntimePluginSelection(p.Id,p.Version,p.Api,BoardGame.Kernel.RuntimeConfiguration.Empty)).ToArray(),plugins))
+            {ConfigureScope=approved==null?null:scope=>scope.Service<BoardVisualChannel>(BoardRenderPlugin.Source).ReadFrame=_=>ReadVisual()};
         var zoomIn=new Button {Content="放大 +"}; var zoomOut=new Button {Content="缩小 −"};
         zoomIn.Click+=(_,_)=>viewport.ChangeZoom(1.1f); zoomOut.Click+=(_,_)=>viewport.ChangeZoom(1/1.1f);
         controls.Children.Add(zoomIn); controls.Children.Add(zoomOut);

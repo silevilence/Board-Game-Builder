@@ -8,12 +8,26 @@ using BoardGame.Resources;
 namespace BoardGame.Runtime;
 
 // An explicit ordinary board assembly. Script/effect implementations are supplied separately.
-public sealed class BoardApplication(uint seed=1,IReadOnlyDictionary<string,string>? controllers=null,int maxSteps=500)
+public sealed class BoardApplication(uint? seed=null,IReadOnlyDictionary<string,string>? controllers=null,int? maxSteps=null,
+    string sessionId="session.local",bool? cpu=null,bool? effects=null)
 {
+    internal sealed record Settings(Dictionary<string,string>? Controllers=null,int MaxSteps=500);
+    private uint Seed(GameContent? content)=>seed ?? (content?.Identity.Startup.Plugins.Single(p=>p.Id=="kernel").Configuration.TryGetProperty("seed",out var value)==true?value.GetUInt32():1);
+    private Settings Options(GameContent? content)
+    {
+        var selection=content?.Identity.Startup.Plugins.SingleOrDefault(p=>p.Id==sessionId);
+        var configured=selection==null?new Settings():selection.Configuration.Deserialize(Wire.Type<Settings>(BoardHostingJson.Default)) ?? new Settings();
+        return configured with {Controllers=controllers==null?configured.Controllers:new(controllers),MaxSteps=maxSteps ?? configured.MaxSteps};
+    }
     private readonly ConditionalWeakTable<GameContent,Binding> bindings=new();
     private sealed record Binding(LoadedModule Module,BoardContentPolicy Policy);
     internal sealed record Payload(GameState State,AssetSet Assets);
     public LoadedModule Module(GameContent content)=>Wire.Copy(Bound(content).Module);
+    public IReadOnlyDictionary<string,string> Controllers(GameContent content)
+    {
+        var options=Options(content);
+        return Bound(content).Module.Initial.Seats.ToDictionary(s=>s.Id,s=>options.Controllers?.GetValueOrDefault(s.Id) ?? s.Controller);
+    }
     public GameDefinition Definition(GameContent content)=>Wire.Copy(Bound(content).Module.Definition!);
     public void Validate(GameContent content,LoadedModule module)=>Bound(content).Policy.Validate(module);
     private Binding Bound(GameContent content)=>bindings.GetValue(content,CreateBinding);
@@ -33,18 +47,21 @@ public sealed class BoardApplication(uint seed=1,IReadOnlyDictionary<string,stri
     }
     public ApprovedApplicationPlugin DefinitionFactory()=>new(_=>DefinitionPlugin());
     public ApprovedApplicationPlugin ResourceFactory()=>new(content=>AssetPlugins.Resources(()=>content==null?null:Bound(content).Module.Resources));
-    public ApprovedApplicationPlugin AuthorityFactory()=>new(content=>AuthorityPlugin.Create(()=>Bound(Required(content)).Module,seed));
+    public ApprovedApplicationPlugin AuthorityFactory()=>new(content=>AuthorityPlugin.Create(()=>Bound(Required(content)).Module,Seed(content)) with {Content=new(["seed"])});
     public ApprovedApplicationPlugin RulesFactory()=>new(_=>CommandRulesPlugin.Create());
     public ApprovedApplicationPlugin RecordingFactory()=>new(content=>RecordingPlugin.Create(()=>Bound(Required(content)).Module,value=>Bound(Required(content)).Policy.Validate(value)));
     public ApprovedApplicationPlugin SessionFactory()=>new(content=>
         {
             var module=content==null?null:Bound(content).Module;
-            if(module!=null && controllers?.Any(p=>!module.Initial.Seats.Any(s=>s.Id==p.Key) || p.Value is not ("human" or "cpu"))==true)
+            var options=Options(content);
+            if(options.MaxSteps<1 || module!=null && options.Controllers?.Any(p=>!module.Initial.Seats.Any(s=>s.Id==p.Key) || p.Value is not ("human" or "cpu"))==true)
                 throw new ArgumentException("Invalid seat/controller configuration");
             var selected=module?.RuntimeIdentity!.Startup.Plugins.Select(p=>p.Id).ToHashSet() ?? [];
-            var control=module?.Initial.Seats.ToDictionary(s=>s.Id,s=>controllers?.GetValueOrDefault(s.Id) ?? s.Controller);
-            return BoardSessionPlugin.Create(()=>Bound(Required(content)).Module,seed,control,maxSteps,
-                new(value=>Bound(Required(content)).Policy.Validate(value),_=>[]),selected.Contains("lua.cpu") || control?.Values.Contains("cpu")==true,selected.Contains("wasm"));
+            var control=module?.Initial.Seats.ToDictionary(s=>s.Id,s=>options.Controllers?.GetValueOrDefault(s.Id) ?? s.Controller);
+            if(cpu==false && control?.Values.Contains("cpu")==true)throw new InvalidDataException(sessionId+": CPU seats require a CPU session composition");
+            return BoardSessionPlugin.Create(()=>Bound(Required(content)).Module,Seed(content),control,options.MaxSteps,
+                new(value=>Bound(Required(content)).Policy.Validate(value),_=>[]),cpu ?? (selected.Contains("lua.cpu") || control?.Values.Contains("cpu")==true),effects ?? selected.Contains("wasm"))
+                with {Id=sessionId,Content=new(["controllers","maxSteps"])};
         });
     private static GameContent Required(GameContent? content)=>content ?? throw new InvalidOperationException("Runtime content is required");
     private static Binding CreateBinding(GameContent content)

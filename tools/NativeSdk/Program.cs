@@ -8,6 +8,8 @@ using BoardGame.Plugins;
 using BoardGame.Publishing;
 using BoardGame.Rendering;
 using BoardGame.Resources;
+using BoardGame.Runtime;
+using BoardGame.View;
 using Sample.Motion;
 
 // Maintainer tool: produces a precompiled distribution. It is never shipped in a game.
@@ -22,6 +24,8 @@ if(args[0]=="pack")
         var common=Closure(typeof(NativeApplicationEntry).Assembly,typeof(PluginRegistration).Assembly);
         var hostFiles=common.Values.Select(a=>Copy(a.Location,destination,"hosts/application", "managed")).ToList();
         foreach(var name in new[]{"av_libglesv2.dll","libHarfBuzzSharp.dll","libSkiaSharp.dll"})hostFiles.Add(Copy(Native(name),destination,"hosts/application","native"));
+        var boardFiles=Closure(typeof(NativeBoardEntry).Assembly,typeof(PluginRegistration).Assembly).Values.Select(a=>Copy(a.Location,destination,"hosts/board","managed")).ToList();
+        boardFiles.AddRange(hostFiles.Where(f=>f.Role=="native"));
         var packages=new List<string>();
         void Add(Type type,string method,params string[] native)
         {
@@ -42,7 +46,15 @@ if(args[0]=="pack")
         Add(typeof(AssetStaticFactories),nameof(AssetStaticFactories.Resources));Add(typeof(AssetStaticFactories),nameof(AssetStaticFactories.Images));
         Add(typeof(AssetStaticFactories),nameof(AssetStaticFactories.TexturePacker));Add(typeof(AssetStaticFactories),nameof(AssetStaticFactories.Font));
         Add(typeof(DesktopGlBackend),nameof(DesktopGlBackend.Create),"SDL2.dll");
-        RuntimeSdk.WriteManifest(destination,new(1,"win-x64",[new("application.desktop",typeof(NativeApplicationEntry).FullName!,"Run",[],[ApplicationViewPlugin.Capability],hostFiles.ToArray())],packages.ToArray()));
+        Add(typeof(BoardStaticFactories),nameof(BoardStaticFactories.Definition));Add(typeof(BoardStaticFactories),nameof(BoardStaticFactories.Authority));
+        Add(typeof(BoardStaticFactories),nameof(BoardStaticFactories.Rules));Add(typeof(BoardStaticFactories),nameof(BoardStaticFactories.Recording));
+        Add(typeof(BoardStaticFactories),nameof(BoardStaticFactories.Session));Add(typeof(BoardStaticFactories),nameof(BoardStaticFactories.CpuSession));
+        Add(typeof(BoardStaticFactories),nameof(BoardStaticFactories.EffectsSession));Add(typeof(BoardStaticFactories),nameof(BoardStaticFactories.CpuEffectsSession));
+        Add(typeof(ViewportTargetPlugin),nameof(ViewportTargetPlugin.Create));Add(typeof(BoardRenderPlugin),nameof(BoardRenderPlugin.Renderer));Add(typeof(BoardRenderPlugin),nameof(BoardRenderPlugin.VisualInput));
+        Add(typeof(WasmStaticFactories),nameof(WasmStaticFactories.Create),"wasmtime.dll");
+        RuntimeSdk.WriteManifest(destination,new(1,"win-x64",[
+            new("application.desktop",typeof(NativeApplicationEntry).FullName!,"Run",[],[ApplicationViewPlugin.Capability],hostFiles.ToArray()),
+            new("board.desktop",typeof(NativeBoardEntry).FullName!,"Run",["board.state"],["session","board.render","board.visual-source","render.target"],boardFiles.ToArray())],packages.ToArray()));
         _=RuntimeSdk.Open(destination);Console.WriteLine("SDK: "+destination);
     }
     catch {Directory.Delete(destination,true);throw;}

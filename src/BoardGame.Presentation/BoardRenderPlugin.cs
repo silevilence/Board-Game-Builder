@@ -9,6 +9,12 @@ public interface IBoardVisualSource
 {
     BoardVisual Read(RenderFrame frame);
 }
+public sealed class BoardVisualChannel : IBoardVisualSource,IDisposable
+{
+    public Func<RenderFrame,BoardVisual>? ReadFrame {get;set;}
+    public BoardVisual Read(RenderFrame frame)=>(ReadFrame ?? throw new InvalidOperationException("Board viewport is not bound"))(frame);
+    public void Dispose()=>ReadFrame=null;
+}
 public sealed class ProjectedBoardVisual(ISeatProjection projection,ResourcePool resources) : IBoardVisualSource
 {
     public BoardVisual Read(RenderFrame frame)=>new(TableScene.From(projection.View(),resources));
@@ -16,6 +22,9 @@ public sealed class ProjectedBoardVisual(ISeatProjection projection,ResourcePool
 
 public static class BoardRenderPlugin
 {
+    public static BoardGame.AppRuntime.ApprovedApplicationPlugin Renderer()=>new(_=>Create());
+    public static BoardGame.AppRuntime.ApprovedApplicationPlugin VisualInput()=>new(_=>new("board.visual-input","1",1,[Source],[],
+        scope=>scope.Provide(Source,scope.Own(new BoardVisualChannel()))) {Execution=new(HostMode.Graphical,RuntimeScope.Viewport)});
     public const string Source="board.visual-source";
     public static RuntimePluginDefinition Input(IBoardVisualSource source)=>new("board.visual-input","1",1,[Source],[],scope=>scope.Provide(Source,source))
         {Execution=new(HostMode.Graphical,RuntimeScope.Viewport)};

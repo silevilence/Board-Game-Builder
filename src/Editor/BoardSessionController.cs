@@ -12,17 +12,27 @@ public sealed class BoardSessionController : IDisposable
     private readonly Action<RuntimeStartup>? requireGraphics;
     private readonly DispatcherTimer timer=new() {Interval=TimeSpan.FromMilliseconds(100)};
     private IDebugSession? session;
+    private IBoardApplicationPreview? applicationPreview;
+    public IDisposable RegisterApplicationPreview(IBoardApplicationPreview preview)
+    {
+        if(applicationPreview!=null)throw new InvalidOperationException("A board application preview is already installed");
+        applicationPreview=preview;void Notify()=>Changed?.Invoke();preview.Changed+=Notify;
+        return new Cleanup(()=>{preview.Changed-=Notify;if(ReferenceEquals(applicationPreview,preview))applicationPreview=null;Changed?.Invoke();});
+    }
     private CancellationTokenSource? starting;
     private int generation;
     private bool pendingPause;
     public LoadedModule? Module { get; private set; }
-    public ProjectView? SourceView { get; private set; }
+    private ProjectView? sourceView;
+    public ProjectView? SourceView { get=>sourceView ?? applicationPreview?.SourceView;private set=>sourceView=value; }
     public DebugFrame? Frame { get; private set; }
     public DebugReply? Reply { get; private set; }
-    public bool Busy { get; private set; }
-    public bool Active=>session!=null;
+    private bool busy;
+    public bool Busy { get=>busy || applicationPreview?.Busy==true;private set=>busy=value; }
+    public bool Active=>session!=null || applicationPreview?.Active==true;
     public bool CanInput=>!Busy && Frame is {Cpu:false,View.Ended:false,Fault:null,IsReplay:false};
-    public string Status { get; private set; }="未开始试玩";
+    private string status="未开始试玩";
+    public string Status {get=>applicationPreview?.Supports(documents.Current)==true?applicationPreview.Status:status;private set=>status=value;}
     public string Seed { get; set; }="42";
     public uint? ActiveSeed { get; private set; }
     public bool External { get; set; }
@@ -58,6 +68,7 @@ public sealed class BoardSessionController : IDisposable
     }
     public async Task Start()
     {
+        if(applicationPreview?.Supports(documents.Current)==true){Stop();await applicationPreview.Start();return;}
         Stop();var current=generation;starting=new();var cancellation=starting.Token;Busy=true;Changed?.Invoke();
         try
         {
@@ -126,6 +137,7 @@ public sealed class BoardSessionController : IDisposable
     }
     public void Stop()
     {
+        applicationPreview?.Stop();
         generation++;timer.Stop();starting?.Cancel();starting?.Dispose();starting=null;session?.Dispose();session=null;Frame=null;Reply=null;Module=null;SourceView=null;Busy=false;pendingPause=false;
         Status="已停止；作者初始局面保持不变。";Changed?.Invoke();
     }

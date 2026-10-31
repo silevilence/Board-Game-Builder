@@ -32,3 +32,10 @@ var runtimeDeps=File.ReadAllText(Path.Combine(AppContext.BaseDirectory,"BoardGam
 foreach(var omitted in new[]{"\"Runtime/","\"Lua/","\"Lua.Execution/","\"BoardGame.Lua/","\"BoardGame.Wasm/","Wasmtime/","MonoGame.Framework/"})
     Check(!runtimeDeps.Contains(omitted),"Unselected implementation linked: "+omitted);
 Console.WriteLine("PASS explicit no-script assembly, formal load/pack, update, recording and absent scripting/graphics dependencies");
+var configured=startup with {Plugins=startup.Plugins.Select(p=>p.Id=="kernel"?P("kernel",new{seed=123u}):p.Id=="session.local"?P("session.local",new{controllers=new{p1="human"},maxSteps=12}):p).ToList()};
+File.WriteAllText(Path.Combine(folder,GameRuntime.Entry),Wire.Json(configured));
+var configuredBoard=new BoardApplication();var configuredCatalog=new ApplicationCatalog(configuredBoard.Plugins());var configuredContent=configuredCatalog.Load(folder);
+await using var configuredHost=await configuredCatalog.StartAsync(configuredContent);
+Check(configuredHost.Service<IGameSession>("session").ExportAuthorityLog().Seed==123,"Entry seed was ignored");
+Check(configuredBoard.Controllers(configuredContent)["p1"]=="human","Viewer controllers differ from session configuration");
+Console.WriteLine("PASS entry seed and controller configuration reach the board session");

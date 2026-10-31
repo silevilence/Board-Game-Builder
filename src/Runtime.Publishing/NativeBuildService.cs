@@ -82,6 +82,8 @@ public static class NativeBuildService
                 else
                 {
                     cancellation.ThrowIfCancellationRequested();Report("verify","Checking native output and complete release files");
+                    foreach(var symbols in Directory.GetFiles(workspace,"*.pdb",SearchOption.AllDirectories).Where(p=>Path.GetFileName(p)=="Play.pdb" && p.Contains(Path.DirectorySeparatorChar+"native"+Path.DirectorySeparatorChar)))
+                        File.Copy(symbols,Path.Combine(logs,"Play.pdb"),true);
                     VerifyOutput(stage,prepared);
                     if(entry.Icon!=null && !File.ReadAllBytes(Path.Combine(stage,"game.ico")).SequenceEqual(entry.Icon))throw new InvalidDataException("Published game icon differs");
                     File.Copy(Path.Combine(workspace,"build-inputs.json"),Path.Combine(stage,"build-inputs.json"));
@@ -149,7 +151,7 @@ internal static class NativeMain
             new XElement("PublishAot","true"),new XElement("RuntimeFrameworkVersion",toolchain.Runtime),new XElement("IlcUseEnvironmentalTools","true"),
             new XElement("TreatWarningsAsErrors","true"),new XElement("ILLinkTreatWarningsAsErrors","true"),new XElement("IlcTreatWarningsAsErrors","true"),new XElement("TrimmerSingleWarn","false"),
             new XElement("RestorePackagesWithLockFile","true"),new XElement("Deterministic","true"),new XElement("DebugSymbols","false"),new XElement("DebugType","none"),
-            new XElement("NativeDebugSymbols","false"),new XElement("CopyOutputSymbolsToPublishDirectory","false"),
+            new XElement("NativeDebugSymbols","true"),new XElement("CopyOutputSymbolsToPublishDirectory","false"),
             new XElement("AssemblyTitle",entry.Title),new XElement("Product",entry.Title),new XElement("InformationalVersion",entry.Version),new XElement("AssemblyVersion","1.0.0.0"));
         if(entry.Icon!=null)properties.Add(new XElement("ApplicationIcon","game.ico"));
         var content=new XElement("ItemGroup",new XElement("Compile",new XAttribute("Include","Program.cs;GeneratedCatalog.cs")));

@@ -21,6 +21,11 @@ public sealed class ApplicationCatalog
     public ApplicationCatalog Extend(IEnumerable<ApprovedApplicationPlugin> plugins)=>new(approved.Concat(plugins));
     public Task<RuntimeHost> StartAsync(GameContent content,HostMode mode=HostMode.Headless,RuntimeHost? graphics=null,
         ApplicationClockOptions? clock=null,Action<Action>? dispatch=null)
+        // Restore invokes content loaders and waits for their temporary scopes. Keep that
+        // work off the caller's UI context, just like runtime activation itself.
+        =>Task.Run(()=>StartCore(content,mode,graphics,clock,dispatch));
+    private Task<RuntimeHost> StartCore(GameContent content,HostMode mode,RuntimeHost? graphics,
+        ApplicationClockOptions? clock,Action<Action>? dispatch)
     {
         // Do not accept a content object validated by another, broader installation catalog.
         var verified=GameRuntime.Restore(content.ExportSnapshot(),Content);

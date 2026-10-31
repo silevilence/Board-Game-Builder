@@ -1,0 +1,14 @@
+<Project Sdk="Microsoft.NET.Sdk">
+  <PropertyGroup>
+    <TargetFramework>net10.0-windows</TargetFramework><OutputType>WinExe</OutputType>
+    <PublishAot>true</PublishAot><IlcTreatWarningsAsErrors>true</IlcTreatWarningsAsErrors>
+    <ApplicationManifest>../../src/app.manifest</ApplicationManifest>
+    <ILLinkTreatWarningsAsErrors>true</ILLinkTreatWarningsAsErrors><TrimmerSingleWarn>false</TrimmerSingleWarn>
+  </PropertyGroup>
+  <ItemGroup>
+    <ProjectReference Include="../../src/Player.Native.Board/Player.Native.Board.csproj" />
+    <ProjectReference Include="../../src/Rendering.DesktopGL/Rendering.DesktopGL.csproj" />
+    <ProjectReference Include="../../src/BoardGame.Wasm/BoardGame.Wasm.csproj" />
+    <ProjectReference Include="../../samples/Sample.NativeCpu/Sample.NativeCpu.csproj" />
+  </ItemGroup>
+</Project>

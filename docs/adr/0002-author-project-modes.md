@@ -21,3 +21,9 @@ CLI、图形编辑器和直接编写文件都需产出相同的运行工程。�
 共享领域代码可通过两种编辑模式验收，图形控件不成为作者数据的所有者。回执是历史证据，不代表源文件此刻仍相同；删除私有日志或关闭 GUI 后，未知结果不能作为自动重放依据。
 
 本期不提供任意文本的自动三方合并、任意第三方编辑器的原子锁或任意 Agent harness 的链接发现承诺。已验证环境与实际产物见 [验收记录](../validation/cli-author-review.md)。
+
+## 独立导出与可选运行组合补充（2026-10-31）
+
+Authoring 的依赖已扩展为显式作者适配、运行目录及可选构建服务；“仅依赖 Runtime”不再描述完整项目引用。无 UI 的 ProjectView／编辑模式契约保持不变，Runtime、小核心与 Player 不反向引用作者或 Editor。
+
+`author.export.package`、`author.export.player`、`author.export.native` 各自贡献元数据、预检与执行；Editor／CLI 共用 AuthorExports，不在 UI 按产物类型分支。NativeAOT 所需 SDK 与 C++ 工具只由该提供者要求。活动导出持有提供者和运行插件 lease；文档替换、取消或关闭先等待任务退出，再归还资源。失败不发布成功目录，也不降级其他方式。桌游静态应用由 `author.runtime.board-application` 适配，非桌游组合独立注册，缺结构化作者格式仍保留文件编辑与试玩。说明和证据入口见 [原生发布说明](../native-publication.md)。

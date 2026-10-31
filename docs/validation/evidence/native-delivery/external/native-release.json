@@ -1,0 +1,63 @@
+{
+  "format": 1,
+  "target": "win-x64",
+  "sourceFingerprint": "A51628FB11159DA15E47C684EBE4800323A9A2B68034E822BC26FC89580DBA91",
+  "title": "\u539F\u751F\u684C\u6E38-external",
+  "version": "1",
+  "sdk": "10.0.112",
+  "runtime": "10.0.12",
+  "compiler": "C:\\Program Files\\Microsoft Visual Studio\\18\\Community\\VC/Tools/MSVC\\14.51.36231\\bin/Hostx64/x64/cl.exe",
+  "linker": "C:\\Program Files\\Microsoft Visual Studio\\18\\Community\\VC/Tools/MSVC\\14.51.36231\\bin/Hostx64/x64/link.exe",
+  "windowsSdk": "10.0.26100.0",
+  "compilerVersion": "19.51.36246.0",
+  "linkerVersion": "14.51.36246.0",
+  "strictWarnings": true,
+  "durationMs": 124494,
+  "files": [
+    {
+      "path": "Play.exe",
+      "bytes": 27005440,
+      "sha256": "592534e6559737908417c64f8d1d4392e89770f3396476940384de96676766e5"
+    },
+    {
+      "path": "SDL2.dll",
+      "bytes": 1679360,
+      "sha256": "f8ab6a41ae9ff682a2b5482414f73979bc1a29eabb14da21fc7ae35090b5dec9"
+    },
+    {
+      "path": "av_libglesv2.dll",
+      "bytes": 5394096,
+      "sha256": "53191a77fe783cd757ca7767077c2a64a662e7043777a5b4ab74980d4a0b73e3"
+    },
+    {
+      "path": "build-inputs.json",
+      "bytes": 13984,
+      "sha256": "986493c8adf91ba289e0281a0d83f59b6a0be156e1d7a1a32877dbbeb7ceadbe"
+    },
+    {
+      "path": "content/card.png",
+      "bytes": 218,
+      "sha256": "3e395c988bd0875944a21e1e13ef3ca739a61b5256a773bd2001c04e7afc60e0"
+    },
+    {
+      "path": "content/game.start.json",
+      "bytes": 5094,
+      "sha256": "2eed3b0d6ed405ee77832c408381e3558f5891f5a6fd0ce162b26a0ae02977aa"
+    },
+    {
+      "path": "content/state.json",
+      "bytes": 2144,
+      "sha256": "099584996cb57850e8caddc5bcd8e49d0fdcbdb70a87ffd5e1fb6a136a225649"
+    },
+    {
+      "path": "libHarfBuzzSharp.dll",
+      "bytes": 1816088,
+      "sha256": "145ade963eba427027d5e1381db5d51a0ef9e98e9fef9efbfa6074ca20da246f"
+    },
+    {
+      "path": "libSkiaSharp.dll",
+      "bytes": 11628896,
+      "sha256": "7dec3ba900ab353491e6446f0083739924c6f8dd668832e2f09d38ebffdbbe1c"
+    }
+  ]
+}

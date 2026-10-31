@@ -1,0 +1,1 @@
+{"success":true,"checks":["unsaved-board-preview-exact-source-stop-and-plugin-shutdown","editor-discovers-board-application-and-exact-external-wasm-native-closure","editor-native-publishes-unsaved-board-state","same-draft-ordinary-player-with-exact-external-plugin","package-export-undo-redo-save-reopen-and-original-source-preserved"],"errors":[]}

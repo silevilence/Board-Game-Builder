@@ -1,5 +1,6 @@
 param([string]$Output = 'artifacts/player-release', [string]$HostProject='src/Player/Player.csproj',
-    [string]$EntryPoint='Player.exe', [ValidateSet(2,3)][int]$PackageFormat=2, [bool]$IncludeLuaWorker=$true, [bool]$IncludeRuntimePlugins=$true)
+    [string]$EntryPoint='Player.exe', [ValidateSet(2,3)][int]$PackageFormat=2, [bool]$IncludeLuaWorker=$true, [bool]$IncludeRuntimePlugins=$true,
+    [bool]$IncludeDesktopGlBackend=$false)
 $ErrorActionPreference = 'Stop'
 $repo = Split-Path $PSScriptRoot -Parent
 $productVersion = ([xml](Get-Content -LiteralPath "$repo/Directory.Build.props" -Raw)).Project.PropertyGroup.Version
@@ -8,6 +9,10 @@ if (Test-Path -LiteralPath $target) { throw 'Release output already exists. Choo
 # This is the engine-maintainer build. Export never calls dotnet or a compiler.
 dotnet publish (Join-Path $repo $HostProject) -c Release -r win-x64 --self-contained true -p:EnableEditorDebug=false -p:PublishSingleFile=false -p:DebugType=None -p:DebugSymbols=false -o $target
 if ($LASTEXITCODE -ne 0) { throw 'Player publish failed' }
+if($IncludeDesktopGlBackend) {
+    dotnet run --project "$repo/tools/GraphicsBackendPack" -c Release -- "$target/backends/desktopgl"
+    if($LASTEXITCODE -ne 0) {throw 'DesktopGL backend packaging failed'}
+}
 if($IncludeLuaWorker) {
     dotnet publish "$repo/src/Lua/Lua.csproj" -c Release -r win-x64 --self-contained true -p:PublishSingleFile=false -p:DebugType=None -p:DebugSymbols=false -o "$target/worker"
     if ($LASTEXITCODE -ne 0) { throw 'Lua worker publish failed' }

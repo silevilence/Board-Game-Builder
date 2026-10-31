@@ -22,7 +22,8 @@ public class PlatformViewport : NativeControlHost, IDisposable
     public event Action? GraphicsChanged;
     public string? ActiveBackend=>renderScope==null?null:configuration.Startup.Plugins.Single().Id;
     private readonly ViewportComposition? presentation;
-    private readonly DrawingTarget drawing=new();
+    private DrawingTarget drawing=new();
+    public Action<RuntimeHost>? ConfigureScope {get;init;}
     private GraphicsWindowHost? graphicsHost;
     private int generation;
     private TimeSpan lastFrame;
@@ -157,10 +158,13 @@ public class PlatformViewport : NativeControlHost, IDisposable
                 {Execution=new(HostMode.Graphical,RuntimeScope.Viewport,[new("draw",ApplicationPhase.Render)])};
             BoardGame.Kernel.RuntimePluginSelection Select(RuntimePluginDefinition p)=>new(p.Id,p.Version,p.Api,BoardGame.Kernel.RuntimeConfiguration.Empty);
             var content=presentation ?? new ViewportComposition([Select(callback)],[callback]);
-            var startup=configuration.Startup with {Plugins=[..configuration.Startup.Plugins,Select(target),..content.Plugins]};
-            var next=await RuntimeHost.StartScopedAsync(startup,[..configuration.Catalog,target,..content.Catalog],[],HostMode.Graphical,
+            var suppliedTarget=content.Catalog.Any(p=>p.Provides.Contains("render.target"));
+            var startup=configuration.Startup with {Plugins=[..configuration.Startup.Plugins,..(suppliedTarget?Array.Empty<BoardGame.Kernel.RuntimePluginSelection>():[Select(target)]),..content.Plugins]};
+            var next=await RuntimeHost.StartScopedAsync(startup,[..configuration.Catalog,..(suppliedTarget?Array.Empty<RuntimePluginDefinition>():[target]),..content.Catalog],[],HostMode.Graphical,
                 RuntimeScope.Viewport,instance,dispatch:GraphicsWindowHost.Dispatch);
             if(disposed || current!=generation) {await next.DisposeAsync();return;}
+            try {drawing=next.Service<DrawingTarget>("render.target");ConfigureScope?.Invoke(next);}
+            catch {await next.DisposeAsync();throw;}
             renderScope=next;lastFrame=clock.Elapsed;timer.Start();GraphicsChanged?.Invoke();
         }
         catch(Exception error) {if(!disposed && current==generation) {Error=error.Message;timer.Stop();Input?.Invoke("error",0,0);}}

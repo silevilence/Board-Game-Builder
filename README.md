@@ -62,3 +62,7 @@ dotnet run --project tests/Engine.Tests -c Release -- freecell freecell-shortcut
 ```
 
 本机独立产物：`artifacts/freecell-windows-1.2.0/Play.exe`。经典绿色牌桌与灰色菜单，自动适应窗口；支持点击选牌／目标、双击快速移牌、按住右键看牌及键盘快捷操作。完整键位见模块说明，证据与限制见 [空当接龙验收记录](docs/validation/freecell-review.md)。
+
+## NativeAOT 发布入口
+
+可选 GL 后端、外部 .NET 运行插件、三种独立导出方式及固定工具链见 [发布说明](docs/native-publication.md)。最终验收状态以 ROADMAP 和 [联合发行记录](docs/validation/native-delivery.md) 为准。

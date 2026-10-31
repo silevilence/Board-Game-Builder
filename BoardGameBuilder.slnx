@@ -1,5 +1,6 @@
 <Solution>
   <Folder Name="/samples/">
+    <Project Path="samples/Sample.NativeCpu/Sample.NativeCpu.csproj" />
     <Project Path="samples/Minimal.Player/Minimal.Player.csproj" />
     <Project Path="samples/Runtime.SamplePlugin/Runtime.SamplePlugin.csproj" />
     <Project Path="samples/Runtime.SampleView/Runtime.SampleView.csproj" />
@@ -10,6 +11,8 @@
   </Folder>
   <Folder Name="/src/">
     <Project Path="src/Player.Native/Player.Native.csproj" />
+    <Project Path="src/Player.Native.Board/Player.Native.Board.csproj" />
+    <Project Path="src/BoardGame.Composition/BoardGame.Composition.csproj" />
     <Project Path="src/Runtime.Publishing/Runtime.Publishing.csproj" />
     <Project Path="src/Rendering.DesktopGL/Rendering.DesktopGL.csproj" />
     <Project Path="src/BoardGame.Avalonia/BoardGame.Avalonia.csproj" />
@@ -60,6 +63,7 @@
     <Project Path="src/View.MonoGame/View.MonoGame.csproj" />
   </Folder>
   <Folder Name="/tests/">
+    <Project Path="tests/Native.Board.Startup/Native.Board.Startup.csproj" />
     <Project Path="tests/Wasm.Execution.Tests/Wasm.Execution.Tests.csproj" />
     <Project Path="tests/Runtime.Publishing.Tests/Runtime.Publishing.Tests.csproj" />
     <Project Path="tests/Rendering.DesktopGL.Tests/Rendering.DesktopGL.Tests.csproj" />
@@ -95,6 +99,7 @@
     <Project Path="tests/View.Tests/View.Tests.csproj" />
   </Folder>
   <Folder Name="/tools/">
+    <Project Path="tools/NativeDelivery/NativeDelivery.csproj" />
     <Project Path="tools/GraphicsBackendPack/GraphicsBackendPack.csproj" />
     <Project Path="tools/NativeSdk/NativeSdk.csproj" />
   </Folder>

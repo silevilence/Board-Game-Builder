@@ -28,6 +28,12 @@ public static class BuiltinPlugins
         }));
         app.Install(new("author.module",1,[],["documents"],scope=>
             scope.Own(scope.Service<DocumentWorkspace>("documents").AuthorFormats.Register(BoardGame.Authoring.GameAuthorFormats.ModuleProvider))));
+        app.Install(new("author.runtime.board-application",1,[],["documents","runtime.catalog","runtime.plugins"],scope=>
+        {
+            var catalog=BoardGame.Runtime.BoardApplicationPlugins.Catalog();
+            scope.Own(scope.Service<DocumentWorkspace>("documents").Runtimes.Register(new BoardGame.Authoring.ApplicationAuthorRuntime("board.application",catalog,scope.Service<BoardGame.Plugins.PluginStore>("runtime.plugins"))));
+            scope.Own(scope.Service<BoardGame.Authoring.AuthorRuntimeCatalog>("runtime.catalog").Register("board.application",_=>catalog.Content.Plugins));
+        }));
         app.Install(new("author.workspace",1,["author.workspace"],["documents","panels","commands"],scope=>
         {
             scope.Provide("author.workspace",new AuthorWorkspaceService(scope.Service<DocumentWorkspace>("documents"),
@@ -69,6 +75,18 @@ public static class BuiltinPlugins
             var sessions=new BoardSessionController(scope.Service<DocumentWorkspace>("documents"),scope.Service<EditorViewports>("viewports").RequireCurrent);scope.Own(sessions);scope.Provide("board.sessions",sessions);
         }));
         app.Install(new("board.viewports",1,["board.viewports"],["viewports"],scope=>scope.Provide("board.viewports",new BoardViewports(scope.Service<EditorViewports>("viewports")))));
+        app.Install(new("play.board.application",1,["board.application.preview"],["documents","board.sessions","commands"],scope=>
+        {
+            var documents=scope.Service<DocumentWorkspace>("documents");var preview=new BoardApplicationPreview(documents,new(BoardGame.Rendering.WindowsDxBackend.Plugin,Path.Combine(AppContext.BaseDirectory,"backends","desktopgl")));
+            scope.Provide("board.application.preview",preview);scope.OwnAsync(preview);
+            scope.Own(scope.Service<BoardSessionController>("board.sessions").RegisterApplicationPreview(preview));
+            scope.Own(app.BeforeShutdown(async()=>{await preview.StopAndWait();return true;}));
+            var commands=scope.Service<EditorCommands>("commands");
+            commands.Register(scope,new("board.application.play","试玩桌游应用草稿",scope.Service<BoardSessionController>("board.sessions").Start,()=>preview.Supports(documents.Current) && !preview.Busy));
+            commands.Register(scope,new("board.application.stop","关闭桌游应用试玩",preview.StopAndWait,()=>preview.Active || preview.Busy));
+            preview.Changed+=commands.Refresh;documents.Changed+=commands.Refresh;
+            scope.Own(new Cleanup(()=>{preview.Changed-=commands.Refresh;documents.Changed-=commands.Refresh;}));
+        }));
         app.Install(new("runtime.motion",1,[],["sessions","documents","runtime.plugins","runtime.catalog"],scope=>
         {
             var catalog=new BoardGame.AppRuntime.ApplicationCatalog(Sample.Motion.MotionPlugins.Catalog());

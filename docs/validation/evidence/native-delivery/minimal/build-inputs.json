@@ -1,0 +1,408 @@
+{
+  "target": "win-x64",
+  "mode": "Graphical",
+  "sourceFingerprint": "AFE64FD146D26418B07A08FD913451614ABA04A06C4A6C15875B2EA25DBB3655",
+  "plugins": [
+    {
+      "id": "board.render",
+      "version": "1",
+      "fingerprint": "3094d4fd24a01797495da7a24d224e5f68fa15ca1fe324a9fff65846e8460150"
+    },
+    {
+      "id": "board.visual-input",
+      "version": "1",
+      "fingerprint": "c259fadab2e49b45d58e90b423404ce286a48a2d81387567f14abce472b776ea"
+    },
+    {
+      "id": "definition.board-state",
+      "version": "1",
+      "fingerprint": "d313f3eacd481f1512684ce2925d6574f45aa51ff6245008f539815ef69c8820"
+    },
+    {
+      "id": "kernel",
+      "version": "1",
+      "fingerprint": "5c97cf8fc2520851167badb9ef5994455712d4fbc6fea65e6c302b59997c3bce"
+    },
+    {
+      "id": "platform.viewport",
+      "version": "1",
+      "fingerprint": "4a3da67e1bb5383e47323c515a84c9e0b06085863b572e8856e524f1d4ba8512"
+    },
+    {
+      "id": "recording",
+      "version": "1",
+      "fingerprint": "0de017d5d84523ee9d4c6580c5ee4c3059f1cabea84089e225e21b07e3c21dbc"
+    },
+    {
+      "id": "render.desktopgl",
+      "version": "1",
+      "fingerprint": "08420fd2ffd1a163d7bad378432105e57b0ab0d6ac7e33666d59b0feb425e45b"
+    },
+    {
+      "id": "resources",
+      "version": "1",
+      "fingerprint": "04a89d859e23192b55654a0d0e6a23736f10b33c28e0ef66b9f8e825962a4088"
+    },
+    {
+      "id": "resources.images",
+      "version": "1",
+      "fingerprint": "20dc9cad612a943d17998ec09b998547a9ec4cbaac4078cae755970f894ad68a"
+    },
+    {
+      "id": "rules.commands",
+      "version": "1",
+      "fingerprint": "ddd4f6d067d35a1163a3f6537a2efc30a7fc0f126d2449b8d36c64904a96fcb3"
+    },
+    {
+      "id": "session.local",
+      "version": "1",
+      "fingerprint": "e43b388d40266994603ec7377a96fa10897f7b2826995baba470089d067a9f2e"
+    }
+  ],
+  "runtime": [
+    {
+      "path": "runtime/Application.Abstractions.dll",
+      "sha256": "5ce29fed6c1e1b6eee90ec58d78cfa6180abf28be16f09b26092b6bc087c9922",
+      "role": "managed",
+      "owner": "board.desktop"
+    },
+    {
+      "path": "runtime/Application.Core.dll",
+      "sha256": "389e8d6fb80fc8e2542ac727f0596f78cd5aa9beac274261e8bd5d12631448ad",
+      "role": "managed",
+      "owner": "board.desktop"
+    },
+    {
+      "path": "runtime/Avalonia.Base.dll",
+      "sha256": "19596afa3c31f1643812b6bacf7dead04889e61c3b465714eb3e818b9ecb1bb3",
+      "role": "managed",
+      "owner": "board.desktop"
+    },
+    {
+      "path": "runtime/Avalonia.Controls.dll",
+      "sha256": "5a2540f4e27a59a7390b13be11bfbac484773ee98843a08ef00ae442e4aafb0c",
+      "role": "managed",
+      "owner": "board.desktop"
+    },
+    {
+      "path": "runtime/Avalonia.Desktop.dll",
+      "sha256": "12d0af0c34912242b4b66fe561dc6aa6b073dcd67427488573deedd721993b70",
+      "role": "managed",
+      "owner": "board.desktop"
+    },
+    {
+      "path": "runtime/Avalonia.Dialogs.dll",
+      "sha256": "b90af0559fa3eae9664e13649300da2e054636aef959b24df897f1a324d56824",
+      "role": "managed",
+      "owner": "board.desktop"
+    },
+    {
+      "path": "runtime/Avalonia.FreeDesktop.AtSpi.dll",
+      "sha256": "be8ef27f44ec61b0af1ea58d6a04c08c4ae05e3ecdcb0c852a0c536b80b981a3",
+      "role": "managed",
+      "owner": "board.desktop"
+    },
+    {
+      "path": "runtime/Avalonia.FreeDesktop.dll",
+      "sha256": "caf2505151490cc075f919613e78d6b962d35bf1f9965845b21659d2698ef57b",
+      "role": "managed",
+      "owner": "board.desktop"
+    },
+    {
+      "path": "runtime/Avalonia.HarfBuzz.dll",
+      "sha256": "7e896b33d3ba0c78347398d33112c6ca4dbd810a6f3b6caf22d3de3686332a40",
+      "role": "managed",
+      "owner": "board.desktop"
+    },
+    {
+      "path": "runtime/Avalonia.Markup.Xaml.dll",
+      "sha256": "3bc2fb3c368256a7ca328e82d6b1296779d459a19fe1ed8a306f0088748d2cc3",
+      "role": "managed",
+      "owner": "board.desktop"
+    },
+    {
+      "path": "runtime/Avalonia.Markup.dll",
+      "sha256": "061c8f2b9734f3befcf38f4b009b66190514c17c312ffd8db6fdbcbf45bffdc1",
+      "role": "managed",
+      "owner": "board.desktop"
+    },
+    {
+      "path": "runtime/Avalonia.Metal.dll",
+      "sha256": "79c7505aa2ac04564e4966d168d38ce60fc47982d8661a6ebcbf3eefc8061c22",
+      "role": "managed",
+      "owner": "board.desktop"
+    },
+    {
+      "path": "runtime/Avalonia.MicroCom.dll",
+      "sha256": "bd86aff78404bb8d09f38c3d7cc8f523df4b4a0af393291afd4e589512923689",
+      "role": "managed",
+      "owner": "board.desktop"
+    },
+    {
+      "path": "runtime/Avalonia.Native.dll",
+      "sha256": "1873d288024bda285b7d9b9d06ae69183fc421667e9bd44d8da0fe0fe54010f9",
+      "role": "managed",
+      "owner": "board.desktop"
+    },
+    {
+      "path": "runtime/Avalonia.OpenGL.dll",
+      "sha256": "60c753cc3f5d118deb82ff6131c99bb873153c081c05483f55406a7c3f60c3ad",
+      "role": "managed",
+      "owner": "board.desktop"
+    },
+    {
+      "path": "runtime/Avalonia.Remote.Protocol.dll",
+      "sha256": "e0f3ccd76a47210367e9b2d1127ef499fb82eb283612cbf388a590a5ddf7e71b",
+      "role": "managed",
+      "owner": "board.desktop"
+    },
+    {
+      "path": "runtime/Avalonia.Skia.dll",
+      "sha256": "9eb06b804efe57cacf6f60e8f451dabe2b5dd743d5b563ff51d6bab84476782e",
+      "role": "managed",
+      "owner": "board.desktop"
+    },
+    {
+      "path": "runtime/Avalonia.Themes.Fluent.dll",
+      "sha256": "43b9888e28f6f635a5926e3cc228b29282c825d7078a66dfc7dfa5a8041ec401",
+      "role": "managed",
+      "owner": "board.desktop"
+    },
+    {
+      "path": "runtime/Avalonia.Vulkan.dll",
+      "sha256": "790aad1467b5d6b48cabb5e6e68fb6e4960923998c9e67fba5758b44815da031",
+      "role": "managed",
+      "owner": "board.desktop"
+    },
+    {
+      "path": "runtime/Avalonia.Win32.Automation.dll",
+      "sha256": "b805d7fcaacff732fbc3951cfeeababc56a8cbe56b01ee6937daeeef5b4c4b42",
+      "role": "managed",
+      "owner": "board.desktop"
+    },
+    {
+      "path": "runtime/Avalonia.Win32.dll",
+      "sha256": "9d7fb93a2d0ed176341ff27396f1969933ca746f53595b55a9e39d411e190e09",
+      "role": "managed",
+      "owner": "board.desktop"
+    },
+    {
+      "path": "runtime/Avalonia.X11.dll",
+      "sha256": "a03ca44de21f07e286cc1a690fe12f40c6bfcc6d5c9dd1f71c5b433bb2b9aebd",
+      "role": "managed",
+      "owner": "board.desktop"
+    },
+    {
+      "path": "runtime/BoardGame.Avalonia.dll",
+      "sha256": "5153619cf4fe0a04bc70407acd697ef9bc5ae627c1028a14fadaf3f2adcfc401",
+      "role": "managed",
+      "owner": "board.desktop"
+    },
+    {
+      "path": "runtime/BoardGame.Core.dll",
+      "sha256": "27e855f8fb8c746cf5ccaf12ba4e70a1507c344d7dd22352bb05140e749632df",
+      "role": "managed",
+      "owner": "board.desktop"
+    },
+    {
+      "path": "runtime/BoardGame.Hosting.dll",
+      "sha256": "95ffb5853affae1f6242fe8b28a2d44dcc9429d1a0c355f7e079474f8aefc80d",
+      "role": "managed",
+      "owner": "board.desktop"
+    },
+    {
+      "path": "runtime/BoardGame.Interaction.dll",
+      "sha256": "9efc5730659f9211877c83c425a1ee931f2d3e945209f8aa97b1c022eb61df4d",
+      "role": "managed",
+      "owner": "board.desktop"
+    },
+    {
+      "path": "runtime/BoardGame.Presentation.dll",
+      "sha256": "29951697eb453bef153f0770387d9a7389ba068c7f711fcf11101fb00f682544",
+      "role": "managed",
+      "owner": "board.desktop"
+    },
+    {
+      "path": "runtime/BoardGame.Recording.dll",
+      "sha256": "da73212f26c4345e19fe946381659e633292cbe7f2cbb109e70a64c52fa11219",
+      "role": "managed",
+      "owner": "board.desktop"
+    },
+    {
+      "path": "runtime/BoardGame.Session.dll",
+      "sha256": "40a174ef968b3b51c71aadc75be1974857940ee0fa92c3865be4bc83c625c224",
+      "role": "managed",
+      "owner": "board.desktop"
+    },
+    {
+      "path": "runtime/CordiSharp.dll",
+      "sha256": "5e35e62dfb20a0eb140767b64d2c289ed030ed9898aa45fdccc8fad87681cec7",
+      "role": "managed",
+      "owner": "board.desktop"
+    },
+    {
+      "path": "runtime/HarfBuzzSharp.dll",
+      "sha256": "55e72ac23263f8e12484f3435e02ec22fac9eff6e6d169bb0a8c246be6b99d29",
+      "role": "managed",
+      "owner": "board.desktop"
+    },
+    {
+      "path": "runtime/Kernel.Abstractions.dll",
+      "sha256": "92ace0c36c0e03f6a114ab8d166e059d83252d1dd7583dab7d194023ddda32b6",
+      "role": "managed",
+      "owner": "board.desktop"
+    },
+    {
+      "path": "runtime/Kernel.dll",
+      "sha256": "c11c95d9918cb2a51dfc02ed1d580f146b1e8473efe3e3c25a0f952ccc232e35",
+      "role": "managed",
+      "owner": "board.desktop"
+    },
+    {
+      "path": "runtime/MicroCom.Runtime.dll",
+      "sha256": "2538ec6f3c24e901a90e33c37788b9a4e4b6ae8158cab7328a00a00bb28eab9e",
+      "role": "managed",
+      "owner": "board.desktop"
+    },
+    {
+      "path": "runtime/Modules.Runtime.dll",
+      "sha256": "5f7a54af99ac67b7dfde437f03a40db36e059bf0a6c3289fa09cff92b48c9384",
+      "role": "managed",
+      "owner": "board.desktop"
+    },
+    {
+      "path": "runtime/MonoGame.Framework.dll",
+      "sha256": "b1a28e2605a0b3037634ac2ca17f265b3bcff8caee72678b9a18acecba31890f",
+      "role": "managed",
+      "owner": "render.desktopgl"
+    },
+    {
+      "path": "runtime/NVorbis.dll",
+      "sha256": "55e7477deeb341058d5543515ed371575a415d8edcf9d0e933a41ca2dee54ad4",
+      "role": "managed",
+      "owner": "render.desktopgl"
+    },
+    {
+      "path": "runtime/Player.Native.Board.dll",
+      "sha256": "cdd7286845f28f5912cc5e1f66232cb8078718235eb844dab8daf017c38ba76f",
+      "role": "managed",
+      "owner": "board.desktop"
+    },
+    {
+      "path": "runtime/Player.Native.dll",
+      "sha256": "b4b8c1429dc945f2e7e6963debfe2e334f31c9bc31ac0b46303158baaa9dab23",
+      "role": "managed",
+      "owner": "board.desktop"
+    },
+    {
+      "path": "runtime/Presentation.Core.dll",
+      "sha256": "39c54ab5fef26a9532c30745471f0e08479ec99eebcc9ccc82468c19181147ae",
+      "role": "managed",
+      "owner": "board.desktop"
+    },
+    {
+      "path": "runtime/Rendering.Abstractions.dll",
+      "sha256": "e04b0013060817f52faa0581e83e2b3c7b4b1d7a42e180d508e9aa470678ae1a",
+      "role": "managed",
+      "owner": "board.desktop"
+    },
+    {
+      "path": "runtime/Rendering.Avalonia.dll",
+      "sha256": "116004504b34e71432a059e5a6d428ecbd84ebb164d726b27ad2bfcc5232e320",
+      "role": "managed",
+      "owner": "board.desktop"
+    },
+    {
+      "path": "runtime/Rendering.Core.dll",
+      "sha256": "c21854bd30a27178dbedc99f54d142720c2644f9d12350cce32c291a2b095c47",
+      "role": "managed",
+      "owner": "board.desktop"
+    },
+    {
+      "path": "runtime/Rendering.DesktopGL.dll",
+      "sha256": "df6f913e04bcd6a2fc711062fb7a1702479d551769c87d71f4af83cf7ca964ab",
+      "role": "implementation",
+      "owner": "render.desktopgl"
+    },
+    {
+      "path": "runtime/Resources.Abstractions.dll",
+      "sha256": "455eb03ed6f36fb8c4fbd15c5332a414294bcce6702c802708cd19005cf88e3a",
+      "role": "managed",
+      "owner": "board.desktop"
+    },
+    {
+      "path": "runtime/Resources.Core.dll",
+      "sha256": "c5daa4ca44dc9789cf9a4a0f54b96fdb1d6c2a0543a7fac5ae393d86fd52b1c8",
+      "role": "managed",
+      "owner": "board.desktop"
+    },
+    {
+      "path": "runtime/Runtime.Plugins.dll",
+      "sha256": "718b885090394622d29d826a63361292452f6bc3d82fc3c4b558b845768f6aae",
+      "role": "managed",
+      "owner": "board.desktop"
+    },
+    {
+      "path": "runtime/SDL2.dll",
+      "sha256": "f8ab6a41ae9ff682a2b5482414f73979bc1a29eabb14da21fc7ae35090b5dec9",
+      "role": "native",
+      "owner": "render.desktopgl"
+    },
+    {
+      "path": "runtime/SkiaSharp.dll",
+      "sha256": "aaaaa18c68ba1f3a3408b00dff28b11d5705198e17ba9d3aa59222bfd35407c8",
+      "role": "managed",
+      "owner": "board.desktop"
+    },
+    {
+      "path": "runtime/Tmds.DBus.Protocol.dll",
+      "sha256": "60a1c5255731d8ac843cab53108be8ba1ed02759ce3db0da5b49939ebe97bd8a",
+      "role": "managed",
+      "owner": "board.desktop"
+    },
+    {
+      "path": "runtime/View.Abstractions.dll",
+      "sha256": "0e7491278146f14b421d30399c80a70637779f4e850f1c4d0ca61b580f03f239",
+      "role": "managed",
+      "owner": "board.desktop"
+    },
+    {
+      "path": "runtime/av_libglesv2.dll",
+      "sha256": "53191a77fe783cd757ca7767077c2a64a662e7043777a5b4ab74980d4a0b73e3",
+      "role": "native",
+      "owner": "board.desktop"
+    },
+    {
+      "path": "runtime/libHarfBuzzSharp.dll",
+      "sha256": "145ade963eba427027d5e1381db5d51a0ef9e98e9fef9efbfa6074ca20da246f",
+      "role": "native",
+      "owner": "board.desktop"
+    },
+    {
+      "path": "runtime/libSkiaSharp.dll",
+      "sha256": "7dec3ba900ab353491e6446f0083739924c6f8dd668832e2f09d38ebffdbbe1c",
+      "role": "native",
+      "owner": "board.desktop"
+    }
+  ],
+  "content": [
+    {
+      "path": "content/card.png",
+      "sha256": "3e395c988bd0875944a21e1e13ef3ca739a61b5256a773bd2001c04e7afc60e0",
+      "role": "content",
+      "owner": "game"
+    },
+    {
+      "path": "content/game.start.json",
+      "sha256": "79cf3b39b20cb917580b351ea8c6dafee0a3e9df094950071f28d83871a4dfa7",
+      "role": "content",
+      "owner": "game"
+    },
+    {
+      "path": "content/state.json",
+      "sha256": "08d79b0ef1005fd95c3347db6bdf869557c419866be89a59b9ac13c6e37bc449",
+      "role": "content",
+      "owner": "game"
+    }
+  ]
+}

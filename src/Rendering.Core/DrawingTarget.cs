@@ -1,5 +1,11 @@
 namespace BoardGame.Rendering;
 
+public static class ViewportTargetPlugin
+{
+    public static BoardGame.AppRuntime.ApprovedApplicationPlugin Create()=>new(_=>new("platform.viewport","1",1,["render.target"],[RenderingPlugin.Capability],
+        scope=>scope.Provide("render.target",new DrawingTarget())) {Execution=new(BoardGame.Runtime.HostMode.Graphical,BoardGame.Runtime.RuntimeScope.Viewport)});
+}
+
 /// <summary>Provides the current device context to independent render contributions.</summary>
 public sealed class DrawingTarget : IDrawingTarget
 {

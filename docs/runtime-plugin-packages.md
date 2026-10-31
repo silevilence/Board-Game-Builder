@@ -67,4 +67,4 @@ Editor 的 `runtime.plugins` 提供安装服务，`runtime.external` 将外部�
 
 普通导入与静态工厂复用 `PluginRegistration.Bind`，保持身份、能力和执行声明一致。原生程序不会动态加载此清单指定的未知托管 DLL。原生库、工作进程及游戏内容的发行收集仍须由发布服务完成，生成引用清单本身不是可运行发行物。
 
-`BoardStaticFactories` 和 `AssetStaticFactories` 提供独立无参入口，不枚举普通运行目录。桌游入口使用默认 BoardApplication 参数；需要定制种子／控制器的发布宿主应装配同一 BoardApplication 实例提供的单项 Factory，不得另造权威实现。`tests/Runtime.StaticRegistration.Tests` 实际生成并编译桌游／非桌游工程，核对普通与静态注册的精确实现身份、能力、作用域、初始化和阶段顺序，并检查没有引用未选的脚本、作者解析器或编辑器程序集。真实原生对局验证由 Native.Board.Tests 和后续发行任务负责。
+`BoardStaticFactories` 和 `AssetStaticFactories` 提供独立无参入口，不枚举普通运行目录。种子读取 `kernel.configuration.seed`，控制器和 CPU 步数上限读取所选会话配置。无脚本／CPU／effects／CPU+effects 会话有独立静态入口，其依赖不会因绑定内容而改变；不能另造权威实现。`tests/Runtime.StaticRegistration.Tests` 实际生成并编译桌游／非桌游工程，核对普通与静态注册的精确实现身份、能力、作用域、初始化和阶段顺序，并检查没有引用未选的脚本、作者解析器或编辑器程序集。真实对局及尚未通过的联合验收见 [发行记录](validation/native-delivery.md)，复现步骤见 [发布说明](native-publication.md)。

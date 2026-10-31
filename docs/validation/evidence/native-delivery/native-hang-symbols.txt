@@ -1,0 +1,171 @@
+Opened log file 'C:\ProbeEvidence\native-hang-symbols.txt'
+
+************* Preparing the environment for Debugger Extensions Gallery repositories **************
+   ExtensionRepository : Implicit
+   UseExperimentalFeatureForNugetShare : true
+   AllowNugetExeUpdate : true
+   NonInteractiveNuget : true
+   AllowNugetMSCredentialProviderInstall : true
+   AllowParallelInitializationOfLocalRepositories : true
+
+   EnableRedirectToV8JsProvider : false
+
+   -- Configuring repositories
+      ----> Repository : LocalInstalled, Enabled: true
+      ----> Repository : UserExtensions, Enabled: true
+
+>>>>>>>>>>>>> Preparing the environment for Debugger Extensions Gallery repositories completed, duration 0.016 seconds
+
+************* Waiting for Debugger Extensions Gallery to Initialize **************
+
+>>>>>>>>>>>>> Waiting for Debugger Extensions Gallery to Initialize completed, duration 0.000 seconds
+   ----> Repository : LocalInstalled, Enabled: true, Packages count: 0
+   ----> Repository : UserExtensions, Enabled: true, Packages count: 0
+
+Microsoft (R) Windows Debugger Version 10.0.26100.7705 AMD64
+Copyright (c) Microsoft Corporation. All rights reserved.
+
+*** wait with pending attach
+Unable to add extension DLL: ntsdexts
+Unable to add extension DLL: uext
+Unable to add extension DLL: exts
+
+************* Path validation summary **************
+Response                         Time (ms)     Location
+OK                                             C:\ProbeInput\diagnostic-cdb
+Symbol search path is: C:\ProbeInput\diagnostic-cdb
+Executable search path is: 
+
++------------------------------------------------------------------------+
+| This target supports Hardware-enforced Stack Protection. A HW based    |
+| "Shadow Stack" may be available to assist in debugging and analysis.   |
+| See aka.ms/userhsp for more info.                                      |
+|                                                                        |
+| dps @ssp                                                               |
+|                                                                        |
++------------------------------------------------------------------------+
+
+ModLoad: 00007ff7`59120000 00007ff7`5ab6d000   C:\BoardNative01\Play.exe
+ModLoad: 00007ff8`683e0000 00007ff8`68646000   C:\Windows\SYSTEM32\ntdll.dll
+ModLoad: 00007ff8`675d0000 00007ff8`67699000   C:\Windows\System32\KERNEL32.DLL
+ModLoad: 00007ff8`65a90000 00007ff8`65e8a000   C:\Windows\System32\KERNELBASE.dll
+ModLoad: 00007ff8`66580000 00007ff8`66636000   C:\Windows\System32\ADVAPI32.dll
+ModLoad: 00007ff8`68120000 00007ff8`681c9000   C:\Windows\System32\msvcrt.dll
+ModLoad: 00007ff8`66450000 00007ff8`664fa000   C:\Windows\System32\sechost.dll
+ModLoad: 00007ff8`68000000 00007ff8`68118000   C:\Windows\System32\RPCRT4.dll
+ModLoad: 00007ff8`66220000 00007ff8`663b8000   C:\Windows\System32\ole32.dll
+ModLoad: 00007ff8`659e0000 00007ff8`65a83000   C:\Windows\System32\msvcp_win.dll
+ModLoad: 00007ff8`65f50000 00007ff8`6609c000   C:\Windows\System32\ucrtbase.dll
+ModLoad: 00007ff8`67f50000 00007ff8`67f7b000   C:\Windows\System32\GDI32.dll
+ModLoad: 00007ff8`659b0000 00007ff8`659d7000   C:\Windows\System32\win32u.dll
+ModLoad: 00007ff8`65880000 00007ff8`659ab000   C:\Windows\System32\gdi32full.dll
+ModLoad: 00007ff8`681d0000 00007ff8`68397000   C:\Windows\System32\USER32.dll
+ModLoad: 00007ff8`668c0000 00007ff8`66c43000   C:\Windows\System32\combase.dll
+ModLoad: 00007ff8`676a0000 00007ff8`67779000   C:\Windows\System32\OLEAUT32.dll
+ModLoad: 00007ff8`65560000 00007ff8`6558a000   C:\Windows\SYSTEM32\bcrypt.dll
+ModLoad: 00007ff8`679f0000 00007ff8`67a22000   C:\Windows\System32\IMM32.DLL
+ModLoad: 00007ff8`644e0000 00007ff8`644fb000   C:\Windows\SYSTEM32\kernel.appcore.dll
+ModLoad: 00007ff8`660a0000 00007ff8`66148000   C:\Windows\System32\bcryptPrimitives.dll
+ModLoad: 00007ff8`57150000 00007ff8`571fa000   C:\Windows\system32\uxtheme.dll
+ModLoad: 00007ff8`5bce0000 00007ff8`5bf80000   C:\Windows\SYSTEM32\icu.dll
+ModLoad: 00007ff8`31270000 00007ff8`31d91000   C:\BoardNative01\libSkiaSharp.DLL
+ModLoad: 00007ff8`5d260000 00007ff8`5d285000   C:\Windows\SYSTEM32\FONTSUB.dll
+ModLoad: 00007ff8`564d0000 00007ff8`56737000   C:\Windows\SYSTEM32\dwrite.dll
+ModLoad: 00007ff8`67780000 00007ff8`678dd000   C:\Windows\System32\MSCTF.dll
+ModLoad: 00007ff8`678f0000 00007ff8`679e6000   C:\Windows\System32\shcore.dll
+ModLoad: 00007ff8`30d40000 00007ff8`3126e000   C:\BoardNative01\av_libGLESv2.dll
+ModLoad: 00007ff8`62a70000 00007ff8`62baa000   C:\Windows\SYSTEM32\dxgi.dll
+ModLoad: 00007ff8`64220000 00007ff8`6427e000   C:\Windows\SYSTEM32\powrprof.dll
+ModLoad: 00007ff8`64200000 00007ff8`64214000   C:\Windows\SYSTEM32\UMPDC.dll
+ModLoad: 00007ff8`62a20000 00007ff8`62a64000   C:\Windows\SYSTEM32\dxcore.dll
+ModLoad: 00007ff8`621c0000 00007ff8`6221f000   C:\Windows\SYSTEM32\directxdatabasehelper.dll
+ModLoad: 00007ff8`652d0000 00007ff8`65321000   C:\Windows\SYSTEM32\cfgmgr32.dll
+ModLoad: 00007ff8`58020000 00007ff8`58281000   C:\Windows\SYSTEM32\d3d11.DLL
+ModLoad: 00007ff8`57350000 00007ff8`57893000   C:\Windows\System32\HostDriverStore\filerepository\iigd_dch.inf_amd64_63c3b49c5917f2c4\igd10iumd64.dll
+ModLoad: 00007ff8`572a0000 00007ff8`57340000   C:\Windows\SYSTEM32\apphelp.dll
+ModLoad: 00007ff8`53980000 00007ff8`5538a000   C:\Windows\System32\HostDriverStore\filerepository\iigd_dch.inf_amd64_63c3b49c5917f2c4\igd10umt64xe.DLL
+ModLoad: 00007ff8`66cd0000 00007ff8`66d37000   C:\Windows\System32\SHLWAPI.dll
+ModLoad: 00007ff8`66e40000 00007ff8`675c4000   C:\Windows\System32\SHELL32.dll
+ModLoad: 00007ff8`52bb0000 00007ff8`53143000   C:\Windows\System32\HostDriverStore\filerepository\iigd_dch.inf_amd64_63c3b49c5917f2c4\igdgmm64.dll
+ModLoad: 00007ff8`4d5e0000 00007ff8`52706000   C:\Windows\System32\HostDriverStore\filerepository\iigd_dch.inf_amd64_63c3b49c5917f2c4\igc64.dll
+ModLoad: 00007ff8`63230000 00007ff8`63ab0000   C:\Windows\SYSTEM32\windows.storage.dll
+ModLoad: 00007ff8`65590000 00007ff8`655b9000   C:\Windows\SYSTEM32\profapi.dll
+ModLoad: 00007ff8`4d590000 00007ff8`4d5dd000   C:\Windows\SYSTEM32\ControlLib.dll
+ModLoad: 00007ff8`4d050000 00007ff8`4d1f7000   C:\Windows\System32\HostDriverStore\filerepository\iigd_dch.inf_amd64_63c3b49c5917f2c4\igdml64.dll
+ModLoad: 00007ff8`66150000 00007ff8`661fe000   C:\Windows\System32\clbcatq.dll
+ModLoad: 00007ff8`5f1a0000 00007ff8`5f30a000   C:\Windows\System32\WinTypes.dll
+ModLoad: 00007ff8`5fe40000 00007ff8`5ff65000   C:\Windows\SYSTEM32\coremessaging.dll
+ModLoad: 00007ff8`55cd0000 00007ff8`55ef2000   C:\Windows\System32\dcomp.dll
+ModLoad: 00007ff8`61540000 00007ff8`61559000   C:\Windows\System32\Microsoft.Internal.WarpPal.dll
+ModLoad: 00007ff8`64e10000 00007ff8`64e1c000   C:\Windows\SYSTEM32\CRYPTBASE.DLL
+ModLoad: 00007ff8`55490000 00007ff8`554e4000   C:\Windows\System32\wuceffects.dll
+ModLoad: 00007ff8`4c180000 00007ff8`4c1b9000   C:\Windows\SYSTEM32\rometadata.dll
+ModLoad: 00007ff8`46b60000 00007ff8`46cba000   C:\Windows\System32\Windows.UI.dll
+ModLoad: 00007ff8`442d0000 00007ff8`44421000   C:\Windows\System32\Windows.UI.Immersive.dll
+ModLoad: 00007ff8`4b970000 00007ff8`4ba44000   C:\Windows\System32\twinapi.dll
+ModLoad: 00007ff8`5f690000 00007ff8`5f8df000   C:\Windows\System32\twinapi.appcore.dll
+ModLoad: 00007ff8`3f930000 00007ff8`3f98c000   C:\Windows\system32\dataexchange.dll
+ModLoad: 00007ff8`62860000 00007ff8`6288f000   C:\Windows\SYSTEM32\dwmapi.dll
+ModLoad: 00007ff8`49810000 00007ff8`499cf000   C:\BoardNative01\libHarfBuzzSharp.DLL
+ModLoad: 00007ff8`3fcb0000 00007ff8`3fdf8000   C:\Windows\SYSTEM32\textinputframework.dll
+ModLoad: 00007ff8`553b0000 00007ff8`55426000   C:\Windows\system32\Oleacc.dll
+ModLoad: 00007ff8`55840000 00007ff8`55cbf000   C:\Windows\SYSTEM32\d3dcompiler_47.dll
+ModLoad: 00007ff8`64e30000 00007ff8`64e4b000   C:\Windows\SYSTEM32\cryptsp.dll
+ModLoad: 00007ff8`53410000 00007ff8`536f4000   C:\Windows\SYSTEM32\CoreUIComponents.dll
+(71c.20ac): Break instruction exception - code 80000003 (first chance)
+ntdll!DbgBreakPoint:
+00007ff8`684fece0 cc              int     3
+0:037> .reload /i Play.exe;~0 kb;~3 kb;qd
+*** WARNING: Unable to verify checksum for C:\BoardNative01\Play.exe
+RetAddr               : Args to Child                                                           : Call Site
+00007ff8`66958394     : 00000029`4a8db2cb 00000092`b497e9a0 00000092`b497e9a0 00000000`00000001 : win32u!NtUserMsgWaitForMultipleObjectsEx+0x14
+00007ff8`66957955     : 00000000`80010116 00000255`c911a470 00000000`010e9b25 00000000`00000001 : combase!InternalCStdIdentityGetIProxyManager+0x4c84
+00007ff8`669079fb     : 00000000`00000002 00000092`00000007 00000092`b497eb60 00000092`b497edd0 : combase!InternalCStdIdentityGetIProxyManager+0x4245
+00007ff7`59c375d3     : 00000000`ffffffff 00000000`ffffffff 00000000`00000001 00000255`c911a470 : combase!CoWaitForMultipleHandles+0xbb
+00007ff7`59c2e351     : 00000255`c911a470 00000092`b497ec10 00000000`ffffffff 00000255`c6de5178 : Play!PalCompatibleWaitAny+0x63
+00007ff7`59683410     : 00007ff7`5a1718a0 00000255`c6d3dff8 00000000`00000000 00000255`c911a170 : Play!RhCompatibleReentrantWaitAny+0x11
+00007ff7`5968322a     : 00007ff7`5a15b300 00000255`c28d8310 00000092`b497ed00 00007ff7`59c2c9d6 : Play!S_P_CoreLib_System_Threading_WaitHandle__WaitForMultipleObjectsIgnoringSyncContext+0x1d0
+00007ff7`596831a0     : 00000000`00000000 00000000`00000000 00000000`00000000 00007ff7`59c2e055 : Play!S_P_CoreLib_System_Threading_WaitHandle__WaitMultipleIgnoringSyncContextCore+0x2a
+00007ff7`5967f60d     : 00000255`c2ac1488 00000000`ffffffff 00000092`b497edd0 00000000`00000000 : Play!S_P_CoreLib_System_Threading_WaitHandle__WaitMultipleIgnoringSyncContext+0x20
+00007ff7`5968292e     : 00000255`c2ac1488 00000000`02b3757e 00000255`c911a438 00000255`c6de51b8 : Play!S_P_CoreLib_System_Threading_SynchronizationContext__WaitHelper+0x2d
+00007ff7`59678b37     : 00000255`c911a3e0 00007ff7`59a80976 00000255`c911a3e0 00007ff7`59a82dbd : Play!S_P_CoreLib_System_Threading_WaitHandle__WaitOneNoCheck+0xce
+00007ff7`5967e172     : 00000255`c911a438 00000000`00000001 00000000`00000000 00000255`c910e818 : Play!S_P_CoreLib_System_Threading_Condition__Wait_1+0xf7
+00007ff7`596867cf     : 00000255`c911a3b8 00007ff7`59684bc3 00000000`00000000 00000000`00000000 : Play!S_P_CoreLib_System_Threading_ManualResetEventSlim__Wait_4+0x292
+00007ff7`596866a4     : 00000255`c911a320 00000255`c911a320 00000000`00000000 00000255`c911a2f0 : Play!S_P_CoreLib_System_Threading_Tasks_Task__SpinThenBlockingWait+0x10f
+00007ff7`59686655     : 00000255`c911a2f0 00007ff7`59137604 00000255`c9117270 00000255`c9118c48 : Play!S_P_CoreLib_System_Threading_Tasks_Task__InternalWaitCore+0x44
+00007ff7`596b52e4     : 00000255`c911a320 00007ff7`ffffffff 00000000`00000000 00000092`b497f110 : Play!S_P_CoreLib_System_Threading_Tasks_Task__InternalWait+0x25
+00007ff7`5914ade6     : 00000255`c9115e28 00000255`c910e800 00007ff7`5a3253a8 00000255`c4400d88 : Play!S_P_CoreLib_System_Runtime_CompilerServices_TaskAwaiter__HandleNonSuccessAndDebuggerNotification+0x24
+00007ff7`59142e65     : 00000255`c90fb148 00007ff7`59a2c8c0 00007ff7`5a0e2418 00000255`c28d8310 : Play!Application_Core_BoardGame_AppRuntime_GameRuntime___c__DisplayClass5_0___Build_g__Prepare_2+0x186
+00007ff7`59142a4d     : 00000255`c90bda80 00000000`0000487a 00007ff7`5a004528 00000255`c6d38660 : Play!Application_Core_BoardGame_AppRuntime_GameRuntime__Build+0x245
+00007ff7`59138349     : 00000255`c6fb0a08 00000255`c6c10390 00000092`b497f350 00007ff7`5959f709 : Play!Application_Core_BoardGame_AppRuntime_GameRuntime__Restore+0x9d
+00007ff7`595a5261     : 00000000`00000013 00000000`00000001 00000092`b497f3c0 00000000`00000013 : Play!Application_Core_BoardGame_AppRuntime_ApplicationCatalog__StartAsync+0x59
+00007ff7`59b3f281     : 00000092`b497f3e0 00000255`84cc14a8 00007ff7`5a84f620 00000255`c90b4528 : Play!Player_Native_Board_BoardGame_Player_NativeBoardWindow__Open_d__37__MoveNext+0xf1
+00007ff7`5959f654     : 00000092`b497f460 00000255`c90b4558 00004362`3264716f 00000001`c4400d88 : Play!S_P_CoreLib_System_Runtime_CompilerServices_AsyncMethodBuilderCore__Start<Player_Native_Board_BoardGame_Player_NativeBoardWindow__Open_d__37>+0x61
+00007ff7`5959f5f9     : 00000255`c4400d88 00000255`c6f44080 00000255`c6f58118 00000001`b497f4f0 : Play!Player_Native_Board_BoardGame_Player_NativeBoardWindow__Open+0x34
+00007ff7`595a7ebb     : 00000000`001e01e2 00007ff8`681f0e3b 00000092`b497f570 00000000`001e01e2 : Play!Player_Native_Board_BoardGame_Player_NativeBoardWindow__Restart+0x29
+00007ff7`59b3f901     : 00000092`b497f518 00000255`c6f61b80 00000000`00000009 00007ff7`5915ca4d : Play!Player_Native_Board_BoardGame_Player_NativeBoardWindow___c__DisplayClass35_0____ctor_b__2_d__MoveNext+0x5b
+00007ff7`595a4d4d     : 00000255`c6f7bef0 00007ff7`5915c42d 00000092`b497f5a0 00007ff7`5944fdfe : Play!S_P_CoreLib_System_Runtime_CompilerServices_AsyncMethodBuilderCore__Start<Player_Native_Board_BoardGame_Player_NativeBoardWindow___c__DisplayClass35_0____ctor_b__2_d>+0x61
+00007ff7`5915db36     : 00000255`c4400d88 00007ff7`5961beb7 00000000`00000000 00000255`c9007200 : Play!Player_Native_Board_BoardGame_Player_NativeBoardWindow___c__DisplayClass35_0____ctor_b__2+0x3d
+00007ff7`592885ee     : 00000255`c6f61b80 00000255`c6fd8a70 00007ff7`5a906f28 00000000`00000000 : Play!Avalonia_Base_Avalonia_Threading_Dispatcher__Send+0x136
+00007ff7`59bcdc18     : 00000255`c6fe27c0 00000000`00000000 40865c00`00000000 00000000`00000000 : Play!Avalonia_Controls_Avalonia_Controls_WindowBase__OnOpened+0x13e
+00007ff7`592859b6     : 00000255`c6f439c8 00007ff7`592c7744 00000255`c6f5d900 00007ff7`594126b6 : Play!Avalonia_Controls_Avalonia_Controls_Window__ShowCore<System___Canon>+0xc08
+00007ff7`592c7836     : 00000000`00000000 00000255`c6f439c8 00000255`c6f439c8 00000255`c28ea9c0 : Play!Avalonia_Controls_Avalonia_Controls_Window__Show+0x16
+00007ff7`592c77a2     : 00000255`c28ea9c0 00007ff7`592d45b0 00000255`c6d385f0 00007ff7`5a02f8f0 : Play!Avalonia_Controls_Avalonia_Controls_ApplicationLifetimes_ClassicDesktopStyleApplicationLifetime__ShowMainWindow+0x16
+00007ff7`5959eb3c     : 00007ff7`5a8b635c 00000000`00000007 00000255`c6c30acc 00000255`c6c65548 : Play!Avalonia_Controls_Avalonia_Controls_ApplicationLifetimes_ClassicDesktopStyleApplicationLifetime__StartCore+0x32
+00007ff7`5959e5cd     : 00000255`c4411208 00007ff7`596df574 00000255`c6c0fdb0 00000255`c6c0ff30 : Play!Player_Native_BoardGame_Player_NativeApplication__Run+0x4c
+00007ff7`59aa63a1     : 00007ff7`0000000c 00007ff7`59c3731d ffffffff`ffffffff 00000255`c28d8310 : Play!Play_NativeMain__Main+0x4d
+00007ff7`59c2c500     : 00000255`c28ea9c0 00007ff7`5a6a7ad0 00007ff7`59120000 00000000`00000001 : Play!Play__Module___StartupCodeMain+0xf1
+00007ff7`59c7e08f     : 00000255`c28ea9c0 00000000`00000000 00000000`00000000 00000000`00000000 : Play!wmain+0xb0
+(Inline Function)     : --------`-------- --------`-------- --------`-------- --------`-------- : Play!invoke_main+0x22
+00007ff8`675fe957     : 00000000`00000000 00000000`00000000 00000000`00000000 00000000`00000000 : Play!__scrt_common_main_seh+0x10f
+00007ff8`68467c1c     : 00000000`00000000 00000000`00000000 00000000`00000000 00000000`00000000 : KERNEL32!BaseThreadInitThunk+0x17
+00000000`00000000     : 00000000`00000000 00000000`00000000 00000000`00000000 00000000`00000000 : ntdll!RtlUserThreadStart+0x2c
+RetAddr               : Args to Child                                                           : Call Site
+00007ff8`684226de     : 00000255`89ffbc90 00000255`89ffbc90 00000092`b45dfd00 00000000`00000000 : ntdll!ZwWaitForAlertByThreadId+0x14
+00007ff8`65ab2ea8     : 00000000`00000000 00000255`8989b560 00000000`00000000 00000000`fffffffc : ntdll!RtlSleepConditionVariableSRW+0x1de
+00007ff8`53ad0034     : 00000255`8989b5b8 00000255`8989b5b8 00000092`b45dfc60 00000000`00000000 : KERNELBASE!SleepConditionVariableSRW+0x38
+00007ff8`53b4c80b     : 00000050`00000040 00000255`88cd5260 00000000`00000000 00000000`00000000 : igd10umt64xe!QueryDesiredMode1+0xecf04
+00007ff8`675fe957     : 00000255`88cd5260 80000000`00000800 00000000`00000000 00000000`00000000 : igd10umt64xe!QueryDesiredMode1+0x1696db
+00007ff8`68467c1c     : 00000000`00000000 00000000`00000000 00000000`00000001 00000092`b63ff000 : KERNEL32!BaseThreadInitThunk+0x17
+00000000`00000000     : 00000000`00000000 00000000`00000000 00000000`00000000 00000000`00000000 : ntdll!RtlUserThreadStart+0x2c
+quit:

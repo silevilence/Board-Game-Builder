@@ -1,5 +1,7 @@
 # CLI 作者工具
 
+数据包、预编译 Player 与 NativeAOT 是三个独立作者导出插件。目标矩阵、配置、外部插件导入及维护者构建见 [原生发布说明](native-publication.md)。普通作者操作不要求 SDK；只有原生编译方式要求构建机工具链。
+
 开发入口为 `dotnet run --project src/Cli -- help`，构建后的入口为 `bgb.exe`。
 CLI 不加载 Avalonia，也不要求 Editor 运行。`--project` 可指定不完整工程；省略时从当前目录向上查找 `game.start.json`。
 

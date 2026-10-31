@@ -1,0 +1,73 @@
+{
+  "format": 1,
+  "target": "win-x64",
+  "sourceFingerprint": "C7604CC2F41DAF53E12349A7744D593D6C2F96455C8185851ABA0E265B057FB1",
+  "title": "\u539F\u751F\u684C\u6E38-wasm",
+  "version": "1",
+  "sdk": "10.0.112",
+  "runtime": "10.0.12",
+  "compiler": "C:\\Program Files\\Microsoft Visual Studio\\18\\Community\\VC/Tools/MSVC\\14.51.36231\\bin/Hostx64/x64/cl.exe",
+  "linker": "C:\\Program Files\\Microsoft Visual Studio\\18\\Community\\VC/Tools/MSVC\\14.51.36231\\bin/Hostx64/x64/link.exe",
+  "windowsSdk": "10.0.26100.0",
+  "compilerVersion": "19.51.36246.0",
+  "linkerVersion": "14.51.36246.0",
+  "strictWarnings": true,
+  "durationMs": 124616,
+  "files": [
+    {
+      "path": "Play.exe",
+      "bytes": 27183104,
+      "sha256": "9f6ccd9387d86b4561401cee7a9919ed287637b9e7964d9366267f94c5b6b26b"
+    },
+    {
+      "path": "SDL2.dll",
+      "bytes": 1679360,
+      "sha256": "f8ab6a41ae9ff682a2b5482414f73979bc1a29eabb14da21fc7ae35090b5dec9"
+    },
+    {
+      "path": "av_libglesv2.dll",
+      "bytes": 5394096,
+      "sha256": "53191a77fe783cd757ca7767077c2a64a662e7043777a5b4ab74980d4a0b73e3"
+    },
+    {
+      "path": "build-inputs.json",
+      "bytes": 14724,
+      "sha256": "3cff878232cf4fd3836ef08a42fb6d601c76e160069116b870c35beabb234487"
+    },
+    {
+      "path": "content/card.png",
+      "bytes": 218,
+      "sha256": "3e395c988bd0875944a21e1e13ef3ca739a61b5256a773bd2001c04e7afc60e0"
+    },
+    {
+      "path": "content/counter.wasm",
+      "bytes": 134,
+      "sha256": "386dd6d65d4753bdd831857013b50aad30ccc2c2a6938cbc01142b13c50d3c26"
+    },
+    {
+      "path": "content/game.start.json",
+      "bytes": 5511,
+      "sha256": "23f4fc016541bcbda3f6b76da223a82345e1bd95ec09e53aee9db49939a72027"
+    },
+    {
+      "path": "content/state.json",
+      "bytes": 2100,
+      "sha256": "08d79b0ef1005fd95c3347db6bdf869557c419866be89a59b9ac13c6e37bc449"
+    },
+    {
+      "path": "libHarfBuzzSharp.dll",
+      "bytes": 1816088,
+      "sha256": "145ade963eba427027d5e1381db5d51a0ef9e98e9fef9efbfa6074ca20da246f"
+    },
+    {
+      "path": "libSkiaSharp.dll",
+      "bytes": 11628896,
+      "sha256": "7dec3ba900ab353491e6446f0083739924c6f8dd668832e2f09d38ebffdbbe1c"
+    },
+    {
+      "path": "wasmtime.dll",
+      "bytes": 22092288,
+      "sha256": "19b3880fbb92f1826c58ac9f5e2a472692b5fc3d012a1a7a41983ccf77544607"
+    }
+  ]
+}

@@ -7,6 +7,7 @@
     <ProjectReference Include="../../samples/Sample.Motion/Sample.Motion.csproj" />
     <ProjectReference Include="../View.MonoGame/View.MonoGame.csproj" />
     <ProjectReference Include="../Rendering.Hosting/Rendering.Hosting.csproj" />
+    <ProjectReference Include="../Player.Native.Board/Player.Native.Board.csproj" />
   </ItemGroup>
   <ItemGroup><PackageReference Include="CordiSharp.Plugins.Avalonia" Version="[0.2.0]" /></ItemGroup>
   <Target Name="UseSeparateLuaWorkerDistribution" BeforeTargets="_HandleFileConflictsForPublish">

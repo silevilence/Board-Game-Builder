@@ -16,6 +16,7 @@ $allowed = @{
  'BoardGame.Lua' = @('BoardGame.Core','Lua')
  'BoardGame.Wasm' = @('BoardGame.Core','BoardGame.Hosting','Modules.Runtime','Wasm.Execution')
  'BoardGame.Hosting' = @('BoardGame.Session','Resources.Core')
+ 'BoardGame.Composition' = @('BoardGame.Hosting','BoardGame.Wasm','BoardGame.Presentation')
  'BoardGame.Interaction' = @('Application.Core','View.Abstractions')
  'BoardGame.Presentation' = @('BoardGame.Core','View.Abstractions','Rendering.Core')
  'BoardGame.Avalonia' = @('BoardGame.Presentation','BoardGame.Interaction','Rendering.Avalonia')
@@ -29,14 +30,15 @@ $allowed = @{
  'Rendering.Hosting' = @('Rendering.Core','Runtime.Plugins')
  'View.Abstractions' = @('Presentation.Core','Kernel.Abstractions')
  'View.MonoGame' = @('Presentation.Avalonia','BoardGame.Interaction','View.Abstractions','BoardGame.Presentation','Rendering.WindowsDX','Rendering.Avalonia','BoardGame.Avalonia')
- 'Authoring' = @('Runtime','Runtime.Publishing','Rendering.Core'); 'Cli' = @('Authoring','Sample.Motion.Authoring')
+ 'Authoring' = @('Runtime','Runtime.Publishing','Rendering.Core','BoardGame.Composition'); 'Cli' = @('Authoring','Sample.Motion.Authoring')
  'Launcher.Core' = @(); 'Launcher' = @('Launcher.Core'); 'Launcher.Cli' = @('Launcher.Core')
  'Player.Hosting' = @('Rendering.Avalonia','Rendering.Hosting','Application.Debug','Runtime.Plugins')
  'Player.Native' = @('Rendering.Avalonia')
- 'Player.Board' = @('Player.Hosting','Runtime','Networking','View.MonoGame')
+ 'Player.Native.Board' = @('Player.Native','BoardGame.Hosting','BoardGame.Avalonia')
+ 'Player.Board' = @('Player.Hosting','Runtime','Networking','View.MonoGame','Player.Native.Board','BoardGame.Composition')
  'Player' = @('Player.Board','Sample.Motion'); 'Toolkit.Entry' = @()
  'Editor.Core' = @('Runtime','Authoring')
- 'Editor' = @('Editor.Core','Runtime','Application.Debug','Sample.Motion','View.MonoGame','Rendering.Hosting')
+ 'Editor' = @('Editor.Core','Runtime','Application.Debug','Sample.Motion','View.MonoGame','Rendering.Hosting','Player.Native.Board')
 }
 Get-ChildItem "$PSScriptRoot/../src" -Filter *.csproj -Recurse | ForEach-Object {
  if (-not $allowed.ContainsKey($_.BaseName)) { throw "Project has no declared boundary: $($_.BaseName)" }
