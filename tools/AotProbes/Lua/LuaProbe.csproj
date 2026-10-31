@@ -1,0 +1,11 @@
+<Project Sdk="Microsoft.NET.Sdk">
+  <PropertyGroup>
+    <OutputType>Exe</OutputType>
+  </PropertyGroup>
+  <ItemGroup>
+    <ProjectReference Include="../../../src/Lua.Execution/Lua.Execution.csproj" />
+    <Content Include="../../../samples/quick-cards/rules.lua" Link="samples/quick-cards/rules.lua" CopyToOutputDirectory="PreserveNewest" />
+    <Content Include="../../../samples/quick-cards/cpu.lua" Link="samples/quick-cards/cpu.lua" CopyToOutputDirectory="PreserveNewest" />
+    <Content Include="../../../samples/flow-cards/turn.lua" Link="samples/flow-cards/turn.lua" CopyToOutputDirectory="PreserveNewest" />
+  </ItemGroup>
+</Project>

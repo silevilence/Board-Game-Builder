@@ -1,0 +1,66 @@
+CORE ipairs=Nil; table.insert=Nil; math.ceil=Nil; platform="core.dotnet.clr4.netcore"; is_aot=false
+FAIL rules-actions: System.InvalidOperationException: Reflection-based serialization has been disabled for this application. Either use the source generator APIs or explicitly configure the 'JsonSerializerOptions.TypeInfoResolver' property.
+   at System.Text.Json.ThrowHelper.ThrowInvalidOperationException_JsonSerializerIsReflectionDisabled() + 0x2b
+   at System.Text.Json.JsonSerializerOptions.ConfigureForJsonSerializer() + 0xc
+   at System.Text.Json.JsonSerializer.GetTypeInfo(JsonSerializerOptions, Type) + 0x2a
+   at System.Text.Json.JsonSerializer.GetTypeInfo[T](JsonSerializerOptions) + 0x25
+   at BoardGame.Lua.LuaExecution.Invoke(String, String, String, String, UInt32, LuaCallShape) + 0x5e6
+   at Program.<>c__DisplayClass0_0.<<<Main>$>g__Invoke|0>d.MoveNext() + 0x1e7
+--- End of stack trace from previous location ---
+   at Program.<<Main>$>d__0.MoveNext() + 0xb2d
+FAIL rules-decide: System.IO.InvalidDataException: samples/quick-cards/rules.lua:decide: samples/quick-cards/rules.lua:(2,4-45): attempt to call a nil value
+ ---> MoonSharp.Interpreter.ScriptRuntimeException: attempt to call a nil value
+   at MoonSharp.Interpreter.Execution.VM.Processor.Internal_ExecCall(Int32, Int32, CallbackFunction, CallbackFunction, Boolean, String, DynValue) + 0x6e7
+   at MoonSharp.Interpreter.Execution.VM.Processor.Processing_Loop(Int32) + 0xcc6
+   at MoonSharp.Interpreter.Execution.VM.Processor.Coroutine_Resume(DynValue[]) + 0x186
+   at BoardGame.Lua.LuaExecution.Run(Script, DynValue, DynValue[]) + 0x40
+   at BoardGame.Lua.LuaExecution.Invoke(String, String, String, String, UInt32, LuaCallShape) + 0x566
+   --- End of inner exception stack trace ---
+   at BoardGame.Lua.LuaExecution.Invoke(String, String, String, String, UInt32, LuaCallShape) + 0x90b
+   at Program.<>c__DisplayClass0_0.<<<Main>$>g__Invoke|0>d.MoveNext() + 0x1e7
+--- End of stack trace from previous location ---
+   at Program.<<Main>$>d__0.MoveNext() + 0xb2d
+FAIL cpu-seeded: System.IO.InvalidDataException: samples/quick-cards/cpu.lua:decide: samples/quick-cards/cpu.lua:(3,4-43): attempt to call a nil value
+ ---> MoonSharp.Interpreter.ScriptRuntimeException: attempt to call a nil value
+   at MoonSharp.Interpreter.Execution.VM.Processor.Internal_ExecCall(Int32, Int32, CallbackFunction, CallbackFunction, Boolean, String, DynValue) + 0x6e7
+   at MoonSharp.Interpreter.Execution.VM.Processor.Processing_Loop(Int32) + 0xcc6
+   at MoonSharp.Interpreter.Execution.VM.Processor.Coroutine_Resume(DynValue[]) + 0x186
+   at BoardGame.Lua.LuaExecution.Run(Script, DynValue, DynValue[]) + 0x40
+   at BoardGame.Lua.LuaExecution.Invoke(String, String, String, String, UInt32, LuaCallShape) + 0x566
+   --- End of inner exception stack trace ---
+   at BoardGame.Lua.LuaExecution.Invoke(String, String, String, String, UInt32, LuaCallShape) + 0x90b
+   at Program.<>c__DisplayClass0_0.<<<Main>$>g__Invoke|0>d.MoveNext() + 0x1e7
+--- End of stack trace from previous location ---
+   at Program.<<Main>$>d__0.MoveNext() + 0xb2d
+FAIL flow-seat: System.InvalidOperationException: Reflection-based serialization has been disabled for this application. Either use the source generator APIs or explicitly configure the 'JsonSerializerOptions.TypeInfoResolver' property.
+   at System.Text.Json.ThrowHelper.ThrowInvalidOperationException_JsonSerializerIsReflectionDisabled() + 0x2b
+   at System.Text.Json.JsonSerializerOptions.ConfigureForJsonSerializer() + 0xc
+   at System.Text.Json.JsonSerializer.GetTypeInfo(JsonSerializerOptions, Type) + 0x2a
+   at System.Text.Json.JsonSerializer.GetTypeInfo[T](JsonSerializerOptions) + 0x25
+   at BoardGame.Lua.LuaExecution.Invoke(String, String, String, String, UInt32, LuaCallShape) + 0x5e6
+   at Program.<>c__DisplayClass0_0.<<<Main>$>g__Invoke|0>d.MoveNext() + 0x1e7
+--- End of stack trace from previous location ---
+   at Program.<<Main>$>d__0.MoveNext() + 0xb2d
+FAIL flow-judge: System.InvalidOperationException: Reflection-based serialization has been disabled for this application. Either use the source generator APIs or explicitly configure the 'JsonSerializerOptions.TypeInfoResolver' property.
+   at System.Text.Json.ThrowHelper.ThrowInvalidOperationException_JsonSerializerIsReflectionDisabled() + 0x2b
+   at System.Text.Json.JsonSerializerOptions.ConfigureForJsonSerializer() + 0xc
+   at System.Text.Json.JsonSerializer.GetTypeInfo(JsonSerializerOptions, Type) + 0x2a
+   at System.Text.Json.JsonSerializer.GetTypeInfo[T](JsonSerializerOptions) + 0x25
+   at BoardGame.Lua.LuaExecution.Invoke(String, String, String, String, UInt32, LuaCallShape) + 0x5e6
+   at Program.<>c__DisplayClass0_0.<<<Main>$>g__Invoke|0>d.MoveNext() + 0x1e7
+--- End of stack trace from previous location ---
+   at Program.<<Main>$>d__0.MoveNext() + 0xb2d
+FAIL flow-next: System.IO.InvalidDataException: samples/flow-cards/turn.lua:next: samples/flow-cards/turn.lua:(10,18-112): attempt to call a nil value
+ ---> MoonSharp.Interpreter.ScriptRuntimeException: attempt to call a nil value
+   at MoonSharp.Interpreter.Execution.VM.Processor.Internal_ExecCall(Int32, Int32, CallbackFunction, CallbackFunction, Boolean, String, DynValue) + 0x6e7
+   at MoonSharp.Interpreter.Execution.VM.Processor.Processing_Loop(Int32) + 0xcc6
+   at MoonSharp.Interpreter.Execution.VM.Processor.Coroutine_Resume(DynValue[]) + 0x186
+   at BoardGame.Lua.LuaExecution.Run(Script, DynValue, DynValue[]) + 0x40
+   at BoardGame.Lua.LuaExecution.Invoke(String, String, String, String, UInt32, LuaCallShape) + 0x566
+   --- End of inner exception stack trace ---
+   at BoardGame.Lua.LuaExecution.Invoke(String, String, String, String, UInt32, LuaCallShape) + 0x90b
+   at Program.<>c__DisplayClass0_0.<<<Main>$>g__Invoke|0>d.MoveNext() + 0x1e7
+--- End of stack trace from previous location ---
+   at Program.<<Main>$>d__0.MoveNext() + 0xb2d
+PASS instruction-budget: instruction-budget.lua:run: Lua instruction budget exceeded.
+RESULT failures=6; mode=direct

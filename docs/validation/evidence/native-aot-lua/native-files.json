@@ -1,0 +1,67 @@
+[
+  {
+    "Path": "lua\\Application.Abstractions.pdb",
+    "Length": 14892,
+    "Sha256": "6251263CE0DC5A9C43583D07A2FB3C630005ABAC795C68AAB6505C7E13A5535A"
+  },
+  {
+    "Path": "lua\\Lua.Execution.pdb",
+    "Length": 16556,
+    "Sha256": "8BA8D8811752BDFE0F673A53BBCC4935EB9D70C6F96521B6848E7AFBC78D7F25"
+  },
+  {
+    "Path": "lua\\LuaProbe.exe",
+    "Length": 4678656,
+    "Sha256": "67709B58218CB24128D3D22C549DCC05F1402102E4C562DF01A4CD5240CF4D24"
+  },
+  {
+    "Path": "lua\\LuaProbe.pdb",
+    "Length": 20000768,
+    "Sha256": "F2BE10651F3A1C90455788593D437C5A2D522078A1F15ED334C9E16B60F86CD1"
+  },
+  {
+    "Path": "lua\\samples\\flow-cards\\turn.lua",
+    "Length": 554,
+    "Sha256": "E591F34A549748AE4CAA36762B777675D0FD76C6D1DA85942ACAE215F7D16B51"
+  },
+  {
+    "Path": "lua\\samples\\quick-cards\\cpu.lua",
+    "Length": 493,
+    "Sha256": "8DED5609DF5DD732F02EF16DA016AFF0298908A256375B692D45CEA252769933"
+  },
+  {
+    "Path": "lua\\samples\\quick-cards\\rules.lua",
+    "Length": 2763,
+    "Sha256": "F1ACF73D6883C6551AB123DF76101D4C7D885D0AF2047D9E6FFE9694591A29AB"
+  },
+  {
+    "Path": "lua-worker\\Application.Abstractions.pdb",
+    "Length": 14864,
+    "Sha256": "76A1D6BE5F039A134CD013B0093A116712F85BCDA0C96E5DA41C9F17A217E09D"
+  },
+  {
+    "Path": "lua-worker\\Kernel.Abstractions.pdb",
+    "Length": 30476,
+    "Sha256": "739E057017C35432CA22C0F483FB1653C1F50EF9BA9B5385E67127C809D592E5"
+  },
+  {
+    "Path": "lua-worker\\Lua.exe",
+    "Length": 4459520,
+    "Sha256": "859ED4A4604A2295C622601B9A3962A31906B9D5E0B0BB9EFCBD97FEA34AB2A5"
+  },
+  {
+    "Path": "lua-worker\\Lua.Execution.pdb",
+    "Length": 16528,
+    "Sha256": "B23BAFFB31A6EF3C0C43D6A7C5DEF37FCB1830A2E59D13C520E16D5E4D292CEB"
+  },
+  {
+    "Path": "lua-worker\\Lua.pdb",
+    "Length": 19124224,
+    "Sha256": "C8AD10C210012266C8AE554EF5816FD3AC0C52773C31F3F61C0351BA5907F241"
+  },
+  {
+    "Path": "lua-worker\\Resources.Abstractions.pdb",
+    "Length": 13880,
+    "Sha256": "4F852398790A03C1B4237726C9AFC5870908907730342DE7213DE1B526914BAF"
+  }
+]

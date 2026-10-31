@@ -1,0 +1,9 @@
+Unhandled exception. System.InvalidOperationException: Reflection-based serialization has been disabled for this application. Either use the source generator APIs or explicitly configure the 'JsonSerializerOptions.TypeInfoResolver' property.
+   at System.Text.Json.ThrowHelper.ThrowInvalidOperationException_JsonSerializerIsReflectionDisabled() + 0x2b
+   at System.Text.Json.JsonSerializerOptions.ConfigureForJsonSerializer() + 0xc
+   at System.Text.Json.JsonSerializer.GetTypeInfo(JsonSerializerOptions, Type) + 0x2a
+   at System.Text.Json.JsonSerializer.GetTypeInfo[T](JsonSerializerOptions) + 0x25
+   at BoardGame.Kernel.Wire.Json[T](T) + 0x33
+   at Program.<<Main>$>d__0.MoveNext() + 0x9ec
+--- End of stack trace from previous location ---
+   at Program.<Main>(String[] args) + 0x28
