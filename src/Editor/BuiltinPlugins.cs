@@ -146,20 +146,22 @@ public static class BuiltinPlugins
             scope.Service<PanelContributions>("panels").Register(scope,"author.tts","TTS 导入",()=>FormatPanel.Board(scope,s=>new TtsImportPanel(s)))));
         app.Install(new("author.print",1,[],["documents","commands","panels"],scope=>
             scope.Service<PanelContributions>("panels").Register(scope,"author.print","打印拼版",()=>FormatPanel.Board(scope,s=>new PrintPanel(s)))));
-        app.Install(new("author.export",1,["exports","author.exports"],["documents","contributions","panels","workspace"],scope=>
+        app.Install(new("author.export",1,["exports","author.exports"],["documents","contributions","panels","workspace","commands"],scope=>
         {
             var providers=new BoardGame.Authoring.AuthorExports();scope.Provide("author.exports",providers);
             var workflow=new ExportWorkflow(scope.Service<DocumentWorkspace>("documents"),scope.Service<EditorContributions>("contributions"),providers);scope.OwnAsync(workflow);scope.Provide("exports",workflow);
             scope.Guard(()=>workflow.Running?"导出正在执行，请等待完成":null);
-            scope.Own(app.BeforeShutdown(()=>
-            {
-                if(workflow.Running) scope.Service<WorkspaceShell>("workspace").Report("导出正在执行，请等待完成后退出。");
-                return Task.FromResult(!workflow.Running);
-            }));
+            scope.Own(app.BeforeShutdown(async()=>{await workflow.CancelAndWait();return true;}));
+            var commands=scope.Service<EditorCommands>("commands");
+            commands.Register(scope,new("author.export.check","发布依赖预检",async()=>{await workflow.Run(false);},()=>!workflow.Running && workflow.Providers.Items.Any(p=>p.Id==workflow.Selected)));
+            commands.Register(scope,new("author.export.run","导出当前草稿",async()=>{await workflow.Run(true);},()=>!workflow.Running && workflow.Providers.Items.Any(p=>p.Id==workflow.Selected)));
+            commands.Register(scope,new("author.export.cancel","取消发布并等待退出",workflow.CancelAndWait,()=>workflow.Running));
+            workflow.Changed+=commands.Refresh;scope.Own(new Cleanup(()=>workflow.Changed-=commands.Refresh));
             scope.Service<PanelContributions>("panels").Register(scope,"author.export","独立导出",()=>new ExportPanel(scope));
         }));
         ExportProvider(new BoardGame.Authoring.PlayerExporter(),new Dictionary<string,string>{["player"]=EditorPaths.ReleasePlayer,["target"]=EditorPaths.InWorkspace("artifacts/export-game")});
         ExportProvider(new BoardGame.Authoring.PackageExporter(),new Dictionary<string,string>{["target"]=EditorPaths.InWorkspace("artifacts/game.bgm")});
+        ExportProvider(new BoardGame.Authoring.NativeExporter(),new Dictionary<string,string>{["target"]=EditorPaths.InWorkspace("artifacts/native-game"),["sdk"]=Path.Combine(AppContext.BaseDirectory,"native-sdk"),["host"]="application.desktop",["platform"]="win-x64"});
         void ExportProvider(BoardGame.Authoring.IAuthorExporter provider,IReadOnlyDictionary<string,string> defaults)=>app.Install(new(provider.Info.Plugin,1,[],["exports","author.exports","documents","commands"],scope=>
         {
             var workflow=scope.Service<ExportWorkflow>("exports");var documents=scope.Service<DocumentWorkspace>("documents");

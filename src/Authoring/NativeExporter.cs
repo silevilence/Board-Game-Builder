@@ -28,8 +28,12 @@ public sealed class NativeExporter : IAuthorExporter
         {
             request.Cancellation.ThrowIfCancellationRequested();_=ExportTargets.NewTarget(request);
             using var prepared=Prepare(request);
+            var details=Describe(prepared.Plan);foreach(var line in details)request.Progress?.Report(line);
             var toolchain=await NativeToolchain.Check(prepared.Plan.Target,Options(request),request.Cancellation).ConfigureAwait(false);
-            return new(request.View.Source,Info.Id,toolchain.Available,toolchain.Diagnostics.Select(d=>new AuthorDiagnostic(d.Code,d.Message)).ToArray());
+            details.Add($"工具链：SDK {toolchain.Sdk}；Runtime {toolchain.Runtime}；Windows SDK {toolchain.WindowsSdk}");
+            details.Add("C++ 编译器："+toolchain.Compiler);details.Add("链接器："+toolchain.Linker);
+            request.Progress?.Report(string.Join("\n",details.TakeLast(3)));
+            return new(request.View.Source,Info.Id,toolchain.Available,toolchain.Diagnostics.Select(d=>new AuthorDiagnostic(d.Code,d.Message)).ToArray()){Details=details};
         }
         catch(Exception error) when(error is not OperationCanceledException and not OutOfMemoryException)
         {return new(request.View.Source,Info.Id,false,[new(error is AuthorOperationException operation?operation.Code:"export.native",error.Message)]);}
@@ -37,6 +41,7 @@ public sealed class NativeExporter : IAuthorExporter
     public async Task<AuthorArtifact> Export(AuthorExportRequest request)
     {
         request.Cancellation.ThrowIfCancellationRequested();var target=ExportTargets.NewTarget(request);using var prepared=Prepare(request);
+        foreach(var line in Describe(prepared.Plan))request.Progress?.Report(line);
         var result=await NativeBuildService.Build(prepared.Plan,prepared.Entry,new(target,Options(request)),
             new ForwardProgress(request.Progress),request.Cancellation).ConfigureAwait(false);
         if(!result.Success)
@@ -50,6 +55,11 @@ public sealed class NativeExporter : IAuthorExporter
     }
     private sealed record Prepared(PublicationPlan Plan,NativeEntry Entry,AuthorApplicationLease Lease):IDisposable
     {public void Dispose()=>Lease.Dispose();}
+    private static List<string> Describe(PublicationPlan plan)=>[
+        "发布目标："+plan.Target+" / "+plan.Mode+"；内容指纹："+plan.SourceFingerprint,
+        "所选后端："+string.Join(", ",plan.Selected.Where(p=>p.Manifest.Provides.Any(c=>c.Name=="render.backend")).Select(p=>p.Manifest.Id)),
+        "实际插件集合：\n"+string.Join("\n",plan.Selected.Select(p=>$"{p.Manifest.Id} {p.Manifest.Version} / API {p.Manifest.Api} / {p.Manifest.Fingerprint}")),
+        "原生依赖："+string.Join(", ",plan.Files.Where(p=>p.Role=="native").Select(p=>p.Name).Distinct())];
     private static Prepared Prepare(AuthorExportRequest request)
     {
         var sdk=RuntimeSdk.Open(Path.GetFullPath(Value(request,"sdk") ?? Path.Combine(AppContext.BaseDirectory,"native-sdk")));
@@ -76,6 +86,8 @@ public sealed class NativeExporter : IAuthorExporter
         try
         {
         var content=GameRuntime.LoadFiles(request.View.CopyFiles(),lease.Catalog.Content);
+        if(startup.Plugins.Count(p=>lease.Catalog.Content.Plugins.Single(d=>d.Id==p.Id).Provides.Contains("render.backend"))!=1)
+            throw new AuthorOperationException("publication.backend","Graphical release requires exactly one render.backend provider in game.start.json");
         var profile=Value(request,"host") ?? "application.desktop";
         // Backend enablement must be in game.start.json; author build options are not a second plugin selection.
         var plan=sdk.Plan(content,profile,[],lease.Imports.Select(p=>new AvailablePlugin(p)));

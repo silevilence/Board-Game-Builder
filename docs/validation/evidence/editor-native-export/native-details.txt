@@ -1,0 +1,35 @@
+发布目标：win-x64 / Graphical；内容指纹：6217F77B6934F7CA43A1AFD7BCB7E0023769C065E8DC3EFCCB1431A9D597459F
+所选后端：render.desktopgl
+实际插件集合：
+motion.definition 1 / API 1 / ac934f51e89978c045f935af07d278f89d08d91f10f61dc0814e4246c5242e9f
+motion.loop 1 / API 1 / 37c8b3222dd03114eb92c68e9c738d2977d96adf3ddb0b8116b20327e276e15a
+motion.view 1 / API 1 / 020fcd7a337bf5ce2494424ce712a7fcffcd8e028a1a935b76ad0c395ecde33d
+render.desktopgl 1 / API 1 / cdde032d4604395c9f038bea84de570e36b8e957cf5143527cc38933c6e34844
+resources 1 / API 1 / 24cfae7e0832e7c8b4b0b0238a203d2ed8d7aacd43d04d4b2446f3a4b8412a7c
+resources.images 1 / API 1 / 4ae29bc1da51bc80688de9e85e28cfe563168bd73e205442199940a128e4aab0
+原生依赖：SDL2.dll, av_libglesv2.dll, libHarfBuzzSharp.dll, libSkiaSharp.dll
+工具链：SDK 10.0.112；Runtime 10.0.12；Windows SDK 10.0.26100.0
+C++ 编译器：C:\Program Files\Microsoft Visual Studio\18\Community\VC/Tools/MSVC\14.51.36231\bin/Hostx64/x64/cl.exe
+链接器：C:\Program Files\Microsoft Visual Studio\18\Community\VC/Tools/MSVC\14.51.36231\bin/Hostx64/x64/link.exe
+发布目标：win-x64 / Graphical；内容指纹：6217F77B6934F7CA43A1AFD7BCB7E0023769C065E8DC3EFCCB1431A9D597459F
+所选后端：render.desktopgl
+实际插件集合：
+motion.definition 1 / API 1 / ac934f51e89978c045f935af07d278f89d08d91f10f61dc0814e4246c5242e9f
+motion.loop 1 / API 1 / 37c8b3222dd03114eb92c68e9c738d2977d96adf3ddb0b8116b20327e276e15a
+motion.view 1 / API 1 / 020fcd7a337bf5ce2494424ce712a7fcffcd8e028a1a935b76ad0c395ecde33d
+render.desktopgl 1 / API 1 / cdde032d4604395c9f038bea84de570e36b8e957cf5143527cc38933c6e34844
+resources 1 / API 1 / 24cfae7e0832e7c8b4b0b0238a203d2ed8d7aacd43d04d4b2446f3a4b8412a7c
+resources.images 1 / API 1 / 4ae29bc1da51bc80688de9e85e28cfe563168bd73e205442199940a128e4aab0
+原生依赖：SDL2.dll, av_libglesv2.dll, libHarfBuzzSharp.dll, libSkiaSharp.dll
+toolchain: Checking Windows x64 native toolchain
+inputs: Copying and verifying selected runtime inputs
+build: Publishing with SDK 10.0.112, NativeAOT 10.0.12, linker C:\Program Files\Microsoft Visual Studio\18\Community\VC/Tools/MSVC\14.51.36231\bin/Hostx64/x64/link.exe
+build:   姝ｅ湪纭畾瑕佽繕鍘熺殑椤圭洰鈥?
+build:   宸茶繕鍘?C:\Users\silev\AppData\Local\Temp\bgb-native-build-600ba0853ae0447ba82d77f9b9879184\Game.csproj (鐢ㄦ椂 355 姣)銆?
+build:   Game -> C:\Users\silev\AppData\Local\Temp\bgb-native-build-600ba0853ae0447ba82d77f9b9879184\bin\Release\net10.0-windows\win-x64\Play.dll
+build:   Generating native code
+build:   Game -> C:\code\dotnet\Board-Game-Builder\artifacts\editor-native-final-fcf6c587dfee4e519e4fe9c0cb3349c9\.game.building-600ba0853ae0447ba82d77f9b9879184\
+verify: Checking native output and complete release files
+complete: Native release created: C:\code\dotnet\Board-Game-Builder\artifacts\editor-native-final-fcf6c587dfee4e519e4fe9c0cb3349c9\game
+构建日志：C:\Users\silev\AppData\Local\Temp\bgb-native-build-logs\600ba0853ae0447ba82d77f9b9879184\build.log
+导出完成：C:\code\dotnet\Board-Game-Builder\artifacts\editor-native-final-fcf6c587dfee4e519e4fe9c0cb3349c9\game。按所选运行插件编译 Windows x64 原生游戏，双击 Play.exe 运行；需要固定 .NET SDK 和 C++ 工具链。  来源版本 5DAEB0FD；工程草稿未保存。

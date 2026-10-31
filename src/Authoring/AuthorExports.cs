@@ -4,7 +4,8 @@ namespace BoardGame.Authoring;
 
 public sealed record AuthorExportInfo(string Id,string Plugin,string Version,int Api,string Title,string ArtifactKind,
     string Description,string[] Platforms,string[] Dependencies,AuthorOperationInfo Operation);
-public sealed record AuthorExportCheck(ProjectSource Source,string Provider,bool Available,IReadOnlyList<AuthorDiagnostic> Diagnostics);
+public sealed record AuthorExportCheck(ProjectSource Source,string Provider,bool Available,IReadOnlyList<AuthorDiagnostic> Diagnostics)
+{public IReadOnlyList<string> Details {get;init;}=[];}
 public sealed record AuthorExportRequest(ProjectView View,AuthorRuntimes Runtimes,JsonElement Arguments,
     CancellationToken Cancellation=default,IProgress<string>? Progress=null,Action<string,string>? AdditionalSteps=null,Action<string>? Warning=null);
 public interface IAuthorExporter

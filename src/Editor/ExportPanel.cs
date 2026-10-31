@@ -6,6 +6,8 @@ namespace BoardGame.Editor;
 public sealed class ExportPanel : UserControl,IDisposable
 {
     private readonly ExportWorkflow workflow;
+    private readonly EditorCommands commands;
+    private readonly TextBox details=new(){IsReadOnly=true,AcceptsReturn=true,MinHeight=180,MaxHeight=360,TextWrapping=Avalonia.Media.TextWrapping.Wrap};
     private readonly ComboBox providers=new(){HorizontalAlignment=Avalonia.Layout.HorizontalAlignment.Stretch};
     private readonly StackPanel fields=new(){Spacing=8};
     private readonly TextBlock description=new(){TextWrapping=Avalonia.Media.TextWrapping.Wrap};
@@ -20,11 +22,15 @@ public sealed class ExportPanel : UserControl,IDisposable
     public ExportPanel(EditorPluginScope scope)
     {
         workflow=scope.Service<ExportWorkflow>("exports");
-        Content=new ScrollViewer{Content=new StackPanel{Margin=new Thickness(20),Spacing=12,Children={new TextBlock{Text="导出方式"},providers,description,fields,
-            new StackPanel{Orientation=Avalonia.Layout.Orientation.Horizontal,Spacing=10,Children={preflight,export,cancel}},progress}}};
+        commands=scope.Service<EditorCommands>("commands");
+        var layout=new Grid{Margin=new Thickness(20),ColumnDefinitions=new("*,*"),ColumnSpacing=20};
+        layout.Children.Add(new ScrollViewer{Content=new StackPanel{Spacing=12,Children={new TextBlock{Text="导出方式"},providers,description,fields}}});
+        var status=new ScrollViewer{Content=new StackPanel{Spacing=12,Children={
+            new StackPanel{Orientation=Avalonia.Layout.Orientation.Horizontal,Spacing=10,Children={preflight,export,cancel}},progress,details}}};
+        Grid.SetColumn(status,1);layout.Children.Add(status);Content=layout;
         providers.SelectionChanged+=(_,_)=>{if(!refreshing && providers.SelectedItem is Choice choice)try{workflow.Selected=choice.Id;}catch(Exception error){progress.Text="发布配置错误："+error.Message;}};
-        preflight.Click+=async(_,_)=>await workflow.Run(false);export.Click+=async(_,_)=>await workflow.Run(true);cancel.Click+=(_,_)=>workflow.Cancel();
-        workflow.Changed+=Refresh;Refresh();
+        preflight.Click+=async(_,_)=>await commands.Execute("author.export.check");export.Click+=async(_,_)=>await commands.Execute("author.export.run");cancel.Click+=async(_,_)=>await commands.Execute("author.export.cancel");
+        workflow.Changed+=Refresh;commands.Changed+=Refresh;Refresh();
     }
     private void Refresh()
     {
@@ -51,9 +57,11 @@ public sealed class ExportPanel : UserControl,IDisposable
             if(selected!=null)foreach(var input in parameterInputs){var text=workflow.Parameter(selected.Id,input.Key);if(input.Value.Text!=text)input.Value.Text=text;}
             description.Text=selected==null?"选择已启用的导出提供者；缺失提供者的配置会保留。":selected.Description+"\n产物："+selected.ArtifactKind+"；目标："+string.Join(", ",selected.Platforms)+"\n前提："+string.Join("；",selected.Dependencies);
             providers.IsEnabled=fields.IsEnabled=!workflow.Running;
-            preflight.IsEnabled=export.IsEnabled=!workflow.Running && selected!=null;cancel.IsEnabled=workflow.Running;progress.Text=workflow.Progress;
+            preflight.IsEnabled=commands.CanExecute("author.export.check");export.IsEnabled=commands.CanExecute("author.export.run");cancel.IsEnabled=commands.CanExecute("author.export.cancel");
+            progress.Text=workflow.Progress+(workflow.Source is {} source?"\n发布快照："+source.Version+"；文档代次 "+source.Identity.Generation:"");
+            details.Text=workflow.Details;
         }
         finally {refreshing=false;}
     }
-    public void Dispose()=>workflow.Changed-=Refresh;
+    public void Dispose(){workflow.Changed-=Refresh;commands.Changed-=Refresh;}
 }

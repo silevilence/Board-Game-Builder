@@ -97,13 +97,13 @@ public sealed partial class DocumentWorkspace : IDisposable
     public void Undo()
     {
         if(UndoAuthor()) return;
-        var pending=AllDrafts.LastOrDefault(d=>d.CanUndo);
+        var pending=AllDrafts.Where(d=>d.CanUndo).MaxBy(d=>d.UndoSequence);
         if(pending!=null) {pending.Undo();Changed?.Invoke();} else Current?.Undo();
     }
     public void Redo()
     {
         if(RedoAuthor()) return;
-        var pending=AllDrafts.LastOrDefault(d=>d.CanRedo);
+        var pending=AllDrafts.Where(d=>d.CanRedo).MaxBy(d=>d.RedoSequence);
         if(pending!=null) {pending.Redo();Changed?.Invoke();} else Current?.Redo();
     }
     public bool CanUndo=>authorUndo.Count>0 || Current?.CanUndo==true || AllDrafts.Any(d=>d.CanUndo);
@@ -134,8 +134,11 @@ public sealed class DocumentDraft(string path,string baseline,string text,bool y
         foreach(var entry in redo.Reverse())copy.redo.Push(entry);
         return copy;
     }
-    private readonly Stack<string> undo=[];
-    private readonly Stack<string> redo=[];
+    private static long sequence;
+    private readonly Stack<(string Text,long Sequence)> undo=[];
+    private readonly Stack<(string Text,long Sequence)> redo=[];
+    internal long UndoSequence=>undo.TryPeek(out var entry)?entry.Sequence:0;
+    internal long RedoSequence=>redo.TryPeek(out var entry)?entry.Sequence:0;
     private string accepted=text;
     public string Path { get; }=path;
     public string Baseline { get; private set; }=baseline;
@@ -143,9 +146,9 @@ public sealed class DocumentDraft(string path,string baseline,string text,bool y
     public bool Dirty=>Text!=accepted;
     public bool CanUndo=>undo.Count>0;
     public bool CanRedo=>redo.Count>0;
-    public void Edit(string value) {if(value==Text)return;undo.Push(Text);redo.Clear();Text=value;}
-    public void Undo() {if(undo.Count==0)return;redo.Push(Text);Text=undo.Pop();}
-    public void Redo() {if(redo.Count==0)return;undo.Push(Text);Text=redo.Pop();}
+    public void Edit(string value) {if(value==Text)return;undo.Push((Text,Interlocked.Increment(ref sequence)));redo.Clear();Text=value;}
+    public void Undo() {if(undo.Count==0)return;redo.Push((Text,Interlocked.Increment(ref sequence)));Text=undo.Pop().Text;}
+    public void Redo() {if(redo.Count==0)return;undo.Push((Text,Interlocked.Increment(ref sequence)));Text=redo.Pop().Text;}
     public string Serialize()
     {
         if(yaml) return AuthorConfiguration.FromYaml(Text).ToJsonString(new() {WriteIndented=true});

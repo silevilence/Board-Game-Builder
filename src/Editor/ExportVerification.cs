@@ -14,7 +14,7 @@ internal static class ExportVerification
             var errors=new List<string>();var passed=new List<string>();Directory.CreateDirectory(output);
             try
             {
-                await host.Ready;var app=host.Application;var documents=app.Service<DocumentWorkspace>("documents");
+                await host.Ready;var app=host.Application;await app.Disable("author.export.native");var documents=app.Service<DocumentWorkspace>("documents");
                 documents.Location=Path.Combine(Path.GetFullPath(output),"author");
                 var sourceDocument=documents.Current!;var original=sourceDocument.CopyFiles();
                 var entry=BoardGame.Runtime.GameRuntime.Entry;

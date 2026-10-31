@@ -22,6 +22,8 @@ public sealed class ExportWorkflow : IAsyncDisposable
     }
     public string Destination {get=>Parameter(Selected,"target");set=>SetParameter(Selected,"target",value);}
     public string Progress {get;private set;}="";
+    private readonly List<string> messages=[];
+    public string Details=>string.Join("\n",messages);
     public bool Running {get;private set;}
     public ProjectSource? Source {get;private set;}
     public event Action? Changed;
@@ -47,7 +49,8 @@ public sealed class ExportWorkflow : IAsyncDisposable
         documents.ViewState.TryAdd("export.selected",provider);Changed?.Invoke();
     }
     public void Cancel()=>cancellation?.Cancel();
-    private void Replaced(){Cancel();Progress="";Source=null;Refresh();}
+    public async Task CancelAndWait(){Cancel();if(pending!=null)await pending;}
+    private void Replaced(){Cancel();Progress="";messages.Clear();Source=null;Refresh();}
     private void Refresh()=>Changed?.Invoke();
     public Task<bool> Run(bool write)
     {
@@ -59,7 +62,7 @@ public sealed class ExportWorkflow : IAsyncDisposable
         if(Running)return false;
         var id=Selected;var generation=documents.Generation;var currentOperation=++operation;
         using var token=new CancellationTokenSource();cancellation=token;
-        Running=true;ActiveProvider=id;Source=null;Changed?.Invoke();
+        Running=true;ActiveProvider=id;Source=null;messages.Clear();Progress="正在准备发布快照…";Changed?.Invoke();
         using var lease=contributions.Acquire("export-step");
         bool Current()=>generation==documents.Generation && currentOperation==operation;
         try
@@ -78,7 +81,7 @@ public sealed class ExportWorkflow : IAsyncDisposable
             // Capture an independent runtime catalog before yielding; plugin removal cannot change this operation's runtime.
             var runtimes=new AuthorRuntimes();using var runtime=runtimes.Register(documents.Runtimes.Resolve(view));
             var steps=contributions.Entries.Where(e=>e.Kind=="export-step").ToArray();
-            var reporter=new Progress<string>(text=>{if(Running && Current()){Progress=text;Changed?.Invoke();}});
+            var reporter=new Progress<string>(text=>{if(Running && Current()){Progress=text;messages.Add(text);if(messages.Count>1000)messages.RemoveAt(0);Changed?.Invoke();}});
             var request=new AuthorExportRequest(view,runtimes,JsonSerializer.SerializeToElement(arguments),token.Token,reporter,(snapshot,staging)=>Dispatcher.UIThread.Invoke(()=>
             {
                 token.Token.ThrowIfCancellationRequested();
@@ -94,7 +97,7 @@ public sealed class ExportWorkflow : IAsyncDisposable
                     return "导出完成："+artifact.Target+"。"+info.Description+" "+string.Join(" ",artifact.Warnings);
                 }
                 var check=await Providers.Preflight(id,request);
-                if(!check.Available)throw new AuthorOperationException("export.preflight",string.Join("; ",check.Diagnostics.Select(d=>d.Message)));
+                if(!check.Available)throw new AuthorOperationException("export.preflight",string.Join("; ",check.Diagnostics.Select(d=>d.Code+": "+d.Message)));
                 return "依赖预检通过。";
             });
             if(Current())Progress=message+" 来源版本 "+view.Source.Version[..8]+"；工程草稿未保存。";
@@ -114,5 +117,5 @@ public sealed class ExportWorkflow : IAsyncDisposable
         }
     }
     public async ValueTask DisposeAsync()
-    {Cancel();if(pending!=null)await pending;Providers.Changed-=Refresh;documents.Replaced-=Replaced;documents.Changed-=Refresh;}
+    {await CancelAndWait();Providers.Changed-=Refresh;documents.Replaced-=Replaced;documents.Changed-=Refresh;Changed=null;}
 }

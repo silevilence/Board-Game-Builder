@@ -181,6 +181,16 @@ public static class AuthorProjectTests
     public static void Workspace() => WorkspaceAsync().GetAwaiter().GetResult();
     private static async Task WorkspaceAsync()
     {
+        using(var edits=new DocumentWorkspace())
+        {
+            edits.Set(ModuleDocument.Create());
+            var rules=edits.Draft("rules.lua").Text;var cpu=edits.Draft("cpu.lua").Text;
+            edits.EditDraft("cpu.lua",cpu+"\n-- first");edits.EditDraft("rules.lua",rules+"\n-- second");
+            edits.Undo();Check.That(edits.Draft("rules.lua").Text==rules && edits.Draft("cpu.lua").Text!=cpu,"Undo must follow edits, not draft creation order");
+            edits.Undo();Check.That(edits.Draft("cpu.lua").Text==cpu);
+            edits.Redo();Check.That(edits.Draft("cpu.lua").Text!=cpu && edits.Draft("rules.lua").Text==rules);
+            edits.Redo();Check.That(edits.Draft("rules.lua").Text!=rules);
+        }
         var root=Path.Combine(Path.GetTempPath(),"bgb-workspace-"+Guid.NewGuid());
         try
         {
