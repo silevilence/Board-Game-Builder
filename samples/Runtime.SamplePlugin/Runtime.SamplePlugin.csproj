@@ -1,0 +1,3 @@
+<Project Sdk="Microsoft.NET.Sdk">
+  <ItemGroup><ProjectReference Include="../../src/Application.Core/Application.Core.csproj" /></ItemGroup>
+</Project>

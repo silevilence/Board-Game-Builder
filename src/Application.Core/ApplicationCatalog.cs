@@ -27,7 +27,7 @@ public sealed class ApplicationCatalog
         var bound=approved.Select((p,i)=>(Factory:p,Description:Content.Plugins[i])).Where(p=>selected.Contains(p.Description.Id)).Select(p=>
         {
             var value=p.Factory.Bind(verified);var description=p.Description;
-            if(value.Id!=description.Id || value.Version!=description.Version || value.Api!=description.Api)
+            if(value.Id!=description.Id || value.Version!=description.Version || value.Api!=description.Api || value.Implementation!=description.Implementation)
                 throw new InvalidDataException("Application factory changed its installed identity");
             return value;
         }).ToArray();

@@ -9,6 +9,8 @@ public sealed record RuntimePluginDefinition(string Id,string Version,int Api,st
 {
     public PluginExecution Execution {get;init;}=new();
     public PluginContentContract? Content {get;init;}
+    // Opaque immutable implementation identity, assigned by the approved catalogue.
+    public string? Implementation {get;init;}
     // Permissions are assigned by the trusted installation catalog, never by game.start.json.
     public string[] Permissions {get;init;}=[];
     public IReadOnlyDictionary<string,string> ServicePermissions {get;init;}=new Dictionary<string,string>();
@@ -61,6 +63,8 @@ public sealed class RuntimeHost : IDisposable, IAsyncDisposable
                 throw new InvalidDataException(plugin.Id+": invalid capability declaration");
             if(plugin.Api!=1 || selection.Api!=plugin.Api || selection.Version!=plugin.Version)
                 throw new InvalidDataException(selection.Id+": incompatible plugin API/version");
+            if(selection.Implementation!=plugin.Implementation)
+                throw new InvalidDataException(selection.Id+": implementation content identity mismatch");
             if(!selected.TryAdd(plugin.Id,plugin)) throw new InvalidDataException(selection.Id+": duplicate plugin identity");
             if(selection.Configuration.ValueKind!=System.Text.Json.JsonValueKind.Object)
                 throw new InvalidDataException(selection.Id+": configuration must be an object");
