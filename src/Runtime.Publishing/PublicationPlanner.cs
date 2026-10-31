@@ -13,7 +13,8 @@ namespace BoardGame.Publishing;
 public sealed record AvailablePlugin(PluginBuildInput Input,bool Builtin=false);
 public sealed record PublicationFile(string Source,string Name,string Sha256,string Role,string Owner);
 public sealed record PublicationPlan(string Target,HostMode Mode,string SourceFingerprint,GameContent Content,
-    IReadOnlyList<PluginBuildInput> Selected,IReadOnlyList<PublicationFile> Files,StaticRegistrationResult Registration);
+    IReadOnlyList<PluginBuildInput> Selected,IReadOnlyList<PublicationFile> Files,StaticRegistrationResult Registration)
+{public IReadOnlyList<RuntimePluginSelection> HostSelections {get;init;}=[];}
 
 public static class PublicationPlanner
 {
@@ -24,7 +25,8 @@ public static class PublicationPlanner
     {
         if(mode is not (HostMode.Graphical or HostMode.Headless))throw new ArgumentOutOfRangeException(nameof(mode));
         var installed=available.ToArray();var selected=new List<PluginBuildInput>();
-        var selections=content.Identity.Startup.Plugins.Concat(hostSelections).ToArray();
+        var host=hostSelections.Select(s=>s with {Configuration=s.Configuration.Clone()}).ToArray();
+        var selections=content.Identity.Startup.Plugins.Concat(host).ToArray();
         if(selections.Select(s=>s.Id).Distinct(StringComparer.Ordinal).Count()!=selections.Length)
             throw new InvalidDataException("publication.identity: duplicate/conflicting game and host selection");
         foreach(var selection in selections)
@@ -77,7 +79,7 @@ public static class PublicationPlanner
         var references=output.Values.Where(f=>f.Role is "implementation" or "managed").Select(f=>f.Source).Order(StringComparer.Ordinal).ToArray();
         var items=new XElement("ItemGroup",references.Select(path=>new XElement("Reference",new XAttribute("Include",AssemblyName.GetAssemblyName(path).Name!),new XElement("HintPath",path),new XElement("Private","true"))));
         registration=registration with {References=references,NativeFiles=output.Values.Where(f=>f.Role=="native").Select(f=>f.Source).ToArray(),ProjectItems=items.ToString()};
-        return new(target,mode,content.Fingerprint,content,selected.AsReadOnly(),output.Values.OrderBy(f=>f.Name,StringComparer.Ordinal).ToArray(),registration);
+        return new(target,mode,content.Fingerprint,content,selected.AsReadOnly(),output.Values.OrderBy(f=>f.Name,StringComparer.Ordinal).ToArray(),registration){HostSelections=host};
     }
     public static void Verify(PublicationFile file)
     {
@@ -124,7 +126,7 @@ public static class PublicationPlanner
         }
         var framework=((string?)AppContext.GetData("TRUSTED_PLATFORM_ASSEMBLIES") ?? "").Split(Path.PathSeparator,StringSplitOptions.RemoveEmptyEntries)
             .Where(p=>string.Equals(Path.GetDirectoryName(p),Path.TrimEndingDirectorySeparator(System.Runtime.InteropServices.RuntimeEnvironment.GetRuntimeDirectory()),StringComparison.OrdinalIgnoreCase))
-            .Select(Path.GetFileNameWithoutExtension).OfType<string>().Where(n=>n is "netstandard" or "mscorlib" or "Microsoft.CSharp" || n.StartsWith("System.",StringComparison.Ordinal)).ToHashSet(StringComparer.OrdinalIgnoreCase);
+            .Select(Path.GetFileNameWithoutExtension).OfType<string>().ToHashSet(StringComparer.OrdinalIgnoreCase);
         foreach(var item in managed.Values)
         {
             using var stream=File.OpenRead(item.File.Source);using var pe=new PEReader(stream);var metadata=pe.GetMetadataReader();

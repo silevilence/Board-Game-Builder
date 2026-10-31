@@ -31,6 +31,7 @@ $allowed = @{
  'Authoring' = @('Runtime'); 'Cli' = @('Authoring','Sample.Motion.Authoring')
  'Launcher.Core' = @(); 'Launcher' = @('Launcher.Core'); 'Launcher.Cli' = @('Launcher.Core')
  'Player.Hosting' = @('Rendering.Avalonia','Application.Debug')
+ 'Player.Native' = @('Rendering.Avalonia')
  'Player.Board' = @('Player.Hosting','Runtime','Networking','View.MonoGame')
  'Player' = @('Player.Board','Sample.Motion'); 'Toolkit.Entry' = @()
  'Editor.Core' = @('Runtime','Authoring')

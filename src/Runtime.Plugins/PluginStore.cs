@@ -179,8 +179,7 @@ public sealed class PluginStore
         return metadata.GetString(type.Namespace)=="System.Runtime.CompilerServices" && metadata.GetString(type.Name)=="ReferenceAssemblyAttribute";
     });
     private static bool EditorOnly(string name)=>name is "Editor" or "Editor.Core" || name.StartsWith("CordiSharp.Plugins.Avalonia",StringComparison.Ordinal);
-    internal static bool Framework(string name)=>platformAssemblies.Contains(name) &&
-        (name is "netstandard" or "mscorlib" or "System" or "Microsoft.CSharp" || name.StartsWith("System.",StringComparison.Ordinal));
+    internal static bool Framework(string name)=>platformAssemblies.Contains(name);
     private static IEnumerable<string> EnumerateSafe(string directory)
     {
         foreach(var entry in Directory.EnumerateFileSystemEntries(directory))

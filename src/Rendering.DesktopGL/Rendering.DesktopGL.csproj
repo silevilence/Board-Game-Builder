@@ -4,6 +4,7 @@
   <ItemGroup>
     <Reference Include="MonoGame.Framework"><HintPath>../../artifacts/native-aot/monogame/MonoGame.Framework.dll</HintPath></Reference>
     <PackageReference Include="MonoGame.Library.SDL" Version="2.32.2.1" />
+    <PackageReference Include="NVorbis" Version="0.10.4" />
     <PackageReference Include="SkiaSharp" Version="3.119.4" />
   </ItemGroup>
   <Target Name="CheckPatchedMonoGame" BeforeTargets="ResolveAssemblyReferences" Condition="!Exists('$(MSBuildProjectDirectory)/../../artifacts/native-aot/monogame/MonoGame.Framework.dll')">

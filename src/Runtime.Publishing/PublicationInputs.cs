@@ -38,7 +38,7 @@ public static class PublicationInputs
             // Only the temporary release copy is pinned. The source fingerprint remains in the build report.
             var startup=JsonSerializer.Deserialize(snapshot.Files[GameRuntime.Entry],PublicationJson.Default.RuntimeStartup)
                 ?? throw new InvalidDataException("Missing release entry");
-            startup=startup with {Plugins=startup.Plugins.Select(p=>p with {Implementation=plan.Selected.Single(i=>i.Manifest.Id==p.Id).Manifest.Fingerprint}).ToList()};
+            startup=startup with {Plugins=startup.Plugins.Concat(plan.HostSelections).Select(p=>p with {Implementation=plan.Selected.Single(i=>i.Manifest.Id==p.Id).Manifest.Fingerprint}).ToList()};
             snapshot.Files[GameRuntime.Entry]=JsonSerializer.SerializeToUtf8Bytes(startup,PublicationJson.Default.RuntimeStartup);
             foreach(var file in snapshot.Files)
             {

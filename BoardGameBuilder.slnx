@@ -7,6 +7,7 @@
     <Project Path="samples/Editor.SamplePlugin/Editor.SamplePlugin.csproj" />
   </Folder>
   <Folder Name="/src/">
+    <Project Path="src/Player.Native/Player.Native.csproj" />
     <Project Path="src/Runtime.Publishing/Runtime.Publishing.csproj" />
     <Project Path="src/Rendering.DesktopGL/Rendering.DesktopGL.csproj" />
     <Project Path="src/BoardGame.Avalonia/BoardGame.Avalonia.csproj" />
@@ -87,5 +88,8 @@
     <Project Path="tests/Engine.Tests/Engine.Tests.csproj" />
     <Project Path="tests/Launcher.Tests/Launcher.Tests.csproj" />
     <Project Path="tests/View.Tests/View.Tests.csproj" />
+  </Folder>
+  <Folder Name="/tools/">
+    <Project Path="tools/NativeSdk/NativeSdk.csproj" />
   </Folder>
 </Solution>

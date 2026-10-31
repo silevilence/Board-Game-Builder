@@ -4,6 +4,7 @@ using System.Security.Cryptography;
 using System.Text.Json;
 using System.Text.RegularExpressions;
 using System.Xml.Linq;
+using BoardGame.Plugins;
 
 namespace BoardGame.Publishing;
 
@@ -19,6 +20,8 @@ public static class NativeBuildService
         IProgress<NativeBuildProgress>? progress=null,CancellationToken cancellation=default)
     {
         cancellation.ThrowIfCancellationRequested();entry=entry with {Icon=entry.Icon?.ToArray()};Validate(entry);
+        var reserved=new HashSet<string>(["Play.exe","Play.dll","game.ico","native-release.json","build-inputs.json","startup-error.txt"],StringComparer.OrdinalIgnoreCase);
+        if(plan.Files.Any(f=>reserved.Contains(f.Name)))throw new InvalidDataException("Runtime input conflicts with a reserved release filename");
         var destination=Path.GetFullPath(options.Destination);
         if(Directory.Exists(destination) || File.Exists(destination))throw new IOException("Release destination already exists: "+destination);
         var watch=Stopwatch.StartNew();var diagnostics=new List<NativeBuildDiagnostic>();
@@ -42,10 +45,15 @@ public static class NativeBuildService
                 workspaceOwned=true;
                 var prepared=await PublicationInputs.Create(plan,workspace,cancellation).ConfigureAwait(false);
                 await File.WriteAllTextAsync(Path.Combine(workspace,"global.json"),JsonSerializer.Serialize(new {sdk=new {version=toolchain.Sdk,rollForward="disable"}}),cancellation).ConfigureAwait(false);
-                await File.WriteAllTextAsync(Path.Combine(workspace,"Program.cs"),Program(entry),cancellation).ConfigureAwait(false);
+                var integrity=NativeReleaseGuard.Describe(prepared.ContentFiles.Select(path=>new NativeReleaseFile("content/"+path,Hash(Path.Combine(workspace,"content",path))))
+                    .Concat(prepared.RuntimeFiles.Where(f=>f.Role is "native" or "content").Select(f=>new NativeReleaseFile(f.Name,f.Sha256)))
+                    .Concat(entry.Icon==null?[]:new[]{new NativeReleaseFile("game.ico",Convert.ToHexStringLower(SHA256.HashData(entry.Icon)))}));
+                await File.WriteAllTextAsync(Path.Combine(workspace,"Program.cs"),Program(entry,integrity,plan.Mode==BoardGame.Runtime.HostMode.Graphical),cancellation).ConfigureAwait(false);
+                using(var manifest=typeof(NativeBuildService).Assembly.GetManifestResourceStream("Runtime.Publishing.NativeApplication.manifest") ?? throw new InvalidDataException("Missing native application manifest"))
+                using(var output=File.Create(Path.Combine(workspace,"app.manifest")))await manifest.CopyToAsync(output,cancellation).ConfigureAwait(false);
                 if(entry.Icon!=null)await File.WriteAllBytesAsync(Path.Combine(workspace,"game.ico"),entry.Icon,cancellation).ConfigureAwait(false);
                 await File.WriteAllTextAsync(Path.Combine(workspace,"Game.csproj"),Project(prepared,entry,toolchain),cancellation).ConfigureAwait(false);
-                foreach(var name in new[]{"Game.csproj","Program.cs","GeneratedCatalog.cs","global.json","build-inputs.json"})
+                foreach(var name in new[]{"Game.csproj","Program.cs","GeneratedCatalog.cs","global.json","build-inputs.json","app.manifest"})
                     File.Copy(Path.Combine(workspace,name),Path.Combine(logs,name));
                 var compilerDirectory=Path.GetDirectoryName(toolchain.Compiler)!;
                 var vcRoot=Path.GetFullPath(Path.Combine(compilerDirectory,"../../.."));
@@ -75,6 +83,7 @@ public static class NativeBuildService
                 {
                     cancellation.ThrowIfCancellationRequested();Report("verify","Checking native output and complete release files");
                     VerifyOutput(stage,prepared);
+                    if(entry.Icon!=null && !File.ReadAllBytes(Path.Combine(stage,"game.ico")).SequenceEqual(entry.Icon))throw new InvalidDataException("Published game icon differs");
                     File.Copy(Path.Combine(workspace,"build-inputs.json"),Path.Combine(stage,"build-inputs.json"));
                     var files=Directory.GetFiles(stage,"*",SearchOption.AllDirectories).Select(path=>new
                     {path=Path.GetRelativePath(stage,path).Replace('\\','/'),bytes=new FileInfo(path).Length,sha256=Convert.ToHexStringLower(SHA256.HashData(File.ReadAllBytes(path)))}).OrderBy(f=>f.path,StringComparer.Ordinal).ToArray();
@@ -109,7 +118,8 @@ public static class NativeBuildService
         if(entry.Icon!=null && (entry.Icon.Length<6 || entry.Icon.Length>4*1024*1024 || entry.Icon[0]!=0 || entry.Icon[1]!=0 || entry.Icon[2]!=1 || entry.Icon[3]!=0 || BitConverter.ToUInt16(entry.Icon,4)==0))
             throw new InvalidDataException("Native application icon must be an ICO file");
     }
-    private static string Program(NativeEntry entry)=>"""
+    private static string Hash(string path){using var stream=File.OpenRead(path);return Convert.ToHexStringLower(SHA256.HashData(stream));}
+    private static string Program(NativeEntry entry,string integrity,bool graphical)=>"""
 using System;
 using System.IO;
 internal static class NativeMain
@@ -118,20 +128,22 @@ internal static class NativeMain
     {
         try
         {
-"""+"            return global::"+string.Join('.',entry.Type.Split('.').Select(s=>"@"+s))+".@"+entry.Method+"(GeneratedCatalog.Create(), Path.Combine(AppContext.BaseDirectory, \"content\"), "+JsonSerializer.Serialize(entry.Title)+");\n"+"""
+"""+"            BoardGame.Plugins.NativeReleaseGuard.Verify(AppContext.BaseDirectory, "+JsonSerializer.Serialize(integrity)+");\n"+
+"            return global::"+string.Join('.',entry.Type.Split('.').Select(s=>"@"+s))+".@"+entry.Method+"(GeneratedCatalog.Create(), Path.Combine(AppContext.BaseDirectory, \"content\"), "+JsonSerializer.Serialize(entry.Title)+");\n"+"""
         }
         catch(Exception error)
         {
-            File.WriteAllText(Path.Combine(AppContext.BaseDirectory,"startup-error.txt"),error.ToString());
+            try {File.WriteAllText(Path.Combine(AppContext.BaseDirectory,"startup-error.txt"),error.ToString());}catch(IOException){}catch(UnauthorizedAccessException){}
+"""+(graphical?"            MessageBoxW(0,error.Message,\"游戏无法启动\",0x10);\n":"")+"""
             return 1;
         }
     }
-}
-""";
+"""+(graphical?"    [System.Runtime.InteropServices.DllImport(\"user32.dll\",CharSet=System.Runtime.InteropServices.CharSet.Unicode)] private static extern int MessageBoxW(nint owner,string text,string title,uint flags);\n":"")+"}\n";
     private static string Project(PreparedPublication input,NativeEntry entry,NativeToolchainInfo toolchain)
     {
         var properties=new XElement("PropertyGroup",
             new XElement("TargetFramework","net10.0-windows"),new XElement("OutputType","WinExe"),new XElement("AssemblyName","Play"),
+            new XElement("ApplicationManifest","app.manifest"),
             new XElement("ImplicitUsings","enable"),new XElement("Nullable","enable"),new XElement("EnableDefaultCompileItems","false"),
             new XElement("ImportDirectoryBuildProps","false"),new XElement("ImportDirectoryBuildTargets","false"),
             new XElement("PublishAot","true"),new XElement("RuntimeFrameworkVersion",toolchain.Runtime),new XElement("IlcUseEnvironmentalTools","true"),
@@ -141,6 +153,7 @@ internal static class NativeMain
             new XElement("AssemblyTitle",entry.Title),new XElement("Product",entry.Title),new XElement("InformationalVersion",entry.Version),new XElement("AssemblyVersion","1.0.0.0"));
         if(entry.Icon!=null)properties.Add(new XElement("ApplicationIcon","game.ico"));
         var content=new XElement("ItemGroup",new XElement("Compile",new XAttribute("Include","Program.cs;GeneratedCatalog.cs")));
+        if(entry.Icon!=null)content.Add(new XElement("Content",new XAttribute("Include","game.ico"),new XElement("CopyToPublishDirectory","Always")));
         foreach(var file in input.RuntimeFiles.Where(f=>f.Role is "native" or "content"))content.Add(new XElement("Content",new XAttribute("Include","runtime/"+file.Name),new XElement("Link",file.Name),new XElement("CopyToPublishDirectory","Always")));
         foreach(var path in input.ContentFiles)content.Add(new XElement("Content",new XAttribute("Include","content/"+path),new XElement("CopyToPublishDirectory","Always")));
         return new XElement("Project",new XAttribute("Sdk","Microsoft.NET.Sdk"),properties,XElement.Parse(input.ProjectItems),content).ToString();

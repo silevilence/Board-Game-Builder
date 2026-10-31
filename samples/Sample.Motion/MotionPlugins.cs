@@ -16,16 +16,18 @@ public static class MotionPlugins
     internal static readonly JsonSerializerOptions Json=MotionJson.Default.Options;
     public static IEnumerable<ApprovedApplicationPlugin> Catalog()
     {
-        yield return new(_=>new("motion.definition","1",1,["definition"],["resources"],s=>s.Provide("definition",new Loader(s.Configuration.GetProperty("path").GetString()!,s.Service<AssetRegistry>("resources"))))
-            {Content=new(["path"],RequiredCapabilities:["motion.state"],Prepare:true,Definition:c=>new(c.GetProperty("path").GetString()!,new Dictionary<string,string>()))});
+        yield return Definition();
         foreach(var plugin in AssetPlugins.Catalog())yield return new(_=>plugin);
-        yield return new(content=>new("motion.loop","1",1,["motion.state"],[],s=>
+        yield return Loop();yield return ViewFactory();
+    }
+    public static ApprovedApplicationPlugin Definition()=>new(_=>new("motion.definition","1",1,["definition"],["resources"],s=>s.Provide("definition",new Loader(s.Configuration.GetProperty("path").GetString()!,s.Service<AssetRegistry>("resources"))))
+        {Content=new(["path"],RequiredCapabilities:["motion.state"],Prepare:true,Definition:c=>new(c.GetProperty("path").GetString()!,new Dictionary<string,string>()))});
+    public static ApprovedApplicationPlugin Loop()=>new(content=>new("motion.loop","1",1,["motion.state"],[],s=>
         {
             var payload=content!.Payload.Data.Deserialize(MotionJson.Default.MotionPayload) ?? throw new InvalidDataException("Missing motion payload");
             var motion=new MotionState(payload);s.Provide("motion.state",motion);s.Update("advance",motion.Update);
         }){Execution=new(Contributions:[new("advance",ApplicationPhase.Update)])});
-        yield return new(_=>new("motion.view","1",1,[ApplicationViewPlugin.Capability],["motion.state"],s=>s.Provide(ApplicationViewPlugin.Capability,new View(s.Service<MotionState>("motion.state")))));
-    }
+    public static ApprovedApplicationPlugin ViewFactory()=>new(_=>new("motion.view","1",1,[ApplicationViewPlugin.Capability],["motion.state"],s=>s.Provide(ApplicationViewPlugin.Capability,new View(s.Service<MotionState>("motion.state")))));
     private sealed class Loader(string path,AssetRegistry registry) : IContentLoader
     {
         public string PayloadFormat=>"sample.motion";

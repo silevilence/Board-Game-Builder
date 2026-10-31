@@ -1,0 +1,68 @@
+{
+  "format": 1,
+  "target": "win-x64",
+  "sourceFingerprint": "A693970C6247F201C40E5AE2AA7F6AEF582978CD43805EF2A2ED7A2853385160",
+  "title": "Motion lab",
+  "version": "1",
+  "sdk": "10.0.112",
+  "runtime": "10.0.12",
+  "compiler": "C:\\Program Files\\Microsoft Visual Studio\\18\\Community\\VC/Tools/MSVC\\14.51.36231\\bin/Hostx64/x64/cl.exe",
+  "linker": "C:\\Program Files\\Microsoft Visual Studio\\18\\Community\\VC/Tools/MSVC\\14.51.36231\\bin/Hostx64/x64/link.exe",
+  "windowsSdk": "10.0.26100.0",
+  "compilerVersion": "19.51.36246.0",
+  "linkerVersion": "14.51.36246.0",
+  "strictWarnings": true,
+  "durationMs": 52653,
+  "files": [
+    {
+      "path": "Play.exe",
+      "bytes": 23886336,
+      "sha256": "45a16ad41c74062429d389b676fe27a3de6b6baa1f9012d5c56c331a4a536127"
+    },
+    {
+      "path": "SDL2.dll",
+      "bytes": 1679360,
+      "sha256": "f8ab6a41ae9ff682a2b5482414f73979bc1a29eabb14da21fc7ae35090b5dec9"
+    },
+    {
+      "path": "av_libglesv2.dll",
+      "bytes": 5394096,
+      "sha256": "53191a77fe783cd757ca7767077c2a64a662e7043777a5b4ab74980d4a0b73e3"
+    },
+    {
+      "path": "build-inputs.json",
+      "bytes": 10569,
+      "sha256": "e49a6a4f96e5755447a6ee21c272145fdeae52452b6281ba15588c1d510bb807"
+    },
+    {
+      "path": "content/game.start.json",
+      "bytes": 1485,
+      "sha256": "8c854e02bd4727ada73e53bea44552cf05a5ade4b9e573b782688ae79ecf2cd3"
+    },
+    {
+      "path": "content/marker.png",
+      "bytes": 178,
+      "sha256": "35e4d21afd558dbdaed09dc47806bf3c85a96054209a3a9f4b6bdf43803001df"
+    },
+    {
+      "path": "content/motion.json",
+      "bytes": 256,
+      "sha256": "c1edcefcbd7347446d1a61dac5278481f802f6688bb545aed63ceeff0bbd6808"
+    },
+    {
+      "path": "game.ico",
+      "bytes": 200,
+      "sha256": "16dd8638c8bbbd902f93e2d7553e97555b0d83a16780ab70d88ec7a9f4bd9834"
+    },
+    {
+      "path": "libHarfBuzzSharp.dll",
+      "bytes": 1816088,
+      "sha256": "145ade963eba427027d5e1381db5d51a0ef9e98e9fef9efbfa6074ca20da246f"
+    },
+    {
+      "path": "libSkiaSharp.dll",
+      "bytes": 11628896,
+      "sha256": "7dec3ba900ab353491e6446f0083739924c6f8dd668832e2f09d38ebffdbbe1c"
+    }
+  ]
+}

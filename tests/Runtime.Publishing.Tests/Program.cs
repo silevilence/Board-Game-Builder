@@ -25,3 +25,4 @@ if(args.FirstOrDefault(a=>!a.StartsWith("--",StringComparison.Ordinal)) is {} wa
 Console.WriteLine("PASS script support declarations: fixed version/target, indirect flow dependency, no managed worker fallback, missing native library");
 PlannerTests.Run(args.Contains("--native")?NativeBuildTests.Run:null);
 BoardPlannerTests.Run();
+ReleaseIntegrityTests.Run();

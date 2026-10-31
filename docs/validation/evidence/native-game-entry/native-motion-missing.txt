@@ -1,0 +1,11 @@
+System.IO.InvalidDataException: release.integrity: missing required file: SDL2.dll
+ ---> System.IO.FileNotFoundException: Could not find file 'C:\原生游戏 Motion\SDL2.dll'.
+File name: 'C:\原生游戏 Motion\SDL2.dll'
+   at Microsoft.Win32.SafeHandles.SafeFileHandle.CreateFile(String, FileMode, FileAccess, FileShare, FileOptions) + 0x17e
+   at Microsoft.Win32.SafeHandles.SafeFileHandle.Open(String, FileMode, FileAccess, FileShare, FileOptions, Int64, Nullable`1) + 0x44
+   at System.IO.Strategies.OSFileStreamStrategy..ctor(String, FileMode, FileAccess, FileShare, FileOptions, Int64, Nullable`1) + 0x50
+   at System.IO.Strategies.FileStreamHelpers.ChooseStrategyCore(String, FileMode, FileAccess, FileShare, FileOptions, Int64, Nullable`1) + 0xbc
+   at BoardGame.Plugins.NativeReleaseGuard.Verify(String, String) + 0x127
+   --- End of inner exception stack trace ---
+   at BoardGame.Plugins.NativeReleaseGuard.Verify(String, String) + 0x300
+   at NativeMain.Main() + 0x1f

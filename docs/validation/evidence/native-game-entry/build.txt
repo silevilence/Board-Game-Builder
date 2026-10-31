@@ -1,0 +1,10 @@
+[toolchain] Checking Windows x64 native toolchain
+[inputs] Copying and verifying selected runtime inputs
+[build] Publishing with SDK 10.0.112, NativeAOT 10.0.12, linker C:\Program Files\Microsoft Visual Studio\18\Community\VC/Tools/MSVC\14.51.36231\bin/Hostx64/x64/link.exe
+[build]   正在确定要还原的项目…
+[build]   已还原 C:\Users\silev\AppData\Local\Temp\bgb-native-build-e3924b7086bd4895a9452ea4b8823e38\Game.csproj (用时 234 毫秒)。
+[build]   Game -> C:\Users\silev\AppData\Local\Temp\bgb-native-build-e3924b7086bd4895a9452ea4b8823e38\bin\Release\net10.0-windows\win-x64\Play.dll
+[build]   Generating native code
+[build]   Game -> C:\code\dotnet\Board-Game-Builder\artifacts\native-aot\.发行 Motion 02.building-e3924b7086bd4895a9452ea4b8823e38\
+[verify] Checking native output and complete release files
+[complete] Native release created: C:\code\dotnet\Board-Game-Builder\artifacts\native-aot\发行 Motion 02

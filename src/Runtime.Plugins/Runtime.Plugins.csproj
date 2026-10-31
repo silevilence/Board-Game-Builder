@@ -1,3 +1,6 @@
 <Project Sdk="Microsoft.NET.Sdk">
   <ItemGroup><ProjectReference Include="../Application.Core/Application.Core.csproj" /></ItemGroup>
+  <ItemGroup Condition="'$(UseStaticRuntime)' == 'true'">
+    <Reference Include="CordiSharp"><HintPath>../../artifacts/native-aot/cordisharp/CordiSharp.dll</HintPath></Reference>
+  </ItemGroup>
 </Project>

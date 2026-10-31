@@ -1,0 +1,3 @@
+System.IO.InvalidDataException: release.integrity: content differs: content/motion.json
+   at BoardGame.Plugins.NativeReleaseGuard.Verify(String, String) + 0x1c2
+   at NativeMain.Main() + 0x1f
