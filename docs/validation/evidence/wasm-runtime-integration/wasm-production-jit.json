@@ -1,0 +1,151 @@
+{
+  "success": true,
+  "dynamicCodeSupported": true,
+  "framework": ".NET 10.0.12",
+  "os": "Microsoft Windows 10.0.26200",
+  "architecture": "X64",
+  "checks": [
+    {
+      "name": "sample-fixed-signatures",
+      "passed": true,
+      "detail": ""
+    },
+    {
+      "name": "fresh-store-and-call-release",
+      "passed": true,
+      "detail": ""
+    },
+    {
+      "name": "reject-import-host",
+      "passed": true,
+      "detail": ""
+    },
+    {
+      "name": "reject-import-wasi_snapshot_preview1",
+      "passed": true,
+      "detail": ""
+    },
+    {
+      "name": "reject-invalid-bytes",
+      "passed": true,
+      "detail": ""
+    },
+    {
+      "name": "reject-size-budget",
+      "passed": true,
+      "detail": ""
+    },
+    {
+      "name": "reject-duplicate",
+      "passed": true,
+      "detail": ""
+    },
+    {
+      "name": "fuel-budget",
+      "passed": true,
+      "detail": ""
+    },
+    {
+      "name": "memory-budget",
+      "passed": true,
+      "detail": ""
+    },
+    {
+      "name": "memory-grow-budget",
+      "passed": true,
+      "detail": ""
+    },
+    {
+      "name": "catch-trap-MemoryOutOfBounds",
+      "passed": true,
+      "detail": ""
+    },
+    {
+      "name": "catch-trap-Unreachable",
+      "passed": true,
+      "detail": ""
+    },
+    {
+      "name": "catch-trap-IntegerDivisionByZero",
+      "passed": true,
+      "detail": ""
+    },
+    {
+      "name": "catch-trap-StackOverflow",
+      "passed": true,
+      "detail": ""
+    },
+    {
+      "name": "repeat-create-release",
+      "passed": true,
+      "detail": ""
+    },
+    {
+      "name": "reject-missing-export",
+      "passed": true,
+      "detail": ""
+    },
+    {
+      "name": "reject-signature-before-execution",
+      "passed": true,
+      "detail": ""
+    },
+    {
+      "name": "signed-int32-boundaries",
+      "passed": true,
+      "detail": ""
+    }
+  ],
+  "nativeModules": [
+    "C:\\code\\dotnet\\Board-Game-Builder\\tests\\Wasm.Execution.Tests\\bin\\Debug\\net10.0\\Wasm.Execution.Tests.exe",
+    "C:\\WINDOWS\\SYSTEM32\\ntdll.dll",
+    "C:\\WINDOWS\\System32\\KERNEL32.DLL",
+    "C:\\WINDOWS\\System32\\KERNELBASE.dll",
+    "C:\\WINDOWS\\SYSTEM32\\apphelp.dll",
+    "C:\\WINDOWS\\System32\\SHELL32.dll",
+    "C:\\WINDOWS\\System32\\msvcp_win.dll",
+    "C:\\WINDOWS\\System32\\ucrtbase.dll",
+    "C:\\WINDOWS\\System32\\USER32.dll",
+    "C:\\WINDOWS\\System32\\win32u.dll",
+    "C:\\WINDOWS\\System32\\GDI32.dll",
+    "C:\\WINDOWS\\System32\\gdi32full.dll",
+    "C:\\WINDOWS\\System32\\ADVAPI32.dll",
+    "C:\\WINDOWS\\System32\\msvcrt.dll",
+    "C:\\WINDOWS\\System32\\sechost.dll",
+    "C:\\WINDOWS\\System32\\RPCRT4.dll",
+    "C:\\WINDOWS\\System32\\IMM32.DLL",
+    "C:\\Program Files\\dotnet\\host\\fxr\\10.0.12\\hostfxr.dll",
+    "C:\\Program Files\\dotnet\\shared\\Microsoft.NETCore.App\\10.0.12\\hostpolicy.dll",
+    "C:\\Program Files\\dotnet\\shared\\Microsoft.NETCore.App\\10.0.12\\coreclr.dll",
+    "C:\\WINDOWS\\System32\\ole32.dll",
+    "C:\\WINDOWS\\System32\\combase.dll",
+    "C:\\WINDOWS\\System32\\OLEAUT32.dll",
+    "C:\\WINDOWS\\System32\\bcryptPrimitives.dll",
+    "C:\\WINDOWS\\SYSTEM32\\kernel.appcore.dll",
+    "C:\\Program Files\\dotnet\\shared\\Microsoft.NETCore.App\\10.0.12\\System.Private.CoreLib.dll",
+    "C:\\Program Files\\dotnet\\shared\\Microsoft.NETCore.App\\10.0.12\\clrjit.dll",
+    "C:\\WINDOWS\\SYSTEM32\\icu.dll",
+    "C:\\code\\dotnet\\Board-Game-Builder\\tests\\Wasm.Execution.Tests\\bin\\Debug\\net10.0\\Wasm.Execution.Tests.dll",
+    "C:\\Program Files\\dotnet\\shared\\Microsoft.NETCore.App\\10.0.12\\System.Runtime.dll",
+    "C:\\code\\dotnet\\Board-Game-Builder\\tests\\Wasm.Execution.Tests\\bin\\Debug\\net10.0\\Wasmtime.Dotnet.dll",
+    "C:\\Program Files\\dotnet\\shared\\Microsoft.NETCore.App\\10.0.12\\System.Text.Json.dll",
+    "C:\\Program Files\\dotnet\\shared\\Microsoft.NETCore.App\\10.0.12\\System.Diagnostics.Process.dll",
+    "C:\\Program Files\\dotnet\\shared\\Microsoft.NETCore.App\\10.0.12\\System.ComponentModel.Primitives.dll",
+    "C:\\Program Files\\dotnet\\shared\\Microsoft.NETCore.App\\10.0.12\\System.Collections.dll",
+    "C:\\Program Files\\dotnet\\shared\\Microsoft.NETCore.App\\10.0.12\\System.Linq.dll",
+    "C:\\Program Files\\dotnet\\shared\\Microsoft.NETCore.App\\10.0.12\\System.Collections.NonGeneric.dll",
+    "C:\\Program Files\\dotnet\\shared\\Microsoft.NETCore.App\\10.0.12\\System.Console.dll",
+    "C:\\code\\dotnet\\Board-Game-Builder\\tests\\Wasm.Execution.Tests\\bin\\Debug\\net10.0\\Wasm.Execution.dll",
+    "C:\\code\\dotnet\\Board-Game-Builder\\tests\\Wasm.Execution.Tests\\bin\\Debug\\net10.0\\runtimes\\win-x64\\native\\wasmtime.DLL",
+    "C:\\WINDOWS\\System32\\ws2_32.dll",
+    "C:\\WINDOWS\\SYSTEM32\\bcrypt.dll",
+    "C:\\WINDOWS\\SYSTEM32\\CRYPTBASE.DLL",
+    "C:\\Program Files\\dotnet\\shared\\Microsoft.NETCore.App\\10.0.12\\System.Runtime.InteropServices.dll",
+    "C:\\Program Files\\dotnet\\shared\\Microsoft.NETCore.App\\10.0.12\\System.Threading.dll",
+    "C:\\Program Files\\dotnet\\shared\\Microsoft.NETCore.App\\10.0.12\\System.Collections.Concurrent.dll",
+    "C:\\Program Files\\dotnet\\shared\\Microsoft.NETCore.App\\10.0.12\\System.Memory.dll",
+    "C:\\Program Files\\dotnet\\shared\\Microsoft.NETCore.App\\10.0.12\\System.Text.Encodings.Web.dll",
+    "C:\\Program Files\\dotnet\\shared\\Microsoft.NETCore.App\\10.0.12\\System.Numerics.Vectors.dll",
+    "C:\\Program Files\\dotnet\\shared\\Microsoft.NETCore.App\\10.0.12\\Microsoft.Win32.Primitives.dll"
+  ]
+}

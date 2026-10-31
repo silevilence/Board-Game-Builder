@@ -1,0 +1,11 @@
+<Project Sdk="Microsoft.NET.Sdk">
+  <PropertyGroup>
+    <OutputType>Exe</OutputType><DefineConstants>$(DefineConstants);UNTYPED_CANDIDATE</DefineConstants>
+    <ILLinkTreatWarningsAsErrors>true</ILLinkTreatWarningsAsErrors><IlcTreatWarningsAsErrors>true</IlcTreatWarningsAsErrors>
+  </PropertyGroup>
+  <ItemGroup>
+    <ProjectReference Include="../../src/Wasm.Execution/Wasm.Execution.csproj" />
+    <Compile Include="../../tools/AotProbes/Wasm/Program.cs" Link="Program.cs" />
+    <Content Include="../../samples/wasm-counter/counter.wasm" Link="counter.wasm" CopyToOutputDirectory="PreserveNewest" CopyToPublishDirectory="PreserveNewest" />
+  </ItemGroup>
+</Project>

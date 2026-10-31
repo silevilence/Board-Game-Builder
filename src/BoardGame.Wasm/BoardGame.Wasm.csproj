@@ -1,7 +1,8 @@
 <Project Sdk="Microsoft.NET.Sdk">
+  <PropertyGroup><IsAotCompatible>true</IsAotCompatible></PropertyGroup>
   <ItemGroup>
     <ProjectReference Include="../BoardGame.Core/BoardGame.Core.csproj" />
-    <ProjectReference Include="../Modules/Modules.csproj" />
+    <ProjectReference Include="../Modules.Runtime/Modules.Runtime.csproj" />
     <ProjectReference Include="../Wasm.Execution/Wasm.Execution.csproj" />
   </ItemGroup>
 </Project>

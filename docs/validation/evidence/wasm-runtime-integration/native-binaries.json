@@ -1,0 +1,10 @@
+[
+  {
+    "Hash": "F063C8ADF44C032FD8D63C7989104E99D025E8BCE2CB9337F5A9FDC138364A3B",
+    "File": "BoardGame.WasmHosting.Tests.exe"
+  },
+  {
+    "Hash": "480BA26825CDB66F8C5CA5C33C9908BBA2A2EE6E2BEEF12DCB144D023F01CE48",
+    "File": "Wasm.Execution.Tests.exe"
+  }
+]

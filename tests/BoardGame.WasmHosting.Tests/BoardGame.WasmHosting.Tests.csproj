@@ -1,1 +1,5 @@
-<Project Sdk="Microsoft.NET.Sdk"><PropertyGroup><OutputType>Exe</OutputType></PropertyGroup><ItemGroup><ProjectReference Include="../../src/BoardGame.Hosting/BoardGame.Hosting.csproj" /><ProjectReference Include="../../src/BoardGame.Wasm/BoardGame.Wasm.csproj" /></ItemGroup></Project>
+<Project Sdk="Microsoft.NET.Sdk">
+  <PropertyGroup><OutputType>Exe</OutputType><ILLinkTreatWarningsAsErrors>true</ILLinkTreatWarningsAsErrors><IlcTreatWarningsAsErrors>true</IlcTreatWarningsAsErrors></PropertyGroup>
+  <ItemGroup><ProjectReference Include="../../src/BoardGame.Hosting/BoardGame.Hosting.csproj" /><ProjectReference Include="../../src/BoardGame.Wasm/BoardGame.Wasm.csproj" /></ItemGroup>
+  <ItemGroup><Content Include="../../samples/wasm-counter/counter.wasm;../../samples/wasm-counter/game.start.json" Link="fixture/%(Filename)%(Extension)" CopyToOutputDirectory="PreserveNewest" CopyToPublishDirectory="PreserveNewest" /></ItemGroup>
+</Project>

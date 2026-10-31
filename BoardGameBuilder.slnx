@@ -7,6 +7,7 @@
     <Project Path="samples/Editor.SamplePlugin/Editor.SamplePlugin.csproj" />
   </Folder>
   <Folder Name="/src/">
+    <Project Path="src/Runtime.Publishing/Runtime.Publishing.csproj" />
     <Project Path="src/Rendering.DesktopGL/Rendering.DesktopGL.csproj" />
     <Project Path="src/BoardGame.Avalonia/BoardGame.Avalonia.csproj" />
     <Project Path="src/Application.Abstractions/Application.Abstractions.csproj" />
@@ -55,6 +56,8 @@
     <Project Path="src/View.MonoGame/View.MonoGame.csproj" />
   </Folder>
   <Folder Name="/tests/">
+    <Project Path="tests/Wasm.Execution.Tests/Wasm.Execution.Tests.csproj" />
+    <Project Path="tests/Runtime.Publishing.Tests/Runtime.Publishing.Tests.csproj" />
     <Project Path="tests/Rendering.DesktopGL.Tests/Rendering.DesktopGL.Tests.csproj" />
     <Project Path="tests/Rendering.Games.Tests/Rendering.Games.Tests.csproj" />
     <Project Path="tests/Native.Board.Tests/Native.Board.Tests.csproj" />

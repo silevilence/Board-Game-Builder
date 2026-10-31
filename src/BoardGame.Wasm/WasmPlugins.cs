@@ -21,8 +21,8 @@ public sealed class WasmPlugins : IEffectProvider, IDisposable
             foreach(var original in declared)
             {
                 var d=Wire.Copy(original);
-                ModulePackage.ValidateDependencies([new(d.Id,d.Version,d.Api,Kind:"wasm",File:d.File,Sha256:d.Sha256,Permissions:d.Permissions)]);
-                if(d.Code.Length>256*1024 || ModulePackage.Hash(d.Code)!=d.Sha256.ToUpperInvariant()) throw new InvalidDataException($"WASM {d.Id}: hash/size mismatch");
+                WasmDependency.ValidateAll([new(d.Id,d.Version,d.Api,Kind:"wasm",File:d.File,Sha256:d.Sha256,Permissions:d.Permissions)]);
+                if(d.Code.Length>256*1024 || ModuleHash.Compute(d.Code)!=d.Sha256.ToUpperInvariant()) throw new InvalidDataException($"WASM {d.Id}: hash/size mismatch");
                 if(!plugins.TryAdd(d.Id,d)) throw new InvalidDataException($"WASM {d.Id}: duplicate identity");
             }
             candidate=new WasmExecutor(plugins.Values.Select(p=>new WasmCode(p.Id,p.Code)));
@@ -74,8 +74,8 @@ public static class WasmRuntimePlugin
         scope.Provide("effects",scope.Own(new WasmPlugins(RuntimeDefinition.Configuration<List<RuntimePlugin>>(definition(),"wasm")))))
         {Content=new(["extensions"],(config,startup)=>
         {
-            var extensions=System.Text.Json.JsonSerializer.Deserialize<List<RuntimeDependency>>(config.GetProperty("extensions"),Wire.Options) ?? throw new InvalidDataException("wasm: missing extensions");
+            var extensions=System.Text.Json.JsonSerializer.Deserialize(config.GetProperty("extensions"),Wire.Type<List<RuntimeDependency>>(WasmJson.Default)) ?? throw new InvalidDataException("wasm: missing extensions");
             if(extensions.Any(p=>p.Kind!="wasm" || p.EditorOnly)) throw new InvalidDataException("wasm: expected runtime WASM extension");
-            ModulePackage.ValidateDependencies(extensions);
-        },Files:config=>System.Text.Json.JsonSerializer.Deserialize<List<RuntimeDependency>>(config.GetProperty("extensions"),Wire.Options)!.Select(p=>p.File!))};
+            WasmDependency.ValidateAll(extensions);
+        },Files:config=>System.Text.Json.JsonSerializer.Deserialize(config.GetProperty("extensions"),Wire.Type<List<RuntimeDependency>>(WasmJson.Default))!.Select(p=>p.File!))};
 }

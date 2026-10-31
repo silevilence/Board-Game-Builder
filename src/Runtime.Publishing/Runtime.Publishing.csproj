@@ -1,0 +1,3 @@
+<Project Sdk="Microsoft.NET.Sdk">
+  <ItemGroup><ProjectReference Include="../Runtime.Plugins/Runtime.Plugins.csproj" /></ItemGroup>
+</Project>

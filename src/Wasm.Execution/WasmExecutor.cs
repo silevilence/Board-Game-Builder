@@ -64,6 +64,14 @@ public sealed class WasmCall
     internal WasmCall(Instance instance)=>this.instance=instance;
     internal void Close()=>instance=null;
     private Instance Active=>instance ?? throw new ObjectDisposedException(nameof(WasmCall));
-    public int ReadInt(string export)=>(Active.GetFunction<int>(export) ?? throw new InvalidDataException("Missing WASM export: "+export))();
-    public int ApplyInt(string export,int first,int second)=>(Active.GetFunction<int,int,int>(export) ?? throw new InvalidDataException("Missing WASM export: "+export))(first,second);
+    private Function Require(string export,int parameters)
+    {
+        var function=Active.GetFunction(export);
+        if(function==null || function.Parameters.Count!=parameters || function.Parameters.Any(k=>k!=ValueKind.Int32) ||
+            function.Results.Count!=1 || function.Results[0]!=ValueKind.Int32)
+            throw new InvalidDataException("Missing WASM export or incompatible i32 signature: "+export);
+        return function;
+    }
+    public int ReadInt(string export)=>(int)Require(export,0).Invoke()!;
+    public int ApplyInt(string export,int first,int second)=>(int)Require(export,2).Invoke(new ValueBox[]{first,second})!;
 }

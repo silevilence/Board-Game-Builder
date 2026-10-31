@@ -1,3 +1,4 @@
 <Project Sdk="Microsoft.NET.Sdk">
+  <PropertyGroup><IsAotCompatible>true</IsAotCompatible></PropertyGroup>
   <ItemGroup><PackageReference Include="Wasmtime" Version="48.0.2" /></ItemGroup>
 </Project>
