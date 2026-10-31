@@ -4,6 +4,7 @@ using BoardGame.Player;
 using BoardGame.Rendering;
 using Sample.Motion;
 
+if(args.Length==2 && args[0]=="runtime-host") {BoardGame.Plugins.PluginPlayerDistribution.WriteHostContract(args[1]);return 0;}
 if(args.Length==2 && args[0]=="runtime-catalog")
 {
     var plugins=new ApplicationCatalog(MotionPlugins.Catalog()).Content.Plugins;
@@ -14,4 +15,4 @@ var graphics=new GraphicsConfiguration(new(1,"graphics","1",[new(backend.Id,back
 var bundled=Path.Combine(AppContext.BaseDirectory,"game.bgm");
 if(args.Length==2 && args[0]=="--verify-standalone")return MinimalPlayerProbe.Run(bundled,args[1],graphics);
 var source=args.FirstOrDefault() ?? (File.Exists(bundled)?bundled:"samples/motion-lab");
-return PlayerApplication.Run(new PlayerCatalog([new ApplicationPlayerProvider(new ApplicationCatalog(MotionPlugins.Catalog()),graphics).Contribution()]),new(source));
+return PlayerApplication.Run(new PlayerCatalog([new ApplicationPlayerProvider(new ApplicationCatalog(MotionPlugins.Catalog()),graphics,PlayerRuntimePlugins.Open(typeof(BoardGame.Resources.AssetRegistry).Assembly)).Contribution()]),new(source));

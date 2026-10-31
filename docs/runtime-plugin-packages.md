@@ -47,7 +47,17 @@
 
 `PluginManifest.Fingerprint` 是规范化清单的 SHA-256，清单包含每个文件的哈希。外部选择须将该值写入 `RuntimePluginSelection.Implementation`；缺失或不同会在运行前拒绝。现有内置插件的空指纹保持历史 JSON 形状，不能用空值选择外部实现。保存包、内容快照和记录时，这个字段随既有启动身份参与完整性校验。
 
-`PluginStore.Import` 先验证来源，再复制到暂存目录并重新核对字节，加载声明工厂完成身份核验后才登记。重名同版本默认拒绝，替换必须显式请求。`Acquire` 返回的 lease 必须覆盖整个校验、会话或发布操作；活动版本禁止替换和移除。托管实现从验证后的字节加载，安装文件不受 CLR 文件映射锁定；`AssemblyLoadContext.Unload` 仍由 GC 决定实际回收，不承诺对局中热卸载。
+`PluginStore.Import` 先验证来源，再复制到暂存目录并重新核对字节，加载声明工厂完成身份核验后才登记。重名同版本默认拒绝，替换必须显式请求。`Acquire` / `Open` 返回的 lease 必须覆盖整个校验、会话或发布操作；活动版本禁止替换和移除。安装文件由 lease 持有只读共享锁，其他安装服务实例也不能替换或删除它们；托管实现从已验证字节加载，lease 结束后不遗留 CLR 文件映射锁。`AssemblyLoadContext.Unload` 仍由 GC 决定实际回收，不承诺对局中热卸载。
+
+`Open(startup, builtinCatalog)` 只解析本次选择、且不在固定目录中的身份；不会自动导入。整个选择集合使用同一个受控加载上下文，允许插件通过共同依赖中的类型协作。同名托管依赖或原生库须字节一致，否则拒绝选择。公共契约由宿主共享，游戏内容不能扩充共享程序集名单。
+
+## 作者与普通发行
+
+Editor 与 CLI 作者安装目录默认是 `%LOCALAPPDATA%/BoardGameBuilder/runtime-plugins`，可由启动环境变量 `BGB_RUNTIME_PLUGIN_STORE` 指定；该路径不来自游戏文件。作者 profile 可启用 `author.runtime.plugins`，发现 `runtime.plugins.list/import/remove`。外部定义由 `author.runtime.external` 提供作者加载、校验及导出适配。`author.run.application` 的 `runtime.run` 用相同目录和捕获的 ProjectView 执行固定步长批次；支持 `ticks` 和 `count`，结果包含源版本、完整内容身份及完成的逻辑时间。启用或导入这些作者能力不会改写游戏入口。
+
+数据包只包含定义、脚本、资源和精确身份。普通自包含 Player 通过 `runtime-host.json` 声明受控安装协议，维护者发布脚本将它及 `Runtime.Plugins.dll` 纳入发行哈希。`PluginPlayerDistribution` 复制本次选中外部包和依赖，记录到 `release.json`，再原子发布到新目录。正式 Player 仅从自身 `plugins/runtime` 加载，脱离作者安装仍可运行；不会从机器其他位置补齐缺件。对附加导出步骤再次检查受保护文件、开发文件与链接，失败不覆盖已有产物。
+
+Editor 的 `runtime.plugins` 提供安装服务，`runtime.external` 将外部定义登记到会话和作者服务。嵌入会话及独立调试 Player 持有精确集合直到异步退出；实际视口先释放，再结束实例并归还安装版本。UI 管理和后端配置按各自 ROADMAP 条目交付。验收见[外部插件普通发行](validation/external-plugin-delivery.md)。
 
 ## NativeAOT 准入与静态构建
 

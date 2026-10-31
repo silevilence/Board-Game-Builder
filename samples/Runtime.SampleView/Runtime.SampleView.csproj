@@ -1,0 +1,4 @@
+<Project Sdk="Microsoft.NET.Sdk">
+  <PropertyGroup><IsAotCompatible>true</IsAotCompatible></PropertyGroup>
+  <ItemGroup><ProjectReference Include="../Runtime.SamplePlugin/Runtime.SamplePlugin.csproj" /><ProjectReference Include="../../src/Rendering.Core/Rendering.Core.csproj" /></ItemGroup>
+</Project>

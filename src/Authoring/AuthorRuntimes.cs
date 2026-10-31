@@ -2,6 +2,7 @@ using System.Text.Json;
 using BoardGame.AppRuntime;
 using BoardGame.Kernel;
 using BoardGame.Runtime;
+using BoardGame.Plugins;
 
 namespace BoardGame.Authoring;
 
@@ -18,6 +19,13 @@ public interface IAuthorPackageRuntime : IAuthorRuntime
 public interface IAuthorApplicationRuntime : IAuthorRuntime
 {
     ApplicationCatalog Catalog {get;}
+    AuthorApplicationLease Open(ProjectView view,IEnumerable<ApprovedApplicationPlugin>? additional=null);
+}
+public sealed class AuthorApplicationLease(ApplicationCatalog catalog,PluginCatalogLease? imported=null):IDisposable
+{
+    public ApplicationCatalog Catalog=>imported?.Catalog ?? catalog;
+    public IReadOnlyList<PluginBuildInput> Imports=>imported?.Inputs ?? [];
+    public void Dispose()=>imported?.Dispose();
 }
 public sealed class AuthorRuntimes
 {
@@ -38,19 +46,28 @@ public sealed class AuthorRuntimes
     }
     public void ValidateContent(ProjectView view)=>Resolve(view).Validate(view,"content").GetAwaiter().GetResult();
 }
-public sealed class ApplicationAuthorRuntime(string id,ApplicationCatalog catalog) : IAuthorPackageRuntime,IAuthorPlayerRuntime,IAuthorApplicationRuntime
+public sealed class ApplicationAuthorRuntime(string id,ApplicationCatalog catalog,PluginStore? installation=null,bool importedDefinitions=false) : IAuthorPackageRuntime,IAuthorPlayerRuntime,IAuthorApplicationRuntime
 {
     public string Id=>id;
     public ApplicationCatalog Catalog=>catalog;
-    public void PreflightPlayer(string release,ProjectView view,CancellationToken cancellation)
-    {cancellation.ThrowIfCancellationRequested();using var snapshot=new ProjectSnapshot(view);_=PrecompiledPlayer.Preflight(release,PlayerSource(snapshot.Directory));}
-    public string ExportPlayer(string release,ProjectView view,string target,AuthorExportRequest request)=>ExportSnapshots.Use(view,request,snapshot=>
+    public AuthorApplicationLease Open(ProjectView view,IEnumerable<ApprovedApplicationPlugin>? additional=null)
     {
-        var source=PlayerSource(snapshot.Directory);
-        PrecompiledPlayer.Export(release,source,target,path=>request.AdditionalSteps?.Invoke(snapshot.Directory,path),request.Progress,request.Cancellation);
-        return source.Fingerprint;
-    });
-    private PlayerPackageSource PlayerSource(string directory)
+        var selected=additional==null?catalog:catalog.Extend(additional);
+        return new(selected,installation?.Open(JsonSerializer.Deserialize<RuntimeStartup>(view.Text(BoardGame.AppRuntime.GameRuntime.Entry),AuthorProfiles.Json) ?? throw new InvalidDataException("Invalid startup"),selected));
+    }
+    public void PreflightPlayer(string release,ProjectView view,CancellationToken cancellation)
+    {cancellation.ThrowIfCancellationRequested();using var lease=Open(view);using var snapshot=new ProjectSnapshot(view);_=PluginPlayerDistribution.Preflight(release,PlayerSource(snapshot.Directory,lease.Catalog),lease.Imports);}
+    public string ExportPlayer(string release,ProjectView view,string target,AuthorExportRequest request)
+    {
+        using var lease=Open(view);
+        return ExportSnapshots.Use(view,request,snapshot=>
+        {
+            var source=PlayerSource(snapshot.Directory,lease.Catalog);
+            PluginPlayerDistribution.Export(release,source,lease.Imports,target,path=>request.AdditionalSteps?.Invoke(snapshot.Directory,path),request.Progress,request.Cancellation);
+            return source.Fingerprint;
+        });
+    }
+    private static PlayerPackageSource PlayerSource(string directory,ApplicationCatalog catalog)
     {
         var content=BoardGame.AppRuntime.GameRuntime.Load(directory,catalog.Content);
         return new(content.Identity.Startup,3,content.Fingerprint,p=>BoardGame.AppRuntime.GamePackage.Pack(directory,p,catalog.Content),
@@ -61,6 +78,7 @@ public sealed class ApplicationAuthorRuntime(string id,ApplicationCatalog catalo
     public string Pack(ProjectView view,string destination,CancellationToken cancellation=default)
     {
         cancellation.ThrowIfCancellationRequested();
+        using var lease=Open(view);var catalog=lease.Catalog;
         using var snapshot=new ProjectSnapshot(view);
         BoardGame.AppRuntime.GamePackage.Pack(snapshot.Directory,destination,catalog.Content);
         return BoardGame.AppRuntime.GamePackage.Load(destination,catalog.Content).Fingerprint;
@@ -68,11 +86,13 @@ public sealed class ApplicationAuthorRuntime(string id,ApplicationCatalog catalo
     public bool Supports(IAuthorFiles files)
     {
         var definitions=catalog.Content.Plugins.Where(p=>p.Provides.Contains("definition")).Select(p=>p.Id).ToHashSet(StringComparer.Ordinal);
+        if(importedDefinitions)foreach(var manifest in installation?.Installed() ?? [])if(manifest.Provides.Any(p=>p.Name=="definition"))definitions.Add(manifest.Id);
         return JsonSerializer.Deserialize<RuntimeStartup>(files.Text(BoardGame.AppRuntime.GameRuntime.Entry),AuthorProfiles.Json)!.Plugins.Any(p=>definitions.Contains(p.Id));
     }
     public async Task<IReadOnlyList<string>> Validate(ProjectView view,string layer,CancellationToken cancellation=default)
     {
         cancellation.ThrowIfCancellationRequested();
+        using var lease=Open(view);var catalog=lease.Catalog;
         var startup=JsonSerializer.Deserialize<RuntimeStartup>(view.Text(BoardGame.AppRuntime.GameRuntime.Entry),AuthorProfiles.Json)!;
         RuntimeDiscovery.Validate(startup,catalog.Content.Plugins);
         if(layer=="configuration")return [];

@@ -1,6 +1,8 @@
 <Solution>
   <Folder Name="/samples/">
     <Project Path="samples/Minimal.Player/Minimal.Player.csproj" />
+    <Project Path="samples/Runtime.SamplePlugin/Runtime.SamplePlugin.csproj" />
+    <Project Path="samples/Runtime.SampleView/Runtime.SampleView.csproj" />
     <Project Path="samples/Sample.Motion.Authoring/Sample.Motion.Authoring.csproj" />
     <Project Path="samples/Sample.Motion/Sample.Motion.csproj" />
     <Project Path="samples/Author.SamplePlugin/Author.SamplePlugin.csproj" />
@@ -63,6 +65,7 @@
     <Project Path="tests/Rendering.Games.Tests/Rendering.Games.Tests.csproj" />
     <Project Path="tests/Native.Board.Tests/Native.Board.Tests.csproj" />
     <Project Path="tests/Runtime.StaticRegistration.Tests/Runtime.StaticRegistration.Tests.csproj" />
+    <Project Path="tests/Runtime.PluginDelivery.Tests/Runtime.PluginDelivery.Tests.csproj" />
     <Project Path="tests/Runtime.PluginImport.Tests/Runtime.PluginImport.Tests.csproj" />
     <Project Path="tests/Runtime.Plugins.Tests/Runtime.Plugins.Tests.csproj" />
     <Project Path="tests/Application.Tests/Application.Tests.csproj" />

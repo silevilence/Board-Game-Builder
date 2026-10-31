@@ -40,9 +40,11 @@ public static class BuiltinPlugins
             void Publish()=>server.Publish(documents.WorkspaceId,documents.Generation,documents.Current?.DirectoryPath);
             documents.Replaced+=Publish;scope.Own(new Cleanup(()=>documents.Replaced-=Publish));Publish();
         }));
-        app.Install(new("base.sessions",1,["sessions"],["documents"],scope=>
+        app.Install(new("runtime.plugins",1,["runtime.plugins"],[],scope=>
+            scope.Provide("runtime.plugins",BoardGame.Authoring.AuthorRuntimePlugins.CreateStore()),true));
+        app.Install(new("base.sessions",1,["sessions"],["documents","runtime.plugins"],scope=>
         {
-            var sessions=new ApplicationSessions(scope.Service<DocumentWorkspace>("documents"));
+            var sessions=new ApplicationSessions(scope.Service<DocumentWorkspace>("documents"),scope.Service<BoardGame.Plugins.PluginStore>("runtime.plugins"));
             scope.OwnAsync(sessions);scope.Provide("sessions",sessions);
         },true));
         app.Install(new("base.viewports",1,["viewports"],[],scope=>scope.Provide("viewports",EditorViewports.WindowsDx()),true));
@@ -51,11 +53,19 @@ public static class BuiltinPlugins
             var sessions=new BoardSessionController(scope.Service<DocumentWorkspace>("documents"));scope.Own(sessions);scope.Provide("board.sessions",sessions);
         }));
         app.Install(new("board.viewports",1,["board.viewports"],[],scope=>scope.Provide("board.viewports",new BoardViewports())));
-        app.Install(new("runtime.motion",1,[],["sessions","documents"],scope=>
+        app.Install(new("runtime.motion",1,[],["sessions","documents","runtime.plugins"],scope=>
         {
             var catalog=new BoardGame.AppRuntime.ApplicationCatalog(Sample.Motion.MotionPlugins.Catalog());
             scope.Own(scope.Service<ApplicationSessions>("sessions").Register("motion",catalog));
-            scope.Own(scope.Service<DocumentWorkspace>("documents").Runtimes.Register(new BoardGame.Authoring.ApplicationAuthorRuntime("motion",catalog)));
+            scope.Own(scope.Service<DocumentWorkspace>("documents").Runtimes.Register(new BoardGame.Authoring.ApplicationAuthorRuntime("motion",catalog,scope.Service<BoardGame.Plugins.PluginStore>("runtime.plugins"))));
+        }));
+        app.Install(new("runtime.external",1,[],["sessions","documents","runtime.plugins"],scope=>
+        {
+            var catalog=new BoardGame.AppRuntime.ApplicationCatalog([BoardGame.Resources.AssetStaticFactories.Resources(),BoardGame.Resources.AssetStaticFactories.Images(),
+                BoardGame.Resources.AssetStaticFactories.TexturePacker(),BoardGame.Resources.AssetStaticFactories.Font()]);
+            var store=scope.Service<BoardGame.Plugins.PluginStore>("runtime.plugins");
+            scope.Own(scope.Service<ApplicationSessions>("sessions").Register("external",catalog,true));
+            scope.Own(scope.Service<DocumentWorkspace>("documents").Runtimes.Register(new BoardGame.Authoring.ApplicationAuthorRuntime("external",catalog,store,true)));
         }));
         app.Install(new("play.application",1,[],["documents","sessions","viewports","panels"],scope=>
         {

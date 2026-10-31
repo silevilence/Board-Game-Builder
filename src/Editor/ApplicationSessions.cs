@@ -2,6 +2,7 @@ using Avalonia.Threading;
 using BoardGame.AppRuntime;
 using BoardGame.Authoring;
 using BoardGame.Runtime;
+using BoardGame.Plugins;
 
 namespace BoardGame.Editor;
 
@@ -9,6 +10,9 @@ namespace BoardGame.Editor;
 public sealed class ApplicationSessions : IAsyncDisposable
 {
     private readonly DocumentWorkspace documents;
+    private readonly PluginStore? installation;
+    private readonly HashSet<string> externalCatalogs=new(StringComparer.Ordinal);
+    private PluginCatalogLease? imported;
     private readonly Dictionary<string,ApplicationCatalog> catalogs=new(StringComparer.Ordinal);
     private readonly DispatcherTimer timer=new(){Interval=TimeSpan.FromMilliseconds(100)};
     private CancellationTokenSource? starting;
@@ -26,23 +30,26 @@ public sealed class ApplicationSessions : IAsyncDisposable
     public string Executable {get;set;}=EditorPaths.DebugPlayer;
     public int? ExternalProcessId=>(session as ExternalApplicationDebugSession)?.ProcessId;
     public event Action? Changed;
-    public ApplicationSessions(DocumentWorkspace documents)
+    public ApplicationSessions(DocumentWorkspace documents,PluginStore? installation=null)
     {
-        this.documents=documents;documents.Replaced+=Stop;
+        this.documents=documents;this.installation=installation;documents.Replaced+=Stop;
         timer.Tick+=async(_,_)=>{if(!Busy && Active)await Send("status");};
     }
-    public IDisposable Register(string id,ApplicationCatalog catalog)
+    public IDisposable Register(string id,ApplicationCatalog catalog,bool importedDefinitions=false)
     {
         if(!catalogs.TryAdd(id,catalog))throw new InvalidOperationException("Duplicate application catalog: "+id);
+        if(importedDefinitions)externalCatalogs.Add(id);
         Changed?.Invoke();
-        return new Cleanup(()=>{if(activeCatalog==id)Stop();catalogs.Remove(id);Changed?.Invoke();});
+        return new Cleanup(()=>{if(activeCatalog==id)Stop();catalogs.Remove(id);externalCatalogs.Remove(id);Changed?.Invoke();});
     }
     private KeyValuePair<string,ApplicationCatalog>[] Matching()
     {
         var plugins=documents.Current?.Startup["plugins"]?.AsArray();
         if(plugins==null)return [];
         var ids=plugins.Select(p=>p?["id"]?.GetValue<string>()).ToHashSet();
-        return catalogs.Where(c=>c.Value.Content.Plugins.Any(p=>p.Provides.Contains("definition") && ids.Contains(p.Id))).ToArray();
+        var importedDefinition=installation?.Installed().Any(p=>ids.Contains(p.Id) && p.Provides.Any(c=>c.Name=="definition"))==true;
+        return catalogs.Where(c=>c.Value.Content.Plugins.Any(p=>p.Provides.Contains("definition") && ids.Contains(p.Id)) ||
+            importedDefinition && externalCatalogs.Contains(c.Key)).ToArray();
     }
     public bool Supported {get {try{return Matching().Length==1;}catch{return false;}}}
     public Task Start()
@@ -53,21 +60,27 @@ public sealed class ApplicationSessions : IAsyncDisposable
     private async Task StartCore(int current,CancellationToken cancellation)
     {
         Busy=true;Changed?.Invoke();
+        PluginCatalogLease? lease=null;
         try
         {
             documents.ApplyDrafts();
             var selected=Matching();if(selected.Length!=1)throw new InvalidDataException("缺少唯一匹配的应用运行能力");
+            activeCatalog=selected[0].Key;
             var doc=documents.Current ?? throw new InvalidOperationException("请打开工程");
             var source=new ProjectView(new(doc.DirectoryPath ?? "", "editor.application", "gui",documents.WorkspaceId,documents.Generation),doc.CopyFiles());
-            var content=await Task.Run(()=>BoardGame.AppRuntime.GameRuntime.LoadFiles(source.CopyFiles(),selected[0].Value.Content),cancellation);
+            var startup=System.Text.Json.JsonSerializer.Deserialize<BoardGame.Kernel.RuntimeStartup>(source.Text(BoardGame.AppRuntime.GameRuntime.Entry),AuthorProfiles.Json)!;
+            lease=installation?.Open(startup,selected[0].Value);var catalog=lease?.Catalog ?? selected[0].Value;
+            var content=await Task.Run(()=>BoardGame.AppRuntime.GameRuntime.LoadFiles(source.CopyFiles(),catalog.Content),cancellation);
             cancellation.ThrowIfCancellationRequested();
-            var created=External?(IApplicationDebugSession)await ExternalApplicationDebugSession.Start(Executable,content.ExportSnapshot(),cancellation):
-                await ApplicationDebugSession.Start(selected[0].Value,content.ExportSnapshot());
+            var created=External?(IApplicationDebugSession)await ExternalApplicationDebugSession.Start(Executable,content.ExportSnapshot(),cancellation,
+                installation==null?[]:["--runtime-plugins",installation.DirectoryPath]):
+                await ApplicationDebugSession.Start(catalog,content.ExportSnapshot());
             if(current!=generation){await created.DisposeAsync();return;}
-            session=created;activeCatalog=selected[0].Key;SourceView=source;Busy=false;
+            session=created;imported=lease;lease=null;activeCatalog=selected[0].Key;SourceView=source;Busy=false;
             await Send("status");if(current==generation)timer.Start();
         }
         catch(Exception error){if(current==generation){Busy=false;Status="应用试玩故障："+error.Message;Changed?.Invoke();}}
+        finally{lease?.Dispose();}
     }
     public Task Send(string operation)
     {
@@ -95,7 +108,9 @@ public sealed class ApplicationSessions : IAsyncDisposable
     {
         generation++;timer.Stop();starting?.Cancel();starting?.Dispose();starting=null;
         var previous=session;session=null;activeCatalog=null;SourceView=null;State=null;Busy=false;Status="已停止";
-        if(previous!=null)shutdown=Task.WhenAll(shutdown,previous.DisposeAsync().AsTask());
+        var previousImports=imported;imported=null;
+        if(previous!=null)shutdown=Task.WhenAll(shutdown,Release());else previousImports?.Dispose();
+        async Task Release(){try{await previous!.DisposeAsync();}finally{previousImports?.Dispose();}}
         Changed?.Invoke();
     }
     public async ValueTask DisposeAsync()

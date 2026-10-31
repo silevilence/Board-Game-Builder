@@ -8,6 +8,7 @@ internal static class Program
 {
     [STAThread] private static int Main(string[] args)
     {
+        if(args.Length==2 && args[0]=="runtime-host") {BoardGame.Plugins.PluginPlayerDistribution.WriteHostContract(args[1]);return 0;}
         if(args.Length==3 && args[0]=="--verify-showcase") return ViewportApp.Run("",[],()=>ShowcaseVerification.Create(args[1],args[2]));
         if(args.Length==3 && args[0]=="--verify-online-gui") return ViewportApp.Run("",[],()=>ShowcaseVerification.Online(args[1],args[2]));
         if(args.Length==2 && args[0]=="--verify-local") return ViewportApp.Run("",[],()=>LocalTableVerification.Create(args[1]));
@@ -18,7 +19,11 @@ internal static class Program
         {
             var backend=WindowsDxBackend.Plugin();
             var graphics=new GraphicsConfiguration(new(1,"graphics","1",[new(backend.Id,backend.Version,backend.Api,JsonSerializer.SerializeToElement(new{}))]),[backend]);
-            return ViewportApp.Run("",[],()=>new ApplicationDebugWindow(new ApplicationCatalog(MotionPlugins.Catalog()),graphics));
+            var pluginOption=Array.IndexOf(args,"--runtime-plugins");
+            var installation=pluginOption<0?PlayerRuntimePlugins.Open(typeof(BoardGame.Resources.AssetRegistry).Assembly):
+                new BoardGame.Plugins.PluginStore(args[pluginOption+1],"win-x64",[typeof(IApplicationView).Assembly,typeof(IDraw2D).Assembly,
+                    typeof(BoardGame.Resources.AssetSet).Assembly,typeof(BoardGame.Resources.AssetRegistry).Assembly]);
+            return ViewportApp.Run("",[],()=>new ApplicationDebugWindow(new ApplicationCatalog(MotionPlugins.Catalog()),graphics,installation));
         }
         if(args.FirstOrDefault()=="--editor-debug")
         {
@@ -35,7 +40,7 @@ internal static class Program
             if(launch.Module==null && File.Exists(bundled))launch=launch with {Module=bundled};
             var backend=WindowsDxBackend.Plugin();
             var graphics=new GraphicsConfiguration(new(1,"graphics","1",[new(backend.Id,backend.Version,backend.Api,JsonSerializer.SerializeToElement(new{}))]),[backend]);
-            return PlayerApplication.Run(new PlayerCatalog([BoardPlayerProvider.Contribution(),new ApplicationPlayerProvider(new ApplicationCatalog(MotionPlugins.Catalog()),graphics).Contribution()]),launch);
+            return PlayerApplication.Run(new PlayerCatalog([BoardPlayerProvider.Contribution(),new ApplicationPlayerProvider(new ApplicationCatalog(MotionPlugins.Catalog()),graphics,PlayerRuntimePlugins.Open(typeof(BoardGame.Resources.AssetRegistry).Assembly)).Contribution()]),launch);
         }
         if(args.Length>0 && args[0]=="viewport") return ViewportApp.Run("Board Game Builder — Player viewport probe",args[1..]);
         if(args.Length==2 && args[0]=="table") return ViewportApp.Run("",[],()=>TablePreview.Create(args[1]));

@@ -52,11 +52,14 @@ public static class ApplicationDebugProtocol
             line.Append(buffer[0]);
         }
     }
-    public static async Task Serve(ApplicationCatalog catalog,Func<RuntimeHost,Task>? opened=null,CancellationToken cancellation=default)
+    public static async Task Serve(ApplicationCatalog catalog,Func<RuntimeHost,Task>? opened=null,CancellationToken cancellation=default,
+        Func<ContentSnapshot,ApplicationCatalog>? resolveCatalog=null,Func<Task>? closing=null)
     {
         var start=JsonSerializer.Deserialize<ApplicationDebugStart>(await Read(Console.In,cancellation).WaitAsync(cancellation),Json) ?? throw new InvalidDataException("Missing debug handshake");
         if(start.Api!=1)throw new InvalidDataException("Application debug API mismatch");
-        await using var session=await ApplicationDebugSession.Start(catalog,start.Content);
+        await using var session=await ApplicationDebugSession.Start(resolveCatalog?.Invoke(start.Content) ?? catalog,start.Content);
+        try
+        {
         if(opened!=null)await opened(session.Host);
         await Reply(await session.SendAsync("status"));
         while(true)
@@ -67,6 +70,8 @@ public static class ApplicationDebugProtocol
             try {await Reply(await session.SendAsync(operation));}
             catch(Exception error){await Reply(new("error",0,0,true,Error:error.Message));}
         }
+        }
+        finally{if(closing!=null)await closing();}
         static Task Reply(ApplicationDebugState value)=>Console.Out.WriteLineAsync(JsonSerializer.Serialize(value,Json));
     }
 }
@@ -80,11 +85,13 @@ public sealed class ExternalApplicationDebugSession : IApplicationDebugSession
     private Task? stopped;
     public int ProcessId=>process.Id;
     private ExternalApplicationDebugSession(Process process){this.process=process;errors=process.StandardError.ReadToEndAsync();}
-    public static async Task<ExternalApplicationDebugSession> Start(string executable,ContentSnapshot snapshot,CancellationToken cancellation=default)
+    public static async Task<ExternalApplicationDebugSession> Start(string executable,ContentSnapshot snapshot,CancellationToken cancellation=default,
+        IReadOnlyList<string>? additionalArguments=null)
     {
         if(!File.Exists(executable))throw new FileNotFoundException("Debug Player not found",executable);
         var info=new ProcessStartInfo(Path.GetFullPath(executable)){UseShellExecute=false,CreateNoWindow=true,RedirectStandardInput=true,RedirectStandardOutput=true,RedirectStandardError=true,WorkingDirectory=AppContext.BaseDirectory};
         info.ArgumentList.Add("--editor-application-debug");
+        foreach(var argument in additionalArguments ?? [])info.ArgumentList.Add(argument);
         var client=new ExternalApplicationDebugSession(Process.Start(info) ?? throw new IOException("Debug Player failed to start"));
         try
         {

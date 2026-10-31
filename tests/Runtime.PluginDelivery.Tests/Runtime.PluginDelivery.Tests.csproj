@@ -1,0 +1,4 @@
+<Project Sdk="Microsoft.NET.Sdk">
+  <PropertyGroup><OutputType>Exe</OutputType></PropertyGroup>
+  <ItemGroup><ProjectReference Include="../../src/Runtime.Plugins/Runtime.Plugins.csproj" /><ProjectReference Include="../../samples/Runtime.SampleView/Runtime.SampleView.csproj" /><ProjectReference Include="../../src/Authoring/Authoring.csproj" /></ItemGroup>
+</Project>

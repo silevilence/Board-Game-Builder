@@ -18,6 +18,7 @@ public sealed class PluginStore
     private readonly Dictionary<string,int> active=new(StringComparer.Ordinal);
     private readonly Assembly[] shared;
     private readonly PluginManifest[] builtins;
+    public string DirectoryPath=>root;
     private static readonly HashSet<string> platformAssemblies=((string?)AppContext.GetData("TRUSTED_PLATFORM_ASSEMBLIES") ?? "")
         .Split(Path.PathSeparator,StringSplitOptions.RemoveEmptyEntries)
         .Where(p=>string.Equals(Path.GetDirectoryName(p),Path.TrimEndingDirectorySeparator(System.Runtime.InteropServices.RuntimeEnvironment.GetRuntimeDirectory()),StringComparison.OrdinalIgnoreCase))
@@ -82,8 +83,52 @@ public sealed class PluginStore
             var key=Key(id,version);var directory=Path.Combine(root,key);var manifest=ReadVerified(directory);
             if(manifest.Id!=id || manifest.Version!=version)throw new InvalidDataException("Installed plugin identity mismatch");
             if(!manifest.Targets.Contains(target,StringComparer.Ordinal))throw new InvalidDataException(id+": unsupported target "+target);
-            var lease=Load(directory,manifest,()=>{lock(gate){if(--active[key]==0)active.Remove(key);}});
-            active[key]=active.GetValueOrDefault(key)+1;return lease;
+            var held=Hold([new(manifest,directory)]);
+            try
+            {
+                var lease=Load(directory,manifest,()=>{held.Dispose();lock(gate){if(--active[key]==0)active.Remove(key);}});
+                active[key]=active.GetValueOrDefault(key)+1;return lease;
+            }
+            catch{held.Dispose();throw;}
+        }
+    }
+    /// <summary>One approved selected set shares dependency identities and retains all versions together.</summary>
+    [RequiresUnreferencedCode("Ordinary selected plugin factories are loaded from their installed manifests.")]
+    [RequiresDynamicCode("Native games use generated static registration.")]
+    public PluginCatalogLease Open(BoardGame.Kernel.RuntimeStartup startup,IEnumerable<ApprovedApplicationPlugin> builtinCatalog)
+        =>Open(startup,new ApplicationCatalog(builtinCatalog));
+    [RequiresUnreferencedCode("Ordinary selected plugin factories are loaded from their installed manifests.")]
+    [RequiresDynamicCode("Native games use generated static registration.")]
+    public PluginCatalogLease Open(BoardGame.Kernel.RuntimeStartup startup,ApplicationCatalog builtinCatalog)
+    {
+        lock(gate)
+        {
+            var ids=builtinCatalog.Content.Plugins.Select(p=>p.Id).ToHashSet(StringComparer.Ordinal);
+            var requested=startup.Plugins.Where(p=>!ids.Contains(p.Id)).ToArray();
+            if(requested.Select(p=>p.Id).Distinct(StringComparer.Ordinal).Count()!=requested.Length)throw new InvalidDataException("Duplicate selected external plugin");
+            var packages=requested.Select(p=>
+            {
+                var directory=Path.Combine(root,Key(p.Id,p.Version));var manifest=ReadVerified(directory);
+                if(manifest.Id!=p.Id || manifest.Version!=p.Version || manifest.Api!=p.Api || manifest.Fingerprint!=p.Implementation)
+                    throw new InvalidDataException(p.Id+": selected implementation identity does not match the installed package");
+                if(!manifest.Targets.Contains(target,StringComparer.Ordinal))throw new InvalidDataException(p.Id+": unsupported target "+target);
+                return new PluginBuildInput(manifest,directory);
+            }).ToArray();
+            var held=Hold(packages);PackageLoadContext? context=null;
+            try
+            {
+                context=new PackageLoadContext(packages,shared);
+                var factories=packages.Select(p=>Factory(context,p.Directory,p.Manifest)).ToArray();
+                var catalog=builtinCatalog.Extend(factories);
+                // Content loading remains the authority for complete startup validation.
+                foreach(var item in packages){var key=Key(item.Manifest.Id,item.Manifest.Version);active[key]=active.GetValueOrDefault(key)+1;}
+                return new(catalog,packages,context,()=>
+                {
+                    held.Dispose();
+                    lock(gate)foreach(var item in packages){var key=Key(item.Manifest.Id,item.Manifest.Version);if(--active[key]==0)active.Remove(key);}
+                });
+            }
+            catch{context?.Unload();held.Dispose();throw;}
         }
     }
     public void Remove(string id,string version)
@@ -97,6 +142,27 @@ public sealed class PluginStore
             DeleteOwned(directory);
         }
     }
+    private IDisposable Hold(IEnumerable<PluginBuildInput> packages)
+    {
+        var files=new HeldFiles();
+        try
+        {
+            foreach(var package in packages)
+            {
+                foreach(var path in package.Manifest.Files.Select(f=>f.Path).Append(PluginManifest.FileName))
+                    files.Add(new FileStream(Inside(package.Directory,path),FileMode.Open,FileAccess.Read,FileShare.Read));
+                if(ReadVerified(package.Directory).Fingerprint!=package.Manifest.Fingerprint)throw new InvalidDataException("Installed package changed while acquiring its lifetime");
+            }
+            return files;
+        }
+        catch{files.Dispose();throw;}
+    }
+    private sealed class HeldFiles:IDisposable
+    {
+        private readonly List<FileStream> files=[];
+        public void Add(FileStream file)=>files.Add(file);
+        public void Dispose(){foreach(var file in files)file.Dispose();files.Clear();}
+    }
     [RequiresUnreferencedCode("Explicit factory entry from a verified package.")]
     [RequiresDynamicCode("Ordinary .NET controlled assembly loading.")]
     private PluginLease Load(string directory,PluginManifest manifest,Action released)
@@ -104,15 +170,21 @@ public sealed class PluginStore
         var context=new PackageLoadContext(directory,manifest,shared);
         try
         {
+            return new(manifest,Factory(context,directory,manifest),context,released);
+        }
+        catch{context.Unload();throw;}
+    }
+    [RequiresUnreferencedCode("Explicit factory from a verified package.")]
+    [RequiresDynamicCode("Ordinary managed factory loading.")]
+    private static ApprovedApplicationPlugin Factory(PackageLoadContext context,string directory,PluginManifest manifest)
+    {
             var assembly=context.LoadManaged(Inside(directory,manifest.Entry.Assembly));
             var type=assembly.GetType(manifest.Entry.Type,true)!;
             var method=type.GetMethod(manifest.Entry.Method,BindingFlags.Public|BindingFlags.Static,null,Type.EmptyTypes,null);
             if(method==null || method.ContainsGenericParameters || method.ReturnType!=typeof(ApprovedApplicationPlugin))
                 throw new InvalidDataException(manifest.Id+": factory must be public static ApprovedApplicationPlugin with no arguments");
             var factory=(ApprovedApplicationPlugin?)method.Invoke(null,null) ?? throw new InvalidDataException("Empty plugin factory");
-            return new(manifest,PluginRegistration.Bind(manifest,factory),context,released);
-        }
-        catch{context.Unload();throw;}
+            return PluginRegistration.Bind(manifest,factory);
     }
     private PluginManifest ReadVerified(string directory)
     {
@@ -220,25 +292,55 @@ public sealed class PluginLease : IDisposable
     public void Dispose(){var owner=Interlocked.Exchange(ref context,null);if(owner==null)return;owner.Unload();Interlocked.Exchange(ref released,null)?.Invoke();}
 }
 
-internal sealed class PackageLoadContext(string directory,PluginManifest manifest,Assembly[] shared) : AssemblyLoadContext(isCollectible:true)
+public sealed class PluginCatalogLease : IDisposable
 {
+    private PackageLoadContext? context;
+    private Action? released;
+    private readonly ApplicationCatalog catalog;
+    private readonly PluginBuildInput[] inputs;
+    public ApplicationCatalog Catalog=>context!=null?catalog:throw new ObjectDisposedException(nameof(PluginCatalogLease));
+    public IReadOnlyList<PluginBuildInput> Inputs=>inputs.Select(p=>p with {Manifest=PluginManifest.Read(p.Manifest.Write())}).ToArray();
+    internal PluginCatalogLease(ApplicationCatalog catalog,PluginBuildInput[] inputs,PackageLoadContext context,Action released)
+    {this.catalog=catalog;this.inputs=inputs;this.context=context;this.released=released;}
+    public void Dispose(){var owner=Interlocked.Exchange(ref context,null);if(owner==null)return;owner.Unload();Interlocked.Exchange(ref released,null)?.Invoke();}
+}
+
+internal sealed class PackageLoadContext : AssemblyLoadContext
+{
+    private readonly Assembly[] shared;
+    private readonly Dictionary<string,(string Path,string Hash)> managed=new(StringComparer.OrdinalIgnoreCase),native=new(StringComparer.OrdinalIgnoreCase);
+    internal PackageLoadContext(string directory,PluginManifest manifest,Assembly[] shared):this([new(manifest,directory)],shared){}
+    internal PackageLoadContext(IEnumerable<PluginBuildInput> packages,Assembly[] shared):base(isCollectible:true)
+    {
+        this.shared=shared;
+        foreach(var package in packages)foreach(var file in package.Manifest.Files)
+        {
+            if(file.Role is not ("managed" or "implementation" or "native"))continue;
+            var path=PluginStore.Inside(package.Directory,file.Path);var map=file.Role=="native"?native:managed;
+            var key=file.Role=="native"?Path.GetFileNameWithoutExtension(path):AssemblyName.GetAssemblyName(path).Name!;
+            if(map.TryGetValue(key,out var previous) && previous.Hash!=file.Sha256)throw new InvalidDataException("Selected plugin dependencies conflict: "+key);
+            map.TryAdd(key,(path,file.Sha256));
+        }
+    }
     // Loading immutable, verified bytes avoids keeping installation files mapped
     // after a lease ends. ALC reclamation itself remains GC-controlled.
-    internal Assembly LoadManaged(string path){using var input=File.OpenRead(path);return LoadFromStream(input);}
+    internal Assembly LoadManaged(string path)
+    {
+        var name=AssemblyName.GetAssemblyName(path);
+        if(Assemblies.SingleOrDefault(a=>a.GetName().Name==name.Name) is {} existing)return existing;
+        using var input=File.OpenRead(path);return LoadFromStream(input);
+    }
     protected override Assembly? Load(AssemblyName name)
     {
         var contract=shared.SingleOrDefault(a=>a.GetName().Name==name.Name);
         if(contract!=null)return contract;
         if(PluginStore.Framework(name.Name!))return null;
-        var file=manifest.Files.Where(f=>f.Role is "managed" or "implementation")
-            .SingleOrDefault(f=>AssemblyName.GetAssemblyName(PluginStore.Inside(directory,f.Path)).Name==name.Name)
-            ?? throw new FileNotFoundException("Unapproved plugin assembly: "+name.Name);
-        return LoadManaged(PluginStore.Inside(directory,file.Path));
+        if(!managed.TryGetValue(name.Name!,out var file))throw new FileNotFoundException("Unapproved plugin assembly: "+name.Name);
+        return LoadManaged(file.Path);
     }
     protected override nint LoadUnmanagedDll(string name)
     {
-        var file=manifest.Files.Where(f=>f.Role=="native").SingleOrDefault(f=>Path.GetFileName(f.Path)==name || Path.GetFileNameWithoutExtension(f.Path)==name);
-        if(file==null)throw new DllNotFoundException("Unapproved plugin native dependency: "+name);
-        return LoadUnmanagedDllFromPath(PluginStore.Inside(directory,file.Path));
+        if(!native.TryGetValue(Path.GetFileNameWithoutExtension(name),out var file))throw new DllNotFoundException("Unapproved plugin native dependency: "+name);
+        return LoadUnmanagedDllFromPath(file.Path);
     }
 }

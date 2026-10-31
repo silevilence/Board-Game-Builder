@@ -1,5 +1,5 @@
 param([string]$Output = 'artifacts/player-release', [string]$HostProject='src/Player/Player.csproj',
-    [string]$EntryPoint='Player.exe', [ValidateSet(2,3)][int]$PackageFormat=2, [bool]$IncludeLuaWorker=$true)
+    [string]$EntryPoint='Player.exe', [ValidateSet(2,3)][int]$PackageFormat=2, [bool]$IncludeLuaWorker=$true, [bool]$IncludeRuntimePlugins=$true)
 $ErrorActionPreference = 'Stop'
 $repo = Split-Path $PSScriptRoot -Parent
 $productVersion = ([xml](Get-Content -LiteralPath "$repo/Directory.Build.props" -Raw)).Project.PropertyGroup.Version
@@ -11,6 +11,10 @@ if ($LASTEXITCODE -ne 0) { throw 'Player publish failed' }
 if($IncludeLuaWorker) {
     dotnet publish "$repo/src/Lua/Lua.csproj" -c Release -r win-x64 --self-contained true -p:PublishSingleFile=false -p:DebugType=None -p:DebugSymbols=false -o "$target/worker"
     if ($LASTEXITCODE -ne 0) { throw 'Lua worker publish failed' }
+}
+if($IncludeRuntimePlugins) {
+    $contractProcess=Start-Process -FilePath (Join-Path $target $EntryPoint) -ArgumentList @('runtime-host',('"'+$target+'"')) -WindowStyle Hidden -PassThru -Wait
+    if($contractProcess.ExitCode -ne 0 -or -not (Test-Path -LiteralPath (Join-Path $target 'runtime-host.json'))) {throw 'Player did not declare external runtime plugin support'}
 }
 # Avalonia 12 native runtime packages include optional PDBs even with DebugSymbols=false.
 Get-ChildItem -LiteralPath $target -Filter *.pdb -File -Recurse | ForEach-Object {

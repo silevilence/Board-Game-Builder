@@ -27,7 +27,7 @@ public sealed class NativeExporter : IAuthorExporter
         try
         {
             request.Cancellation.ThrowIfCancellationRequested();_=ExportTargets.NewTarget(request);
-            var prepared=Prepare(request);
+            using var prepared=Prepare(request);
             var toolchain=await NativeToolchain.Check(prepared.Plan.Target,Options(request),request.Cancellation).ConfigureAwait(false);
             return new(request.View.Source,Info.Id,toolchain.Available,toolchain.Diagnostics.Select(d=>new AuthorDiagnostic(d.Code,d.Message)).ToArray());
         }
@@ -36,7 +36,7 @@ public sealed class NativeExporter : IAuthorExporter
     }
     public async Task<AuthorArtifact> Export(AuthorExportRequest request)
     {
-        request.Cancellation.ThrowIfCancellationRequested();var target=ExportTargets.NewTarget(request);var prepared=Prepare(request);
+        request.Cancellation.ThrowIfCancellationRequested();var target=ExportTargets.NewTarget(request);using var prepared=Prepare(request);
         var result=await NativeBuildService.Build(prepared.Plan,prepared.Entry,new(target,Options(request)),
             new ForwardProgress(request.Progress),request.Cancellation).ConfigureAwait(false);
         if(!result.Success)
@@ -48,7 +48,9 @@ public sealed class NativeExporter : IAuthorExporter
         return new(request.View.Source,target,Info.ArtifactKind,prepared.Plan.SourceFingerprint)
             {Log=result.Log,Warnings=result.Diagnostics.Select(d=>d.Code+": "+d.Message).ToArray()};
     }
-    private static (PublicationPlan Plan,NativeEntry Entry) Prepare(AuthorExportRequest request)
+    private sealed record Prepared(PublicationPlan Plan,NativeEntry Entry,AuthorApplicationLease Lease):IDisposable
+    {public void Dispose()=>Lease.Dispose();}
+    private static Prepared Prepare(AuthorExportRequest request)
     {
         var sdk=RuntimeSdk.Open(Path.GetFullPath(Value(request,"sdk") ?? Path.Combine(AppContext.BaseDirectory,"native-sdk")));
         if((Value(request,"platform") ?? "win-x64")!=sdk.Target)throw new AuthorOperationException("toolchain.target","Only the SDK's verified win-x64 target is available");
@@ -56,7 +58,8 @@ public sealed class NativeExporter : IAuthorExporter
             ?? throw new AuthorOperationException("export.native-runtime","The selected author runtime has no approved application catalogue for native publication");
         var startup=JsonSerializer.Deserialize<RuntimeStartup>(request.View.Text(GameRuntime.Entry),AuthorProfiles.Json)
             ?? throw new AuthorOperationException("entry.invalid","Missing startup identity");
-        var definitions=runtime.Catalog.Content.Plugins.ToList();
+        var definitions=runtime.Catalog.Content.Plugins;
+        var additional=new List<ApprovedApplicationPlugin>();
         // Validate graphics identities/configuration without opening a device in an author/export process.
         // Active instance code always comes from the already approved author runtime.
         foreach(var selection in startup.Plugins.Where(p=>definitions.All(d=>d.Id!=p.Id)))
@@ -66,15 +69,21 @@ public sealed class NativeExporter : IAuthorExporter
             var manifest=candidate.Input.Manifest;
             if(manifest.Execution.Scope==RuntimeScope.Instance && (manifest.Execution.Modes & HostMode.Headless)!=0)continue;
             if(selection.Implementation!=null && selection.Implementation!=manifest.Fingerprint)throw new AuthorOperationException("plugin.identity",selection.Id+": implementation content identity mismatch");
-            definitions.Add(PluginRegistration.IdentityOnly(manifest).Bind(null) with {Implementation=selection.Implementation});
+            var descriptor=PluginRegistration.IdentityOnly(manifest).Bind(null) with {Implementation=selection.Implementation};
+            additional.Add(new(_=>descriptor));
         }
-        var content=GameRuntime.LoadFiles(request.View.CopyFiles(),new(definitions));
+        var lease=runtime.Open(request.View,additional);
+        try
+        {
+        var content=GameRuntime.LoadFiles(request.View.CopyFiles(),lease.Catalog.Content);
         var profile=Value(request,"host") ?? "application.desktop";
         // Backend enablement must be in game.start.json; author build options are not a second plugin selection.
-        var plan=sdk.Plan(content,profile,[]);
+        var plan=sdk.Plan(content,profile,[],lease.Imports.Select(p=>new AvailablePlugin(p)));
         byte[]? icon=null;
         if(Value(request,"icon") is {} path){ProjectPaths.Validate(path);icon=request.View.Bytes(path);}
-        return(plan,sdk.Entry(profile,Value(request,"title") ?? startup.Id,Value(request,"version") ?? startup.Version,icon));
+        return new(plan,sdk.Entry(profile,Value(request,"title") ?? startup.Id,Value(request,"version") ?? startup.Version,icon),lease);
+        }
+        catch{lease.Dispose();throw;}
     }
     private static string? Value(AuthorExportRequest request,string key)=>request.Arguments.TryGetProperty(key,out var value)?value.GetString():null;
     private static NativeToolchainOptions Options(AuthorExportRequest request)=>new(Value(request,"dotnet") ?? "dotnet",VisualStudio:Value(request,"visualStudio"),WindowsKits:Value(request,"windowsKits"));

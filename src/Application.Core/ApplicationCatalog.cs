@@ -18,6 +18,7 @@ public sealed class ApplicationCatalog
         Content=new(descriptions);
     }
     public GameContent Load(string source,string? preset=null)=>GameRuntime.Load(source,Content,preset);
+    public ApplicationCatalog Extend(IEnumerable<ApprovedApplicationPlugin> plugins)=>new(approved.Concat(plugins));
     public Task<RuntimeHost> StartAsync(GameContent content,HostMode mode=HostMode.Headless,RuntimeHost? graphics=null,
         ApplicationClockOptions? clock=null,Action<Action>? dispatch=null)
     {

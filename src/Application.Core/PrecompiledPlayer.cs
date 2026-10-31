@@ -94,7 +94,7 @@ public static class PrecompiledPlayer
         if(path.Split('/').Any(p=>p.StartsWith("Editor",StringComparison.OrdinalIgnoreCase) || p.StartsWith("CordiSharp",StringComparison.OrdinalIgnoreCase) && p!="CordiSharp.dll") ||
             path.EndsWith(".csproj",StringComparison.OrdinalIgnoreCase) || path.EndsWith(".pdb",StringComparison.OrdinalIgnoreCase))throw new InvalidDataException("Editor/development export content is forbidden: "+path);
     }
-    private static void ValidateTree(DirectoryInfo directory)
+    public static void ValidateTree(DirectoryInfo directory)
     {
         if((directory.Attributes&FileAttributes.ReparsePoint)!=0)throw new InvalidDataException("Linked export content: "+directory.Name);
         foreach(var item in directory.EnumerateFileSystemInfos())
