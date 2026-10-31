@@ -4,6 +4,8 @@
 *.lua text eol=lf
 # Verification manifests hash the exact captured bytes, including line endings and whitespace.
 docs/validation/evidence/** -text -whitespace
+# Reviewed upstream patches include context whitespace and are identified by byte hash.
+third_party/**/*.patch -text -whitespace
 # Preserve the vendored license exactly as supplied in the Kenney archive.
 samples/freecell/assets/License.txt -text -whitespace
 samples/poker-uno/assets/License.txt -text -whitespace
