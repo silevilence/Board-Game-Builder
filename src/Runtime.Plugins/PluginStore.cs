@@ -19,7 +19,9 @@ public sealed class PluginStore
     private readonly Assembly[] shared;
     private readonly PluginManifest[] builtins;
     private static readonly HashSet<string> platformAssemblies=((string?)AppContext.GetData("TRUSTED_PLATFORM_ASSEMBLIES") ?? "")
-        .Split(Path.PathSeparator,StringSplitOptions.RemoveEmptyEntries).Select(Path.GetFileNameWithoutExtension).OfType<string>().ToHashSet(StringComparer.OrdinalIgnoreCase);
+        .Split(Path.PathSeparator,StringSplitOptions.RemoveEmptyEntries)
+        .Where(p=>string.Equals(Path.GetDirectoryName(p),Path.TrimEndingDirectorySeparator(System.Runtime.InteropServices.RuntimeEnvironment.GetRuntimeDirectory()),StringComparison.OrdinalIgnoreCase))
+        .Select(Path.GetFileNameWithoutExtension).OfType<string>().ToHashSet(StringComparer.OrdinalIgnoreCase);
     public PluginStore(string directory,string target,IEnumerable<Assembly>? sharedContracts=null,IEnumerable<PluginManifest>? builtinManifests=null)
     {
         root=Path.GetFullPath(directory);this.target=target;

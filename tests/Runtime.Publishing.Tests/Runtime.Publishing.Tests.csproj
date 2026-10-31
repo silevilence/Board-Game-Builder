@@ -1,4 +1,7 @@
 <Project Sdk="Microsoft.NET.Sdk">
   <PropertyGroup><OutputType>Exe</OutputType></PropertyGroup>
   <ItemGroup><ProjectReference Include="../../src/Runtime.Publishing/Runtime.Publishing.csproj" /></ItemGroup>
+  <ItemGroup><ProjectReference Include="../../samples/Runtime.SamplePlugin/Runtime.SamplePlugin.csproj" /></ItemGroup>
+  <ItemGroup><ProjectReference Include="../../src/BoardGame.Wasm/BoardGame.Wasm.csproj" /></ItemGroup>
+  <ItemGroup><Content Include="../../samples/wasm-counter/counter.wasm" Link="counter.wasm" CopyToOutputDirectory="PreserveNewest" /></ItemGroup>
 </Project>

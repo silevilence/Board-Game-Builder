@@ -2,6 +2,7 @@
   <PropertyGroup><IsAotCompatible>true</IsAotCompatible></PropertyGroup>
   <ItemGroup>
     <ProjectReference Include="../BoardGame.Core/BoardGame.Core.csproj" />
+    <ProjectReference Include="../BoardGame.Hosting/BoardGame.Hosting.csproj" />
     <ProjectReference Include="../Modules.Runtime/Modules.Runtime.csproj" />
     <ProjectReference Include="../Wasm.Execution/Wasm.Execution.csproj" />
   </ItemGroup>

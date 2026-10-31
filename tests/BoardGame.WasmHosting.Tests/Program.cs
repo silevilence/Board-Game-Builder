@@ -16,7 +16,7 @@ var action=new Command{Kind="wasm.counter.command",Entity="counter",Value=2};
 var startup=new RuntimeStartup(1,"wasm-board","1",[P("definition.board-state","""{"path":"state.json"}"""),P("resources"),P("kernel"),P("session.local"),P("recording"),
     P("rules.commands","""{"actions":[{"id":"add","label":"Add","command":{"kind":"wasm.counter.command","entity":"counter","value":2}}]}"""),extension]);
 File.WriteAllText(Path.Combine(folder,GameRuntime.Entry),Wire.Json(startup));
-var board=new BoardApplication();var catalog=new ApplicationCatalog(board.Plugins().Append(new(content=>WasmRuntimePlugin.Create(()=>board.Definition(content!)))));
+var board=new BoardApplication();var catalog=new ApplicationCatalog(board.Plugins().Append(WasmStaticFactories.Create()));
 var content=catalog.Load(folder);await using var host=await catalog.StartAsync(content);var session=host.Service<IGameSession>("session");
 host.Driver.Enqueue("board.command",JsonSerializer.SerializeToUtf8Bytes(new BoardUpdateRequest(0,"p1",action),BoardSessionJson.Default.BoardUpdateRequest));
 await host.Driver.AdvanceAsync(TimeSpan.FromSeconds(1.0/30));

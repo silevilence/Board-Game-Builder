@@ -37,6 +37,8 @@ public static class StaticRegistration
             source.Append("        PluginRegistration.Bind(PluginManifest.Read(").Append(Literal(manifest.Write()))
                 .Append("), global::").Append(string.Join('.',manifest.Entry.Type.Split('.').Select(p=>"@"+p))).Append(".@").Append(manifest.Entry.Method).Append("()),\n");
         }
+        foreach(var input in inputs.Where(i=>!result.Ordered.Any(m=>m.Id==i.Manifest.Id)))
+            source.Append("        PluginRegistration.IdentityOnly(PluginManifest.Read(").Append(Literal(input.Manifest.Write())).Append(")),\n");
         source.Append("    ];\n}\n");
         var items=new XElement("ItemGroup",references.Select(r=>new XElement("Reference",new XAttribute("Include",r.Key),
             new XElement("HintPath",r.Value.Path),new XElement("Private","true"))));

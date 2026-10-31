@@ -17,6 +17,8 @@ public sealed record PluginManifest(int Format,string Kind,string Id,string Vers
     PluginCapability[] Requires,PluginExecution Execution,PluginFile[] Files)
 {
     public const string FileName="runtime.plugin.json";
+    // Needed only for validating dormant graphical declarations without linking their implementation.
+    [JsonIgnore(Condition=JsonIgnoreCondition.WhenWritingNull)] public string[]? ContentFields {get;init;}
     public static PluginManifest Read(string json)
     {
         try
@@ -44,6 +46,8 @@ public sealed record PluginManifest(int Format,string Kind,string Id,string Vers
             Aot.Compatible && Aot.Targets.Length==0 || !Aot.Compatible && string.IsNullOrWhiteSpace(Aot.Reason)))
             throw new InvalidDataException(Id+": invalid AOT declaration");
         ValidateCapabilities(Provides,"provided");ValidateCapabilities(Requires,"required");
+        if(ContentFields!=null && (ContentFields.Any(string.IsNullOrWhiteSpace) || ContentFields.Distinct(StringComparer.Ordinal).Count()!=ContentFields.Length))
+            throw new InvalidDataException(Id+": invalid content configuration fields");
         if(Execution==null || Execution.Modes==0 || (Execution.Modes & ~HostMode.All)!=0 || !Enum.IsDefined(Execution.Scope))
             throw new InvalidDataException(Id+": invalid execution scope/mode");
         if(Files==null || Files.Length==0 || Files.Length>2048)throw new InvalidDataException(Id+": invalid package files");

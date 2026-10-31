@@ -23,3 +23,5 @@ try
 finally{Directory.Delete(missing,true);}
 if(args.Length>0)Check(BuiltinScriptSupport.NativeFiles("wasm","1",1,"win-x64",args[0]).Single().Role=="native","Verified runtime not collected");
 Console.WriteLine("PASS script support declarations: fixed version/target, indirect flow dependency, no managed worker fallback, missing native library");
+PlannerTests.Run();
+BoardPlannerTests.Run();

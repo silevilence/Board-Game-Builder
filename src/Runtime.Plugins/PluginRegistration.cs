@@ -16,10 +16,20 @@ public static class PluginRegistration
                 !definition.Provides.Order(StringComparer.Ordinal).SequenceEqual(manifest.Provides.Select(c=>c.Name).Order(StringComparer.Ordinal)) ||
                 !definition.Requires.Order(StringComparer.Ordinal).SequenceEqual(manifest.Requires.Select(c=>c.Name).Order(StringComparer.Ordinal)) ||
                 definition.Execution.Modes!=manifest.Execution.Modes || definition.Execution.Scope!=manifest.Execution.Scope ||
+                manifest.ContentFields!=null && !(definition.Content?.Fields ?? []).SequenceEqual(manifest.ContentFields) ||
                 !SameContributions(definition.Execution,manifest.Execution))throw new InvalidDataException(manifest.Id+": factory differs from declared identity/capabilities/execution");
             return definition with {Implementation=fingerprint};
         }
         _=Create(null);return new(Create);
+    }
+    public static ApprovedApplicationPlugin IdentityOnly(PluginManifest original)
+    {
+        var manifest=PluginManifest.Read(original.Write());
+        if(manifest.Execution.Scope==RuntimeScope.Instance && (manifest.Execution.Modes & HostMode.Headless)!=0)
+            throw new InvalidDataException(manifest.Id+": active instance implementation cannot be omitted");
+        return new(_=>new(manifest.Id,manifest.Version,manifest.Api,manifest.Provides.Select(c=>c.Name).ToArray(),manifest.Requires.Select(c=>c.Name).ToArray(),
+            _=>throw new InvalidOperationException(manifest.Id+": this headless publication does not contain a graphical implementation"))
+            {Implementation=manifest.Fingerprint,Execution=manifest.Execution,Content=new(manifest.ContentFields ?? [])});
     }
     private static bool SameContributions(PluginExecution left,PluginExecution right)
     {
