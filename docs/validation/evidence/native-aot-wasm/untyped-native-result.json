@@ -1,0 +1,127 @@
+{
+  "success": true,
+  "dynamicCodeSupported": false,
+  "framework": ".NET 10.0.12",
+  "os": "Microsoft Windows 10.0.26200",
+  "architecture": "X64",
+  "checks": [
+    {
+      "name": "sample-fixed-signatures",
+      "passed": true,
+      "detail": ""
+    },
+    {
+      "name": "fresh-store-and-call-release",
+      "passed": true,
+      "detail": ""
+    },
+    {
+      "name": "reject-import-host",
+      "passed": true,
+      "detail": ""
+    },
+    {
+      "name": "reject-import-wasi_snapshot_preview1",
+      "passed": true,
+      "detail": ""
+    },
+    {
+      "name": "reject-invalid-bytes",
+      "passed": true,
+      "detail": ""
+    },
+    {
+      "name": "reject-size-budget",
+      "passed": true,
+      "detail": ""
+    },
+    {
+      "name": "reject-duplicate",
+      "passed": true,
+      "detail": ""
+    },
+    {
+      "name": "fuel-budget",
+      "passed": true,
+      "detail": ""
+    },
+    {
+      "name": "memory-budget",
+      "passed": true,
+      "detail": ""
+    },
+    {
+      "name": "memory-grow-budget",
+      "passed": true,
+      "detail": ""
+    },
+    {
+      "name": "catch-trap-MemoryOutOfBounds",
+      "passed": true,
+      "detail": ""
+    },
+    {
+      "name": "catch-trap-Unreachable",
+      "passed": true,
+      "detail": ""
+    },
+    {
+      "name": "catch-trap-IntegerDivisionByZero",
+      "passed": true,
+      "detail": ""
+    },
+    {
+      "name": "catch-trap-StackOverflow",
+      "passed": true,
+      "detail": ""
+    },
+    {
+      "name": "repeat-create-release",
+      "passed": true,
+      "detail": ""
+    },
+    {
+      "name": "reject-missing-export",
+      "passed": true,
+      "detail": ""
+    },
+    {
+      "name": "reject-signature-before-execution",
+      "passed": true,
+      "detail": ""
+    },
+    {
+      "name": "signed-int32-boundaries",
+      "passed": true,
+      "detail": ""
+    }
+  ],
+  "nativeModules": [
+    "C:\\code\\dotnet\\Board-Game-Builder\\artifacts\\native-aot\\wasm\\untyped-verified\\aot\\Wasm.Untyped.AotProbe.exe",
+    "C:\\WINDOWS\\SYSTEM32\\ntdll.dll",
+    "C:\\WINDOWS\\System32\\KERNEL32.DLL",
+    "C:\\WINDOWS\\System32\\KERNELBASE.dll",
+    "C:\\WINDOWS\\SYSTEM32\\apphelp.dll",
+    "C:\\WINDOWS\\System32\\ADVAPI32.dll",
+    "C:\\WINDOWS\\System32\\msvcrt.dll",
+    "C:\\WINDOWS\\System32\\sechost.dll",
+    "C:\\WINDOWS\\System32\\RPCRT4.dll",
+    "C:\\WINDOWS\\System32\\ole32.dll",
+    "C:\\WINDOWS\\System32\\msvcp_win.dll",
+    "C:\\WINDOWS\\System32\\ucrtbase.dll",
+    "C:\\WINDOWS\\SYSTEM32\\bcrypt.dll",
+    "C:\\WINDOWS\\System32\\GDI32.dll",
+    "C:\\WINDOWS\\System32\\win32u.dll",
+    "C:\\WINDOWS\\System32\\gdi32full.dll",
+    "C:\\WINDOWS\\System32\\USER32.dll",
+    "C:\\WINDOWS\\System32\\combase.dll",
+    "C:\\WINDOWS\\System32\\IMM32.DLL",
+    "C:\\WINDOWS\\SYSTEM32\\kernel.appcore.dll",
+    "C:\\WINDOWS\\System32\\bcryptPrimitives.dll",
+    "C:\\code\\dotnet\\Board-Game-Builder\\artifacts\\native-aot\\wasm\\untyped-verified\\aot\\wasmtime.DLL",
+    "C:\\WINDOWS\\System32\\ws2_32.dll",
+    "C:\\WINDOWS\\System32\\shell32.dll",
+    "C:\\WINDOWS\\SYSTEM32\\CRYPTBASE.DLL",
+    "C:\\WINDOWS\\SYSTEM32\\icu.dll"
+  ]
+}

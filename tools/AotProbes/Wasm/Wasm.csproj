@@ -1,0 +1,16 @@
+<Project Sdk="Microsoft.NET.Sdk">
+  <PropertyGroup>
+    <OutputType>Exe</OutputType>
+    <AssemblyName>Wasm.AotProbe</AssemblyName>
+    <PublishAot>true</PublishAot>
+    <IsAotCompatible>true</IsAotCompatible>
+    <EnableDefaultCompileItems>false</EnableDefaultCompileItems>
+  </PropertyGroup>
+  <ItemGroup>
+    <Compile Include="Program.cs" />
+    <!-- Compile the unchanged production executor into an isolated diagnostic host. -->
+    <Compile Include="../../../src/Wasm.Execution/*.cs" Link="Production/%(Filename)%(Extension)" />
+    <PackageReference Include="Wasmtime" Version="48.0.2" />
+    <Content Include="../../../samples/wasm-counter/counter.wasm" Link="counter.wasm" CopyToOutputDirectory="PreserveNewest" CopyToPublishDirectory="PreserveNewest" />
+  </ItemGroup>
+</Project>

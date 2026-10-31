@@ -1,0 +1,5 @@
+  正在确定要还原的项目…
+  已还原 C:\code\dotnet\Board-Game-Builder\tools\AotProbes\WasmUntyped\WasmUntyped.csproj (用时 952 毫秒)。
+  WasmUntyped -> C:\code\dotnet\Board-Game-Builder\artifacts\native-aot\wasm\untyped-verified\build-aot\bin\WasmUntyped\release_win-x64\Wasm.Untyped.AotProbe.dll
+  Generating native code
+  WasmUntyped -> C:\code\dotnet\Board-Game-Builder\artifacts\native-aot\wasm\untyped-verified\aot\

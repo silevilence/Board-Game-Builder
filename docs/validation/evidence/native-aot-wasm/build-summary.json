@@ -1,0 +1,12 @@
+{
+  "sdk": "10.0.112",
+  "strictPublishExit": 1,
+  "jit": {
+    "exit": 0,
+    "report": "jit-result.json"
+  },
+  "diagnosticAot": {
+    "exit": 0,
+    "report": "aot-result.json"
+  }
+}

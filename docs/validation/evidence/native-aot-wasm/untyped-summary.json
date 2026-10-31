@@ -1,0 +1,12 @@
+{
+  "sdk": "10.0.112",
+  "productionSha256": "80C2BA7C31017389B1F5BABADCE6AE916E3B5A104C5A1AE788259A75438CBE3C",
+  "jit": {
+    "buildExit": 0,
+    "runExit": 0
+  },
+  "aot": {
+    "buildExit": 0,
+    "runExit": 0
+  }
+}

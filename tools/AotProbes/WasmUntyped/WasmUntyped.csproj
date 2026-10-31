@@ -1,0 +1,20 @@
+<Project Sdk="Microsoft.NET.Sdk">
+  <PropertyGroup>
+    <OutputType>Exe</OutputType>
+    <AssemblyName>Wasm.Untyped.AotProbe</AssemblyName>
+    <PublishAot>true</PublishAot>
+    <IsAotCompatible>true</IsAotCompatible>
+    <EnableDefaultCompileItems>false</EnableDefaultCompileItems>
+    <DefineConstants>$(DefineConstants);UNTYPED_CANDIDATE</DefineConstants>
+  </PropertyGroup>
+  <ItemGroup>
+    <Compile Include="../Wasm/Program.cs" Link="Program.cs" />
+    <Compile Include="$(ProbeExecutor)" Link="WasmExecutor.cs" Condition="'$(ProbeExecutor)' != ''" />
+    <Compile Include="../../../src/Wasm.Execution/WasmtimeTrapCompatibility.cs" Link="Production/WasmtimeTrapCompatibility.cs" />
+    <PackageReference Include="Wasmtime" Version="48.0.2" />
+    <Content Include="../../../samples/wasm-counter/counter.wasm" Link="counter.wasm" CopyToOutputDirectory="PreserveNewest" CopyToPublishDirectory="PreserveNewest" />
+  </ItemGroup>
+  <Target Name="RequireGeneratedExecutor" BeforeTargets="CoreCompile">
+    <Error Condition="'$(ProbeExecutor)' == ''" Text="Use run.ps1 to generate the isolated executor candidate from current production source." />
+  </Target>
+</Project>

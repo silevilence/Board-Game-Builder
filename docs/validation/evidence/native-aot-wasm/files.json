@@ -1,0 +1,22 @@
+[
+  {
+    "name": "counter.wasm",
+    "bytes": 134,
+    "sha256": "386DD6D65D4753BDD831857013B50AAD30CCC2C2A6938CBC01142B13C50D3C26"
+  },
+  {
+    "name": "Wasm.AotProbe.exe",
+    "bytes": 2254848,
+    "sha256": "416BB6E3DF34DE98CD2DB5DA6A5456C4E7213BA42D7E4D143299ED1F523FB361"
+  },
+  {
+    "name": "Wasm.AotProbe.pdb",
+    "bytes": 10694656,
+    "sha256": "C961600BE8E3C45E14D4225E8EE1F718D9F15EF8A752C9E4761851601AC3DBD8"
+  },
+  {
+    "name": "wasmtime.dll",
+    "bytes": 22092288,
+    "sha256": "19B3880FBB92F1826C58AC9F5E2A472692B5FC3D012A1A7A41983CCF77544607"
+  }
+]
