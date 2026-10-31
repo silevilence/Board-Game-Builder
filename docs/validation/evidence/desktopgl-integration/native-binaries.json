@@ -1,0 +1,10 @@
+[
+  {
+    "Hash": "6CED9CDBE4A94B58FA006A7102865D99FD716916475DA82F2C6F39A911740605",
+    "File": "Rendering.Games.Tests.exe"
+  },
+  {
+    "Hash": "FDF0D3F9A9282469B76EA40C45928F45DE64FA64177D3F328EDB519C477C275B",
+    "File": "Rendering.DesktopGL.Tests.exe"
+  }
+]

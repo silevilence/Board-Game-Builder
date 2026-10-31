@@ -12,7 +12,7 @@ public sealed record SceneCaptions(int Format,SceneCaption[] Captions)
         if(resources==null || !resources.Binaries.ContainsKey("board.presentation"))return;
         var bytes=resources.GetBinary("board.presentation");
         if(bytes.Length>64*1024)throw new InvalidDataException("board.presentation exceeds 64 KiB");
-        var value=JsonSerializer.Deserialize<SceneCaptions>(bytes.Span,new JsonSerializerOptions(Wire.Options){UnmappedMemberHandling=JsonUnmappedMemberHandling.Disallow});
+        var value=JsonSerializer.Deserialize(bytes.Span,Wire.Type<SceneCaptions>(SceneJson.Default));
         if(value is not {Format:1,Captions.Length:<=64})throw new InvalidDataException("board.presentation: invalid format/captions");
         foreach(var caption in value.Captions)
         {
@@ -25,3 +25,6 @@ public sealed record SceneCaptions(int Format,SceneCaption[] Captions)
         }
     }
 }
+[JsonSourceGenerationOptions(PropertyNamingPolicy=JsonKnownNamingPolicy.CamelCase,UnmappedMemberHandling=JsonUnmappedMemberHandling.Disallow,NumberHandling=JsonNumberHandling.AllowNamedFloatingPointLiterals)]
+[JsonSerializable(typeof(SceneCaptions))]
+internal partial class SceneJson:JsonSerializerContext;

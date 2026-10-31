@@ -140,7 +140,7 @@ public class PlatformViewport : NativeControlHost, IDisposable
             var callback=new RuntimePluginDefinition("render.callback","1",1,[],["render.target"],scope=>
             {var output=scope.Service<IDrawingTarget>("render.target");scope.Render("draw",_=>output.Draw(draw=>Paint?.Invoke(draw)));})
                 {Execution=new(HostMode.Graphical,RuntimeScope.Viewport,[new("draw",ApplicationPhase.Render)])};
-            BoardGame.Kernel.RuntimePluginSelection Select(RuntimePluginDefinition p)=>new(p.Id,p.Version,p.Api,System.Text.Json.JsonSerializer.SerializeToElement(new{}));
+            BoardGame.Kernel.RuntimePluginSelection Select(RuntimePluginDefinition p)=>new(p.Id,p.Version,p.Api,BoardGame.Kernel.RuntimeConfiguration.Empty);
             var content=presentation ?? new ViewportComposition([Select(callback)],[callback]);
             var startup=configuration.Startup with {Plugins=[..configuration.Startup.Plugins,Select(target),..content.Plugins]};
             var next=await RuntimeHost.StartScopedAsync(startup,[..configuration.Catalog,target,..content.Catalog],[],HostMode.Graphical,

@@ -28,7 +28,7 @@ public static class BoardInteractionPlugin
     public static Task<RuntimeHost> StartAsync(IBoardInteractionTarget target)
     {
         RuntimePluginDefinition[] plugins=[Bind(target),Create()];
-        var selections=plugins.Select(p=>new RuntimePluginSelection(p.Id,p.Version,p.Api,JsonSerializer.SerializeToElement(new{}))).ToList();
+        var selections=plugins.Select(p=>new RuntimePluginSelection(p.Id,p.Version,p.Api,RuntimeConfiguration.Empty)).ToList();
         return RuntimeHost.StartAsync(new(1,"board-input","1",selections),plugins,[Capability]);
     }
     private sealed class Interaction(IBoardInteractionTarget target) : IBoardInteraction,IDisposable

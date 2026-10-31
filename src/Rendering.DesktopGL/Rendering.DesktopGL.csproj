@@ -1,0 +1,12 @@
+<Project Sdk="Microsoft.NET.Sdk">
+  <PropertyGroup><TargetFramework>net10.0-windows</TargetFramework><AllowUnsafeBlocks>true</AllowUnsafeBlocks></PropertyGroup>
+  <ItemGroup><ProjectReference Include="../Rendering.Core/Rendering.Core.csproj" /></ItemGroup>
+  <ItemGroup>
+    <Reference Include="MonoGame.Framework"><HintPath>../../artifacts/native-aot/monogame/MonoGame.Framework.dll</HintPath></Reference>
+    <PackageReference Include="MonoGame.Library.SDL" Version="2.32.2.1" />
+    <PackageReference Include="SkiaSharp" Version="3.119.4" />
+  </ItemGroup>
+  <Target Name="CheckPatchedMonoGame" BeforeTargets="ResolveAssemblyReferences" Condition="!Exists('$(MSBuildProjectDirectory)/../../artifacts/native-aot/monogame/MonoGame.Framework.dll')">
+    <Error Text="Build the pinned GL dependency first: pwsh -NoProfile -File third_party/MonoGame/build-patched.ps1" />
+  </Target>
+</Project>

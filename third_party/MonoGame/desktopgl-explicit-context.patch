@@ -1,3 +1,70 @@
+diff --git a/MonoGame.Framework/Design/VectorConversion.cs b/MonoGame.Framework/Design/VectorConversion.cs
+index d1e97230..e5dd6eca 100644
+--- a/MonoGame.Framework/Design/VectorConversion.cs
++++ b/MonoGame.Framework/Design/VectorConversion.cs
+@@ -1,4 +1,4 @@
+-﻿using System;
++using System;
+ using System.ComponentModel;
+ using System.Globalization;
+ using Microsoft.Xna.Framework.Graphics.PackedVector;
+@@ -17,7 +17,7 @@ namespace Microsoft.Xna.Framework.Design
+                 return true;
+             if (destinationType == typeof(Vector4))
+                 return true;
+-            if (destinationType.GetInterface("IPackedVector") != null)
++            if (typeof(IPackedVector).IsAssignableFrom(destinationType) && (System.Runtime.CompilerServices.RuntimeFeature.IsDynamicCodeSupported || CreateStatic(destinationType) != null))
+                 return true;
+ 
+             return false;
+@@ -33,14 +33,45 @@ namespace Microsoft.Xna.Framework.Design
+                 return new Vector3(value.X, value.Y, value.Z);
+             if (destinationType == typeof(Vector4))
+                 return new Vector4(value.X, value.Y, value.Z, value.W);
+-            if (destinationType.GetInterface("IPackedVector") != null)
++            if (typeof(IPackedVector).IsAssignableFrom(destinationType) && (System.Runtime.CompilerServices.RuntimeFeature.IsDynamicCodeSupported || CreateStatic(destinationType) != null))
+             {
+-                var packedVec = (IPackedVector)Activator.CreateInstance(destinationType);
++                var packedVec = CreateStatic(destinationType);
++                if (packedVec == null && System.Runtime.CompilerServices.RuntimeFeature.IsDynamicCodeSupported)
++                    packedVec = CreateDynamic(destinationType);
++                if (packedVec == null) return null;
+                 packedVec.PackFromVector4(value);
+                 return packedVec;
+             }            
+ 
+             return null;
+         }         
++
++        // Static packed-vector conversions remain usable through Avalonia TypeDescriptor.
++        private static IPackedVector CreateStatic(Type type)
++        {
++            if (type == typeof(Alpha8)) return new Alpha8();
++            if (type == typeof(Bgr565)) return new Bgr565();
++            if (type == typeof(Bgra4444)) return new Bgra4444();
++            if (type == typeof(Bgra5551)) return new Bgra5551();
++            if (type == typeof(Byte4)) return new Byte4();
++            if (type == typeof(HalfSingle)) return new HalfSingle();
++            if (type == typeof(HalfVector2)) return new HalfVector2();
++            if (type == typeof(HalfVector4)) return new HalfVector4();
++            if (type == typeof(NormalizedByte2)) return new NormalizedByte2();
++            if (type == typeof(NormalizedByte4)) return new NormalizedByte4();
++            if (type == typeof(NormalizedShort2)) return new NormalizedShort2();
++            if (type == typeof(NormalizedShort4)) return new NormalizedShort4();
++            if (type == typeof(Rg32)) return new Rg32();
++            if (type == typeof(Rgba1010102)) return new Rgba1010102();
++            if (type == typeof(Rgba64)) return new Rgba64();
++            if (type == typeof(Short2)) return new Short2();
++            if (type == typeof(Short4)) return new Short4();
++
++            return null;
++        }
++
++        [System.Diagnostics.CodeAnalysis.RequiresUnreferencedCode("Custom packed-vector converters require an ordinary reflection-enabled host.")]
++        [System.Diagnostics.CodeAnalysis.RequiresDynamicCode("Custom packed-vector converters require an ordinary JIT host.")]
++        private static IPackedVector CreateDynamic(Type type) => (IPackedVector)Activator.CreateInstance(type);
+     }
+ }
 diff --git a/MonoGame.Framework/Graphics/GraphicsDevice.cs b/MonoGame.Framework/Graphics/GraphicsDevice.cs
 index 35662be8..246df5da 100644
 --- a/MonoGame.Framework/Graphics/GraphicsDevice.cs

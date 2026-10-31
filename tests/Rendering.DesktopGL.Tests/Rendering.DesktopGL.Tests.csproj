@@ -1,0 +1,11 @@
+<Project Sdk="Microsoft.NET.Sdk">
+  <PropertyGroup><OutputType>WinExe</OutputType><TargetFramework>net10.0-windows</TargetFramework><ApplicationManifest>../../src/app.manifest</ApplicationManifest></PropertyGroup>
+  <ItemGroup>
+    <ProjectReference Include="../../src/Rendering.DesktopGL/Rendering.DesktopGL.csproj" />
+    <ProjectReference Include="../../src/Rendering.Avalonia/Rendering.Avalonia.csproj" />
+  </ItemGroup>
+  <ItemGroup>
+    <Content Include="../../samples/poker-uno/assets/cards.png" Link="assets/cards.png" CopyToOutputDirectory="PreserveNewest" CopyToPublishDirectory="PreserveNewest" />
+    <Content Include="../../samples/cursed-investigators/assets/fonts/noto-sans-cjk-sc/NotoSansCJKsc-Regular.otf" Link="assets/font.otf" CopyToOutputDirectory="PreserveNewest" CopyToPublishDirectory="PreserveNewest" />
+  </ItemGroup>
+</Project>

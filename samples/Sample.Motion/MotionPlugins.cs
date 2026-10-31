@@ -13,7 +13,7 @@ internal sealed record MotionKey(string Key,bool Pressed,string Source);
 
 public static class MotionPlugins
 {
-    internal static readonly JsonSerializerOptions Json=new(){PropertyNamingPolicy=JsonNamingPolicy.CamelCase,PropertyNameCaseInsensitive=true};
+    internal static readonly JsonSerializerOptions Json=MotionJson.Default.Options;
     public static IEnumerable<ApprovedApplicationPlugin> Catalog()
     {
         yield return new(_=>new("motion.definition","1",1,["definition"],["resources"],s=>s.Provide("definition",new Loader(s.Configuration.GetProperty("path").GetString()!,s.Service<AssetRegistry>("resources"))))
@@ -21,7 +21,7 @@ public static class MotionPlugins
         foreach(var plugin in AssetPlugins.Catalog())yield return new(_=>plugin);
         yield return new(content=>new("motion.loop","1",1,["motion.state"],[],s=>
         {
-            var payload=content!.Payload.Data.Deserialize<MotionPayload>(Json) ?? throw new InvalidDataException("Missing motion payload");
+            var payload=content!.Payload.Data.Deserialize(MotionJson.Default.MotionPayload) ?? throw new InvalidDataException("Missing motion payload");
             var motion=new MotionState(payload);s.Provide("motion.state",motion);s.Update("advance",motion.Update);
         }){Execution=new(Contributions:[new("advance",ApplicationPhase.Update)])});
         yield return new(_=>new("motion.view","1",1,[ApplicationViewPlugin.Capability],["motion.state"],s=>s.Provide(ApplicationViewPlugin.Capability,new View(s.Service<MotionState>("motion.state")))));
@@ -32,7 +32,7 @@ public static class MotionPlugins
         public int PayloadVersion=>1;
         public JsonElement Load(IContentSource source)
         {
-            var config=JsonSerializer.Deserialize<MotionSettings>(source.Read(path).Span,Json) ?? throw new InvalidDataException("Missing motion settings");
+            var config=JsonSerializer.Deserialize(source.Read(path).Span,MotionJson.Default.MotionSettings) ?? throw new InvalidDataException("Missing motion settings");
             if(string.IsNullOrWhiteSpace(config.Title) || config.Title.Length>80 || config.Instructions==null || config.Instructions.Length>256 || config.Success==null || config.Success.Length>256
                 || new[]{config.Width,config.Height,config.Speed,config.StartX,config.StartY,config.TargetX,config.TargetY}.Any(v=>!float.IsFinite(v))
                 || config.Width is <200 or >2048 || config.Height is <200 or >2048 || config.Speed is <10 or >800
@@ -40,7 +40,7 @@ public static class MotionPlugins
                 || config.TargetX<16 || config.TargetX>config.Width-16 || config.TargetY<64 || config.TargetY>config.Height-48)
                 throw new InvalidDataException("Invalid motion settings");
             var assets=registry.Load(new ContentResourceInput(source));_=assets.GetImage("marker");
-            return JsonSerializer.SerializeToElement(new MotionPayload(config,assets),Json);
+            return JsonSerializer.SerializeToElement(new MotionPayload(config,assets),MotionJson.Default.MotionPayload);
         }
     }
     private sealed class View(MotionState state) : IApplicationView
@@ -48,9 +48,9 @@ public static class MotionPlugins
         public ApplicationViewDescription Description=>new(state.Settings.Title,state.Settings.Width,state.Settings.Height,new(14,27,37));
         public ViewInput? Translate(ViewportInput input)
         {
-            if(input.Kind=="cancel")return new("motion.cancel",JsonSerializer.SerializeToUtf8Bytes(input.Source ?? "",Json));
+            if(input.Kind=="cancel")return new("motion.cancel",JsonSerializer.SerializeToUtf8Bytes(input.Source ?? "",MotionJson.Default.String));
             if(input.Kind is not ("key-down" or "key-up") || input.Key is not ("left" or "right" or "up" or "down" or "space"))return null;
-            return new("motion.key",JsonSerializer.SerializeToUtf8Bytes(new MotionKey(input.Key,input.Kind=="key-down",input.Source ?? ""),Json));
+            return new("motion.key",JsonSerializer.SerializeToUtf8Bytes(new MotionKey(input.Key,input.Kind=="key-down",input.Source ?? ""),MotionJson.Default.MotionKey));
         }
         public void Draw(IDraw2D draw,RenderFrame frame)
         {
@@ -79,9 +79,9 @@ public sealed class MotionState
         cancellation.ThrowIfCancellationRequested();var sources=held.ToDictionary(p=>p.Key,p=>new HashSet<string>(p.Value));var current=Snapshot;
         foreach(var input in frame.Inputs)
         {
-            if(input.Kind=="motion.cancel"){sources.Remove(JsonSerializer.Deserialize<string>(input.Data.Span,MotionPlugins.Json) ?? "");continue;}
+            if(input.Kind=="motion.cancel"){sources.Remove(JsonSerializer.Deserialize(input.Data.Span,MotionJson.Default.String) ?? "");continue;}
             if(input.Kind!="motion.key")continue;
-            var key=JsonSerializer.Deserialize<MotionKey>(input.Data.Span,MotionPlugins.Json) ?? throw new InvalidDataException("Invalid motion input");
+            var key=JsonSerializer.Deserialize(input.Data.Span,MotionJson.Default.MotionKey) ?? throw new InvalidDataException("Invalid motion input");
             if(key.Key=="space" && key.Pressed){current=new(Settings.StartX,Settings.StartY,false,current.Tick);sources.Clear();}
             else if(key.Key is "left" or "right" or "up" or "down")
             {

@@ -1,0 +1,19 @@
+{
+  "success": true,
+  "errors": [],
+  "screenshots": [
+    "C:\\ProbeEvidence\\gl-viewport.0.png",
+    "C:\\ProbeEvidence\\gl-viewport.1.png",
+    "C:\\ProbeEvidence\\gl-viewport.2.png"
+  ],
+  "input": [
+    "down",
+    "up",
+    "a",
+    "cancel",
+    "cancel"
+  ],
+  "devices": 0,
+  "backends": 0,
+  "nativeWindows": 0
+}

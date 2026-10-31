@@ -1,0 +1,17 @@
+<Project Sdk="Microsoft.NET.Sdk">
+  <PropertyGroup>
+    <OutputType>WinExe</OutputType><TargetFramework>net10.0-windows</TargetFramework>
+    <ApplicationManifest>../../src/app.manifest</ApplicationManifest>
+    <UseDesktopGl Condition="'$(UseDesktopGl)' == ''">true</UseDesktopGl>
+    <DefineConstants Condition="'$(UseDesktopGl)' == 'true'">$(DefineConstants);DESKTOP_GL</DefineConstants>
+  </PropertyGroup>
+  <ItemGroup>
+    <ProjectReference Include="../../samples/Sample.Motion/Sample.Motion.csproj" />
+    <ProjectReference Include="../../src/BoardGame.Hosting/BoardGame.Hosting.csproj" />
+    <ProjectReference Include="../../src/BoardGame.Avalonia/BoardGame.Avalonia.csproj" />
+    <ProjectReference Include="../../src/Rendering.DesktopGL/Rendering.DesktopGL.csproj" Condition="'$(UseDesktopGl)' == 'true'" />
+    <ProjectReference Include="../../src/Rendering.WindowsDX/Rendering.WindowsDX.csproj" Condition="'$(UseDesktopGl)' != 'true'" />
+    <Content Include="../../samples/motion-lab/game.start.json;../../samples/motion-lab/motion.json;../../samples/motion-lab/marker.png" Link="motion/%(Filename)%(Extension)" CopyToOutputDirectory="PreserveNewest" CopyToPublishDirectory="PreserveNewest" />
+    <Content Include="../../samples/cursed-investigators/assets/fonts/noto-sans-cjk-sc/*" Link="font/%(Filename)%(Extension)" CopyToOutputDirectory="PreserveNewest" CopyToPublishDirectory="PreserveNewest" />
+  </ItemGroup>
+</Project>

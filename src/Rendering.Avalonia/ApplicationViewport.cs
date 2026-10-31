@@ -22,7 +22,7 @@ public sealed class ApplicationViewport : PlatformViewport
     private static ViewportComposition Composition(IApplicationView view)
     {
         var plugin=ApplicationViewPlugin.Create(view);
-        return new([new RuntimePluginSelection(plugin.Id,plugin.Version,plugin.Api,JsonSerializer.SerializeToElement(new{}))],[plugin]);
+        return new([new RuntimePluginSelection(plugin.Id,plugin.Version,plugin.Api,RuntimeConfiguration.Empty)],[plugin]);
     }
     public void Submit(ViewportInput input)
     {

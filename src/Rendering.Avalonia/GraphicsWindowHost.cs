@@ -21,7 +21,7 @@ internal sealed class GraphicsWindowHost
     private int references;
     private GraphicsWindowHost(TopLevel window,GraphicsConfiguration configuration)
     {
-        this.window=window;identity=JsonSerializer.Serialize(configuration.Startup);
+        this.window=window;identity=JsonSerializer.Serialize(configuration.Startup,RenderingStartupJson.Default.RuntimeStartup);
         graphics=RenderingHost.StartAsync(configuration.Startup,configuration.Catalog,Dispatch);
         Instance=StartInstance(configuration);
     }
@@ -38,7 +38,7 @@ internal sealed class GraphicsWindowHost
     {
         Dispatcher.UIThread.VerifyAccess();
         if(!hosts.TryGetValue(window,out var owner)) {owner=new(window,configuration);hosts.Add(window,owner);}
-        if(owner.identity!=JsonSerializer.Serialize(configuration.Startup)) throw new InvalidOperationException("A graphics window already has a different backend selection; close its viewports before rebuilding");
+        if(owner.identity!=JsonSerializer.Serialize(configuration.Startup,RenderingStartupJson.Default.RuntimeStartup)) throw new InvalidOperationException("A graphics window already has a different backend selection; close its viewports before rebuilding");
         owner.references++;return owner;
     }
     internal Task Release()

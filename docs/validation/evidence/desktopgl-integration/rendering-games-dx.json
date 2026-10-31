@@ -1,0 +1,16 @@
+{
+  "success": true,
+  "errors": [],
+  "checks": [
+    "motion-native-key-target-reset-and-paused-render",
+    "board-native-click-shuffle-draw-finish-replay-dpi-resize-zoom"
+  ],
+  "screenshots": [
+    "C:\\code\\dotnet\\Board-Game-Builder\\.scratch\\rendering-games-dx.json.motion.png",
+    "C:\\code\\dotnet\\Board-Game-Builder\\.scratch\\rendering-games-dx.json.board.png"
+  ],
+  "stateHash": "C4A0FC1983F2D9895B910EFCB4AD6140F0E0FE7C4DEE6B2B557398C5C4ABC379",
+  "recordingHash": "027C97CE7BE970C13D2E3777077C4F0F6357A790C1D3AC72CE4E7582E1FF4634",
+  "devices": 0,
+  "backends": 0
+}

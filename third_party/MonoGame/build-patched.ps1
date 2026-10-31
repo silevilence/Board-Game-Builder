@@ -8,7 +8,7 @@ $source=[IO.Path]::GetFullPath((Join-Path $repo $SourceRoot))
 $destination=[IO.Path]::GetFullPath((Join-Path $repo $Output))
 $commit='f34200720b558125964273fd3e7ab44cde0b0429'
 $patch=Join-Path $PSScriptRoot 'desktopgl-explicit-context.patch'
-$expectedPatch='EFD828319E991EA2F27E4CB9C005F2A294744407E3ABBF2AC1DF8EDD81600BB6'
+$expectedPatch='46A421B691E8CC3E130BA0FC89608AACE4C8586D83AE0E51E1EAC4CD9D86A516'
 if((Get-FileHash -LiteralPath $patch -Algorithm SHA256).Hash -ne $expectedPatch){throw 'MonoGame patch hash changed; review and update its pinned identity.'}
 if(-not (Test-Path -LiteralPath $source)) {
     git clone --filter=blob:none --no-checkout https://github.com/MonoGame/MonoGame.git $source
