@@ -12,7 +12,7 @@ public sealed class BoardApplication(uint seed=1,IReadOnlyDictionary<string,stri
 {
     private readonly ConditionalWeakTable<GameContent,Binding> bindings=new();
     private sealed record Binding(LoadedModule Module,BoardContentPolicy Policy);
-    private sealed record Payload(GameState State,AssetSet Assets);
+    internal sealed record Payload(GameState State,AssetSet Assets);
     public LoadedModule Module(GameContent content)=>Wire.Copy(Bound(content).Module);
     public GameDefinition Definition(GameContent content)=>Wire.Copy(Bound(content).Module.Definition!);
     public void Validate(GameContent content,LoadedModule module)=>Bound(content).Policy.Validate(module);
@@ -50,7 +50,7 @@ public sealed class BoardApplication(uint seed=1,IReadOnlyDictionary<string,stri
     private static Binding CreateBinding(GameContent content)
     {
         if(content.Payload.Format!="board.state" || content.Payload.Version!=1)throw new InvalidDataException("Unsupported board payload");
-        var payload=content.Payload.Data.Deserialize<Payload>(Wire.Options) ?? throw new InvalidDataException("Missing board payload");
+        var payload=content.Payload.Data.Deserialize(Wire.Type<Payload>(BoardHostingJson.Default)) ?? throw new InvalidDataException("Missing board payload");
         StateValidation.Validate(payload.State);var identity=content.Identity;var startup=identity.Startup;
         LuaScript Script(string id)
         {
@@ -59,7 +59,7 @@ public sealed class BoardApplication(uint seed=1,IReadOnlyDictionary<string,stri
             return new(text.StartsWith('\uFEFF')?text[1..]:text,path);
         }
         var rules=Script("lua.rules");var cpu=Script("lua.cpu");
-        var extensions=startup.Plugins.SingleOrDefault(p=>p.Id=="wasm")?.Configuration.GetProperty("extensions").Deserialize<List<RuntimeDependency>>(Wire.Options) ?? [];
+        var extensions=startup.Plugins.SingleOrDefault(p=>p.Id=="wasm")?.Configuration.GetProperty("extensions").Deserialize(Wire.Type<List<RuntimeDependency>>(BoardHostingJson.Default)) ?? [];
         var wasm=extensions.Select(e=>new RuntimePlugin(e.Id,e.Version,e.Api,e.File!,e.Sha256!,e.Permissions ?? [],content.File(e.File!).ToArray())).ToList();
         var assets=payload.Assets;var resources=new ResourcePool(assets.Files,assets.Images,assets.Binaries,assets.Font);
         var module=new LoadedModule(startup.Id,startup.Version,"",payload.State,rules.Source,cpu.Source,rules.Path,cpu.Path,
@@ -85,15 +85,15 @@ public sealed class BoardApplication(uint seed=1,IReadOnlyDictionary<string,stri
         public JsonElement Load(IContentSource source)
         {
             var state=BoardStateDocument.Parse(System.Text.Encoding.UTF8.GetString(source.Read(path).Span),"definition.board-state: "+path);
-            return JsonSerializer.SerializeToElement(new Payload(state,assets.Load(new ContentResourceInput(source))),Wire.Options);
+            return JsonSerializer.SerializeToElement(new Payload(state,assets.Load(new ContentResourceInput(source))),Wire.Type<Payload>(BoardHostingJson.Default));
         }
         public JsonElement Load(IContentSource source,RuntimeStartup startup)
         {
-            var extensions=startup.Plugins.SingleOrDefault(p=>p.Id=="wasm")?.Configuration.GetProperty("extensions").Deserialize<List<RuntimeDependency>>(Wire.Options) ?? [];
+            var extensions=startup.Plugins.SingleOrDefault(p=>p.Id=="wasm")?.Configuration.GetProperty("extensions").Deserialize(Wire.Type<List<RuntimeDependency>>(BoardHostingJson.Default)) ?? [];
             foreach(var extension in extensions)
             {
                 var bytes=source.Read(extension.File!);
-                if(bytes.Length>256*1024 || ModulePackage.Hash(bytes.ToArray())!=extension.Sha256?.ToUpperInvariant())
+                if(bytes.Length>256*1024 || ModuleHash.Compute(bytes.Span)!=extension.Sha256?.ToUpperInvariant())
                     throw new InvalidDataException(extension.Id+": WASM content hash/size mismatch");
             }
             return Load(source);

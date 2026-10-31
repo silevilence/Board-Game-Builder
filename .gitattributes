@@ -6,6 +6,7 @@
 docs/validation/evidence/** -text -whitespace
 # Reviewed upstream patches include context whitespace and are identified by byte hash.
 third_party/**/*.patch -text -whitespace
+third_party/CordiSharp/prepare-static.py -text
 # Preserve the vendored license exactly as supplied in the Kenney archive.
 samples/freecell/assets/License.txt -text -whitespace
 samples/poker-uno/assets/License.txt -text -whitespace

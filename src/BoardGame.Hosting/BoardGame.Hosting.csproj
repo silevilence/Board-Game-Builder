@@ -1,1 +1,2 @@
-<Project Sdk="Microsoft.NET.Sdk"><ItemGroup><ProjectReference Include="../BoardGame.Session/BoardGame.Session.csproj" /><ProjectReference Include="../Resources.Core/Resources.Core.csproj" /></ItemGroup></Project>
+<Project Sdk="Microsoft.NET.Sdk">
+  <PropertyGroup><IsAotCompatible>true</IsAotCompatible></PropertyGroup><ItemGroup><ProjectReference Include="../BoardGame.Session/BoardGame.Session.csproj" /><ProjectReference Include="../Resources.Core/Resources.Core.csproj" /></ItemGroup></Project>

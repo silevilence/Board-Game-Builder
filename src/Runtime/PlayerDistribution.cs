@@ -20,6 +20,6 @@ public static class PlayerDistribution
             ..module.RuntimePlugins is {Count:>0}?new[]{"Wasmtime.Dotnet.dll","wasmtime.dll"}:[]];
         return new(module.RuntimeIdentity!.Startup,2,module.Fingerprint,p=>GamePackage.Pack(directory,p),p=>GameRuntime.Load(p).Fingerprint,required,
             "Board Game Builder — Windows x64\r\n双击 Play.exe，按模块默认席位直接进入游戏。\r\n游戏 → 开局设置（F3）可选择种子、真人／CPU 和本地模式；确认后开始新对局，取消保留当前对局。\r\n游戏菜单可新开、重开或结束对局；文件菜单可加载模块或显示工具栏。\r\n查看菜单可适应窗口、显示／隐藏动作栏；棋盘支持中键平移、滚轮缩放。\r\n热座交接时由下一位玩家确认接手；同屏模式可被旁观。\r\n需工具界面时运行 Play.exe gui --shell tools。\r\n无需编辑器、.NET SDK 或 .NET 运行时。需要 Direct3D 11 图形设备。\r\n",
-            new{module=module.Id,module.Version,module.Fingerprint,rules=Wire.Hash(module.Rules),cpu=Wire.Hash(module.Cpu)});
+            System.Text.Json.JsonSerializer.SerializeToElement(new{module=module.Id,module.Version,module.Fingerprint,rules=Wire.Hash(module.Rules),cpu=Wire.Hash(module.Cpu)},Wire.Options));
     }
 }

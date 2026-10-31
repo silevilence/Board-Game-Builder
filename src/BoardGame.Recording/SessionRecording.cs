@@ -7,12 +7,12 @@ public sealed record SessionRecording(ReplayLog Log,List<ScriptSwitch> Switches,
 {
     public static SessionRecording Create(ReplayLog log,List<ScriptSwitch> switches,Dictionary<string,LoadedModule> versions)
     {
-        var recording=Wire.Copy(new SessionRecording(log,switches,versions,"",versions.Values.Any(v=>v.RuntimeIdentity!=null)?2:1));
+        var recording=RecordingCodec.Copy(new SessionRecording(log,switches,versions,"",versions.Values.Any(v=>v.RuntimeIdentity!=null)?2:1));
         return recording with {Hash=Checksum(recording)};
     }
     private static string Checksum(SessionRecording recording) => Wire.Hash(recording.Format==1
-        ?Wire.Json(new {recording.Log,recording.Switches,recording.Versions,Hash=""})
-        :Wire.Json(recording with {Hash=""}));
+        ?Wire.Json(new LegacyRecordingInput(recording.Log,recording.Switches,recording.Versions,""),Wire.Type<LegacyRecordingInput>(RecordingJson.Default))
+        :RecordingCodec.Write(recording with {Hash=""}));
     public GameEngine Replay(Action<LoadedModule> validate)
     {
         ArgumentNullException.ThrowIfNull(validate);
@@ -44,7 +44,7 @@ internal sealed class SessionRecorder : IRecordingProvider
     {
         this.authority=authority;this.validate=validate;
         if(recording==null) RecordVersion(module);
-        else {switches.AddRange(Wire.Copy(recording.Switches));foreach(var version in Wire.Copy(recording.Versions)) versions.Add(version.Key,version.Value);}
+        else {var copy=RecordingCodec.Copy(recording);switches.AddRange(copy.Switches);foreach(var version in copy.Versions) versions.Add(version.Key,version.Value);}
     }
     public void RecordVersion(LoadedModule module)
     {versions[module.Fingerprint]=Wire.Copy(module);switches.Add(new(authority.ExportLog().EntryCount,module.Fingerprint));}

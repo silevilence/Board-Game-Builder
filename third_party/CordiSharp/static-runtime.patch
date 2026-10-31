@@ -1,0 +1,87 @@
+--- a/src/CordiSharp/Events/EventsService.cs
++++ b/src/CordiSharp/Events/EventsService.cs
+@@ -93 +93 @@
+-        var label = $"ctx.on({JsonSerializer.Serialize(name)})";
++        var label = $"ctx.on({CordiSharp.Internal.StaticJson.Quote(name)})";
+--- a/src/CordiSharp/Fiber.cs
++++ b/src/CordiSharp/Fiber.cs
+@@ -368,2 +368,2 @@
+-            var resultProp = task.GetType().GetProperty("Result");
+-            if (resultProp is not null) return resultProp.GetValue(task);
++            if (System.Runtime.CompilerServices.RuntimeFeature.IsDynamicCodeSupported) return ReadDynamicTaskResult(task);
++            throw new NotSupportedException("NativeAOT effect setup requires Task or Task<object?>; normalize typed results before registration.");
+@@ -372,0 +373,4 @@
++
++    [System.Diagnostics.CodeAnalysis.RequiresDynamicCode("Dynamic CordiSharp plugin shapes require a JIT host.")]
++    [System.Diagnostics.CodeAnalysis.RequiresUnreferencedCode("Dynamic CordiSharp plugin shapes require reflection metadata.")]
++    private static object? ReadDynamicTaskResult(Task task) => task.GetType().GetProperty("Result")?.GetValue(task);
+--- a/src/CordiSharp/Internal/StaticJson.cs
++++ b/src/CordiSharp/Internal/StaticJson.cs
+@@ -0,0 +1,9 @@
++using System.Text.Json;
++using System.Text.Json.Serialization;
++namespace CordiSharp.Internal;
++internal static class StaticJson
++{
++    internal static string Quote(string? value) => JsonSerializer.Serialize(value, StringJsonContext.Default.String);
++}
++[JsonSerializable(typeof(string))]
++internal partial class StringJsonContext : JsonSerializerContext;
+--- a/src/CordiSharp/Logger/LoggerService.cs
++++ b/src/CordiSharp/Logger/LoggerService.cs
+@@ -228,3 +228,7 @@
+-        var prop = config.GetType().GetProperty(key, BindingFlags.Public | BindingFlags.Instance);
+-        return prop?.GetValue(config);
+-    }
++        if (System.Runtime.CompilerServices.RuntimeFeature.IsDynamicCodeSupported) return GetDynamicProperty(config, key);
++        throw new NotSupportedException("NativeAOT logger interception requires dictionary configuration.");
++    }
++
++    [System.Diagnostics.CodeAnalysis.RequiresDynamicCode("Dynamic CordiSharp plugin shapes require a JIT host.")]
++    [System.Diagnostics.CodeAnalysis.RequiresUnreferencedCode("Dynamic CordiSharp plugin shapes require reflection metadata.")]
++    private static object? GetDynamicProperty(object config, string key) => config.GetType().GetProperty(key, BindingFlags.Public | BindingFlags.Instance)?.GetValue(config);
+--- a/src/CordiSharp/ReflectService.cs
++++ b/src/CordiSharp/ReflectService.cs
+@@ -108 +108 @@
+-        }, $"ctx.provide({JsonSerializer.Serialize(name)})");
++        }, $"ctx.provide({CordiSharp.Internal.StaticJson.Quote(name)})");
+@@ -144 +144 @@
+-        }, $"ctx.accessor({JsonSerializer.Serialize(name)})");
++        }, $"ctx.accessor({CordiSharp.Internal.StaticJson.Quote(name)})");
+@@ -176 +176 @@
+-        }), $"ctx.mixin({JsonSerializer.Serialize(source)})");
++        }), $"ctx.mixin({CordiSharp.Internal.StaticJson.Quote(source)})");
+--- a/src/CordiSharp/Registry/RegistryService.cs
++++ b/src/CordiSharp/Registry/RegistryService.cs
+@@ -129 +129 @@
+-            case Type type:
++            case Type type when System.Runtime.CompilerServices.RuntimeFeature.IsDynamicCodeSupported:
+@@ -141 +141,9 @@
+-            case Delegate d:
++            case Func<Context, object?, object?> callback when !System.Runtime.CompilerServices.RuntimeFeature.IsDynamicCodeSupported:
++                key = callback;
++                runtime = new PluginRuntime { Name = callback.Method.Name.StartsWith('<') ? null : callback.Method.Name, Callback = callback };
++                return true;
++            case Action<Context, object?> callback when !System.Runtime.CompilerServices.RuntimeFeature.IsDynamicCodeSupported:
++                key = callback;
++                runtime = new PluginRuntime { Name = callback.Method.Name.StartsWith('<') ? null : callback.Method.Name, Callback = (ctx, config) => { callback(ctx, config); return null; } };
++                return true;
++            case Delegate d when System.Runtime.CompilerServices.RuntimeFeature.IsDynamicCodeSupported:
+@@ -146,4 +154,7 @@
+-                return TryResolveObjectPlugin(plugin, out key, out runtime);
+-        }
+-    }
+-
++                if (System.Runtime.CompilerServices.RuntimeFeature.IsDynamicCodeSupported) return TryResolveObjectPlugin(plugin, out key, out runtime);
++                throw new NotSupportedException("NativeAOT registration requires Inject, IPluginObject, Func<Context, object?, object?> or Action<Context, object?>. Type plugins, other delegate signatures and structural apply objects require a JIT host.");
++        }
++    }
++
++    [System.Diagnostics.CodeAnalysis.RequiresDynamicCode("Dynamic CordiSharp plugin shapes require a JIT host.")]
++    [System.Diagnostics.CodeAnalysis.RequiresUnreferencedCode("Dynamic CordiSharp plugin shapes require reflection metadata.")]
+@@ -201,0 +213,2 @@
++    [System.Diagnostics.CodeAnalysis.RequiresDynamicCode("Dynamic CordiSharp plugin shapes require a JIT host.")]
++    [System.Diagnostics.CodeAnalysis.RequiresUnreferencedCode("Dynamic CordiSharp plugin shapes require reflection metadata.")]
+@@ -246,0 +260,2 @@
++    [System.Diagnostics.CodeAnalysis.RequiresDynamicCode("Dynamic CordiSharp plugin shapes require a JIT host.")]
++    [System.Diagnostics.CodeAnalysis.RequiresUnreferencedCode("Dynamic CordiSharp plugin shapes require reflection metadata.")]

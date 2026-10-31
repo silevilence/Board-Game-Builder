@@ -21,7 +21,7 @@ public sealed record FlowState
             Status is not ("ready" or "waiting" or "ended") || (Status=="waiting")!=(Seat!=null) ||
             Seat!=null && !state.Seats.Any(s=>s.Id==Seat) || (Status=="ended")!=state.Ended ||
             GameContext==null || NodeContext==null || Trace==null || Trace.Count>64 ||
-            System.Text.Encoding.UTF8.GetByteCount(Wire.Json(new {GameContext,NodeContext}))>16384)
+            System.Text.Encoding.UTF8.GetByteCount(Wire.Json(new FlowContextInput(GameContext,NodeContext)))>16384)
             throw new InvalidDataException("flow-state: invalid continuation or context budget exceeded");
     }
 }

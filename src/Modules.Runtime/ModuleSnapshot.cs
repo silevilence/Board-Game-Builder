@@ -2,9 +2,9 @@ using BoardGame.Kernel;
 namespace BoardGame.Modules;
 public static class ModuleSnapshot
 {
-    public static string Fingerprint(LoadedModule module) => Wire.Hash(Wire.Json(new {
-        id=module.Id,version=module.Version,state=module.Initial,rules=module.Rules,cpu=module.Cpu,
-        resources=module.ResourceHashes ?? new SortedDictionary<string,string>(StringComparer.Ordinal),runtime=module.RuntimeHashes })+(module.RuntimePlugins==null?"":Wire.Json(module.RuntimePlugins))+
+    public static string Fingerprint(LoadedModule module) => Wire.Hash(Wire.Json(new ModuleFingerprintInput(
+        module.Id,module.Version,module.Initial,module.Rules,module.Cpu,
+        module.ResourceHashes ?? new SortedDictionary<string,string>(StringComparer.Ordinal),module.RuntimeHashes),Wire.Type<ModuleFingerprintInput>(ModuleJson.Default))+(module.RuntimePlugins==null?"":Wire.Json(module.RuntimePlugins))+
         (module.RuntimeIdentity==null?"":Canonical(Wire.Json(module.RuntimeIdentity)))+
         (module.Resources==null?"":Canonical(Wire.Json(module.Resources))));
     private static string Canonical(string json)
@@ -32,7 +32,7 @@ public static class ModuleSnapshot
             if(string.IsNullOrWhiteSpace(module.Id) || string.IsNullOrWhiteSpace(module.Version) || module.Initial==null || module.Rules==null || module.Cpu==null) throw new InvalidDataException("Missing module metadata.");
             StateValidation.Validate(module.Initial);
             foreach(var resource in module.ResourceHashes ?? [])
-                if(module.ResourceData==null || !module.ResourceData.TryGetValue(resource.Key,out var data) || ModulePackage.Hash(data)!=resource.Value)
+                if(module.ResourceData==null || !module.ResourceData.TryGetValue(resource.Key,out var data) || ModuleHash.Compute(data)!=resource.Value)
                     throw new InvalidDataException($"resources[{resource.Key}]: missing or content hash mismatch");
             if(module.Fingerprint!=Fingerprint(module)) throw new InvalidDataException("Module snapshot content fingerprint mismatch.");
             return module;

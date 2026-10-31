@@ -5,7 +5,7 @@ using BoardGame.Kernel;
 namespace BoardGame.AppRuntime;
 
 public sealed record PlayerPackageSource(RuntimeStartup Startup,int Format,string Fingerprint,Action<string> Pack,
-    Func<string,string> ReadFingerprint,string[] RequiredFiles,string Instructions,object Versions);
+    Func<string,string> ReadFingerprint,string[] RequiredFiles,string Instructions,System.Text.Json.JsonElement Versions);
 
 /// <summary>Verified precompiled host delivery; no compiler, content parser or board model.</summary>
 public static class PrecompiledPlayer
@@ -68,7 +68,7 @@ public static class PrecompiledPlayer
             if(content.ReadFingerprint(Path.Combine(staging,"game.bgm"))!=content.Fingerprint)throw new InvalidDataException("Export package identity mismatch");
             if(manifest.EntryPoint!="Play.exe")File.Copy(Path.Combine(staging,manifest.EntryPoint),Path.Combine(staging,"Play.exe"));
             File.WriteAllText(Path.Combine(staging,"README.txt"),content.Instructions);
-            var versions=System.Text.Json.Nodes.JsonNode.Parse(ContentJson.Write(content.Versions))!.AsObject();
+            var versions=System.Text.Json.Nodes.JsonNode.Parse(content.Versions.GetRawText())!.AsObject();
             versions["api"]=manifest.Api;versions["player"]=manifest.Version;versions["kind"]="formal-player";
             File.WriteAllText(Path.Combine(staging,"versions.json"),versions.ToJsonString(ContentJson.Options));
             var protectedFiles=Directory.GetFiles(staging,"*",SearchOption.AllDirectories).ToDictionary(p=>Path.GetRelativePath(staging,p),p=>ContentJson.Hash(File.ReadAllBytes(p)));

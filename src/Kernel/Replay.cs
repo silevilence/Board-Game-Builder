@@ -2,9 +2,9 @@ namespace BoardGame.Kernel;
 public sealed partial class GameEngine
 {
     public ReplayLog ExportLog() => Wire.Copy(new ReplayLog(1,EngineVersion.Api,fingerprint,seed,initial,entries,entries.Count,entries.Count==0?Wire.Hash(Wire.Json(initial)):entries[^1].Hash,HeaderHash(fingerprint,seed,initial)));
-    private static string HeaderHash(string fingerprint,uint seed,GameState initial) => Wire.Hash(Wire.Json(new { fingerprint,seed,initial }));
+    private static string HeaderHash(string fingerprint,uint seed,GameState initial) => Wire.Hash(Wire.Json(new ReplayHeaderInput(fingerprint,seed,initial),Wire.Type<ReplayHeaderInput>(ReplayJson.Default)));
     private static string EntryHash(Submission submission,List<AppliedCommand> effects,string stateHash,string previousHash) =>
-        Wire.Hash(Wire.Json(new { submission,effects,stateHash,previousHash }));
+        Wire.Hash(Wire.Json(new ReplayEntryInput(submission,effects,stateHash,previousHash),Wire.Type<ReplayEntryInput>(ReplayJson.Default)));
     private void Record(Submission submission,List<AppliedCommand> effects,GameState? candidate=null)
     {
         var previous = entries.Count == 0 ? Wire.Hash(Wire.Json(initial)) : entries[^1].Hash;

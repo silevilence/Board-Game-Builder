@@ -10,7 +10,8 @@ production sources, static JSON contracts, closed ordinal dictionary converters,
 named fingerprint inputs, and runtime-only module primitives. It is deliberately
 a single-assembly experiment and is **not** a proposed production dependency graph.
 
-`prepare.py` creates a new source snapshot and refuses to overwrite a directory.
+`prepare.py` creates a new source snapshot from pinned pre-adaptation commit
+`b10583e`, applies the Core JSON candidate, and refuses to overwrite a directory.
 It changes no production source or NuGet cache. `WireStatic.cs` is compiled only
 for the candidate. Existing type forwarding declarations are omitted only because
 their source and destination types are in the same experimental assembly.

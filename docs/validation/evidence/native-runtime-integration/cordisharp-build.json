@@ -1,0 +1,11 @@
+{
+  "sdk": "10.0.112",
+  "assemblySha256": "5E35E62DFB20A0EB140767B64D2C289ED030ED9898AA45FDCCC8FAD87681CEC7",
+  "scope": "Static runtime callbacks only; arbitrary reflection-based plugins remain JIT-only.",
+  "upstream": "https://github.com/oniemiddle/CordiSharp",
+  "packageVersion": "0.2.0",
+  "commit": "7b6cde4f43013ae4ff026b5f7bea5e5f9dd9300f",
+  "archiveSha256": "917DF179E460C799FDD0F083071223EE622E4CD16E3036BF1108130314D35A27",
+  "generatorSha256": "A316E096C39C90C95EC9C3728D1EECB7DD514462A46B6A4B4D7267E1B7AEBC55",
+  "patchSha256": "B07DAB43C89A82D854BBCF967CC3CEA6B6CF3C559E07AEA5D4D6A7425C21618C"
+}

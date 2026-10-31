@@ -52,7 +52,7 @@ public sealed class ApplicationAuthorRuntime(string id,ApplicationCatalog catalo
         return new(content.Identity.Startup,3,content.Fingerprint,p=>BoardGame.AppRuntime.GamePackage.Pack(directory,p,catalog.Content),
             p=>BoardGame.AppRuntime.GamePackage.Load(p,catalog.Content).Fingerprint,[],
             "Windows x64\r\n双击 Play.exe 运行。无需作者工具、SDK 或系统 .NET。需要 Direct3D 11 图形设备。\r\n",
-            new{content.Identity.Startup.Id,content.Identity.Startup.Version,content.Fingerprint});
+            JsonSerializer.SerializeToElement(new{content.Identity.Startup.Id,content.Identity.Startup.Version,content.Fingerprint},AuthorProfiles.Json));
     }
     public string Pack(ProjectView view,string destination,CancellationToken cancellation=default)
     {

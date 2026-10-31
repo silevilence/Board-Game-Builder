@@ -1,0 +1,19 @@
+  正在确定要还原的项目…
+  所有项目均是最新的，无法还原。
+  Application.Abstractions -> C:\code\dotnet\Board-Game-Builder\src\Application.Abstractions\bin\Release\net10.0\Application.Abstractions.dll
+  Resources.Abstractions -> C:\code\dotnet\Board-Game-Builder\src\Resources.Abstractions\bin\Release\net10.0\Resources.Abstractions.dll
+  Application.Core -> C:\code\dotnet\Board-Game-Builder\src\Application.Core\bin\Release\net10.0\Application.Core.dll
+  Resources.Core -> C:\code\dotnet\Board-Game-Builder\src\Resources.Core\bin\Release\net10.0\Resources.Core.dll
+  Kernel.Abstractions -> C:\code\dotnet\Board-Game-Builder\src\Kernel.Abstractions\bin\Release\net10.0\Kernel.Abstractions.dll
+  Modules.Runtime -> C:\code\dotnet\Board-Game-Builder\src\Modules.Runtime\bin\Release\net10.0\Modules.Runtime.dll
+  Kernel -> C:\code\dotnet\Board-Game-Builder\src\Kernel\bin\Release\net10.0\Kernel.dll
+  BoardGame.Core -> C:\code\dotnet\Board-Game-Builder\src\BoardGame.Core\bin\Release\net10.0\BoardGame.Core.dll
+  BoardGame.Recording -> C:\code\dotnet\Board-Game-Builder\src\BoardGame.Recording\bin\Release\net10.0\BoardGame.Recording.dll
+  BoardGame.Session -> C:\code\dotnet\Board-Game-Builder\src\BoardGame.Session\bin\Release\net10.0\BoardGame.Session.dll
+  BoardGame.Hosting -> C:\code\dotnet\Board-Game-Builder\src\BoardGame.Hosting\bin\Release\net10.0\BoardGame.Hosting.dll
+
+已成功生成。
+    0 个警告
+    0 个错误
+
+已用时间 00:00:11.23

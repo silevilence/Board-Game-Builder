@@ -24,7 +24,7 @@ public static class BoardStateDocument
             }
             try
             {
-                var state=root["state"]!.Deserialize<GameState>(Wire.Options) ?? throw new InvalidDataException("required object");
+                var state=root["state"]!.Deserialize(Wire.Type<GameState>()) ?? throw new InvalidDataException("required object");
                 StateValidation.Validate(state);return state;
             }
             catch(Exception error) when(error is not OutOfMemoryException)

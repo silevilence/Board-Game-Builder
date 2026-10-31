@@ -3,6 +3,7 @@ from pathlib import Path
 import re
 import shutil
 import sys
+import subprocess
 
 repo = Path(__file__).resolve().parents[3]
 target = Path(sys.argv[1]).resolve()
@@ -10,15 +11,28 @@ if target.exists():
     raise SystemExit(f"Candidate already exists: {target}")
 projects = ["Application.Abstractions", "Application.Core", "Resources.Abstractions", "Resources.Core",
             "Kernel.Abstractions", "Kernel", "BoardGame.Core", "BoardGame.Session", "BoardGame.Recording", "BoardGame.Hosting"]
+revision = "b10583e"
+def original(file):
+    return subprocess.check_output(["git", "-C", str(repo), "show", f"{revision}:{file}"], text=True, encoding="utf-8-sig")
 for name in projects:
     (target / name).mkdir(parents=True)
-    for file in (repo / "src" / name).glob("*.cs"):
-        shutil.copyfile(file, target / name / file.name)
+    names = subprocess.check_output(["git", "-C", str(repo), "ls-tree", "--name-only", f"{revision}:src/{name}"], text=True).splitlines()
+    for file in names:
+        if file.endswith(".cs"):
+            (target / name / file).write_text(original(f"src/{name}/{file}"), encoding="utf-8")
+# The original experiment included the independently proven Core JSON candidate.
+core = target / "core-json-candidate"
+subprocess.run(["pwsh", "-NoProfile", "-File", str(repo / "tools/AotProbes/Core/prepare-candidate.ps1"), "-Destination", str(core), "-SourceRevision", revision], check=True)
+for file in core.glob("*.cs"):
+    shutil.copyfile(file, target / "Application.Core" / file.name)
+# Do not leave duplicate Compile inputs inside the candidate tree.
+for file in core.glob("*.cs"):
+    file.rename(file.with_suffix(".cs.evidence"))
 (target / "Modules").mkdir()
-shutil.copyfile(repo / "src/Modules/ModuleSnapshot.cs", target / "Modules/ModuleSnapshot.cs")
+(target / "Modules/ModuleSnapshot.cs").write_text(original("src/Modules/ModuleSnapshot.cs"), encoding="utf-8")
 # Extract only the exact data contract and hash primitive needed at runtime.
 # Historical package parsing and author YAML remain in their original sources.
-module = (repo / "src/Modules/ModulePackage.cs").read_text(encoding="utf-8-sig")
+module = original("src/Modules/ModulePackage.cs")
 contract = module[module.index("public sealed record RuntimeDependency"):module.index("public sealed record PackageManifest")]
 hash_line = next(line for line in module.splitlines() if "public static string Hash(byte[]" in line)
 (target / "Modules/RuntimeModulePrimitives.cs").write_text(

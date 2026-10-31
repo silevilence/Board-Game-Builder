@@ -10,13 +10,13 @@ internal static class RuntimeDefinition
         Wire.Copy(module.ResourceHashes ?? new(StringComparer.Ordinal)),Wire.Copy(module.ResourceData ?? new(StringComparer.Ordinal)),
         new(StringComparer.Ordinal)
         {
-            ["lua.rules"]=JsonSerializer.SerializeToElement(new LuaScript(module.Rules,module.RulesPath),Wire.Options),
-            ["lua.cpu"]=JsonSerializer.SerializeToElement(new LuaScript(module.Cpu,module.CpuPath),Wire.Options),
-            ["wasm"]=JsonSerializer.SerializeToElement(module.RuntimePlugins ?? [],Wire.Options)
+            ["lua.rules"]=JsonSerializer.SerializeToElement(new LuaScript(module.Rules,module.RulesPath),Wire.Type<LuaScript>(BoardCoreJson.Default)),
+            ["lua.cpu"]=JsonSerializer.SerializeToElement(new LuaScript(module.Cpu,module.CpuPath),Wire.Type<LuaScript>(BoardCoreJson.Default)),
+            ["wasm"]=Wire.Element(module.RuntimePlugins ?? [])
         },module.Resources);
     public static T Configuration<T>(GameDefinition definition,string capability)=>
         definition.CapabilityData.TryGetValue(capability,out var configuration)
-            ? configuration.Deserialize<T>(Wire.Options) ?? throw new InvalidDataException(capability+": missing configuration")
+            ? configuration.Deserialize(Wire.Type<T>(BoardCoreJson.Default)) ?? throw new InvalidDataException(capability+": missing configuration")
             : throw new InvalidDataException(capability+": missing configuration");
 }
 
@@ -25,7 +25,7 @@ internal sealed class CommandRuleProvider : IRuleProvider, IGameRules
     private readonly List<ActionOffer> offers;
     public CommandRuleProvider(JsonElement configuration)
     {
-        offers=configuration.TryGetProperty("actions",out var actions)?actions.Deserialize<List<ActionOffer>>(Wire.Options) ?? throw new InvalidDataException("rules.commands: actions must be an array"):[];
+        offers=configuration.TryGetProperty("actions",out var actions)?actions.Deserialize(Wire.Type<List<ActionOffer>>()) ?? throw new InvalidDataException("rules.commands: actions must be an array"):[];
         if(offers.Count>256 || offers.Any(a=>a==null || string.IsNullOrWhiteSpace(a.Id) || string.IsNullOrWhiteSpace(a.Label) || a.Command==null || string.IsNullOrWhiteSpace(a.Command.Kind)) || offers.Select(a=>a.Id).Distinct().Count()!=offers.Count)
             throw new InvalidDataException("rules.commands: invalid action schema or limit exceeded");
     }

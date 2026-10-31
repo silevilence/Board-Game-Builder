@@ -1,0 +1,16 @@
+  正在确定要还原的项目…
+  所有项目均是最新的，无法还原。
+  Application.Abstractions -> C:\code\dotnet\Board-Game-Builder\artifacts\native-aot\board\production-build\bin\Application.Abstractions\release\Application.Abstractions.dll
+  Resources.Abstractions -> C:\code\dotnet\Board-Game-Builder\artifacts\native-aot\board\production-build\bin\Resources.Abstractions\release\Resources.Abstractions.dll
+  Application.Core -> C:\code\dotnet\Board-Game-Builder\artifacts\native-aot\board\production-build\bin\Application.Core\release\Application.Core.dll
+  Resources.Core -> C:\code\dotnet\Board-Game-Builder\artifacts\native-aot\board\production-build\bin\Resources.Core\release\Resources.Core.dll
+  Kernel.Abstractions -> C:\code\dotnet\Board-Game-Builder\artifacts\native-aot\board\production-build\bin\Kernel.Abstractions\release\Kernel.Abstractions.dll
+  Modules.Runtime -> C:\code\dotnet\Board-Game-Builder\artifacts\native-aot\board\production-build\bin\Modules.Runtime\release\Modules.Runtime.dll
+  Kernel -> C:\code\dotnet\Board-Game-Builder\artifacts\native-aot\board\production-build\bin\Kernel\release\Kernel.dll
+  BoardGame.Core -> C:\code\dotnet\Board-Game-Builder\artifacts\native-aot\board\production-build\bin\BoardGame.Core\release\BoardGame.Core.dll
+  BoardGame.Recording -> C:\code\dotnet\Board-Game-Builder\artifacts\native-aot\board\production-build\bin\BoardGame.Recording\release\BoardGame.Recording.dll
+  BoardGame.Session -> C:\code\dotnet\Board-Game-Builder\artifacts\native-aot\board\production-build\bin\BoardGame.Session\release\BoardGame.Session.dll
+  BoardGame.Hosting -> C:\code\dotnet\Board-Game-Builder\artifacts\native-aot\board\production-build\bin\BoardGame.Hosting\release\BoardGame.Hosting.dll
+  Native.Board.Tests -> C:\code\dotnet\Board-Game-Builder\artifacts\native-aot\board\production-build\bin\Native.Board.Tests\release_win-x64\Native.Board.Tests.dll
+  Generating native code
+  Native.Board.Tests -> C:\code\dotnet\Board-Game-Builder\artifacts\native-aot\board\production\

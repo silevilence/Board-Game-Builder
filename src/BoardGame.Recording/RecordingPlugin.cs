@@ -13,7 +13,7 @@ public static class RecordingPlugin
     /// Authority recordings contain secrets and must never be sent to a player.</summary>
     public static ISeatProjection Observe(SessionRecording recording,string authorizedSeat,Action<LoadedModule> validate)
     {
-        var engine=Wire.Copy(recording).Replay(validate);
+        var engine=RecordingCodec.Copy(recording).Replay(validate);
         return new RecordedProjection(engine.Project(authorizedSeat));
     }
 

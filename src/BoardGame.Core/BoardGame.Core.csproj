@@ -1,4 +1,5 @@
 <Project Sdk="Microsoft.NET.Sdk">
+  <PropertyGroup><IsAotCompatible>true</IsAotCompatible></PropertyGroup>
   <ItemGroup>
     <ProjectReference Include="../Kernel/Kernel.csproj" />
     <ProjectReference Include="../Application.Core/Application.Core.csproj" />

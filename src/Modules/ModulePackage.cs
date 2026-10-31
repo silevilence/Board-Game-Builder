@@ -7,11 +7,6 @@ using System.Text.Json.Serialization;
 using BoardGame.Kernel;
 namespace BoardGame.Modules;
 
-public sealed record RuntimeDependency(string Id,string Version,int Api,[property:JsonPropertyName("editor_only")] bool EditorOnly=false,
-    [property:JsonIgnore(Condition=JsonIgnoreCondition.WhenWritingNull)] string? Kind=null,
-    [property:JsonIgnore(Condition=JsonIgnoreCondition.WhenWritingNull)] string? File=null,
-    [property:JsonIgnore(Condition=JsonIgnoreCondition.WhenWritingNull)] string? Sha256=null,
-    [property:JsonIgnore(Condition=JsonIgnoreCondition.WhenWritingNull)] List<string>? Permissions=null);
 public sealed record PackageManifest(int Format,int Api,string Source,string ModuleId,string ModuleVersion,string Fingerprint,
     List<RuntimeDependency> Dependencies,SortedDictionary<string,string> Files);
 public static class ModulePackage

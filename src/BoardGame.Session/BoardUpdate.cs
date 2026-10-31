@@ -59,7 +59,7 @@ internal sealed partial class LocalGameSession
                 cancellation.ThrowIfCancellationRequested();
                 try
                 {
-                    var request=JsonSerializer.Deserialize<BoardUpdateRequest>(input.Data.Span,Wire.Options)
+                    var request=JsonSerializer.Deserialize(input.Data.Span,Wire.Type<BoardUpdateRequest>(BoardSessionJson.Default))
                         ?? throw new InvalidDataException("Missing board request");
                     if(request.Revision!=revision) {results.Add(new(input.Sequence,false,"stale-revision"));continue;}
                     switch(input.Kind)

@@ -34,6 +34,7 @@
     <Project Path="src/Launcher.Cli/Launcher.Cli.csproj" />
     <Project Path="src/Launcher/Launcher.csproj" />
     <Project Path="src/Modules/Modules.csproj" />
+    <Project Path="src/Modules.Runtime/Modules.Runtime.csproj" />
     <Project Path="src/Networking/Networking.csproj" />
     <Project Path="src/NetworkClient/NetworkClient.csproj" />
     <Project Path="src/Server/Server.csproj" />
@@ -52,6 +53,7 @@
     <Project Path="src/View.MonoGame/View.MonoGame.csproj" />
   </Folder>
   <Folder Name="/tests/">
+    <Project Path="tests/Native.Board.Tests/Native.Board.Tests.csproj" />
     <Project Path="tests/Runtime.StaticRegistration.Tests/Runtime.StaticRegistration.Tests.csproj" />
     <Project Path="tests/Runtime.PluginImport.Tests/Runtime.PluginImport.Tests.csproj" />
     <Project Path="tests/Runtime.Plugins.Tests/Runtime.Plugins.Tests.csproj" />

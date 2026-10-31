@@ -8,7 +8,7 @@ namespace BoardGame.AppRuntime;
 public static class GamePackage
 {
     internal const string Manifest="package.manifest.json";
-    private sealed record PackageManifest(int Format,string Fingerprint,SortedDictionary<string,string> Files);
+    internal sealed record PackageManifest(int Format,string Fingerprint,SortedDictionary<string,string> Files);
     public static void Pack(string directory,string destination,ContentCatalog catalog)
     {
         var content=GameRuntime.LoadDirectory(directory,catalog);

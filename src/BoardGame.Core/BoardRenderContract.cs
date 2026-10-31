@@ -10,7 +10,7 @@ public static class BoardRenderContract
     public static RuntimePluginDefinition Description=>new(Id,"1",1,[Id],["board.visual-source","render.target"],
         _=>throw new InvalidOperationException("board.render: graphical host must bind its installed renderer"))
         {Execution=new(HostMode.Graphical,RuntimeScope.Viewport,[new("draw",ApplicationPhase.Render)])};
-    public static RuntimePluginSelection Selection=>new(Id,"1",1,JsonSerializer.SerializeToElement(new{}));
+    public static RuntimePluginSelection Selection=>new(Id,"1",1,Wire.Empty());
     public static RuntimePluginSelection Require(RuntimeStartup startup)
     {
         var selected=startup.Plugins.SingleOrDefault(p=>p.Id==Id)

@@ -1,6 +1,7 @@
 <Project Sdk="Microsoft.NET.Sdk">
   <ItemGroup>
     <ProjectReference Include="../Kernel.Abstractions/Kernel.Abstractions.csproj" />
+    <ProjectReference Include="../Modules.Runtime/Modules.Runtime.csproj" />
   </ItemGroup>
   <ItemGroup>
     <PackageReference Include="YamlDotNet" Version="18.1.0" />

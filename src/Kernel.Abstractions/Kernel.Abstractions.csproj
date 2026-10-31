@@ -1,4 +1,5 @@
 <Project Sdk="Microsoft.NET.Sdk">
+  <PropertyGroup><IsAotCompatible>true</IsAotCompatible></PropertyGroup>
   <ItemGroup><ProjectReference Include="../Application.Abstractions/Application.Abstractions.csproj" /></ItemGroup>
   <ItemGroup><ProjectReference Include="../Resources.Abstractions/Resources.Abstractions.csproj" /></ItemGroup>
 </Project>

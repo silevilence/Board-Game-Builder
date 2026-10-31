@@ -8,10 +8,11 @@
   </PropertyGroup>
   <ItemGroup>
     <Compile Include="Program.cs" />
-    <Compile Include="../../../src/Application.Abstractions/*.cs" Link="Production/Abstractions/%(Filename)%(Extension)" />
-    <Compile Include="../../../src/Application.Core/*.cs" Link="Production/Core/%(Filename)%(Extension)" Condition="'$(ProbeCoreSources)' == ''" />
+    <Compile Include="../../../src/Application.Abstractions/*.cs" Link="Production/Abstractions/%(Filename)%(Extension)" Condition="'$(UseProductionProjects)' != 'true'" />
+    <Compile Include="../../../src/Application.Core/*.cs" Link="Production/Core/%(Filename)%(Extension)" Condition="'$(ProbeCoreSources)' == '' and '$(UseProductionProjects)' != 'true'" />
     <Compile Include="$(ProbeCoreSources)/*.cs" Link="Candidate/%(Filename)%(Extension)" Condition="'$(ProbeCoreSources)' != ''" />
-    <PackageReference Include="CordiSharp" Version="[0.2.0]" ExcludeAssets="analyzers" Condition="'$(ProbeCordiSharpProject)' == ''" />
+    <PackageReference Include="CordiSharp" Version="[0.2.0]" ExcludeAssets="analyzers" Condition="'$(ProbeCordiSharpProject)' == '' and '$(UseProductionProjects)' != 'true'" />
     <ProjectReference Include="$(ProbeCordiSharpProject)" Condition="'$(ProbeCordiSharpProject)' != ''" />
+    <ProjectReference Include="../../../src/Application.Core/Application.Core.csproj" Condition="'$(UseProductionProjects)' == 'true'" />
   </ItemGroup>
 </Project>

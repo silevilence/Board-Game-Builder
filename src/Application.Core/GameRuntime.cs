@@ -57,7 +57,7 @@ public static class GameRuntime
         var hashes=new SortedDictionary<string,string>(StringComparer.Ordinal);
         foreach(var file in source.Files.Where(p=>p.Key!=Entry)) hashes.Add(file.Key,ContentJson.Hash(file.Value));
         var identity=new ContentIdentity(1,effective,RuntimeDiscovery.Definition(effective,catalog.Plugins).Sources.Source,hashes);
-        var fingerprint=ContentJson.Hash(Encoding.UTF8.GetBytes(ContentJson.Canonical(new{identity,payload})));
+        var fingerprint=ContentJson.Hash(Encoding.UTF8.GetBytes(ContentJson.Canonical(new ContentFingerprintInput(identity,payload))));
         return new(new("application-content",1,preset,identity,payload,source.Files,fingerprint));
 
         ContentPayload Prepare(RuntimeStartup selected)
