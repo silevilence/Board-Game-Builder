@@ -1,7 +1,11 @@
 namespace BoardGame.Authoring;
 
 public sealed record AuthorArtifact(ProjectSource Source,string Target,string Kind,string Fingerprint)
-{public IReadOnlyList<string> Warnings {get;init;}=[];}
+{
+    public IReadOnlyList<string> Warnings {get;init;}=[];
+    [System.Text.Json.Serialization.JsonIgnore(Condition=System.Text.Json.Serialization.JsonIgnoreCondition.WhenWritingNull)]
+    public string? Log {get;init;}
+}
 public static class ExportOperations
 {
     // Explicit legacy profile bundle, not a fallback when either provider is missing.

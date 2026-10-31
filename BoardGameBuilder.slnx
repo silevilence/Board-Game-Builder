@@ -71,6 +71,7 @@
     <Project Path="tests/Motion.ViewTests/Motion.ViewTests.csproj" />
     <Project Path="tests/Application.Hosting.Tests/Application.Hosting.Tests.csproj" />
     <Project Path="tests/BoardGame.Presentation.Tests/BoardGame.Presentation.Tests.csproj" />
+    <Project Path="tests/Authoring.Native.Tests/Authoring.Native.Tests.csproj" />
     <Project Path="tests/BoardGame.Hosting.Tests/BoardGame.Hosting.Tests.csproj" />
     <Project Path="tests/BoardGame.WasmHosting.Tests/BoardGame.WasmHosting.Tests.csproj" />
     <Project Path="tests/BoardGame.ScriptHosting.Tests/BoardGame.ScriptHosting.Tests.csproj" />

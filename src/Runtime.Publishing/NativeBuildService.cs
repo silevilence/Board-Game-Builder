@@ -19,7 +19,7 @@ public static class NativeBuildService
     public static async Task<NativeBuildResult> Build(PublicationPlan plan,NativeEntry entry,NativeBuildOptions options,
         IProgress<NativeBuildProgress>? progress=null,CancellationToken cancellation=default)
     {
-        cancellation.ThrowIfCancellationRequested();entry=entry with {Icon=entry.Icon?.ToArray()};Validate(entry);
+        cancellation.ThrowIfCancellationRequested();entry=entry with {Icon=entry.Icon?.ToArray()};ValidateEntry(entry);
         var reserved=new HashSet<string>(["Play.exe","Play.dll","game.ico","native-release.json","build-inputs.json","startup-error.txt"],StringComparer.OrdinalIgnoreCase);
         if(plan.Files.Any(f=>reserved.Contains(f.Name)))throw new InvalidDataException("Runtime input conflicts with a reserved release filename");
         var destination=Path.GetFullPath(options.Destination);
@@ -110,7 +110,7 @@ public static class NativeBuildService
         }
         return new(success,success?destination:null,log,diagnostics.AsReadOnly(),watch.Elapsed);
     }
-    private static void Validate(NativeEntry entry)
+    public static void ValidateEntry(NativeEntry entry)
     {
         bool Name(string part)=>Regex.IsMatch(part,"\\A[A-Za-z_][A-Za-z0-9_]*\\z",RegexOptions.CultureInvariant);
         if(string.IsNullOrWhiteSpace(entry.Type) || !entry.Type.Split('.').All(Name) || !Name(entry.Method) || string.IsNullOrWhiteSpace(entry.Title) || entry.Title.Length>128 || string.IsNullOrWhiteSpace(entry.Version) || entry.Version.Length>80)

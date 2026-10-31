@@ -1,0 +1,21 @@
+{
+  "ok": true,
+  "requestId": "native-cli-20261031",
+  "result": {
+    "source": {
+      "identity": {
+        "directory": "C:\\code\\dotnet\\Board-Game-Builder\\artifacts\\native-aot\\cli-native-project",
+        "profile": "native",
+        "mode": "disk",
+        "workspace": null,
+        "generation": 0
+      },
+      "version": "FA3569E08337E7B0CDFDE4513B7C55954F3C2F7F550F682E24B1306831FA9568"
+    },
+    "target": "C:\\code\\dotnet\\Board-Game-Builder\\artifacts\\native-aot\\cli-native-release",
+    "kind": "native-directory",
+    "fingerprint": "9D76956926FFB142A7447DDDE2505CC6FEF6D316F081A119503536BE4942733B",
+    "warnings": [],
+    "log": "C:\\Users\\silev\\AppData\\Local\\Temp\\bgb-native-build-logs\\f8d91e35c3e24194a5aa14e051a629b7\\build.log"
+  }
+}

@@ -53,7 +53,7 @@ public sealed class RuntimeSdk
         return plan;
     }
     public NativeEntry Entry(string hostId,string title,string version,byte[]? icon=null)
-    {var host=manifest.Hosts.Single(h=>h.Id==hostId);return new(host.EntryType,host.EntryMethod,title,version,icon);}
+    {var host=manifest.Hosts.Single(h=>h.Id==hostId);var entry=new NativeEntry(host.EntryType,host.EntryMethod,title,version,icon);NativeBuildService.ValidateEntry(entry);return entry;}
     public static void WriteManifest(string directory,NativeSdkManifest manifest)=>System.IO.File.WriteAllText(Path.Combine(directory,"native.sdk.json"),JsonSerializer.Serialize(manifest,json));
     private static PublicationFile File(string directory,PluginFile file,string owner)
     {ContentPath.Validate(file.Path);return new(Path.Combine(directory,file.Path),Path.GetFileName(file.Path),file.Sha256,file.Role,owner);}

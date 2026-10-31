@@ -15,6 +15,10 @@ public interface IAuthorPackageRuntime : IAuthorRuntime
 {
     string Pack(ProjectView view,string destination,CancellationToken cancellation=default);
 }
+public interface IAuthorApplicationRuntime : IAuthorRuntime
+{
+    ApplicationCatalog Catalog {get;}
+}
 public sealed class AuthorRuntimes
 {
     private readonly Dictionary<string,IAuthorRuntime> providers=new(StringComparer.Ordinal);
@@ -34,7 +38,7 @@ public sealed class AuthorRuntimes
     }
     public void ValidateContent(ProjectView view)=>Resolve(view).Validate(view,"content").GetAwaiter().GetResult();
 }
-public sealed class ApplicationAuthorRuntime(string id,ApplicationCatalog catalog) : IAuthorPackageRuntime,IAuthorPlayerRuntime
+public sealed class ApplicationAuthorRuntime(string id,ApplicationCatalog catalog) : IAuthorPackageRuntime,IAuthorPlayerRuntime,IAuthorApplicationRuntime
 {
     public string Id=>id;
     public ApplicationCatalog Catalog=>catalog;

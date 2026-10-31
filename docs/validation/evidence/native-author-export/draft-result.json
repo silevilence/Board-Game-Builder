@@ -1,0 +1,17 @@
+{
+  "Source": {
+    "Identity": {
+      "Directory": "C:\\code\\dotnet\\Board-Game-Builder\\samples\\motion-lab",
+      "Profile": "native-test",
+      "Mode": "memory",
+      "Workspace": null,
+      "Generation": 3
+    },
+    "Version": "BFDC490C9AD03CDC8E51B7DA2C2D7D095BDC94D717168F8508FE8A5A50E2D2B0"
+  },
+  "Target": "C:\\code\\dotnet\\Board-Game-Builder\\artifacts\\native-aot\\author\\2ae5bc8160d84d3eb25e27517a6dd0d7\\game",
+  "Kind": "native-directory",
+  "Fingerprint": "2C973390D3341FBD0228C433DF4D1AB7F7691ED625806FFED8D0D19D1E2FEEA3",
+  "Warnings": [],
+  "Log": "C:\\Users\\silev\\AppData\\Local\\Temp\\bgb-native-build-logs\\fdd884292676474ba1507d472b69c0d8\\build.log"
+}

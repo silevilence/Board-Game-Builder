@@ -1,0 +1,311 @@
+{
+  "target": "win-x64",
+  "mode": "Graphical",
+  "sourceFingerprint": "9D76956926FFB142A7447DDDE2505CC6FEF6D316F081A119503536BE4942733B",
+  "plugins": [
+    {
+      "id": "motion.definition",
+      "version": "1",
+      "fingerprint": "ac934f51e89978c045f935af07d278f89d08d91f10f61dc0814e4246c5242e9f"
+    },
+    {
+      "id": "motion.loop",
+      "version": "1",
+      "fingerprint": "37c8b3222dd03114eb92c68e9c738d2977d96adf3ddb0b8116b20327e276e15a"
+    },
+    {
+      "id": "motion.view",
+      "version": "1",
+      "fingerprint": "020fcd7a337bf5ce2494424ce712a7fcffcd8e028a1a935b76ad0c395ecde33d"
+    },
+    {
+      "id": "render.desktopgl",
+      "version": "1",
+      "fingerprint": "cdde032d4604395c9f038bea84de570e36b8e957cf5143527cc38933c6e34844"
+    },
+    {
+      "id": "resources",
+      "version": "1",
+      "fingerprint": "24cfae7e0832e7c8b4b0b0238a203d2ed8d7aacd43d04d4b2446f3a4b8412a7c"
+    },
+    {
+      "id": "resources.images",
+      "version": "1",
+      "fingerprint": "4ae29bc1da51bc80688de9e85e28cfe563168bd73e205442199940a128e4aab0"
+    }
+  ],
+  "runtime": [
+    {
+      "path": "runtime/Application.Abstractions.dll",
+      "sha256": "6846c28ba9e4698e2ce9a6e4ea60206e6180000417703d7fba417dcbefe0106a",
+      "role": "managed",
+      "owner": "application.desktop"
+    },
+    {
+      "path": "runtime/Application.Core.dll",
+      "sha256": "10c6b51d4f1cd06f1c8de7acc6d55a43edb2acb0a8ae4d87f8503a4bc20a3a3d",
+      "role": "managed",
+      "owner": "application.desktop"
+    },
+    {
+      "path": "runtime/Avalonia.Base.dll",
+      "sha256": "19596afa3c31f1643812b6bacf7dead04889e61c3b465714eb3e818b9ecb1bb3",
+      "role": "managed",
+      "owner": "application.desktop"
+    },
+    {
+      "path": "runtime/Avalonia.Controls.dll",
+      "sha256": "5a2540f4e27a59a7390b13be11bfbac484773ee98843a08ef00ae442e4aafb0c",
+      "role": "managed",
+      "owner": "application.desktop"
+    },
+    {
+      "path": "runtime/Avalonia.Desktop.dll",
+      "sha256": "12d0af0c34912242b4b66fe561dc6aa6b073dcd67427488573deedd721993b70",
+      "role": "managed",
+      "owner": "application.desktop"
+    },
+    {
+      "path": "runtime/Avalonia.Dialogs.dll",
+      "sha256": "b90af0559fa3eae9664e13649300da2e054636aef959b24df897f1a324d56824",
+      "role": "managed",
+      "owner": "application.desktop"
+    },
+    {
+      "path": "runtime/Avalonia.FreeDesktop.AtSpi.dll",
+      "sha256": "be8ef27f44ec61b0af1ea58d6a04c08c4ae05e3ecdcb0c852a0c536b80b981a3",
+      "role": "managed",
+      "owner": "application.desktop"
+    },
+    {
+      "path": "runtime/Avalonia.FreeDesktop.dll",
+      "sha256": "caf2505151490cc075f919613e78d6b962d35bf1f9965845b21659d2698ef57b",
+      "role": "managed",
+      "owner": "application.desktop"
+    },
+    {
+      "path": "runtime/Avalonia.HarfBuzz.dll",
+      "sha256": "7e896b33d3ba0c78347398d33112c6ca4dbd810a6f3b6caf22d3de3686332a40",
+      "role": "managed",
+      "owner": "application.desktop"
+    },
+    {
+      "path": "runtime/Avalonia.Markup.Xaml.dll",
+      "sha256": "3bc2fb3c368256a7ca328e82d6b1296779d459a19fe1ed8a306f0088748d2cc3",
+      "role": "managed",
+      "owner": "application.desktop"
+    },
+    {
+      "path": "runtime/Avalonia.Markup.dll",
+      "sha256": "061c8f2b9734f3befcf38f4b009b66190514c17c312ffd8db6fdbcbf45bffdc1",
+      "role": "managed",
+      "owner": "application.desktop"
+    },
+    {
+      "path": "runtime/Avalonia.Metal.dll",
+      "sha256": "79c7505aa2ac04564e4966d168d38ce60fc47982d8661a6ebcbf3eefc8061c22",
+      "role": "managed",
+      "owner": "application.desktop"
+    },
+    {
+      "path": "runtime/Avalonia.MicroCom.dll",
+      "sha256": "bd86aff78404bb8d09f38c3d7cc8f523df4b4a0af393291afd4e589512923689",
+      "role": "managed",
+      "owner": "application.desktop"
+    },
+    {
+      "path": "runtime/Avalonia.Native.dll",
+      "sha256": "1873d288024bda285b7d9b9d06ae69183fc421667e9bd44d8da0fe0fe54010f9",
+      "role": "managed",
+      "owner": "application.desktop"
+    },
+    {
+      "path": "runtime/Avalonia.OpenGL.dll",
+      "sha256": "60c753cc3f5d118deb82ff6131c99bb873153c081c05483f55406a7c3f60c3ad",
+      "role": "managed",
+      "owner": "application.desktop"
+    },
+    {
+      "path": "runtime/Avalonia.Remote.Protocol.dll",
+      "sha256": "e0f3ccd76a47210367e9b2d1127ef499fb82eb283612cbf388a590a5ddf7e71b",
+      "role": "managed",
+      "owner": "application.desktop"
+    },
+    {
+      "path": "runtime/Avalonia.Skia.dll",
+      "sha256": "9eb06b804efe57cacf6f60e8f451dabe2b5dd743d5b563ff51d6bab84476782e",
+      "role": "managed",
+      "owner": "application.desktop"
+    },
+    {
+      "path": "runtime/Avalonia.Themes.Fluent.dll",
+      "sha256": "43b9888e28f6f635a5926e3cc228b29282c825d7078a66dfc7dfa5a8041ec401",
+      "role": "managed",
+      "owner": "application.desktop"
+    },
+    {
+      "path": "runtime/Avalonia.Vulkan.dll",
+      "sha256": "790aad1467b5d6b48cabb5e6e68fb6e4960923998c9e67fba5758b44815da031",
+      "role": "managed",
+      "owner": "application.desktop"
+    },
+    {
+      "path": "runtime/Avalonia.Win32.Automation.dll",
+      "sha256": "b805d7fcaacff732fbc3951cfeeababc56a8cbe56b01ee6937daeeef5b4c4b42",
+      "role": "managed",
+      "owner": "application.desktop"
+    },
+    {
+      "path": "runtime/Avalonia.Win32.dll",
+      "sha256": "9d7fb93a2d0ed176341ff27396f1969933ca746f53595b55a9e39d411e190e09",
+      "role": "managed",
+      "owner": "application.desktop"
+    },
+    {
+      "path": "runtime/Avalonia.X11.dll",
+      "sha256": "a03ca44de21f07e286cc1a690fe12f40c6bfcc6d5c9dd1f71c5b433bb2b9aebd",
+      "role": "managed",
+      "owner": "application.desktop"
+    },
+    {
+      "path": "runtime/CordiSharp.dll",
+      "sha256": "5e35e62dfb20a0eb140767b64d2c289ed030ed9898aa45fdccc8fad87681cec7",
+      "role": "managed",
+      "owner": "application.desktop"
+    },
+    {
+      "path": "runtime/HarfBuzzSharp.dll",
+      "sha256": "55e72ac23263f8e12484f3435e02ec22fac9eff6e6d169bb0a8c246be6b99d29",
+      "role": "managed",
+      "owner": "application.desktop"
+    },
+    {
+      "path": "runtime/MicroCom.Runtime.dll",
+      "sha256": "2538ec6f3c24e901a90e33c37788b9a4e4b6ae8158cab7328a00a00bb28eab9e",
+      "role": "managed",
+      "owner": "application.desktop"
+    },
+    {
+      "path": "runtime/MonoGame.Framework.dll",
+      "sha256": "b1a28e2605a0b3037634ac2ca17f265b3bcff8caee72678b9a18acecba31890f",
+      "role": "managed",
+      "owner": "render.desktopgl"
+    },
+    {
+      "path": "runtime/NVorbis.dll",
+      "sha256": "55e7477deeb341058d5543515ed371575a415d8edcf9d0e933a41ca2dee54ad4",
+      "role": "managed",
+      "owner": "render.desktopgl"
+    },
+    {
+      "path": "runtime/Player.Native.dll",
+      "sha256": "32150ddb5165324743a00143be0a86a0bf2f6ef28eec5df888dd4b2a91cb967c",
+      "role": "managed",
+      "owner": "application.desktop"
+    },
+    {
+      "path": "runtime/Rendering.Abstractions.dll",
+      "sha256": "8e6338026303f5e373a771d67b8d38df2ea94e58f8567727243e244da5a415cd",
+      "role": "managed",
+      "owner": "application.desktop"
+    },
+    {
+      "path": "runtime/Rendering.Avalonia.dll",
+      "sha256": "ff5b6aad61e53a34b3ad6a2c6b184bcf7f5663f0e27f41427e1ef6d72ce1e555",
+      "role": "managed",
+      "owner": "application.desktop"
+    },
+    {
+      "path": "runtime/Rendering.Core.dll",
+      "sha256": "b8abd111880b32080a085076045b0aeea31204523104d7263bf9170b9d52a2ee",
+      "role": "managed",
+      "owner": "application.desktop"
+    },
+    {
+      "path": "runtime/Rendering.DesktopGL.dll",
+      "sha256": "df7fc887bf1dda3c31454235103a62fb09795f72a01e9ba5fef06370bb9b10ec",
+      "role": "implementation",
+      "owner": "render.desktopgl"
+    },
+    {
+      "path": "runtime/Resources.Abstractions.dll",
+      "sha256": "dc2e7296b912748c12112805b0cbd5eceb72c8e1f9cddb3a76bd761db84850b0",
+      "role": "managed",
+      "owner": "application.desktop"
+    },
+    {
+      "path": "runtime/Resources.Core.dll",
+      "sha256": "7d178a8b65f60706485a9a77c2d2f5ba58338d04a39fce52e6042441af301a27",
+      "role": "managed",
+      "owner": "motion.definition"
+    },
+    {
+      "path": "runtime/Runtime.Plugins.dll",
+      "sha256": "0fa4881aae2d7b5a1493798035ec202ca643a3109e3b79fe9048958ac2d045bc",
+      "role": "managed",
+      "owner": "application.desktop"
+    },
+    {
+      "path": "runtime/SDL2.dll",
+      "sha256": "f8ab6a41ae9ff682a2b5482414f73979bc1a29eabb14da21fc7ae35090b5dec9",
+      "role": "native",
+      "owner": "render.desktopgl"
+    },
+    {
+      "path": "runtime/Sample.Motion.dll",
+      "sha256": "02c80a0c1d33f71947839348d7a13e3a613dbe27333972746781d9f8bf6e08c9",
+      "role": "implementation",
+      "owner": "motion.definition"
+    },
+    {
+      "path": "runtime/SkiaSharp.dll",
+      "sha256": "aaaaa18c68ba1f3a3408b00dff28b11d5705198e17ba9d3aa59222bfd35407c8",
+      "role": "managed",
+      "owner": "application.desktop"
+    },
+    {
+      "path": "runtime/Tmds.DBus.Protocol.dll",
+      "sha256": "60a1c5255731d8ac843cab53108be8ba1ed02759ce3db0da5b49939ebe97bd8a",
+      "role": "managed",
+      "owner": "application.desktop"
+    },
+    {
+      "path": "runtime/av_libglesv2.dll",
+      "sha256": "53191a77fe783cd757ca7767077c2a64a662e7043777a5b4ab74980d4a0b73e3",
+      "role": "native",
+      "owner": "application.desktop"
+    },
+    {
+      "path": "runtime/libHarfBuzzSharp.dll",
+      "sha256": "145ade963eba427027d5e1381db5d51a0ef9e98e9fef9efbfa6074ca20da246f",
+      "role": "native",
+      "owner": "application.desktop"
+    },
+    {
+      "path": "runtime/libSkiaSharp.dll",
+      "sha256": "7dec3ba900ab353491e6446f0083739924c6f8dd668832e2f09d38ebffdbbe1c",
+      "role": "native",
+      "owner": "application.desktop"
+    }
+  ],
+  "content": [
+    {
+      "path": "content/game.start.json",
+      "sha256": "8c854e02bd4727ada73e53bea44552cf05a5ade4b9e573b782688ae79ecf2cd3",
+      "role": "content",
+      "owner": "game"
+    },
+    {
+      "path": "content/marker.png",
+      "sha256": "35e4d21afd558dbdaed09dc47806bf3c85a96054209a3a9f4b6bdf43803001df",
+      "role": "content",
+      "owner": "game"
+    },
+    {
+      "path": "content/motion.json",
+      "sha256": "c1edcefcbd7347446d1a61dac5278481f802f6688bb545aed63ceeff0bbd6808",
+      "role": "content",
+      "owner": "game"
+    }
+  ]
+}
