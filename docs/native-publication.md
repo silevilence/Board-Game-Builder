@@ -1,6 +1,6 @@
 # NativeAOT 发布与外部运行插件
 
-首轮目标是 Windows x64。NativeAOT 是可选作者导出方式，普通预编译 Player 仍可独立使用。当前联合验收进度见 [发行验收记录](validation/native-delivery.md)；未通过的 ROADMAP 条目不因本文存在而视为完成。
+首轮目标是 Windows x64。NativeAOT 是可选作者导出方式，普通预编译 Player 仍可独立使用。2026-11-02 已完成 SDK04 最终产物的干净 Windows 图形联合验收，证据见 [发行验收记录](validation/native-delivery.md)；全范围整体代码审核仍待完成，不能用环境验收替代。
 
 ## 三种导出方式
 

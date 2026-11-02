@@ -180,4 +180,4 @@ AuthorExports 是 CordiSharp 所属注册表；无 UI 的 PackageExporter／Play
 
 替换实现时，在受信任宿主目录登记新的稳定 ID、版本与契约，启动配置显式选择它，并移除冲突的唯一能力提供者。桌游替换规则仍经 authority 提交；替换展示仍只取得绑定席位投影，不能借 Requires 提升权限。依赖声明改变必须停止并重新装配实例，不能在活动帧中改图。默认 Player 的预编译安装仍绑定 board.render；其他绘制实现须由维护者显式制作匹配的宿主组合，不能仅修改游戏 JSON 就安装代码。
 
-默认桌游配置见 [quick-cards](../samples/quick-cards/game.start.json)，无 Lua／WASM 桌游见 [state-minimal](../samples/state-minimal/game.start.json)。开发使用 .NET 10 SDK；作者和玩家使用预编译产物。当前交付支持 Windows x64／WindowsDX，GL、NativeAOT 和任意外部 .NET 运行插件仍属于 ROADMAP 后续范围。
+默认桌游配置见 [quick-cards](../samples/quick-cards/game.start.json)，无 Lua／WASM 桌游见 [state-minimal](../samples/state-minimal/game.start.json)。开发使用 .NET 10 SDK；普通作者操作和玩家使用预编译产物。Windows x64 支持普通 WindowsDX 和固定 MonoGame DesktopGL 后端；可选 NativeAOT 导出要求作者安装构建工具链，玩家不需系统 .NET。外部 .NET 插件须显式导入并验证精确实现，原生路径另需兼容声明、严格编译和目标运行验证；Lua 当前不支持原生发行。准确矩阵、工具链与证据见 [原生发布说明](native-publication.md)，这些能力沿用本协议的实例、更新、绘制和释放边界。
