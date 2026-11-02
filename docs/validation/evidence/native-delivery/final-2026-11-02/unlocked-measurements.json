@@ -1,0 +1,44 @@
+[
+  {
+    "mode": "jit",
+    "run": 1,
+    "firstFrameMs": 1947,
+    "workingSet": 333426688,
+    "privateBytes": 204029952
+  },
+  {
+    "mode": "jit",
+    "run": 2,
+    "firstFrameMs": 1898,
+    "workingSet": 333197312,
+    "privateBytes": 204161024
+  },
+  {
+    "mode": "jit",
+    "run": 3,
+    "firstFrameMs": 1866,
+    "workingSet": 331554816,
+    "privateBytes": 202309632
+  },
+  {
+    "mode": "native",
+    "run": 1,
+    "firstFrameMs": 837,
+    "workingSet": 276234240,
+    "privateBytes": 183308288
+  },
+  {
+    "mode": "native",
+    "run": 2,
+    "firstFrameMs": 849,
+    "workingSet": 277884928,
+    "privateBytes": 184299520
+  },
+  {
+    "mode": "native",
+    "run": 3,
+    "firstFrameMs": 825,
+    "workingSet": 277958656,
+    "privateBytes": 184860672
+  }
+]

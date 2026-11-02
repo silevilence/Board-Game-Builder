@@ -1,0 +1,27 @@
+{
+  "ok": true,
+  "requestId": "ea8b8de225264be1999248ff12c3729e",
+  "result": {
+    "source": {
+      "identity": {
+        "directory": "C:\\code\\dotnet\\Board-Game-Builder\\artifacts\\native-aot\\cli-final-04\\project",
+        "profile": "native-board",
+        "mode": "disk",
+        "workspace": null,
+        "generation": 0
+      },
+      "version": "EFA560097939BA1A15D1D711D07D7BEAC995E2380FFB63A0EBAAAF4E54425CFB"
+    },
+    "checks": [
+      "files",
+      "configuration",
+      "dependencies",
+      "runtime",
+      "initial-application-update"
+    ],
+    "diagnostics": [],
+    "currentAtCompletion": true,
+    "success": true,
+    "exitCode": 0
+  }
+}

@@ -22,6 +22,7 @@ public sealed class NativeBoardWindow : Window
     private readonly ContentControl surface=new();
     private readonly DispatcherTimer refresh=new(){Interval=TimeSpan.FromMilliseconds(33)};
     private Task pending=Task.CompletedTask;
+    private readonly CancellationTokenSource lifetime=new();
     private bool closing,released;
     private long revision=-1;
     private string seat="";
@@ -37,34 +38,49 @@ public sealed class NativeBoardWindow : Window
         var selected=content.Identity.Startup.Plugins.Select(p=>p.Id).ToHashSet(StringComparer.Ordinal);
         board=new(sessionId:catalog.Content.Plugins.Single(p=>selected.Contains(p.Id) && p.Provides.Contains("session")).Id);
         var restart=new Button{Content="重新开局"};restart.Click+=async(_,_)=>await Restart();
-        var record=new Button{Content="保存并校验记录"};record.Click+=async(_,_)=>
-        {
-            try
-            {
-                if(Pump==null || Session==null)return;await Pump.SetPausedAsync(true);
-                var text=RecordingCodec.Write(Session.ExportRecording());ValidateRecording(text);
-                var directory=Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.LocalApplicationData),"BoardGameBuilder","recordings",content.Fingerprint);
-                Directory.CreateDirectory(directory);var file=Path.Combine(directory,DateTime.UtcNow.ToString("yyyyMMdd-HHmmssfff")+".json");
-                await File.WriteAllTextAsync(file,text);status.Text="记录已保存并通过回放校验："+file;
-            }
-            catch(Exception error){ShowError(error);}
-            finally{if(Pump!=null && !closing)await Pump.SetPausedAsync(false);}
-        };
+        var record=new Button{Content="保存并校验记录"};record.Click+=async(_,_)=>await SaveRecording();
         var top=new StackPanel{Margin=new(12),Spacing=8,Children={new StackPanel{Orientation=Avalonia.Layout.Orientation.Horizontal,Spacing=8,Children={restart,record}},status,actions}};
         var layout=new DockPanel();DockPanel.SetDock(top,Dock.Top);layout.Children.Add(top);layout.Children.Add(surface);Content=layout;
         Opened+=async(_,_)=>await Restart();
         refresh.Tick+=(_,_)=>Refresh();
         Closing+=async(_,eventArgs)=>
         {
-            if(released)return;eventArgs.Cancel=true;if(closing)return;closing=true;refresh.Stop();
-            try{await pending;await Release();}catch(Exception error){Error=error.Message;}
-            finally{released=true;Close();}
+            if(released)return;eventArgs.Cancel=true;if(closing)return;closing=true;refresh.Stop();lifetime.Cancel();
+            try{await pending;}catch(Exception error){Error=error.Message;}
+            try{await Release();}catch(Exception error){Error=error.Message;}
+            finally{released=true;lifetime.Dispose();Close();}
         };
     }
     public Task Restart()
     {
         if(closing || !pending.IsCompleted)return pending;
         pending=Open();return pending;
+    }
+    public Task SaveRecording()
+    {
+        if(closing || !pending.IsCompleted)return pending;
+        pending=SaveRecordingCore();return pending;
+    }
+    private async Task SaveRecordingCore()
+    {
+        try
+        {
+            if(Pump==null || Session==null)return;await Pump.SetPausedAsync(true);
+            var text=RecordingCodec.Write(Session.ExportRecording());ValidateRecording(text);
+            var directory=Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.LocalApplicationData),"BoardGameBuilder","recordings",content.Fingerprint);
+            Directory.CreateDirectory(directory);var file=Path.Combine(directory,DateTime.UtcNow.ToString("yyyyMMdd-HHmmssfff")+"-"+Guid.NewGuid().ToString("N")+".json");
+            var temporary=file+".tmp";
+            try
+            {
+                await File.WriteAllTextAsync(temporary,text,lifetime.Token);
+                lifetime.Token.ThrowIfCancellationRequested();File.Move(temporary,file);
+            }
+            finally{if(File.Exists(temporary))File.Delete(temporary);}
+            if(!closing)status.Text="记录已保存并通过回放校验："+file;
+        }
+        catch(OperationCanceledException) when(closing){}
+        catch(Exception error){ShowError(error);}
+        finally{if(Pump!=null && !closing)await Pump.SetPausedAsync(false);}
     }
     private async Task Open()
     {

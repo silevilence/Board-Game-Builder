@@ -1,0 +1,72 @@
+{
+  "ok": true,
+  "requestId": "71524f28127d403db7dfac46e8d47530",
+  "result": {
+    "id": "native.export",
+    "plugin": "author.export.native",
+    "description": "Compile the selected project snapshot to a native game; never fall back to a precompiled Player",
+    "parameters": {
+      "target": {
+        "type": "string",
+        "required": true,
+        "description": "New independent output directory"
+      },
+      "sdk": {
+        "type": "string",
+        "required": false,
+        "description": "Maintainer native runtime distribution; default bundled native-sdk directory"
+      },
+      "host": {
+        "type": "string",
+        "required": false,
+        "description": "Native host profile; default application.desktop"
+      },
+      "platform": {
+        "type": "string",
+        "required": false,
+        "description": "Target platform; only win-x64 is verified"
+      },
+      "title": {
+        "type": "string",
+        "required": false,
+        "description": "EXE product title; defaults to game identity"
+      },
+      "version": {
+        "type": "string",
+        "required": false,
+        "description": "EXE product version; defaults to game version"
+      },
+      "icon": {
+        "type": "string",
+        "required": false,
+        "description": "ICO path inside the captured project snapshot"
+      },
+      "dotnet": {
+        "type": "string",
+        "required": false,
+        "description": "Build machine dotnet executable"
+      },
+      "visualStudio": {
+        "type": "string",
+        "required": false,
+        "description": "Visual Studio installation directory"
+      },
+      "windowsKits": {
+        "type": "string",
+        "required": false,
+        "description": "Windows Kits installation directory"
+      }
+    },
+    "resultSchema": {
+      "type": "object",
+      "description": "source, target, native-directory kind and source content fingerprint"
+    },
+    "conditions": [
+      "Native runtime distribution and native compiler"
+    ],
+    "effects": [
+      "artifact"
+    ],
+    "readsProject": true
+  }
+}

@@ -1,0 +1,108 @@
+2026-11-02T00:43:51.6246405Z 3 Instance 原生桌游-wasm-external start
+2026-11-02T00:43:51.6443851Z 3 Instance 原生桌游-wasm-external resources await Loading
+2026-11-02T00:43:51.6473814Z 4 Instance 原生桌游-wasm-external resources activate
+2026-11-02T00:43:51.6494472Z 4 Instance 原生桌游-wasm-external resources dispatched
+2026-11-02T00:43:51.6513686Z 3 Instance 原生桌游-wasm-external resources done Active
+2026-11-02T00:43:51.6528457Z 3 Instance 原生桌游-wasm-external definition.board-state await Loading
+2026-11-02T00:43:51.6544786Z 4 Instance 原生桌游-wasm-external definition.board-state activate
+2026-11-02T00:43:51.6576048Z 4 Instance 原生桌游-wasm-external definition.board-state dispatched
+2026-11-02T00:43:51.6701398Z 2 Instance 原生桌游-wasm-external definition.board-state done Active
+2026-11-02T00:43:51.6732119Z 2 Instance 原生桌游-wasm-external resources.images await Loading
+2026-11-02T00:43:51.6791727Z 4 Instance 原生桌游-wasm-external resources.images activate
+2026-11-02T00:43:51.6818621Z 4 Instance 原生桌游-wasm-external resources.images dispatched
+2026-11-02T00:43:51.6960970Z 3 Instance 原生桌游-wasm-external resources.images done Active
+2026-11-02T00:43:51.6978403Z 3 Instance 原生桌游-wasm-external initialized
+2026-11-02T00:43:53.2783280Z 3 Instance 原生桌游-wasm-external start
+2026-11-02T00:43:53.2849597Z 3 Instance 原生桌游-wasm-external resources await Loading
+2026-11-02T00:43:53.2872412Z 3 Instance 原生桌游-wasm-external start
+2026-11-02T00:43:53.2958237Z 3 Instance 原生桌游-wasm-external resources await Loading
+2026-11-02T00:43:53.3127622Z 4 Instance 原生桌游-wasm-external resources activate
+2026-11-02T00:43:53.3151562Z 4 Instance 原生桌游-wasm-external resources dispatched
+2026-11-02T00:43:53.3171888Z 4 Instance 原生桌游-wasm-external resources activate
+2026-11-02T00:43:53.3188591Z 4 Instance 原生桌游-wasm-external resources dispatched
+2026-11-02T00:43:53.3343969Z 3 Instance 原生桌游-wasm-external resources done Active
+2026-11-02T00:43:53.3364427Z 3 Instance 原生桌游-wasm-external definition.board-state await Loading
+2026-11-02T00:43:53.3379617Z 3 Instance 原生桌游-wasm-external resources done Active
+2026-11-02T00:43:53.3396193Z 3 Instance 原生桌游-wasm-external definition.board-state await Loading
+2026-11-02T00:43:53.3550548Z 4 Instance 原生桌游-wasm-external definition.board-state activate
+2026-11-02T00:43:53.4590003Z 4 Instance 原生桌游-wasm-external definition.board-state dispatched
+2026-11-02T00:43:53.4611460Z 4 Instance 原生桌游-wasm-external definition.board-state activate
+2026-11-02T00:43:53.4633845Z 4 Instance 原生桌游-wasm-external definition.board-state dispatched
+2026-11-02T00:43:53.5012592Z 6 Instance 原生桌游-wasm-external definition.board-state done Active
+2026-11-02T00:43:53.5033343Z 3 Instance 原生桌游-wasm-external definition.board-state done Active
+2026-11-02T00:43:53.5070207Z 3 Instance 原生桌游-wasm-external resources.images await Loading
+2026-11-02T00:43:53.5090736Z 4 Instance 原生桌游-wasm-external resources.images activate
+2026-11-02T00:43:53.5109520Z 4 Instance 原生桌游-wasm-external resources.images dispatched
+2026-11-02T00:43:53.5125837Z 4 Instance 原生桌游-wasm-external resources.images activate
+2026-11-02T00:43:53.5143514Z 4 Instance 原生桌游-wasm-external resources.images dispatched
+2026-11-02T00:43:53.5374914Z 7 Instance 原生桌游-wasm-external resources.images done Active
+2026-11-02T00:43:53.5982980Z 7 Instance 原生桌游-wasm-external initialized
+2026-11-02T00:43:53.6984656Z 6 Instance 原生桌游-wasm-external resources.images await Loading
+2026-11-02T00:43:53.7011844Z 6 Instance 原生桌游-wasm-external resources.images done Active
+2026-11-02T00:43:53.7029607Z 6 Instance 原生桌游-wasm-external initialized
+2026-11-02T00:43:53.9778038Z 2 Instance 原生桌游-wasm-external start
+2026-11-02T00:43:53.9808282Z 2 Instance 原生桌游-wasm-external resources await Loading
+2026-11-02T00:43:54.0039550Z 4 Instance 原生桌游-wasm-external resources activate
+2026-11-02T00:43:54.0179688Z 4 Instance 原生桌游-wasm-external resources dispatched
+2026-11-02T00:43:54.0479741Z 2 Instance 原生桌游-wasm-external resources done Active
+2026-11-02T00:43:54.0501723Z 2 Instance 原生桌游-wasm-external definition.board-state await Loading
+2026-11-02T00:43:54.0648126Z 4 Instance 原生桌游-wasm-external definition.board-state activate
+2026-11-02T00:43:54.0666494Z 4 Instance 原生桌游-wasm-external definition.board-state dispatched
+2026-11-02T00:43:54.1375313Z 7 Instance 原生桌游-wasm-external definition.board-state done Active
+2026-11-02T00:43:54.1462013Z 7 Instance 原生桌游-wasm-external kernel await Loading
+2026-11-02T00:43:54.1482250Z 4 Instance 原生桌游-wasm-external kernel activate
+2026-11-02T00:43:54.1533299Z 4 Instance 原生桌游-wasm-external kernel dispatched
+2026-11-02T00:43:54.1973792Z 2 Instance 原生桌游-wasm-external kernel done Active
+2026-11-02T00:43:54.1995057Z 2 Instance 原生桌游-wasm-external recording await Loading
+2026-11-02T00:43:54.2011047Z 2 Instance 原生桌游-wasm-external start
+2026-11-02T00:43:54.2026994Z 2 Instance 原生桌游-wasm-external resources await Loading
+2026-11-02T00:43:54.2300740Z 4 Instance 原生桌游-wasm-external recording activate
+2026-11-02T00:43:54.2460610Z 4 Instance 原生桌游-wasm-external recording dispatched
+2026-11-02T00:43:54.2494249Z 4 Instance 原生桌游-wasm-external resources activate
+2026-11-02T00:43:54.2508749Z 4 Instance 原生桌游-wasm-external resources dispatched
+2026-11-02T00:43:54.2815376Z 2 Instance 原生桌游-wasm-external recording done Active
+2026-11-02T00:43:54.2832290Z 2 Instance 原生桌游-wasm-external resources.images await Loading
+2026-11-02T00:43:54.2847069Z 2 Instance 原生桌游-wasm-external resources done Active
+2026-11-02T00:43:54.2859266Z 2 Instance 原生桌游-wasm-external definition.board-state await Loading
+2026-11-02T00:43:54.2971615Z 4 Instance 原生桌游-wasm-external resources.images activate
+2026-11-02T00:43:54.2988168Z 4 Instance 原生桌游-wasm-external resources.images dispatched
+2026-11-02T00:43:54.3002610Z 4 Instance 原生桌游-wasm-external definition.board-state activate
+2026-11-02T00:43:54.3015450Z 4 Instance 原生桌游-wasm-external definition.board-state dispatched
+2026-11-02T00:43:54.3534081Z 7 Instance 原生桌游-wasm-external resources.images done Active
+2026-11-02T00:43:54.3578111Z 7 Instance 原生桌游-wasm-external rules.commands await Loading
+2026-11-02T00:43:54.3593070Z 7 Instance 原生桌游-wasm-external definition.board-state done Active
+2026-11-02T00:43:54.3606928Z 7 Instance 原生桌游-wasm-external resources.images await Loading
+2026-11-02T00:43:54.3689099Z 4 Instance 原生桌游-wasm-external rules.commands activate
+2026-11-02T00:43:54.3707640Z 4 Instance 原生桌游-wasm-external rules.commands dispatched
+2026-11-02T00:43:54.3729541Z 4 Instance 原生桌游-wasm-external resources.images activate
+2026-11-02T00:43:54.3742917Z 4 Instance 原生桌游-wasm-external resources.images dispatched
+2026-11-02T00:43:54.4118855Z 2 Instance 原生桌游-wasm-external rules.commands done Active
+2026-11-02T00:43:54.4143042Z 2 Instance 原生桌游-wasm-external sample.native-cpu await Loading
+2026-11-02T00:43:54.4160433Z 2 Instance 原生桌游-wasm-external resources.images done Active
+2026-11-02T00:43:54.4173536Z 2 Instance 原生桌游-wasm-external initialized
+2026-11-02T00:43:54.4238666Z 4 Instance 原生桌游-wasm-external sample.native-cpu activate
+2026-11-02T00:43:54.4261301Z 4 Instance 原生桌游-wasm-external sample.native-cpu dispatched
+2026-11-02T00:43:54.4353152Z 7 Instance 原生桌游-wasm-external sample.native-cpu done Active
+2026-11-02T00:43:54.4366660Z 7 Instance 原生桌游-wasm-external wasm await Loading
+2026-11-02T00:43:54.4448196Z 4 Instance 原生桌游-wasm-external wasm activate
+2026-11-02T00:43:54.5012084Z 4 Instance 原生桌游-wasm-external wasm dispatched
+2026-11-02T00:43:54.6028460Z 2 Instance 原生桌游-wasm-external wasm done Active
+2026-11-02T00:43:54.6042904Z 2 Instance 原生桌游-wasm-external session.local.cpu-effects await Loading
+2026-11-02T00:43:54.6054410Z 4 Instance 原生桌游-wasm-external session.local.cpu-effects activate
+2026-11-02T00:43:54.6097514Z 4 Instance 原生桌游-wasm-external session.local.cpu-effects dispatched
+2026-11-02T00:43:54.6236579Z 2 Instance 原生桌游-wasm-external session.local.cpu-effects done Active
+2026-11-02T00:43:54.6249579Z 2 Instance 原生桌游-wasm-external initialized
+2026-11-02T00:43:54.6609681Z 8 Instance 原生桌游-wasm-external start
+2026-11-02T00:43:54.6625393Z 8 Instance 原生桌游-wasm-external resources await Loading
+2026-11-02T00:43:54.7006411Z 4 Instance 原生桌游-wasm-external resources activate
+2026-11-02T00:43:54.7019760Z 4 Instance 原生桌游-wasm-external resources dispatched
+2026-11-02T00:43:54.7094974Z 2 Instance 原生桌游-wasm-external resources done Active
+2026-11-02T00:43:54.7108036Z 2 Instance 原生桌游-wasm-external definition.board-state await Loading
+2026-11-02T00:43:54.7171588Z 4 Instance 原生桌游-wasm-external definition.board-state activate
+2026-11-02T00:43:54.7748167Z 4 Instance 原生桌游-wasm-external definition.board-state dispatched
+2026-11-02T00:43:54.8068618Z 8 Instance 原生桌游-wasm-external definition.board-state done Active
+2026-11-02T00:43:54.8086631Z 8 Instance 原生桌游-wasm-external resources.images await Loading
+2026-11-02T00:43:54.8099327Z 4 Instance 原生桌游-wasm-external resources.images activate
+2026-11-02T00:43:54.8112492Z 4 Instance 原生桌游-wasm-external resources.images dispatched
+2026-11-02T00:43:54.8125444Z 2 Instance 原生桌游-wasm-external resources.images done Active
+2026-11-02T00:43:54.8133842Z 2 Instance 原生桌游-wasm-external initialized

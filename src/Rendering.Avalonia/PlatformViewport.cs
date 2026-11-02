@@ -34,6 +34,7 @@ public class PlatformViewport : NativeControlHost, IDisposable
     private int width, height;
     private bool cameraInitialized;
     private bool disposed;
+    private TaskCompletionSource? nativeDestruction;
     private double renderScale=1;
     public float Zoom { get; private set; } = 1;
     public float PanX { get; private set; }
@@ -97,6 +98,7 @@ public class PlatformViewport : NativeControlHost, IDisposable
         DestroyWindow(control.Handle);
         LiveNativeWindows--;
         handle = 0;
+        nativeDestruction?.TrySetResult();
         panning = false;
         Input?.Invoke("cancel", 0, 0);
     }
@@ -109,7 +111,15 @@ public class PlatformViewport : NativeControlHost, IDisposable
         if(disposed) return;disposed=true;
         CancelInput();
         inputRoot?.RemoveHandler(PointerWheelChangedEvent,RootWheel); inputRoot=null;
-        timer.Stop(); ReleaseGraphics();ReleaseAttachment(); Paint=null; Input=null; UsesSecondaryPointer=null; KeyPressed=null;KeyChanged=null;Disposed?.Invoke();Disposed=null;GraphicsChanged=null;
+        timer.Stop(); ReleaseGraphics();ReleaseAttachment();
+        // NativeControlHost destroys a detached HWND at Background priority. Keep the
+        // dispatcher alive until that callback runs; owners detach before awaiting Shutdown.
+        if(handle!=0)
+        {
+            nativeDestruction=new(TaskCreationOptions.RunContinuationsAsynchronously);
+            Shutdown=Task.WhenAll(Shutdown,nativeDestruction.Task);
+        }
+        Paint=null; Input=null; UsesSecondaryPointer=null; KeyPressed=null;KeyChanged=null;Disposed?.Invoke();Disposed=null;GraphicsChanged=null;
     }
     protected override void OnAttachedToVisualTree(Avalonia.VisualTreeAttachmentEventArgs e)
     {

@@ -1,0 +1,881 @@
+Opened log file 'C:\code\dotnet\Board-Game-Builder\artifacts\native-aot\final-clean-evidence\host-native-trace-sync-9.txt.stack'
+
+************* Preparing the environment for Debugger Extensions Gallery repositories **************
+   ExtensionRepository : Implicit
+   UseExperimentalFeatureForNugetShare : true
+   AllowNugetExeUpdate : true
+   NonInteractiveNuget : true
+   AllowNugetMSCredentialProviderInstall : true
+   AllowParallelInitializationOfLocalRepositories : true
+
+   EnableRedirectToV8JsProvider : false
+
+   -- Configuring repositories
+      ----> Repository : LocalInstalled, Enabled: true
+      ----> Repository : UserExtensions, Enabled: true
+
+>>>>>>>>>>>>> Preparing the environment for Debugger Extensions Gallery repositories completed, duration 0.000 seconds
+
+************* Waiting for Debugger Extensions Gallery to Initialize **************
+
+>>>>>>>>>>>>> Waiting for Debugger Extensions Gallery to Initialize completed, duration 0.016 seconds
+   ----> Repository : UserExtensions, Enabled: true, Packages count: 0
+   ----> Repository : LocalInstalled, Enabled: true, Packages count: 0
+
+Microsoft (R) Windows Debugger Version 10.0.26100.7705 AMD64
+Copyright (c) Microsoft Corporation. All rights reserved.
+
+*** wait with pending attach
+Unable to add extension DLL: ntsdexts
+Unable to add extension DLL: uext
+Unable to add extension DLL: exts
+
+************* Path validation summary **************
+Response                         Time (ms)     Location
+OK                                             C:\code\dotnet\Board-Game-Builder\artifacts\native-aot\startup-trace-04
+Symbol search path is: C:\code\dotnet\Board-Game-Builder\artifacts\native-aot\startup-trace-04
+Executable search path is: 
+
++------------------------------------------------------------------------+
+| This target supports Hardware-enforced Stack Protection. A HW based    |
+| "Shadow Stack" may be available to assist in debugging and analysis.   |
+| See aka.ms/userhsp for more info.                                      |
+|                                                                        |
+| dps @ssp                                                               |
+|                                                                        |
++------------------------------------------------------------------------+
+
+ModLoad: 00007ff6`8b110000 00007ff6`8caff000   C:\code\dotnet\Board-Game-Builder\artifacts\native-aot\startup-trace-04\Native.Board.Startup.exe
+ModLoad: 00007ffd`feb00000 00007ffd`fed66000   C:\WINDOWS\SYSTEM32\ntdll.dll
+ModLoad: 00007ffd`fe430000 00007ffd`fe4f9000   C:\WINDOWS\System32\KERNEL32.DLL
+ModLoad: 00007ffd`fc200000 00007ffd`fc5fa000   C:\WINDOWS\System32\KERNELBASE.dll
+ModLoad: 00007ffd`fe510000 00007ffd`fe5c6000   C:\WINDOWS\System32\ADVAPI32.dll
+ModLoad: 00007ffd`fdd60000 00007ffd`fde09000   C:\WINDOWS\System32\msvcrt.dll
+ModLoad: 00007ffd`fe160000 00007ffd`fe20a000   C:\WINDOWS\System32\sechost.dll
+ModLoad: 00007ffd`fdff0000 00007ffd`fe108000   C:\WINDOWS\System32\RPCRT4.dll
+ModLoad: 00007ffd`fd840000 00007ffd`fd9d8000   C:\WINDOWS\System32\ole32.dll
+ModLoad: 00007ffd`fbd90000 00007ffd`fbe33000   C:\WINDOWS\System32\msvcp_win.dll
+ModLoad: 00007ffd`fbe70000 00007ffd`fbfbc000   C:\WINDOWS\System32\ucrtbase.dll
+ModLoad: 00007ffd`fdbc0000 00007ffd`fdbeb000   C:\WINDOWS\System32\GDI32.dll
+ModLoad: 00007ffd`fbe40000 00007ffd`fbe67000   C:\WINDOWS\System32\win32u.dll
+ModLoad: 00007ffd`fc600000 00007ffd`fc72b000   C:\WINDOWS\System32\gdi32full.dll
+ModLoad: 00007ffd`fd9e0000 00007ffd`fdba7000   C:\WINDOWS\System32\USER32.dll
+ModLoad: 00007ffd`fe720000 00007ffd`feaa3000   C:\WINDOWS\System32\combase.dll
+ModLoad: 00007ffd`fdc80000 00007ffd`fdd59000   C:\WINDOWS\System32\OLEAUT32.dll
+ModLoad: 00007ffd`fbc80000 00007ffd`fbcaa000   C:\WINDOWS\SYSTEM32\bcrypt.dll
+ModLoad: 00007ffd`fe3f0000 00007ffd`fe422000   C:\WINDOWS\System32\IMM32.DLL
+ModLoad: 00007ffd`faae0000 00007ffd`faafb000   C:\WINDOWS\SYSTEM32\kernel.appcore.dll
+ModLoad: 00007ffd`fc730000 00007ffd`fc7d8000   C:\WINDOWS\System32\bcryptPrimitives.dll
+ModLoad: 00007ffd`f8040000 00007ffd`f80ea000   C:\WINDOWS\system32\uxtheme.dll
+ModLoad: 00007ffd`f3700000 00007ffd`f39a0000   C:\WINDOWS\SYSTEM32\icu.dll
+ModLoad: 00007ffc`ed6a0000 00007ffc`ee1c1000   C:\code\dotnet\Board-Game-Builder\artifacts\native-aot\startup-trace-04\libSkiaSharp.DLL
+ModLoad: 00007ffd`8a430000 00007ffd`8a455000   C:\WINDOWS\SYSTEM32\FONTSUB.dll
+ModLoad: 00007ffd`f8d00000 00007ffd`f8f67000   C:\WINDOWS\SYSTEM32\dwrite.dll
+ModLoad: 00007ffd`fce80000 00007ffd`fcfdd000   C:\WINDOWS\System32\MSCTF.dll
+ModLoad: 00007ffc`ed170000 00007ffc`ed69e000   C:\code\dotnet\Board-Game-Builder\artifacts\native-aot\startup-trace-04\av_libGLESv2.dll
+ModLoad: 00007ffd`f95d0000 00007ffd`f970a000   C:\WINDOWS\SYSTEM32\dxgi.dll
+ModLoad: 00007ffd`fbbf0000 00007ffd`fbc4e000   C:\WINDOWS\SYSTEM32\powrprof.dll
+ModLoad: 00007ffd`fbbd0000 00007ffd`fbbe4000   C:\WINDOWS\SYSTEM32\UMPDC.dll
+ModLoad: 00007ffd`f8620000 00007ffd`f8664000   C:\WINDOWS\SYSTEM32\dxcore.dll
+ModLoad: 00007ffd`f48d0000 00007ffd`f492f000   C:\WINDOWS\SYSTEM32\directxdatabasehelper.dll
+ModLoad: 00007ffd`fb900000 00007ffd`fb951000   C:\WINDOWS\SYSTEM32\cfgmgr32.dll
+ModLoad: 00007ffd`f9360000 00007ffd`f95c1000   C:\WINDOWS\SYSTEM32\d3d11.DLL
+ModLoad: 00007ffd`f31b0000 00007ffd`f36f3000   C:\WINDOWS\System32\DriverStore\FileRepository\iigd_dch.inf_amd64_63c3b49c5917f2c4\igd10iumd64.dll
+ModLoad: 00007ffd`f7df0000 00007ffd`f7e90000   C:\WINDOWS\SYSTEM32\apphelp.dll
+ModLoad: 00007ffd`f1620000 00007ffd`f302a000   C:\WINDOWS\System32\DriverStore\FileRepository\iigd_dch.inf_amd64_63c3b49c5917f2c4\igd10umt64xe.DLL
+ModLoad: 00007ffd`fdea0000 00007ffd`fdf07000   C:\WINDOWS\System32\SHLWAPI.dll
+ModLoad: 00007ffd`fd0b0000 00007ffd`fd834000   C:\WINDOWS\System32\SHELL32.dll
+ModLoad: 00007ffd`f0840000 00007ffd`f0dd3000   C:\WINDOWS\System32\DriverStore\FileRepository\iigd_dch.inf_amd64_63c3b49c5917f2c4\igdgmm64.dll
+ModLoad: 00007ffd`eb320000 00007ffd`f0446000   C:\WINDOWS\System32\DriverStore\FileRepository\iigd_dch.inf_amd64_63c3b49c5917f2c4\igc64.dll
+ModLoad: 00007ffd`f9900000 00007ffd`fa180000   C:\WINDOWS\SYSTEM32\windows.storage.dll
+ModLoad: 00007ffd`fe5d0000 00007ffd`fe6c6000   C:\WINDOWS\System32\SHCORE.dll
+ModLoad: 00007ffd`fbcb0000 00007ffd`fbcd9000   C:\WINDOWS\SYSTEM32\profapi.dll
+ModLoad: 00007ffd`ea900000 00007ffd`ea94d000   C:\WINDOWS\SYSTEM32\ControlLib.dll
+ModLoad: 00007ffd`d8050000 00007ffd`d80fc000   C:\WINDOWS\System32\DriverStore\FileRepository\iigd_dch.inf_amd64_63c3b49c5917f2c4\IntelControlLib.dll
+ModLoad: 00007ffd`ea720000 00007ffd`ea8c7000   C:\WINDOWS\System32\DriverStore\FileRepository\iigd_dch.inf_amd64_63c3b49c5917f2c4\igdml64.dll
+ModLoad: 00007ffd`fcfe0000 00007ffd`fd08e000   C:\WINDOWS\System32\clbcatq.dll
+ModLoad: 00007ffd`f5360000 00007ffd`f54ca000   C:\Windows\System32\WinTypes.dll
+ModLoad: 00007ffd`f7660000 00007ffd`f7785000   C:\WINDOWS\SYSTEM32\coremessaging.dll
+ModLoad: 00007ffd`f72e0000 00007ffd`f7502000   C:\Windows\System32\dcomp.dll
+ModLoad: 00007ffd`f6b40000 00007ffd`f6b59000   C:\Windows\System32\Microsoft.Internal.WarpPal.dll
+ModLoad: 00007ffd`fb290000 00007ffd`fb29c000   C:\WINDOWS\SYSTEM32\CRYPTBASE.DLL
+ModLoad: 00007ffd`d90e0000 00007ffd`d9134000   C:\Windows\System32\wuceffects.dll
+ModLoad: 00007ffd`c68b0000 00007ffd`c68e9000   C:\WINDOWS\SYSTEM32\rometadata.dll
+ModLoad: 00007ffd`da4f0000 00007ffd`da64a000   C:\Windows\System32\Windows.UI.dll
+ModLoad: 00007ffd`db5f0000 00007ffd`db741000   C:\Windows\System32\Windows.UI.Immersive.dll
+ModLoad: 00007ffd`d4a50000 00007ffd`d4b24000   C:\Windows\System32\twinapi.dll
+ModLoad: 00007ffd`eac50000 00007ffd`eae9f000   C:\Windows\System32\twinapi.appcore.dll
+ModLoad: 00007ffd`db8e0000 00007ffd`db93c000   C:\WINDOWS\system32\dataexchange.dll
+ModLoad: 00007ffd`f8190000 00007ffd`f81bf000   C:\WINDOWS\SYSTEM32\dwmapi.dll
+ModLoad: 00007ffd`7ec30000 00007ffd`7edef000   C:\code\dotnet\Board-Game-Builder\artifacts\native-aot\startup-trace-04\libHarfBuzzSharp.DLL
+ModLoad: 00007ffd`e83e0000 00007ffd`e8528000   C:\WINDOWS\SYSTEM32\textinputframework.dll
+ModLoad: 00007ffd`d40b0000 00007ffd`d4126000   C:\WINDOWS\system32\Oleacc.dll
+ModLoad: 00007ffd`d4b30000 00007ffd`d4f50000   C:\WINDOWS\SYSTEM32\UIAutomationCore.dll
+ModLoad: 00007ffc`a07d0000 00007ffc`a1ce6000   C:\code\dotnet\Board-Game-Builder\artifacts\native-aot\startup-trace-04\wasmtime.DLL
+ModLoad: 00007ffd`fde10000 00007ffd`fde90000   C:\WINDOWS\System32\ws2_32.dll
+ModLoad: 00007ffd`f6c20000 00007ffd`f709f000   C:\WINDOWS\SYSTEM32\d3dcompiler_47.dll
+ModLoad: 00007ffd`fb430000 00007ffd`fb44b000   C:\WINDOWS\SYSTEM32\cryptsp.dll
+(bf74.bb4): Break instruction exception - code 80000003 (first chance)
+ntdll!DbgBreakPoint:
+00007ffd`fec1ece0 cc              int     3
+0:059> ~* kb;qd
+
+   0  Id: bf74.b984 Suspend: 1 Teb: 000000d7`1bdbd000 Unfrozen
+RetAddr               : Args to Child                                                           : Call Site
+00007ffd`fd9f38ef     : 00007ffd`d4b30000 00007ffd`fc2217a9 00000000`00000000 00000060`00000000 : win32u!NtUserPeekMessage+0x14
+00007ffd`fd9f3878     : 00000000`00000000 00000000`00000000 00000000`000003e8 00007ffd`fec64094 : USER32!PeekMessageW+0x1df
+00007ffd`fe7b9717     : 000000d7`1bf7e6c0 00000000`00000001 00000000`00000000 00007ffd`fd9f38ef : USER32!PeekMessageW+0x168
+00007ffd`fe7b9690     : 000000d7`1bf7e8c0 000000d7`1bf7e6c0 00000000`00000000 00007ffd`000003e0 : combase!CoUnloadingWOW+0x597
+00007ffd`fe7b9870     : 00000000`00000000 000002a2`defeb838 000000d7`1bf7e8c0 00007ffd`fe7b9717 : combase!CoUnloadingWOW+0x510
+00007ffd`fe7b7a13     : 000000d7`1bf7e8c0 00000000`00000001 000000d7`1bf7e8c0 00007ffd`fe7b9690 : combase!CoUnloadingWOW+0x6f0
+00007ffd`fe7b844b     : 000000d7`00580040 000000d7`1bf7e8c0 000000d7`1bf7e8fc 00000000`00000001 : combase!InternalCStdIdentityGetIProxyManager+0x4303
+00007ffd`fe7b7955     : 00000000`80010116 000002a2`defeb838 00000000`208b5b07 00000000`00000001 : combase!InternalCStdIdentityGetIProxyManager+0x4d3b
+00007ffd`fe7679fb     : 00000000`00000002 00000000`00000000 00000000`00000000 00000000`00014030 : combase!InternalCStdIdentityGetIProxyManager+0x4245
+*** WARNING: Unable to verify checksum for C:\code\dotnet\Board-Game-Builder\artifacts\native-aot\startup-trace-04\Native.Board.Startup.exe
+00007ff6`8bc0af63     : 00000000`ffffffff 00000000`ffffffff 00000000`00000001 000002a2`defeb838 : combase!CoWaitForMultipleHandles+0xbb
+00007ff6`8bc01ce1     : 000002a2`defeb838 000000d7`1bf7eb30 00000000`ffffffff 000002a2`de8508b8 : Native_Board_Startup!PalCompatibleWaitAny+0x63
+00007ff6`8b66ad10     : 000000d7`00000000 000002a2`de82cec8 00000000`00000000 000002a2`defeb028 : Native_Board_Startup!RhCompatibleReentrantWaitAny+0x11
+00007ff6`8b66ab2a     : 00007ff6`8c124f08 000002a2`da73ca70 000000d7`1bf7ed00 00007ff6`8bc00366 : Native_Board_Startup!S_P_CoreLib_System_Threading_WaitHandle__WaitForMultipleObjectsIgnoringSyncContext+0x1d0
+00007ff6`8b66aaa0     : 00000000`00000020 000002a2`de82da28 00007ff6`8c0173c0 00007ff6`8bc019e5 : Native_Board_Startup!S_P_CoreLib_System_Threading_WaitHandle__WaitMultipleIgnoringSyncContextCore+0x2a
+00007ff6`8b666ecd     : 000002a2`dac03f88 00000000`ffffffff 000000d7`1bf7ecf0 00000000`00000000 : Native_Board_Startup!S_P_CoreLib_System_Threading_WaitHandle__WaitMultipleIgnoringSyncContext+0x20
+00007ff6`8b66a22e     : 000002a2`dac03f88 00000000`03249fa6 000002a2`defeb800 000002a2`de8508f8 : Native_Board_Startup!S_P_CoreLib_System_Threading_SynchronizationContext__WaitHelper+0x2d
+00007ff6`8b6603f7     : 000002a2`defeb7a8 00007ff6`8ba55fb6 000002a2`defeb7a8 00007ff6`8ba583fd : Native_Board_Startup!S_P_CoreLib_System_Threading_WaitHandle__WaitOneNoCheck+0xce
+00007ff6`8b665a32     : 000002a2`defeb800 00000000`00000001 00000000`00000000 000002a2`defa8910 : Native_Board_Startup!S_P_CoreLib_System_Threading_Condition__Wait_1+0xf7
+00007ff6`8b66e10f     : 000002a2`defeb780 00007ff6`8b66c503 00000000`00000000 00000000`00000000 : Native_Board_Startup!S_P_CoreLib_System_Threading_ManualResetEventSlim__Wait_4+0x292
+00007ff6`8b66dfe4     : 000002a2`defeb6e8 000002a2`defeb6e8 00000000`00000000 000002a2`defeb6a0 : Native_Board_Startup!S_P_CoreLib_System_Threading_Tasks_Task__SpinThenBlockingWait+0x10f
+00007ff6`8b66df95     : 000002a2`defeb6a0 00007ff6`8b1273a4 000002a2`defc5a40 000002a2`defea010 : Native_Board_Startup!S_P_CoreLib_System_Threading_Tasks_Task__InternalWaitCore+0x44
+00007ff6`8b69d6f4     : 000002a2`defeb6e8 00007ff6`ffffffff 00000000`00000000 000000d7`1bf7f030 : Native_Board_Startup!S_P_CoreLib_System_Threading_Tasks_Task__InternalWait+0x25
+00007ff6`8b13af86     : 000002a2`defaff20 00007ff6`8b9fcb12 000002a2`defa8790 00007ff6`8ba01320 : Native_Board_Startup!S_P_CoreLib_System_Runtime_CompilerServices_TaskAwaiter__HandleNonSuccessAndDebuggerNotification+0x24
+00007ff6`8b132ba5     : 000002a2`def827f8 00007ff6`8ba03340 000002a2`de80f12c 00000400`00000056 : Native_Board_Startup!Application_Core_BoardGame_AppRuntime_GameRuntime___c__DisplayClass5_0___Build_g__Prepare_2+0x186
+00007ff6`8b132686     : 000002a2`defe4010 00007ff6`8bc10aa7 00000001`00000000 00007ff6`8b5fe740 : Native_Board_Startup!Application_Core_BoardGame_AppRuntime_GameRuntime__Build+0x245
+00007ff6`8b590b06     : 000002a2`def091a0 00007ff6`8b66dddd 000002a2`defe40f0 000002a2`da73ca70 : Native_Board_Startup!Application_Core_BoardGame_AppRuntime_GameRuntime__Load+0x1f6
+00007ff6`8bb13441     : 000000d7`1bf7f2a8 00007ff6`8bb13fa1 000000d7`1bf7f2b8 00000001`1bf7f2f0 : Native_Board_Startup!Native_Board_Startup_Program___c__DisplayClass0_1___Main_b__5_d__MoveNext+0x426
+00007ff6`8b5904d2     : 00000000`00000002 00007ff6`8b59706d 00000000`00000000 000002a2`dee86270 : Native_Board_Startup!S_P_CoreLib_System_Runtime_CompilerServices_AsyncMethodBuilderCore__Start<Native_Board_Startup_Program___c__DisplayClass0_1___Main_b__5_d>+0x61
+00007ff6`8ba755b7     : 000002a2`deea0da8 00007ff6`8b14c62d 000000d7`1bf7f3a0 00007ff6`8b43fffe : Native_Board_Startup!Native_Board_Startup_Program___c__DisplayClass0_1___Main_b__5+0x42
+00007ff6`8b14dd36     : 000002a2`dc400d88 00007ff6`8b6046d7 00000000`00000000 000002a2`def33e88 : Native_Board_Startup!S_P_CoreLib_System_EventHandler__InvokeMulticastThunk+0x37
+00007ff6`8b2787ee     : 000002a2`de8acfa0 000002a2`deef04c0 00007ff6`8c8a30d8 00000000`00000000 : Native_Board_Startup!Avalonia_Base_Avalonia_Threading_Dispatcher__Send+0x136
+00007ff6`8bba2318     : 000002a2`def041c8 00000000`00000000 40872000`00000000 00000000`00000000 : Native_Board_Startup!Avalonia_Controls_Avalonia_Controls_WindowBase__OnOpened+0x13e
+00007ff6`8b275bb6     : 000002a2`dee6add0 00007ff6`8b2b7944 000002a2`dee84d78 00007ff6`8b4028b6 : Native_Board_Startup!Avalonia_Controls_Avalonia_Controls_Window__ShowCore<System___Canon>+0xc08
+00007ff6`8b2b7a36     : 000002a2`dec4dc00 000002a2`dee6add0 000002a2`dee6add0 000002a2`dee6ab90 : Native_Board_Startup!Avalonia_Controls_Avalonia_Controls_Window__Show+0x16
+00007ff6`8b2b79a2     : 000002a2`dee6ab90 00007ff6`8b2c47b0 00007ff6`8bfcf018 00007ff6`8bffb1a8 : Native_Board_Startup!Avalonia_Controls_Avalonia_Controls_ApplicationLifetimes_ClassicDesktopStyleApplicationLifetime__ShowMainWindow+0x16
+00007ff6`8b590f2c     : 00000000`00000000 00007ff6`8b6046d7 00000000`00000000 000002a2`dec2f3d8 : Native_Board_Startup!Avalonia_Controls_Avalonia_Controls_ApplicationLifetimes_ClassicDesktopStyleApplicationLifetime__StartCore+0x32
+00007ff6`8b58fc18     : 000000d7`1bf7f780 00000000`00000000 00000000`00000000 000002a2`da75cec0 : Native_Board_Startup!Player_Native_BoardGame_Player_NativeApplication__Run+0x4c
+00007ff6`8ba7b9f9     : 000002a2`dec2f3a8 00007ff6`8bc0acad ffffffff`ffffffff 000002a2`da73ca70 : Native_Board_Startup!Native_Board_Startup_Program__Main+0x558
+00007ff6`8bbffe90     : 000002a2`da744b50 00007ff6`8c650880 00007ff6`8b110000 00000000`00000004 : Native_Board_Startup!Native_Board_Startup__Module___StartupCodeMain+0xf9
+00007ff6`8bc51a4f     : 000002a2`da744b50 00000000`00000000 00000000`00000000 00000000`00000000 : Native_Board_Startup!wmain+0xb0
+(Inline Function)     : --------`-------- --------`-------- --------`-------- --------`-------- : Native_Board_Startup!invoke_main+0x22
+00007ffd`fe45e957     : 00000000`00000000 00000000`00000000 00000000`00000000 00000000`00000000 : Native_Board_Startup!__scrt_common_main_seh+0x10f
+00007ffd`feb87c1c     : 00000000`00000001 000000d7`1c0ff000 00000000`00000000 00000000`00000000 : KERNEL32!BaseThreadInitThunk+0x17
+00000000`00000000     : 00000000`00000000 00000000`00000000 00000000`00000000 00000000`00000000 : ntdll!RtlUserThreadStart+0x2c
+
+   1  Id: bf74.f8c8 Suspend: 1 Teb: 000000d7`1bdbf000 Unfrozen
+RetAddr               : Args to Child                                                           : Call Site
+00007ffd`feb2c97e     : 00000000`0001000e 00000000`00000001 000002a2`da748ff0 000002a2`da73cea0 : ntdll!ZwWaitForWorkViaWorkerFactory+0x14
+00007ffd`fe45e957     : 00000000`00000000 00000000`00000000 00000000`00000000 00000000`00000000 : ntdll!RtlSetThreadSubProcessTag+0x1aee
+00007ffd`feb87c1c     : 00000000`00000001 000000d7`1c3ff000 00000000`00000000 00000000`00000000 : KERNEL32!BaseThreadInitThunk+0x17
+00000000`00000000     : 00000000`00000000 00000000`00000000 00000000`00000000 00000000`00000000 : ntdll!RtlUserThreadStart+0x2c
+
+   2  Id: bf74.100bc Suspend: 1 Teb: 000000d7`1bdc1000 Unfrozen
+RetAddr               : Args to Child                                                           : Call Site
+00007ffd`feb2c97e     : 00000000`00000000 00000000`00000000 00007ffd`feb2b8e0 000002a2`da73cea0 : ntdll!ZwWaitForWorkViaWorkerFactory+0x14
+00007ffd`fe45e957     : 00000000`00000800 00000000`00000000 00000000`00000000 00000000`00000000 : ntdll!RtlSetThreadSubProcessTag+0x1aee
+00007ffd`feb87c1c     : 00000000`00000000 00000000`00000000 00000000`00000001 000000d7`1c6ff000 : KERNEL32!BaseThreadInitThunk+0x17
+00000000`00000000     : 00000000`00000000 00000000`00000000 00000000`00000000 00000000`00000000 : ntdll!RtlUserThreadStart+0x2c
+
+   3  Id: bf74.1027c Suspend: 1 Teb: 000000d7`1bdc3000 Unfrozen ".NET Finalizer"
+RetAddr               : Args to Child                                                           : Call Site
+00007ffd`fc222bc3     : 00000000`00000000 00007ff6`8c51d588 00000000`00000000 00000000`00000000 : ntdll!ZwWaitForMultipleObjects+0x14
+00007ff6`8bc0af3a     : 000002a2`dac02220 00007ff6`8b613b59 00000000`00000000 00000000`00000002 : KERNELBASE!WaitForMultipleObjectsEx+0x123
+00007ff6`8bc03da5     : 00000000`00000178 00000000`000007d0 00000000`00000000 00007ff6`8bc03d0c : Native_Board_Startup!PalCompatibleWaitAny+0x3a
+00007ff6`8b6987a9     : 00000000`00000000 000000d7`1c87f790 00000000`00000000 00000000`00020000 : Native_Board_Startup!RhpWaitForFinalizerRequest+0x75
+00007ff6`8bc03bbe     : 000002a2`da73f670 00000000`00000170 00000000`00000000 00000000`00000170 : Native_Board_Startup!S_P_CoreLib_System_Runtime___Finalizer__ProcessFinalizers+0x69
+00007ffd`fe45e957     : 00000000`00000000 00000000`00000000 00000000`00000000 00000000`00000000 : Native_Board_Startup!FinalizerStart+0x8e
+00007ffd`feb87c1c     : 00000000`00000001 000000d7`1c9ff000 00000000`00000000 00000000`00000000 : KERNEL32!BaseThreadInitThunk+0x17
+00000000`00000000     : 00000000`00000000 00000000`00000000 00000000`00000000 00000000`00000000 : ntdll!RtlUserThreadStart+0x2c
+
+   4  Id: bf74.be30 Suspend: 1 Teb: 000000d7`1bdc5000 Unfrozen
+RetAddr               : Args to Child                                                           : Call Site
+00007ffd`feb2c97e     : 00000000`00000000 00000000`00000000 00007ffd`feb2b8e0 000002a2`da731a80 : ntdll!ZwWaitForWorkViaWorkerFactory+0x14
+00007ffd`fe45e957     : 00000000`00000000 00000000`00000000 00000000`00000000 00000000`00000000 : ntdll!RtlSetThreadSubProcessTag+0x1aee
+00007ffd`feb87c1c     : 00000000`00000001 000000d7`1ccff000 00000000`00000000 00000000`00000000 : KERNEL32!BaseThreadInitThunk+0x17
+00000000`00000000     : 00000000`00000000 00000000`00000000 00000000`00000000 00000000`00000000 : ntdll!RtlUserThreadStart+0x2c
+
+   5  Id: bf74.71a4 Suspend: 1 Teb: 000000d7`1bdc7000 Unfrozen
+RetAddr               : Args to Child                                                           : Call Site
+00007ffd`feb2c97e     : 00000000`00000000 00000000`00000000 00007ffd`feb2b8e0 000002a2`da731a80 : ntdll!ZwWaitForWorkViaWorkerFactory+0x14
+00007ffd`fe45e957     : 00000000`00000000 00000000`00000000 00000000`00000000 00000000`00000000 : ntdll!RtlSetThreadSubProcessTag+0x1aee
+00007ffd`feb87c1c     : 00000000`00000001 000000d7`1cfff000 00000000`00000000 00000000`00000000 : KERNEL32!BaseThreadInitThunk+0x17
+00000000`00000000     : 00000000`00000000 00000000`00000000 00000000`00000000 00000000`00000000 : ntdll!RtlUserThreadStart+0x2c
+
+   6  Id: bf74.b5e0 Suspend: 1 Teb: 000000d7`1bdc9000 Unfrozen "cordis-pump"
+RetAddr               : Args to Child                                                           : Call Site
+00007ffd`fc222bc3     : 00007ff6`8c8fe5d4 00000000`00002020 00000000`00000040 00000000`00000000 : ntdll!ZwWaitForMultipleObjects+0x14
+00007ff6`8b66acaf     : 00000000`00000000 00007ff6`8c893940 000000d7`1d17f818 00000000`ffffffff : KERNELBASE!WaitForMultipleObjectsEx+0x123
+00007ff6`8b66a259     : 00000000`00000001 000002a2`deff7a48 000000d7`1d17f880 00007ffd`fc242aa1 : Native_Board_Startup!S_P_CoreLib_System_Threading_WaitHandle__WaitForMultipleObjectsIgnoringSyncContext+0x16f
+00007ff6`8b6603f7     : 000000d7`1d17f9b8 00007ff6`8bc0c274 000000d7`1d17f910 00007ff6`8ba58451 : Native_Board_Startup!S_P_CoreLib_System_Threading_WaitHandle__WaitOneNoCheck+0xf9
+00007ff6`8b6662be     : 000002a2`de85b370 000002a2`ded3e670 000000d7`1d17f9f0 00007ff6`8b666d1b : Native_Board_Startup!S_P_CoreLib_System_Threading_Condition__Wait_1+0xf7
+00007ff6`8b666023     : ffffffff`00000000 000002a2`de855a10 00000000`00000000 00000000`00000000 : Native_Board_Startup!S_P_CoreLib_System_Threading_SemaphoreSlim__WaitUntilCountOrTimeout+0x11e
+00007ff6`8b4de942     : 000002a2`de855e78 000002a2`ded53ea0 00000000`00000000 00000000`00001058 : Native_Board_Startup!S_P_CoreLib_System_Threading_SemaphoreSlim__WaitCore+0x143
+00007ff6`8b6619f5     : 000002a2`de855a10 00000000`00000000 00000000`00000000 00007ffd`fc2b168b : Native_Board_Startup!CordiSharp_CordiSharp_FiberPump__PumpThread+0xa2
+00007ff6`8b66208a     : 00000000`00000000 00007ff6`8bc01af9 00000000`00000000 000002a2`dac011e0 : Native_Board_Startup!S_P_CoreLib_System_Threading_Thread__StartThread+0x135
+00007ffd`fe45e957     : 00000000`00000000 00000000`00000000 00000000`00000000 00000000`00000000 : Native_Board_Startup!S_P_CoreLib_System_Threading_Thread__ThreadEntryPoint+0x1a
+00007ffd`feb87c1c     : 00000000`00000001 000000d7`1d2ff000 00000000`00000000 00000000`00000000 : KERNEL32!BaseThreadInitThunk+0x17
+00000000`00000000     : 00000000`00000000 00000000`00000000 00000000`00000000 00000000`00000000 : ntdll!RtlUserThreadStart+0x2c
+
+   7  Id: bf74.581c Suspend: 1 Teb: 000000d7`1bdcb000 Unfrozen
+RetAddr               : Args to Child                                                           : Call Site
+00007ffd`fc222bc3     : 00000000`00000000 00000000`00000000 00000000`00000000 00000000`00000000 : ntdll!ZwWaitForMultipleObjects+0x14
+00007ffd`fe7a450e     : 00000000`00000278 00000000`00000000 00000000`00000278 00000000`00000000 : KERNELBASE!WaitForMultipleObjectsEx+0x123
+00007ffd`fe836caf     : 000002a2`dabf7d20 00000000`00000000 000002a2`da7ce200 00000000`00000000 : combase!Ordinal112+0x198e
+00007ffd`fe836bbf     : 000002a2`da7ce200 00000000`00000000 000002a2`da7ce200 00000000`00000000 : combase!RoParameterizedTypeExtraGetTypeSignature+0x1df
+00007ffd`fe45e957     : 000002a2`da7ce200 00000000`00000000 00000000`00000000 00000000`00000000 : combase!RoParameterizedTypeExtraGetTypeSignature+0xef
+00007ffd`feb87c1c     : 00000000`00000000 00000000`00000000 00000000`00000001 000000d7`1d5ff000 : KERNEL32!BaseThreadInitThunk+0x17
+00000000`00000000     : 00000000`00000000 00000000`00000000 00000000`00000000 00000000`00000000 : ntdll!RtlUserThreadStart+0x2c
+
+   8  Id: bf74.3998 Suspend: 1 Teb: 000000d7`1bdcd000 Unfrozen
+RetAddr               : Args to Child                                                           : Call Site
+00007ffd`feb426de     : 000002a2`ad90ea00 000002a2`ad90ea00 000000d7`1d6ffe00 00000000`00000000 : ntdll!ZwWaitForAlertByThreadId+0x14
+00007ffd`fc222ea8     : 00000000`00000000 000002a2`ab109910 00000000`00000000 00000000`fffffffc : ntdll!RtlSleepConditionVariableSRW+0x1de
+00007ffd`f1770034     : 000002a2`ab109968 000002a2`ab109968 000000d7`1d6ffcf0 00000000`00000000 : KERNELBASE!SleepConditionVariableSRW+0x38
+00007ffd`f17ec80b     : 00000050`00000030 000002a2`a8490260 00000000`00000000 00000000`00000000 : igd10umt64xe!QueryDesiredMode1+0xecf04
+00007ffd`fe45e957     : 000002a2`a8490260 00000000`00000000 00000000`00000000 00000000`00000000 : igd10umt64xe!QueryDesiredMode1+0x1696db
+00007ffd`feb87c1c     : 00000000`00000001 000000d7`1d7ff000 00000000`00000000 00000000`00000000 : KERNEL32!BaseThreadInitThunk+0x17
+00000000`00000000     : 00000000`00000000 00000000`00000000 00000000`00000000 00000000`00000000 : ntdll!RtlUserThreadStart+0x2c
+
+   9  Id: bf74.df5c Suspend: 1 Teb: 000000d7`1bdcf000 Unfrozen
+RetAddr               : Args to Child                                                           : Call Site
+00007ffd`feb426de     : 00000000`00000002 00007ffd`f174eaba 000002a2`ad945e50 000002a2`00000000 : ntdll!ZwWaitForAlertByThreadId+0x14
+00007ffd`fc222ea8     : 00000000`00000000 000002a2`ab109870 00000000`00000000 00000000`0000000f : ntdll!RtlSleepConditionVariableSRW+0x1de
+00007ffd`f17709d1     : 001132f0`e984b87c 00000000`00000000 000000d7`1d8ff9f0 000002a2`ab109870 : KERNELBASE!SleepConditionVariableSRW+0x38
+00007ffd`f17ec80b     : 00000050`00000050 000002a2`a848fea0 00000000`00000000 00000000`00000000 : igd10umt64xe!QueryDesiredMode1+0xed8a1
+00007ffd`fe45e957     : 000002a2`a848fea0 00000000`00000000 00000000`00000000 80000000`00000800 : igd10umt64xe!QueryDesiredMode1+0x1696db
+00007ffd`feb87c1c     : 00000000`00000000 00000000`00000000 00000000`00000000 00000000`00000000 : KERNEL32!BaseThreadInitThunk+0x17
+00000000`00000000     : 00000000`00000000 00000000`00000000 00000000`00000000 00000000`00000000 : ntdll!RtlUserThreadStart+0x2c
+
+  10  Id: bf74.49c8 Suspend: 1 Teb: 000000d7`1bdd1000 Unfrozen
+RetAddr               : Args to Child                                                           : Call Site
+00007ffd`feb426de     : 00000000`00000000 000000d7`1daff8e0 00000000`00000002 000002a2`ad945d80 : ntdll!ZwWaitForAlertByThreadId+0x14
+00007ffd`fc222ea8     : 00000000`00000000 000002a2`ad92dc30 00000000`00000000 000002a2`ad92dc30 : ntdll!RtlSleepConditionVariableSRW+0x1de
+00007ffd`f17062a9     : 000002a2`a8466fa0 000002a2`a8463008 000002a2`a8466fa0 000002a2`ad92dc30 : KERNELBASE!SleepConditionVariableSRW+0x38
+00007ffd`f17ec80b     : 00000050`00000040 000002a2`a848ffc0 00000000`00000000 00000000`00000000 : igd10umt64xe!QueryDesiredMode1+0x83179
+00007ffd`fe45e957     : 000002a2`a848ffc0 80000000`00000800 00000000`00000000 00000000`00000000 : igd10umt64xe!QueryDesiredMode1+0x1696db
+00007ffd`feb87c1c     : 00000000`00000000 00000000`00000000 00000000`00000001 000000d7`1dbff000 : KERNEL32!BaseThreadInitThunk+0x17
+00000000`00000000     : 00000000`00000000 00000000`00000000 00000000`00000000 00000000`00000000 : ntdll!RtlUserThreadStart+0x2c
+
+  11  Id: bf74.11220 Suspend: 1 Teb: 000000d7`1bdd3000 Unfrozen "DwmRenderTimerLoop"
+RetAddr               : Args to Child                                                           : Call Site
+00007ffd`fd9f38ef     : 00000000`00000000 00000000`00000000 00000000`000003e8 00000000`00000000 : win32u!NtUserPeekMessage+0x14
+00007ffd`fd9f3878     : 00000000`00000000 00000000`00000000 00000000`00000118 00007ffd`fd9f38ef : USER32!PeekMessageW+0x1df
+00007ffd`fe7b9717     : 000000d7`1dd7f2f0 00000000`00000010 00000000`00000000 00007ffd`000003e0 : USER32!PeekMessageW+0x168
+00007ffd`fe7b996b     : 000000d7`1dd7f480 000000d7`1dd7f2f0 00000000`00000000 00007ffd`00000118 : combase!CoUnloadingWOW+0x597
+00007ffd`fe7b7a13     : 000000d7`1dd7f480 00000000`00000001 000000d7`1dd7f480 00007ffd`fe7b9690 : combase!CoUnloadingWOW+0x7eb
+00007ffd`fe7b844b     : 000000d7`00180010 000000d7`1dd7f480 000000d7`1dd7f4bc 00000000`00000001 : combase!InternalCStdIdentityGetIProxyManager+0x4303
+00007ffd`fe7b7955     : 00000000`80010116 000000d7`1dd7f758 00000000`208b7304 00000000`00000001 : combase!InternalCStdIdentityGetIProxyManager+0x4d3b
+00007ffd`fe7679fb     : 00000000`00000002 00000000`00000000 000000d7`1dd7f800 00007ffd`fd9ec569 : combase!InternalCStdIdentityGetIProxyManager+0x4245
+00007ff6`8bc0af63     : 00000000`ffffffff 00000000`ffffffff 00000000`00000001 000000d7`1dd7f758 : combase!CoWaitForMultipleHandles+0xbb
+00007ff6`8bc01ce1     : 000000d7`1dd7f758 000000d7`1dd7f6f0 00000000`ffffffff 00007ff6`8c7f9278 : Native_Board_Startup!PalCompatibleWaitAny+0x63
+00007ff6`8b66ad10     : 00000000`00000000 00000000`00000000 00000000`00000000 00007ffd`fda8c710 : Native_Board_Startup!RhCompatibleReentrantWaitAny+0x11
+00007ff6`8b66a259     : 00000000`000f0d6a 00000000`00000000 00000000`80000001 00000000`00000000 : Native_Board_Startup!S_P_CoreLib_System_Threading_WaitHandle__WaitForMultipleObjectsIgnoringSyncContext+0x1d0
+00007ff6`8b46676a     : 000002a2`00008000 000000d7`1dd7f770 000000d7`1dd7f890 000002a2`de8b02d8 : Native_Board_Startup!S_P_CoreLib_System_Threading_WaitHandle__WaitOneNoCheck+0xf9
+00007ff6`8b439dea     : 000002a2`dee947e0 000002a2`a4b61288 000002a2`a4b61288 00000000`00000000 : Native_Board_Startup!Avalonia_Win32_Avalonia_Win32_WinRT_Composition_WinUiCompositorConnection_RunLoopHandler__OnAfterMessageWithoutLock+0x4a
+00007ff6`8b466ca4     : 000002a2`dee947e0 000000d7`1dd7f8c0 00000000`00000000 000002a2`dee94008 : Native_Board_Startup!Avalonia_Win32_Avalonia_Win32_WinRT_Composition_WinUiCompositorConnection__RunLoop+0x1ea
+00007ff6`8b6619f5     : 000002a2`dee91eb8 00000000`00000000 00000000`00000000 00007ffd`fc2b168b : Native_Board_Startup!Avalonia_Win32_Avalonia_Win32_WinRT_Composition_WinUiCompositorConnection___c__DisplayClass10_0___TryCreateAndRegisterCore_b__0+0x144
+00007ff6`8b66208a     : 00000000`00000000 00007ff6`8bc01af9 00000000`00000000 000002a2`dac011e0 : Native_Board_Startup!S_P_CoreLib_System_Threading_Thread__StartThread+0x135
+00007ffd`fe45e957     : 00000000`00000000 00000000`00000000 00000000`00000000 00000000`00000000 : Native_Board_Startup!S_P_CoreLib_System_Threading_Thread__ThreadEntryPoint+0x1a
+00007ffd`feb87c1c     : 00000000`00000001 000000d7`1deff000 00000000`00000000 00000000`00000000 : KERNEL32!BaseThreadInitThunk+0x17
+00000000`00000000     : 00000000`00000000 00000000`00000000 00000000`00000000 00000000`00000000 : ntdll!RtlUserThreadStart+0x2c
+
+  12  Id: bf74.1039c Suspend: 1 Teb: 000000d7`1bdd5000 Unfrozen "ShellHandwriting Delegate Thread"
+RetAddr               : Args to Child                                                           : Call Site
+00007ffd`fda1b352     : ffffffff`fffffffd 00000000`00000000 00007ff6`8b110000 00000000`00000000 : win32u!NtUserGetMessage+0x14
+00007ffd`fcf89a0b     : 00000000`00000001 00000000`00000000 00000000`00000000 00007ffd`00000000 : USER32!GetMessageW+0x22
+00007ffd`fcf85dc0     : 000002a2`ab1ef2d0 000002a2`ab1ef2d0 00000000`00000000 00000000`00000000 : MSCTF!TF_SetShowFloatingStatus+0x5642b
+00007ffd`fe45e957     : 00000000`00000000 80000000`00000800 00000000`00000000 00000000`00000000 : MSCTF!TF_SetShowFloatingStatus+0x527e0
+00007ffd`feb87c1c     : 00000000`00000000 00000000`00000000 00000000`00000001 000000d7`1e1ff000 : KERNEL32!BaseThreadInitThunk+0x17
+00000000`00000000     : 00000000`00000000 00000000`00000000 00000000`00000000 00000000`00000000 : ntdll!RtlUserThreadStart+0x2c
+
+  13  Id: bf74.8588 Suspend: 1 Teb: 000000d7`1bdd7000 Unfrozen
+RetAddr               : Args to Child                                                           : Call Site
+00007ffd`feb2c97e     : 00000000`00000000 00000000`00000000 00007ffd`feb2b8e0 000002a2`da731a80 : ntdll!ZwWaitForWorkViaWorkerFactory+0x14
+00007ffd`fe45e957     : 00000000`00000000 00000000`00000000 00000000`00000000 00000000`00000000 : ntdll!RtlSetThreadSubProcessTag+0x1aee
+00007ffd`feb87c1c     : 00000000`00000001 000000d7`1e4ff000 00000000`00000000 00000000`00000000 : KERNEL32!BaseThreadInitThunk+0x17
+00000000`00000000     : 00000000`00000000 00000000`00000000 00000000`00000000 00000000`00000000 : ntdll!RtlUserThreadStart+0x2c
+
+  14  Id: bf74.4d98 Suspend: 1 Teb: 000000d7`1bdd9000 Unfrozen
+RetAddr               : Args to Child                                                           : Call Site
+00007ffd`feb2c97e     : 00000000`00000000 00000000`00000000 00007ffd`feb2b8e0 000002a2`da731a80 : ntdll!ZwWaitForWorkViaWorkerFactory+0x14
+00007ffd`fe45e957     : 00000000`00000800 00000000`00000000 00000000`00000000 00000000`00000000 : ntdll!RtlSetThreadSubProcessTag+0x1aee
+00007ffd`feb87c1c     : 00000000`00000000 00000000`00000000 00000000`00000001 000000d7`1e7ff000 : KERNEL32!BaseThreadInitThunk+0x17
+00000000`00000000     : 00000000`00000000 00000000`00000000 00000000`00000000 00000000`00000000 : ntdll!RtlUserThreadStart+0x2c
+
+  15  Id: bf74.f82c Suspend: 1 Teb: 000000d7`1bddb000 Unfrozen
+RetAddr               : Args to Child                                                           : Call Site
+00007ffd`feb2c97e     : 00000000`00000000 00000000`00000000 00007ffd`feb2b8e0 000002a2`da731a80 : ntdll!ZwWaitForWorkViaWorkerFactory+0x14
+00007ffd`fe45e957     : 00000000`00000000 00000000`00000000 00000000`00000000 00000000`00000000 : ntdll!RtlSetThreadSubProcessTag+0x1aee
+00007ffd`feb87c1c     : 00000000`00000000 00000000`00000000 00000000`00000000 00000000`00000000 : KERNEL32!BaseThreadInitThunk+0x17
+00000000`00000000     : 00000000`00000000 00000000`00000000 00000000`00000000 00000000`00000000 : ntdll!RtlUserThreadStart+0x2c
+
+  16  Id: bf74.2e08 Suspend: 1 Teb: 000000d7`1bddd000 Unfrozen
+RetAddr               : Args to Child                                                           : Call Site
+00007ffd`fc222bc3     : 00000000`00000000 00000000`00000020 00000000`00000020 00000000`00000001 : ntdll!ZwWaitForMultipleObjects+0x14
+00007ff6`8b66acaf     : 00000000`00000000 00007ff6`00000000 000000d7`1ec7e5e8 00000000`ffffffff : KERNELBASE!WaitForMultipleObjectsEx+0x123
+00007ff6`8b66a259     : 000002a2`de850a00 000002a2`de8508b8 00000000`ffffffff 000002a2`e100f0f0 : Native_Board_Startup!S_P_CoreLib_System_Threading_WaitHandle__WaitForMultipleObjectsIgnoringSyncContext+0x16f
+00007ff6`8b6603f7     : 000002a2`e100f0f0 00007ff6`8ba55fb6 000002a2`e100f0f0 00007ff6`8ba583fd : Native_Board_Startup!S_P_CoreLib_System_Threading_WaitHandle__WaitOneNoCheck+0xf9
+00007ff6`8b665a32     : 000002a2`e100f148 000000d7`1ec7ed80 00000000`00000000 000002a2`a83b0230 : Native_Board_Startup!S_P_CoreLib_System_Threading_Condition__Wait_1+0xf7
+00007ff6`8b66e10f     : 000002a2`e100f0c8 000002a2`dc4009b8 00000000`00000000 00007ff6`8b6cb601 : Native_Board_Startup!S_P_CoreLib_System_Threading_ManualResetEventSlim__Wait_4+0x292
+00007ff6`8b66dfe4     : 000002a2`e100f058 00007ff6`8bb9e1c3 00000000`00000000 000002a2`e100ef00 : Native_Board_Startup!S_P_CoreLib_System_Threading_Tasks_Task__SpinThenBlockingWait+0x10f
+00007ff6`8b66df95     : 000002a2`de8acfa0 00007ff6`8bfe3340 000002a2`dc4009b8 00007ff6`8bb9e0f9 : Native_Board_Startup!S_P_CoreLib_System_Threading_Tasks_Task__InternalWaitCore+0x44
+00007ff6`8b69d6f4     : 000002a2`e100f058 00000000`ffffffff 00000000`00000000 000002a2`e100eed0 : Native_Board_Startup!S_P_CoreLib_System_Threading_Tasks_Task__InternalWait+0x25
+00007ff6`8b9df391     : 000000d7`1ec7ea78 00007ff6`8bc10aa7 000000d7`1ec7ee90 00007ff6`8bfe3340 : Native_Board_Startup!S_P_CoreLib_System_Runtime_CompilerServices_TaskAwaiter__HandleNonSuccessAndDebuggerNotification+0x24
+00007ff6`8b46e155     : 00000000`00000000 00000000`00000000 00630061`00660072 0070006d`00490065 : Native_Board_Startup!Avalonia_Base_Avalonia_Threading_DispatcherOperation_1<System___Canon>__get_Result+0xc1
+00007ff6`8b469de0     : 000002a2`de96bb90 000002a2`ab26a230 00000000`00000030 00000000`00000024 : Native_Board_Startup!Avalonia_Win32_Automation_Avalonia_Win32_Automation_RootAutomationNode__GetFocus+0x35
+00007ffd`d4b48660     : 000002a2`a83b0200 00000000`00000005 00000000`00000000 000002a2`da730000 : Native_Board_Startup!Avalonia_Win32_Automation__Avalonia_Win32_Automation_Interop_IRawElementProviderFragmentRoot_FBA9B50B97E84B89AC7D5A3B2903D753CE315823F09C51C0C0266726DBD3C1993__InterfaceImplementation__ABI_GetFocus+0x40
+00007ffd`d4b4771f     : 00007ff6`8b69d9c0 000000d7`1ec7ea30 00000000`00000001 00001799`19ffe65e : UIAutomationCore+0x18660
+00007ffd`d4b463a5     : 000002a2`ad5029b0 00000000`00000000 000002a2`ad502958 00000000`00000000 : UIAutomationCore+0x1771f
+00007ffd`d4bba16d     : 00000000`00000000 00000000`00000000 000002a2`ad431c90 000000d7`1ec7ee90 : UIAutomationCore+0x163a5
+00007ffd`d4bbdc86     : 00000000`00000000 00000000`00000000 000000d7`1ec7ef40 000002a2`a83b0200 : UIAutomationCore!UiaNodeFromHandle+0x24edd
+00007ffd`d4bbda77     : 00007ffd`d4ed13c8 f6ea590e`328703a4 000000d7`1ec7ee98 00007ffd`d4cbc76e : UIAutomationCore!UiaNodeFromHandle+0x289f6
+00007ffd`d4c8dbf1     : 000002a2`ad4a0001 000002a2`a83b0200 000002a2`ad420370 000000d7`1ec7ef80 : UIAutomationCore!UiaNodeFromHandle+0x287e7
+00007ffd`d4b8889c     : 00000000`00000000 00000000`00000000 000000d7`1ec7f3b0 00000000`00000000 : UIAutomationCore!UiaGetReservedMixedAttributeValue+0x1321
+00007ffd`d4bb850d     : 00007ffd`fbfa98b0 00007ffd`00000012 000002a2`a83b0200 000000d7`1ec7eeb0 : UIAutomationCore+0x5889c
+00007ffd`d4bb7dfd     : 00000000`80000022 000002a2`a83b0200 000000d7`00000000 000000d7`1ec7ef60 : UIAutomationCore!UiaNodeFromHandle+0x2327d
+00007ffd`d4c09c1d     : 00007ffd`d4ec02b8 00000000`00000000 00007ffd`d4ebf558 000000d7`1ec7f348 : UIAutomationCore!UiaNodeFromHandle+0x22b6d
+00007ffd`d4c095b1     : 00007ffd`d4ec02b8 000002a2`ad4203a0 000002a2`ad4d9530 00007ffd`d4c13025 : UIAutomationCore!UiaRaiseNotificationEvent+0x326d
+00007ffd`d4bf4c50     : 0000ea60`00000000 00000000`00000028 000002a2`ad4d9530 00007ffd`d4bf3ce9 : UIAutomationCore!UiaRaiseNotificationEvent+0x2c01
+00007ffd`d4bf3ea6     : 000002a2`ad648410 00007ffd`d4e11d20 000000d7`1ec7f548 00007ffd`d4cc2ba8 : UIAutomationCore!UiaRaiseAutomationPropertyChangedEvent+0x1a4b0
+00007ffd`d4cd547b     : 000000d7`1ec7f5b8 00007ffd`d4b4e140 000000d7`1ec7f578 000000d7`1ec7f578 : UIAutomationCore!UiaRaiseAutomationPropertyChangedEvent+0x19706
+00007ffd`d4c9ccab     : 000000d7`1ec7f628 000002a2`ad4d9530 00000000`00000000 00000000`00000007 : UIAutomationCore!WindowPattern_WaitForInputIdle+0x419b
+00007ffd`d4b77ddb     : 000002a2`ad4d95d0 000002a2`ad4d9530 000002a2`ad41eff4 000002a2`ad4d95d0 : UIAutomationCore!UiaNodeFromProvider+0x624b
+00007ffd`d4c11f45     : 00000201`00000005 00000000`00000001 000000d7`1ec7f7e0 00007ffd`fc222a91 : UIAutomationCore+0x47ddb
+00007ffd`d4bbf1a9     : 000002a2`00000289 000002a2`ad41df20 000002a2`ad41df20 00000000`00000001 : UIAutomationCore!UiaRaiseNotificationEvent+0xb595
+00007ffd`d4c940f9     : 00000050`00000000 00000000`00000000 00000000`00000000 00000000`00000000 : UIAutomationCore!UiaNodeFromHandle+0x29f19
+00007ffd`fe45e957     : 00000000`00000000 00000000`00000000 00000000`00000000 00000000`00000000 : UIAutomationCore!UiaIAccessibleFromProvider+0x749
+00007ffd`feb87c1c     : 00000000`00000001 000000d7`1edff000 00000000`00000000 00000000`00000000 : KERNEL32!BaseThreadInitThunk+0x17
+00000000`00000000     : 00000000`00000000 00000000`00000000 00000000`00000000 00000000`00000000 : ntdll!RtlUserThreadStart+0x2c
+
+  17  Id: bf74.3274 Suspend: 1 Teb: 000000d7`1bddf000 Unfrozen
+RetAddr               : Args to Child                                                           : Call Site
+00007ffd`feb0c873     : 000000d7`1efff538 000000d7`1efff838 000002a2`ad4343d0 00007ffc`a1250c9b : ntdll!ZwWaitForAlertByThreadId+0x14
+00007ffd`fc2de898     : 000002a2`ad435404 00000000`00000000 000000d7`1efff5c0 00000000`00000000 : ntdll!RtlWaitOnAddress+0x213
+*** WARNING: Unable to verify checksum for C:\code\dotnet\Board-Game-Builder\artifacts\native-aot\startup-trace-04\wasmtime.DLL
+00007ffc`a19a3753     : 000002a2`ad436180 000002a2`ad436180 000000d7`1efff700 000002a2`ad4343e0 : KERNELBASE!WaitOnAddress+0x38
+00007ffc`a1a14086     : 00000000`00000000 00007ffc`a1251d12 00000000`00000000 00000000`00000000 : wasmtime!wasmtime_set_vmctx_memory_48_0_2+0xa084b3
+00007ffc`a125054a     : 00000000`00000000 00000000`00000000 00000000`00000000 000002a2`ad4343d4 : wasmtime!wasm_frame_instance+0x221a6
+00007ffc`a124fbc9     : 00000000`00000000 00000000`00000008 00000000`00000000 00000000`00000000 : wasmtime!wasmtime_set_vmctx_memory_48_0_2+0x2b52aa
+00007ffc`a124fff0     : 00000000`00000000 00000000`00000000 00000000`00000000 00000000`00000000 : wasmtime!wasmtime_set_vmctx_memory_48_0_2+0x2b4929
+00007ffc`a19b1a9a     : 000002a2`aaf29a30 000002a2`ad3db480 000002a2`ad4d19c0 00000000`00000000 : wasmtime!wasmtime_set_vmctx_memory_48_0_2+0x2b4d50
+00007ffd`fe45e957     : 00000000`00000000 00000000`00000000 00000000`00000800 80000000`00000800 : wasmtime!wasmtime_set_vmctx_memory_48_0_2+0xa167fa
+00007ffd`feb87c1c     : 00000000`00000000 00000000`00000000 00000000`00000000 00000000`00000000 : KERNEL32!BaseThreadInitThunk+0x17
+00000000`00000000     : 00000000`00000000 00000000`00000000 00000000`00000000 00000000`00000000 : ntdll!RtlUserThreadStart+0x2c
+
+  18  Id: bf74.9704 Suspend: 1 Teb: 000000d7`1bde1000 Unfrozen
+RetAddr               : Args to Child                                                           : Call Site
+00007ffd`feb0c873     : 000000d7`1f3ff638 000000d7`1f3ff938 000002a2`ad4343f8 00007ffc`a1250c9b : ntdll!ZwWaitForAlertByThreadId+0x14
+00007ffd`fc2de898     : 000002a2`ad435484 00000000`00000000 000000d7`1f3ff6c0 00000000`00000000 : ntdll!RtlWaitOnAddress+0x213
+00007ffc`a19a3753     : 000002a2`ad436180 000002a2`ad436180 000000d7`1f3ff830 000002a2`ad434408 : KERNELBASE!WaitOnAddress+0x38
+00007ffc`a1a14086     : 00000000`00000000 00007ffc`a1251d12 00001f80`0010005b 00000000`00000033 : wasmtime!wasmtime_set_vmctx_memory_48_0_2+0xa084b3
+00007ffc`a125054a     : 00000000`00000000 00000000`00000000 00000000`00000000 000002a2`ad4343fc : wasmtime!wasm_frame_instance+0x221a6
+00007ffc`a124fbc9     : 00000000`00000000 00000000`00000008 00000000`00000000 00000000`00000000 : wasmtime!wasmtime_set_vmctx_memory_48_0_2+0x2b52aa
+00007ffc`a124fff0     : 00000000`00000000 00000000`00000000 00000000`00000000 00000000`00000000 : wasmtime!wasmtime_set_vmctx_memory_48_0_2+0x2b4929
+00007ffc`a19b1a9a     : 000002a2`aaf298f0 000002a2`ad3db4e0 000002a2`ad4d1600 00000000`00000000 : wasmtime!wasmtime_set_vmctx_memory_48_0_2+0x2b4d50
+00007ffd`fe45e957     : 00000000`00000000 00000000`00000000 00000000`00000000 00000000`00000000 : wasmtime!wasmtime_set_vmctx_memory_48_0_2+0xa167fa
+00007ffd`feb87c1c     : 00000000`00000000 00000000`00000000 00000000`00000000 00000000`00000000 : KERNEL32!BaseThreadInitThunk+0x17
+00000000`00000000     : 00000000`00000000 00000000`00000000 00000000`00000000 00000000`00000000 : ntdll!RtlUserThreadStart+0x2c
+
+  19  Id: bf74.c058 Suspend: 1 Teb: 000000d7`1bde3000 Unfrozen
+RetAddr               : Args to Child                                                           : Call Site
+00007ffd`feb0c873     : 000000d7`1f7ff7b8 000000d7`1f7ffab8 000002a2`ad434420 00007ffc`a1250c9b : ntdll!ZwWaitForAlertByThreadId+0x14
+00007ffd`fc2de898     : 000002a2`ad435504 00000000`00000000 000000d7`1f7ff840 00000000`00000000 : ntdll!RtlWaitOnAddress+0x213
+00007ffc`a19a3753     : 000002a2`ad436180 000002a2`ad436180 000000d7`1f7ff990 000002a2`ad434430 : KERNELBASE!WaitOnAddress+0x38
+00007ffc`a1a14086     : 00000000`00000000 00007ffc`a1251d12 00000000`00000000 00000000`00000000 : wasmtime!wasmtime_set_vmctx_memory_48_0_2+0xa084b3
+00007ffc`a125054a     : 00000000`00000000 00000000`00000000 00000000`00000000 000002a2`ad434424 : wasmtime!wasm_frame_instance+0x221a6
+00007ffc`a124fbc9     : 00000000`00000000 00000000`00000008 00000000`00000000 00000000`00000000 : wasmtime!wasmtime_set_vmctx_memory_48_0_2+0x2b52aa
+00007ffc`a124fff0     : 00000000`00000000 00000000`00000000 00000000`00000000 00000000`00000000 : wasmtime!wasmtime_set_vmctx_memory_48_0_2+0x2b4929
+00007ffc`a19b1a9a     : 000002a2`aaf2a070 000002a2`ad3db500 000002a2`ad4d16a0 00000000`00000000 : wasmtime!wasmtime_set_vmctx_memory_48_0_2+0x2b4d50
+00007ffd`fe45e957     : 00000000`00000800 80000000`00000800 00000000`00000000 00000000`00000000 : wasmtime!wasmtime_set_vmctx_memory_48_0_2+0xa167fa
+00007ffd`feb87c1c     : 00000000`00000000 00000000`00000000 00000000`00000001 000000d7`1f9ff000 : KERNEL32!BaseThreadInitThunk+0x17
+00000000`00000000     : 00000000`00000000 00000000`00000000 00000000`00000000 00000000`00000000 : ntdll!RtlUserThreadStart+0x2c
+
+  20  Id: bf74.67b8 Suspend: 1 Teb: 000000d7`1bde5000 Unfrozen
+RetAddr               : Args to Child                                                           : Call Site
+00007ffd`feb0c873     : 000000d7`1fbff538 000000d7`1fbff838 000002a2`ad434448 00007ffc`a1250c9b : ntdll!ZwWaitForAlertByThreadId+0x14
+00007ffd`fc2de898     : 000002a2`ad435584 00000000`00000000 000000d7`1fbff5c0 00000000`00000000 : ntdll!RtlWaitOnAddress+0x213
+00007ffc`a19a3753     : 000002a2`ad436180 000002a2`ad436180 000000d7`1fbff770 000002a2`ad434458 : KERNELBASE!WaitOnAddress+0x38
+00007ffc`a1a14086     : 00000000`00000000 00007ffc`a1251d12 00000000`00000000 00000000`00000000 : wasmtime!wasmtime_set_vmctx_memory_48_0_2+0xa084b3
+00007ffc`a125054a     : 00000000`00000000 00000000`00000000 00007ffc`a19b18d0 000002a2`ad43444c : wasmtime!wasm_frame_instance+0x221a6
+00007ffc`a124fbc9     : 00000000`00000000 00000000`00000008 00000000`00000000 00000000`00000000 : wasmtime!wasmtime_set_vmctx_memory_48_0_2+0x2b52aa
+00007ffc`a124fff0     : 00000000`00000000 00000000`00000000 00000000`00000000 00000000`00000000 : wasmtime!wasmtime_set_vmctx_memory_48_0_2+0x2b4929
+00007ffc`a19b1a9a     : 000002a2`aaf29670 000002a2`ad3db5a0 000002a2`ad4d1ce0 00000000`00000000 : wasmtime!wasmtime_set_vmctx_memory_48_0_2+0x2b4d50
+00007ffd`fe45e957     : 00000000`00000000 00000000`00000000 00000000`00000000 00000000`00000000 : wasmtime!wasmtime_set_vmctx_memory_48_0_2+0xa167fa
+00007ffd`feb87c1c     : 00000000`00000000 00000000`00000000 00000000`00000000 00000000`00000000 : KERNEL32!BaseThreadInitThunk+0x17
+00000000`00000000     : 00000000`00000000 00000000`00000000 00000000`00000000 00000000`00000000 : ntdll!RtlUserThreadStart+0x2c
+
+  21  Id: bf74.b83c Suspend: 1 Teb: 000000d7`1bde7000 Unfrozen
+RetAddr               : Args to Child                                                           : Call Site
+00007ffd`feb0c873     : 000000d7`1ffff9b8 000000d7`1ffffcb8 000002a2`ad434470 00007ffc`a1250c9b : ntdll!ZwWaitForAlertByThreadId+0x14
+00007ffd`fc2de898     : 000002a2`ad435604 00000000`00000000 000000d7`1ffffa40 00000000`00000000 : ntdll!RtlWaitOnAddress+0x213
+00007ffc`a19a3753     : 000002a2`ad436180 000002a2`ad436180 000000d7`1ffffb90 000002a2`ad434480 : KERNELBASE!WaitOnAddress+0x38
+00007ffc`a1a14086     : 00000000`00000000 00007ffc`a1251d12 00000000`00000000 00000000`00000000 : wasmtime!wasmtime_set_vmctx_memory_48_0_2+0xa084b3
+00007ffc`a125054a     : 00000000`00000000 00000000`00000000 00000000`00000000 000002a2`ad434474 : wasmtime!wasm_frame_instance+0x221a6
+00007ffc`a124fbc9     : 00000000`00000000 00000000`00000008 00000000`00000000 00000000`00000000 : wasmtime!wasmtime_set_vmctx_memory_48_0_2+0x2b52aa
+00007ffc`a124fff0     : 00000000`00000000 00000000`00000000 00000000`00000000 00000000`00000000 : wasmtime!wasmtime_set_vmctx_memory_48_0_2+0x2b4929
+00007ffc`a19b1a9a     : 000002a2`aaf29c30 000002a2`ad3dba60 000002a2`ad4d1b00 00000000`00000000 : wasmtime!wasmtime_set_vmctx_memory_48_0_2+0x2b4d50
+00007ffd`fe45e957     : 00000000`00000800 80000000`00000800 00000000`00000000 00000000`00000000 : wasmtime!wasmtime_set_vmctx_memory_48_0_2+0xa167fa
+00007ffd`feb87c1c     : 00000000`00000000 00000000`00000000 00000000`00000001 000000d7`201ff000 : KERNEL32!BaseThreadInitThunk+0x17
+00000000`00000000     : 00000000`00000000 00000000`00000000 00000000`00000000 00000000`00000000 : ntdll!RtlUserThreadStart+0x2c
+
+  22  Id: bf74.b4ec Suspend: 1 Teb: 000000d7`1bde9000 Unfrozen
+RetAddr               : Args to Child                                                           : Call Site
+00007ffd`feb0c873     : 000000d7`203ff838 000000d7`203ffb38 000002a2`ad434498 00007ffc`a1250c9b : ntdll!ZwWaitForAlertByThreadId+0x14
+00007ffd`fc2de898     : 000002a2`ad435684 00000000`00000000 000000d7`203ff8c0 00000000`00000000 : ntdll!RtlWaitOnAddress+0x213
+00007ffc`a19a3753     : 000002a2`ad436180 000002a2`ad436180 000000d7`203ffa20 000002a2`ad4344a8 : KERNELBASE!WaitOnAddress+0x38
+00007ffc`a1a14086     : 00000000`00000000 00007ffc`a1251d12 00000200`002b0000 00000000`00000000 : wasmtime!wasmtime_set_vmctx_memory_48_0_2+0xa084b3
+00007ffc`a125054a     : 00000000`00000000 00000000`00000000 00000000`00000000 000002a2`ad43449c : wasmtime!wasm_frame_instance+0x221a6
+00007ffc`a124fbc9     : 00000000`00000000 00000000`00000008 00000000`00000000 00000000`00000000 : wasmtime!wasmtime_set_vmctx_memory_48_0_2+0x2b52aa
+00007ffc`a124fff0     : 00000000`00000000 00000000`00000000 00000000`00000000 00000000`00000000 : wasmtime!wasmtime_set_vmctx_memory_48_0_2+0x2b4929
+00007ffc`a19b1a9a     : 000002a2`aaf296f0 000002a2`ad3dbb20 000002a2`ad4d2640 00000000`00000000 : wasmtime!wasmtime_set_vmctx_memory_48_0_2+0x2b4d50
+00007ffd`fe45e957     : 00000000`00000000 00000000`00000000 00000000`00000000 00000000`00000000 : wasmtime!wasmtime_set_vmctx_memory_48_0_2+0xa167fa
+00007ffd`feb87c1c     : 00000000`00000001 000000d7`205ff000 00000000`00000000 00000000`00000000 : KERNEL32!BaseThreadInitThunk+0x17
+00000000`00000000     : 00000000`00000000 00000000`00000000 00000000`00000000 00000000`00000000 : ntdll!RtlUserThreadStart+0x2c
+
+  23  Id: bf74.eaec Suspend: 1 Teb: 000000d7`1bdeb000 Unfrozen
+RetAddr               : Args to Child                                                           : Call Site
+00007ffd`feb0c873     : 000000d7`207ff390 000002a2`ad434460 000002a2`ad4343d0 000002a2`ad389a80 : ntdll!ZwWaitForAlertByThreadId+0x14
+00007ffd`fc2de898     : 000002a2`ad435704 00000000`00000000 000000d7`207ff3c0 00000000`00000000 : ntdll!RtlWaitOnAddress+0x213
+00007ffc`a19a3753     : 000002a2`ad436180 000002a2`ad436180 000000d7`207ff520 000002a2`ad4344d0 : KERNELBASE!WaitOnAddress+0x38
+00007ffc`a1a14086     : 00000000`00000000 00007ffc`a1251d12 00000200`002b0000 00000000`00000000 : wasmtime!wasmtime_set_vmctx_memory_48_0_2+0xa084b3
+00007ffc`a125054a     : 00000000`00000000 00000000`00000000 00000000`00000000 000002a2`ad4344c4 : wasmtime!wasm_frame_instance+0x221a6
+00007ffc`a124fbc9     : 00000000`00000000 00000000`00000008 00000000`00000000 00000000`00000000 : wasmtime!wasmtime_set_vmctx_memory_48_0_2+0x2b52aa
+00007ffc`a124fff0     : 00000000`00000000 00000000`00000000 00000000`00000000 00000000`00000000 : wasmtime!wasmtime_set_vmctx_memory_48_0_2+0x2b4929
+00007ffc`a19b1a9a     : 000002a2`aaf29730 000002a2`ad3dbea0 000002a2`ad4d0e80 00000000`00000000 : wasmtime!wasmtime_set_vmctx_memory_48_0_2+0x2b4d50
+00007ffd`fe45e957     : 00000000`00000000 00000000`00000000 00000000`00000000 00000000`00000000 : wasmtime!wasmtime_set_vmctx_memory_48_0_2+0xa167fa
+00007ffd`feb87c1c     : 00000000`00000001 000000d7`209ff000 00000000`00000000 00000000`00000000 : KERNEL32!BaseThreadInitThunk+0x17
+00000000`00000000     : 00000000`00000000 00000000`00000000 00000000`00000000 00000000`00000000 : ntdll!RtlUserThreadStart+0x2c
+
+  24  Id: bf74.100c4 Suspend: 1 Teb: 000000d7`1bded000 Unfrozen
+RetAddr               : Args to Child                                                           : Call Site
+00007ffd`feb0c873     : 000000d7`20bff5b8 000000d7`20bff8b8 00007ffc`a0f66cb0 00007ffc`a1250c9b : ntdll!ZwWaitForAlertByThreadId+0x14
+00007ffd`fc2de898     : 000002a2`ad435784 00000000`00000000 000000d7`20bff640 00000000`00000000 : ntdll!RtlWaitOnAddress+0x213
+00007ffc`a19a3753     : 000002a2`ad436180 000002a2`ad436180 000000d7`20bff7d0 000002a2`ad4344f8 : KERNELBASE!WaitOnAddress+0x38
+00007ffc`a1a14086     : 00000000`00000000 00007ffc`a1251d12 00000000`00000000 00000000`00000000 : wasmtime!wasmtime_set_vmctx_memory_48_0_2+0xa084b3
+00007ffc`a125054a     : 00000000`00000000 000000d7`20bffbf8 00000000`00000000 000002a2`ad4344ec : wasmtime!wasm_frame_instance+0x221a6
+00007ffc`a124fbc9     : 00000000`00000000 00000000`00000008 00000000`00000000 00000000`00000000 : wasmtime!wasmtime_set_vmctx_memory_48_0_2+0x2b52aa
+00007ffc`a124fff0     : 00000000`00000000 00000000`00000000 00000000`00000000 00000000`00000000 : wasmtime!wasmtime_set_vmctx_memory_48_0_2+0x2b4929
+00007ffc`a19b1a9a     : 000002a2`aaf292b0 000002a2`ad3dba40 000002a2`ad4d1ba0 00000000`00000000 : wasmtime!wasmtime_set_vmctx_memory_48_0_2+0x2b4d50
+00007ffd`fe45e957     : 00000000`00000800 80000000`00000800 00000000`00000000 00000000`00000000 : wasmtime!wasmtime_set_vmctx_memory_48_0_2+0xa167fa
+00007ffd`feb87c1c     : 00000000`00000000 00000000`00000000 00000000`00000001 000000d7`20dff000 : KERNEL32!BaseThreadInitThunk+0x17
+00000000`00000000     : 00000000`00000000 00000000`00000000 00000000`00000000 00000000`00000000 : ntdll!RtlUserThreadStart+0x2c
+
+  25  Id: bf74.e520 Suspend: 1 Teb: 000000d7`1bdef000 Unfrozen
+RetAddr               : Args to Child                                                           : Call Site
+00007ffd`feb0c873     : 000000d7`20fff1b8 000000d7`20fff4b8 00007ffc`a0f651c0 00007ffc`a1250c9b : ntdll!ZwWaitForAlertByThreadId+0x14
+00007ffd`fc2de898     : 000002a2`ad435804 00000000`00000000 000000d7`20fff240 00000000`00000000 : ntdll!RtlWaitOnAddress+0x213
+00007ffc`a19a3753     : 000002a2`ad436180 000002a2`ad436180 000000d7`20fff3d0 000002a2`ad434520 : KERNELBASE!WaitOnAddress+0x38
+00007ffc`a1a14086     : 00000000`00000000 00007ffc`a0f651c0 00000000`00000001 000000d7`1d17a6c8 : wasmtime!wasmtime_set_vmctx_memory_48_0_2+0xa084b3
+00007ffc`a125054a     : 00000000`00000000 000000d7`20fff7f8 00000000`00000000 000002a2`ad434514 : wasmtime!wasm_frame_instance+0x221a6
+00007ffc`a124fbc9     : 00000000`00000000 00000000`00000008 00000000`00000000 00000000`00000000 : wasmtime!wasmtime_set_vmctx_memory_48_0_2+0x2b52aa
+00007ffc`a124fff0     : 00000000`00000000 00000000`00000000 00000000`00000000 00000000`00000000 : wasmtime!wasmtime_set_vmctx_memory_48_0_2+0x2b4929
+00007ffc`a19b1a9a     : 000002a2`aaf295b0 000002a2`ad3dba20 000002a2`ad4d0f20 00000000`00000000 : wasmtime!wasmtime_set_vmctx_memory_48_0_2+0x2b4d50
+00007ffd`fe45e957     : 00000000`00000800 80000000`00000800 00000000`00000000 00000000`00000000 : wasmtime!wasmtime_set_vmctx_memory_48_0_2+0xa167fa
+00007ffd`feb87c1c     : 00000000`00000000 00000000`00000000 00000000`00000001 000000d7`211ff000 : KERNEL32!BaseThreadInitThunk+0x17
+00000000`00000000     : 00000000`00000000 00000000`00000000 00000000`00000000 00000000`00000000 : ntdll!RtlUserThreadStart+0x2c
+
+  26  Id: bf74.2ed8 Suspend: 1 Teb: 000000d7`1bdf1000 Unfrozen
+RetAddr               : Args to Child                                                           : Call Site
+00007ffd`feb0c873     : 000000d7`213ff3b8 000000d7`213ff6b8 000002a2`ad434538 00007ffc`a1250c9b : ntdll!ZwWaitForAlertByThreadId+0x14
+00007ffd`fc2de898     : 000002a2`ad435884 00000000`00000000 000000d7`213ff440 00000000`00000000 : ntdll!RtlWaitOnAddress+0x213
+00007ffc`a19a3753     : 000002a2`ad436180 000002a2`ad436180 000000d7`213ff5c0 000002a2`ad434548 : KERNELBASE!WaitOnAddress+0x38
+00007ffc`a1a14086     : 00000000`00000000 00007ffc`a1251d12 00000000`00000000 00000000`00000000 : wasmtime!wasmtime_set_vmctx_memory_48_0_2+0xa084b3
+00007ffc`a125054a     : 00000000`00000000 00000000`00000000 00000000`00000000 000002a2`ad43453c : wasmtime!wasm_frame_instance+0x221a6
+00007ffc`a124fbc9     : 00000000`00000000 00000000`00000008 00000000`00000000 00000000`00000000 : wasmtime!wasmtime_set_vmctx_memory_48_0_2+0x2b52aa
+00007ffc`a124fff0     : 00000000`00000000 00000000`00000000 00000000`00000000 00000000`00000000 : wasmtime!wasmtime_set_vmctx_memory_48_0_2+0x2b4929
+00007ffc`a19b1a9a     : 000002a2`aaf296b0 000002a2`ad3dbe40 000002a2`ad4d2140 00000000`00000000 : wasmtime!wasmtime_set_vmctx_memory_48_0_2+0x2b4d50
+00007ffd`fe45e957     : 00000000`00000000 00000000`00000000 00000000`00000800 80000000`00000800 : wasmtime!wasmtime_set_vmctx_memory_48_0_2+0xa167fa
+00007ffd`feb87c1c     : 00000000`00000000 00000000`00000000 00000000`00000000 00000000`00000000 : KERNEL32!BaseThreadInitThunk+0x17
+00000000`00000000     : 00000000`00000000 00000000`00000000 00000000`00000000 00000000`00000000 : ntdll!RtlUserThreadStart+0x2c
+
+  27  Id: bf74.cbec Suspend: 1 Teb: 000000d7`1bdf3000 Unfrozen
+RetAddr               : Args to Child                                                           : Call Site
+00007ffd`feb0c873     : 000000d7`217ff3b8 000000d7`217ff6b8 000002a2`ad434560 00007ffc`a1250c9b : ntdll!ZwWaitForAlertByThreadId+0x14
+00007ffd`fc2de898     : 000002a2`ad435904 00000000`00000000 000000d7`217ff440 00000000`00000000 : ntdll!RtlWaitOnAddress+0x213
+00007ffc`a19a3753     : 000002a2`ad436180 000002a2`ad436180 000000d7`217ff5f0 000002a2`ad434570 : KERNELBASE!WaitOnAddress+0x38
+00007ffc`a1a14086     : 00000000`00000000 00007ffc`a1251d12 00000000`00000000 00000000`00000000 : wasmtime!wasmtime_set_vmctx_memory_48_0_2+0xa084b3
+00007ffc`a125054a     : 00000000`00000000 00000000`00000000 00007ffc`a19b18d0 000002a2`ad434564 : wasmtime!wasm_frame_instance+0x221a6
+00007ffc`a124fbc9     : 00000000`00000000 00000000`00000008 00000000`00000000 00000000`00000000 : wasmtime!wasmtime_set_vmctx_memory_48_0_2+0x2b52aa
+00007ffc`a124fff0     : 00000000`00000000 00000000`00000000 00000000`00000000 00000000`00000000 : wasmtime!wasmtime_set_vmctx_memory_48_0_2+0x2b4929
+00007ffc`a19b1a9a     : 000002a2`aaf2a0f0 000002a2`ad3dbe60 000002a2`ad4d2960 00000000`00000000 : wasmtime!wasmtime_set_vmctx_memory_48_0_2+0x2b4d50
+00007ffd`fe45e957     : 00000000`00000000 00000000`00000000 00000000`00000000 00000000`00000000 : wasmtime!wasmtime_set_vmctx_memory_48_0_2+0xa167fa
+00007ffd`feb87c1c     : 00000000`00000000 00000000`00000000 00000000`00000000 00000000`00000000 : KERNEL32!BaseThreadInitThunk+0x17
+00000000`00000000     : 00000000`00000000 00000000`00000000 00000000`00000000 00000000`00000000 : ntdll!RtlUserThreadStart+0x2c
+
+  28  Id: bf74.cd10 Suspend: 1 Teb: 000000d7`1bdf5000 Unfrozen
+RetAddr               : Args to Child                                                           : Call Site
+00007ffd`feb0c873     : 000000d7`21bff3b8 000000d7`21bff6b8 000002a2`ad434588 00007ffc`a1250c9b : ntdll!ZwWaitForAlertByThreadId+0x14
+00007ffd`fc2de898     : 000002a2`ad435984 00000000`00000000 000000d7`21bff440 00000000`00000000 : ntdll!RtlWaitOnAddress+0x213
+00007ffc`a19a3753     : 000002a2`ad436180 000002a2`ad436180 000000d7`21bff5b0 000002a2`ad434598 : KERNELBASE!WaitOnAddress+0x38
+00007ffc`a1a14086     : 00000000`00000000 00007ffc`a1251d12 00001f80`0010005b 00000000`00000033 : wasmtime!wasmtime_set_vmctx_memory_48_0_2+0xa084b3
+00007ffc`a125054a     : 00000000`00000000 00000000`00000000 00000000`00000000 000002a2`ad43458c : wasmtime!wasm_frame_instance+0x221a6
+00007ffc`a124fbc9     : 00000000`00000000 00000000`00000008 00000000`00000000 00000000`00000000 : wasmtime!wasmtime_set_vmctx_memory_48_0_2+0x2b52aa
+00007ffc`a124fff0     : 00000000`00000000 00000000`00000000 00000000`00000000 00000000`00000000 : wasmtime!wasmtime_set_vmctx_memory_48_0_2+0x2b4929
+00007ffc`a19b1a9a     : 000002a2`aaf297b0 000002a2`ad3dbc20 000002a2`ad4d1d80 00000000`00000000 : wasmtime!wasmtime_set_vmctx_memory_48_0_2+0x2b4d50
+00007ffd`fe45e957     : 00000000`00000000 00000000`00000000 00000000`00000000 00000000`00000000 : wasmtime!wasmtime_set_vmctx_memory_48_0_2+0xa167fa
+00007ffd`feb87c1c     : 00000000`00000000 00000000`00000000 00000000`00000000 00000000`00000000 : KERNEL32!BaseThreadInitThunk+0x17
+00000000`00000000     : 00000000`00000000 00000000`00000000 00000000`00000000 00000000`00000000 : ntdll!RtlUserThreadStart+0x2c
+
+  29  Id: bf74.2488 Suspend: 1 Teb: 000000d7`1bdf7000 Unfrozen
+RetAddr               : Args to Child                                                           : Call Site
+00007ffd`feb0c873     : 000000d7`21fff938 000000d7`21fffc38 000002a2`ad4345b0 00007ffc`a1250c9b : ntdll!ZwWaitForAlertByThreadId+0x14
+00007ffd`fc2de898     : 000002a2`ad435a04 00000000`00000000 000000d7`21fff9c0 00000000`00000000 : ntdll!RtlWaitOnAddress+0x213
+00007ffc`a19a3753     : 000002a2`ad436180 000002a2`ad436180 000000d7`21fffb70 000002a2`ad4345c0 : KERNELBASE!WaitOnAddress+0x38
+00007ffc`a1a14086     : 00000000`00000000 00007ffc`a1251d12 00000000`00000000 00000000`00000000 : wasmtime!wasmtime_set_vmctx_memory_48_0_2+0xa084b3
+00007ffc`a125054a     : 00000000`00000000 00000000`00000000 00007ffc`a19b18d0 000002a2`ad4345b4 : wasmtime!wasm_frame_instance+0x221a6
+00007ffc`a124fbc9     : 00000000`00000000 00000000`00000008 00000000`00000000 00000000`00000000 : wasmtime!wasmtime_set_vmctx_memory_48_0_2+0x2b52aa
+00007ffc`a124fff0     : 00000000`00000000 00000000`00000000 00000000`00000000 00000000`00000000 : wasmtime!wasmtime_set_vmctx_memory_48_0_2+0x2b4929
+00007ffc`a19b1a9a     : 000002a2`aaf291b0 000002a2`ad3dbe80 000002a2`ad4d1c40 00000000`00000000 : wasmtime!wasmtime_set_vmctx_memory_48_0_2+0x2b4d50
+00007ffd`fe45e957     : 00000000`00000000 00000000`00000000 00000000`00000000 00000000`00000000 : wasmtime!wasmtime_set_vmctx_memory_48_0_2+0xa167fa
+00007ffd`feb87c1c     : 00000000`00000000 00000000`00000000 00000000`00000000 00000000`00000000 : KERNEL32!BaseThreadInitThunk+0x17
+00000000`00000000     : 00000000`00000000 00000000`00000000 00000000`00000000 00000000`00000000 : ntdll!RtlUserThreadStart+0x2c
+
+  30  Id: bf74.cfd0 Suspend: 1 Teb: 000000d7`1bdf9000 Unfrozen
+RetAddr               : Args to Child                                                           : Call Site
+00007ffd`feb0c873     : 000000d7`223ff8b8 000000d7`223ffbb8 000002a2`ad4345d8 00007ffc`a1250c9b : ntdll!ZwWaitForAlertByThreadId+0x14
+00007ffd`fc2de898     : 000002a2`ad435a84 00000000`00000000 000000d7`223ff940 00000000`00000000 : ntdll!RtlWaitOnAddress+0x213
+00007ffc`a19a3753     : 000002a2`ad436180 000002a2`ad436180 000000d7`223ffa80 000002a2`ad4345e8 : KERNELBASE!WaitOnAddress+0x38
+00007ffc`a1a14086     : 00000000`00000000 00007ffc`a1251d12 00000000`00000000 00000000`00000000 : wasmtime!wasmtime_set_vmctx_memory_48_0_2+0xa084b3
+00007ffc`a125054a     : 00000000`00000000 00000000`00000000 00000000`00000000 000002a2`ad4345dc : wasmtime!wasm_frame_instance+0x221a6
+00007ffc`a124fbc9     : 00000000`00000000 00000000`00000008 00000000`00000000 00000000`00000000 : wasmtime!wasmtime_set_vmctx_memory_48_0_2+0x2b52aa
+00007ffc`a124fff0     : 00000000`00000000 00000000`00000000 00000000`00000000 00000000`00000000 : wasmtime!wasmtime_set_vmctx_memory_48_0_2+0x2b4929
+00007ffc`a19b1a9a     : 000002a2`aaf29470 000002a2`ad3dc0e0 000002a2`ad4d25a0 00000000`00000000 : wasmtime!wasmtime_set_vmctx_memory_48_0_2+0x2b4d50
+00007ffd`fe45e957     : 00000000`00000000 00000000`00000000 00000000`00000800 80000000`00000800 : wasmtime!wasmtime_set_vmctx_memory_48_0_2+0xa167fa
+00007ffd`feb87c1c     : 00000000`00000000 00000000`00000000 00000000`00000000 00000000`00000000 : KERNEL32!BaseThreadInitThunk+0x17
+00000000`00000000     : 00000000`00000000 00000000`00000000 00000000`00000000 00000000`00000000 : ntdll!RtlUserThreadStart+0x2c
+
+  31  Id: bf74.b1b8 Suspend: 1 Teb: 000000d7`1bdfb000 Unfrozen
+RetAddr               : Args to Child                                                           : Call Site
+00007ffd`feb426de     : 00000000`00000000 00000000`00000000 00000000`00000000 00000000`00000000 : ntdll!ZwWaitForAlertByThreadId+0x14
+00007ffd`fc222ea8     : 00000000`00000000 000002a2`ab10a108 00000000`00000000 000002a2`ad708a50 : ntdll!RtlSleepConditionVariableSRW+0x1de
+00007ffc`ed41f4d3     : 000002a2`ab10a110 00007ffc`ed41f42a 000000d7`2277f8e0 00000000`00000000 : KERNELBASE!SleepConditionVariableSRW+0x38
+00007ffc`ed3f2410     : 00000000`00000000 00007ffc`ed41ca39 00000000`00000000 00000000`00000000 : av_libGLESv2!glStartTilingQCOM+0x261aa3
+00007ffc`ed424cb4     : 000002a2`ad379800 00000000`00000000 000002a2`ad3791d0 00007ffd`fc2b168b : av_libGLESv2!glStartTilingQCOM+0x2349e0
+00007ffc`ed425481     : 00000000`00000000 00007ffc`ed528ced 000002a2`ad3791d0 00000000`00000000 : av_libGLESv2!glStartTilingQCOM+0x267284
+00007ffc`ed51461f     : 00000050`00000020 00000000`00000000 00000000`00000800 80000000`00000800 : av_libGLESv2!glStartTilingQCOM+0x267a51
+00007ffd`fe45e957     : 00000000`00000000 00000000`00000000 00000000`00000000 00000000`00000000 : av_libGLESv2!glStartTilingQCOM+0x356bef
+00007ffd`feb87c1c     : 00000000`00000000 00000000`00000000 00000000`00000000 00000000`00000000 : KERNEL32!BaseThreadInitThunk+0x17
+00000000`00000000     : 00000000`00000000 00000000`00000000 00000000`00000000 00000000`00000000 : ntdll!RtlUserThreadStart+0x2c
+
+  32  Id: bf74.5738 Suspend: 1 Teb: 000000d7`1bdfd000 Unfrozen
+RetAddr               : Args to Child                                                           : Call Site
+00007ffd`feb426de     : 00000000`00000000 00000000`00000000 00000000`00000000 00000000`00000000 : ntdll!ZwWaitForAlertByThreadId+0x14
+00007ffd`fc222ea8     : 00000000`00000000 000002a2`ab10a108 00000000`00000000 000002a2`ad708cd0 : ntdll!RtlSleepConditionVariableSRW+0x1de
+00007ffc`ed41f4d3     : 000002a2`ab10a110 00007ffc`ed41f42a 000000d7`22a7fd80 00000000`00000000 : KERNELBASE!SleepConditionVariableSRW+0x38
+00007ffc`ed3f2410     : 00000000`00000000 00007ffc`ed41ca39 000002a2`ab10a110 000002a2`ad9377f0 : av_libGLESv2!glStartTilingQCOM+0x261aa3
+00007ffc`ed424cb4     : 000002a2`ad379c20 00000000`00000000 000002a2`ad3799b0 00007ffd`fc2b168b : av_libGLESv2!glStartTilingQCOM+0x2349e0
+00007ffc`ed425481     : 00000000`00000000 00007ffc`ed528ced 000002a2`ad3799b0 00000000`00000000 : av_libGLESv2!glStartTilingQCOM+0x267284
+00007ffc`ed51461f     : 00000050`00000040 00000000`00000000 00000000`00000000 00000000`00000000 : av_libGLESv2!glStartTilingQCOM+0x267a51
+00007ffd`fe45e957     : 00000000`00000800 80000000`00000800 00000000`00000000 00000000`00000000 : av_libGLESv2!glStartTilingQCOM+0x356bef
+00007ffd`feb87c1c     : 00000000`00000000 00000000`00000000 00000000`00000001 000000d7`22bff000 : KERNEL32!BaseThreadInitThunk+0x17
+00000000`00000000     : 00000000`00000000 00000000`00000000 00000000`00000000 00000000`00000000 : ntdll!RtlUserThreadStart+0x2c
+
+  33  Id: bf74.61a8 Suspend: 1 Teb: 000000d7`1bc00000 Unfrozen
+RetAddr               : Args to Child                                                           : Call Site
+00007ffd`feb426de     : 00000000`00000001 000002a2`ad7be978 00000000`00000004 00007ffc`ed52ba34 : ntdll!ZwWaitForAlertByThreadId+0x14
+00007ffd`fc222ea8     : 00000000`00000000 000002a2`ab10a108 00000000`00000000 000002a2`ad708590 : ntdll!RtlSleepConditionVariableSRW+0x1de
+00007ffc`ed41f4d3     : 000002a2`ab10a110 00007ffc`ed41f42a 000000d7`22d7fcd0 000002a2`ad67d198 : KERNELBASE!SleepConditionVariableSRW+0x38
+00007ffc`ed3f2410     : 00000000`00000000 00007ffc`ed41ca39 00000000`00000000 00000000`00000000 : av_libGLESv2!glStartTilingQCOM+0x261aa3
+00007ffc`ed424cb4     : 000002a2`ad379200 00000000`00000000 000002a2`ad379440 00007ffd`fc2b168b : av_libGLESv2!glStartTilingQCOM+0x2349e0
+00007ffc`ed425481     : 00000000`00000000 00007ffc`ed528ced 000002a2`ad379440 00000000`00000000 : av_libGLESv2!glStartTilingQCOM+0x267284
+00007ffc`ed51461f     : 00000050`00000030 00000000`00000000 00000000`00000000 00000000`00000000 : av_libGLESv2!glStartTilingQCOM+0x267a51
+00007ffd`fe45e957     : 00000000`00000000 00000000`00000000 00000000`00000000 00000000`00000000 : av_libGLESv2!glStartTilingQCOM+0x356bef
+00007ffd`feb87c1c     : 00000000`00000001 000000d7`22eff000 00000000`00000000 00000000`00000000 : KERNEL32!BaseThreadInitThunk+0x17
+00000000`00000000     : 00000000`00000000 00000000`00000000 00000000`00000000 00000000`00000000 : ntdll!RtlUserThreadStart+0x2c
+
+  34  Id: bf74.1194c Suspend: 1 Teb: 000000d7`1bc02000 Unfrozen
+RetAddr               : Args to Child                                                           : Call Site
+00007ffd`feb426de     : 00000000`00000000 00000000`00000000 00000000`00000000 00000000`00000000 : ntdll!ZwWaitForAlertByThreadId+0x14
+00007ffd`fc222ea8     : 00000000`00000000 000002a2`ab10a108 00000000`00000000 000002a2`ad708bd0 : ntdll!RtlSleepConditionVariableSRW+0x1de
+00007ffc`ed41f4d3     : 000002a2`ab10a110 00007ffc`ed41f42a 000000d7`2307faf0 00000000`00000000 : KERNELBASE!SleepConditionVariableSRW+0x38
+00007ffc`ed3f2410     : 00000000`00000000 00007ffc`ed41ca39 000002a2`ab10a110 000002a2`ad927a00 : av_libGLESv2!glStartTilingQCOM+0x261aa3
+00007ffc`ed424cb4     : 000002a2`ad379230 00000000`00000000 000002a2`ad379830 00007ffd`fc2b168b : av_libGLESv2!glStartTilingQCOM+0x2349e0
+00007ffc`ed425481     : 00000000`00000000 00007ffc`ed528ced 000002a2`ad379830 00000000`00000000 : av_libGLESv2!glStartTilingQCOM+0x267284
+00007ffc`ed51461f     : 00000050`00000050 00000000`00000000 00000000`00000000 00000000`00000000 : av_libGLESv2!glStartTilingQCOM+0x267a51
+00007ffd`fe45e957     : 00000000`00000000 00000000`00000000 00000000`00000800 80000000`00000800 : av_libGLESv2!glStartTilingQCOM+0x356bef
+00007ffd`feb87c1c     : 00000000`00000000 00000000`00000000 00000000`00000000 00000000`00000000 : KERNEL32!BaseThreadInitThunk+0x17
+00000000`00000000     : 00000000`00000000 00000000`00000000 00000000`00000000 00000000`00000000 : ntdll!RtlUserThreadStart+0x2c
+
+  35  Id: bf74.ff58 Suspend: 1 Teb: 000000d7`1bc04000 Unfrozen
+RetAddr               : Args to Child                                                           : Call Site
+00007ffd`feb426de     : 00000000`00000001 000002a2`ad934478 00000000`00000004 00007ffc`ed52ba34 : ntdll!ZwWaitForAlertByThreadId+0x14
+00007ffd`fc222ea8     : 00000000`00000000 000002a2`ab10a108 00000000`00000000 000002a2`ad7087d0 : ntdll!RtlSleepConditionVariableSRW+0x1de
+00007ffc`ed41f4d3     : 000002a2`ab10a110 00007ffc`ed41f42a 000000d7`2337f810 000002a2`ad67e818 : KERNELBASE!SleepConditionVariableSRW+0x38
+00007ffc`ed3f2410     : 000002a2`ad67d360 00007ffc`ed41ca39 00000000`00000000 00000000`00000000 : av_libGLESv2!glStartTilingQCOM+0x261aa3
+00007ffc`ed424cb4     : 000002a2`ad379b60 00000000`00000000 000002a2`ad3794d0 00007ffd`fc2b168b : av_libGLESv2!glStartTilingQCOM+0x2349e0
+00007ffc`ed425481     : 00000000`00000000 00007ffc`ed528ced 000002a2`ad3794d0 00000000`00000000 : av_libGLESv2!glStartTilingQCOM+0x267284
+00007ffc`ed51461f     : 00000050`00000030 00000000`00000000 00000000`00000000 00000000`00000000 : av_libGLESv2!glStartTilingQCOM+0x267a51
+00007ffd`fe45e957     : 00000000`00000000 00000000`00000000 00000000`00000000 00000000`00000000 : av_libGLESv2!glStartTilingQCOM+0x356bef
+00007ffd`feb87c1c     : 00000000`00000001 000000d7`234ff000 00000000`00000000 00000000`00000000 : KERNEL32!BaseThreadInitThunk+0x17
+00000000`00000000     : 00000000`00000000 00000000`00000000 00000000`00000000 00000000`00000000 : ntdll!RtlUserThreadStart+0x2c
+
+  36  Id: bf74.86f4 Suspend: 1 Teb: 000000d7`1bc06000 Unfrozen
+RetAddr               : Args to Child                                                           : Call Site
+00007ffd`feb426de     : 00000000`00000000 00000000`00000000 00000000`00000000 00000000`00000000 : ntdll!ZwWaitForAlertByThreadId+0x14
+00007ffd`fc222ea8     : 00000000`00000000 000002a2`ab10a108 00000000`00000000 000002a2`ad7085d0 : ntdll!RtlSleepConditionVariableSRW+0x1de
+00007ffc`ed41f4d3     : 000002a2`ab10a110 00007ffc`ed41f42a 000000d7`2367f820 000002a2`ad67ca18 : KERNELBASE!SleepConditionVariableSRW+0x38
+00007ffc`ed3f2410     : 00000000`00000000 00007ffc`ed41ca39 00000000`00000000 00000000`00000000 : av_libGLESv2!glStartTilingQCOM+0x261aa3
+00007ffc`ed424cb4     : 000002a2`ad379a10 00000000`00000000 000002a2`ad379260 00007ffd`fc2b168b : av_libGLESv2!glStartTilingQCOM+0x2349e0
+00007ffc`ed425481     : 00000000`00000000 00007ffc`ed528ced 000002a2`ad379260 00000000`00000000 : av_libGLESv2!glStartTilingQCOM+0x267284
+00007ffc`ed51461f     : 00000050`00000020 00000000`00000000 00000000`00000800 80000000`00000800 : av_libGLESv2!glStartTilingQCOM+0x267a51
+00007ffd`fe45e957     : 00000000`00000000 00000000`00000000 00000000`00000000 00000000`00000000 : av_libGLESv2!glStartTilingQCOM+0x356bef
+00007ffd`feb87c1c     : 00000000`00000000 00000000`00000000 00000000`00000000 00000000`00000000 : KERNEL32!BaseThreadInitThunk+0x17
+00000000`00000000     : 00000000`00000000 00000000`00000000 00000000`00000000 00000000`00000000 : ntdll!RtlUserThreadStart+0x2c
+
+  37  Id: bf74.74b0 Suspend: 1 Teb: 000000d7`1bc08000 Unfrozen
+RetAddr               : Args to Child                                                           : Call Site
+00007ffd`feb426de     : 00000000`00000002 000002a2`ad9445f8 00000000`00000008 00007ffc`ed52ba34 : ntdll!ZwWaitForAlertByThreadId+0x14
+00007ffd`fc222ea8     : 00000000`00000000 000002a2`ab10a108 00000000`00000000 000002a2`ad7082d0 : ntdll!RtlSleepConditionVariableSRW+0x1de
+00007ffc`ed41f4d3     : 000002a2`ab10a110 00007ffc`ed41f42a 000000d7`2397fdd0 000002a2`ad67e958 : KERNELBASE!SleepConditionVariableSRW+0x38
+00007ffc`ed3f2410     : 00000002`00000000 00007ffc`ed41ca39 000002a2`ab10a110 000002a2`ad3797d0 : av_libGLESv2!glStartTilingQCOM+0x261aa3
+00007ffc`ed424cb4     : 000002a2`ad379a70 00000000`00000000 000002a2`ad379920 00007ffd`fc2b168b : av_libGLESv2!glStartTilingQCOM+0x2349e0
+00007ffc`ed425481     : 00000000`00000000 00007ffc`ed52d19e 000002a2`00080001 000002a2`ad379920 : av_libGLESv2!glStartTilingQCOM+0x267284
+00007ffc`ed51461f     : 00000050`00000000 00000000`00000000 00000000`00000000 00000000`00000000 : av_libGLESv2!glStartTilingQCOM+0x267a51
+00007ffd`fe45e957     : 00000000`00000000 00000000`00000000 00000000`00000000 00000000`00000000 : av_libGLESv2!glStartTilingQCOM+0x356bef
+00007ffd`feb87c1c     : 00000000`00000001 000000d7`23aff000 00000000`00000000 00000000`00000000 : KERNEL32!BaseThreadInitThunk+0x17
+00000000`00000000     : 00000000`00000000 00000000`00000000 00000000`00000000 00000000`00000000 : ntdll!RtlUserThreadStart+0x2c
+
+  38  Id: bf74.e55c Suspend: 1 Teb: 000000d7`1bc0a000 Unfrozen
+RetAddr               : Args to Child                                                           : Call Site
+00007ffd`feb426de     : 00000000`00000000 00000000`00000000 00000000`00000000 00000000`00000000 : ntdll!ZwWaitForAlertByThreadId+0x14
+00007ffd`fc222ea8     : 00000000`00000000 000002a2`ab10a108 00000000`00000000 000002a2`ad708f90 : ntdll!RtlSleepConditionVariableSRW+0x1de
+00007ffc`ed41f4d3     : 000002a2`ab10a110 00007ffc`ed41f42a 000000d7`23c7f7f0 00000000`00000000 : KERNELBASE!SleepConditionVariableSRW+0x38
+00007ffc`ed3f2410     : 00000000`00000000 00007ffc`ed41ca39 000002a2`ab10a110 000002a2`ad92bd50 : av_libGLESv2!glStartTilingQCOM+0x261aa3
+00007ffc`ed424cb4     : 000002a2`ad379ad0 00000000`00000000 000002a2`ad379470 00007ffd`fc2b168b : av_libGLESv2!glStartTilingQCOM+0x2349e0
+00007ffc`ed425481     : 00000000`00000000 00007ffc`ed528ced 000002a2`ad379470 00000000`00000000 : av_libGLESv2!glStartTilingQCOM+0x267284
+00007ffc`ed51461f     : 00000050`00000050 00000000`00000000 00000000`00000000 00000000`00000000 : av_libGLESv2!glStartTilingQCOM+0x267a51
+00007ffd`fe45e957     : 00000000`00000000 00000000`00000000 00000000`00000800 80000000`00000800 : av_libGLESv2!glStartTilingQCOM+0x356bef
+00007ffd`feb87c1c     : 00000000`00000000 00000000`00000000 00000000`00000000 00000000`00000000 : KERNEL32!BaseThreadInitThunk+0x17
+00000000`00000000     : 00000000`00000000 00000000`00000000 00000000`00000000 00000000`00000000 : ntdll!RtlUserThreadStart+0x2c
+
+  39  Id: bf74.1e04 Suspend: 1 Teb: 000000d7`1bc0c000 Unfrozen
+RetAddr               : Args to Child                                                           : Call Site
+00007ffd`feb426de     : 00000000`00000000 000002a2`ad67e300 000000d7`23f7fdd0 00007ffc`ed52838c : ntdll!ZwWaitForAlertByThreadId+0x14
+00007ffd`fc222ea8     : 00000000`00000000 000002a2`ab10a108 00000000`00000000 000002a2`ad709110 : ntdll!RtlSleepConditionVariableSRW+0x1de
+00007ffc`ed41f4d3     : 000002a2`ab10a110 00007ffc`ed41f42a 000000d7`23f7fe60 000002a2`ad67ef98 : KERNELBASE!SleepConditionVariableSRW+0x38
+00007ffc`ed3f2410     : 000002a2`ad67e300 00007ffc`ed41ca39 00000000`00000000 00000000`00000000 : av_libGLESv2!glStartTilingQCOM+0x261aa3
+00007ffc`ed424cb4     : 000002a2`ad379950 00000000`00000000 000002a2`ad379b90 00007ffd`fc2b168b : av_libGLESv2!glStartTilingQCOM+0x2349e0
+00007ffc`ed425481     : 00000000`00000000 00007ffc`ed528ced 000002a2`ad379b90 00000000`00000000 : av_libGLESv2!glStartTilingQCOM+0x267284
+00007ffc`ed51461f     : 00000050`00000020 00000000`00000000 00000000`00000800 80000000`00000800 : av_libGLESv2!glStartTilingQCOM+0x267a51
+00007ffd`fe45e957     : 00000000`00000000 00000000`00000000 00000000`00000000 00000000`00000000 : av_libGLESv2!glStartTilingQCOM+0x356bef
+00007ffd`feb87c1c     : 00000000`00000000 00000000`00000000 00000000`00000000 00000000`00000000 : KERNEL32!BaseThreadInitThunk+0x17
+00000000`00000000     : 00000000`00000000 00000000`00000000 00000000`00000000 00000000`00000000 : ntdll!RtlUserThreadStart+0x2c
+
+  40  Id: bf74.5cf8 Suspend: 1 Teb: 000000d7`1bc0e000 Unfrozen
+RetAddr               : Args to Child                                                           : Call Site
+00007ffd`feb426de     : 00000000`00000000 00000000`00000000 00000000`00000000 00000000`00000000 : ntdll!ZwWaitForAlertByThreadId+0x14
+00007ffd`fc222ea8     : 00000000`00000000 000002a2`ab10a108 00000000`00000000 000002a2`ad708b50 : ntdll!RtlSleepConditionVariableSRW+0x1de
+00007ffc`ed41f4d3     : 000002a2`ab10a110 00007ffc`ed41f42a 000000d7`2427fd80 00000000`00000000 : KERNELBASE!SleepConditionVariableSRW+0x38
+00007ffc`ed3f2410     : 00000000`00000000 00007ffc`ed41ca39 00000000`00000000 00000000`00000000 : av_libGLESv2!glStartTilingQCOM+0x261aa3
+00007ffc`ed424cb4     : 000002a2`ad379bc0 00000000`00000000 000002a2`ad379c50 00007ffd`fc2b168b : av_libGLESv2!glStartTilingQCOM+0x2349e0
+00007ffc`ed425481     : 00000000`00000000 00007ffc`ed528ced 000002a2`ad379c50 00000000`00000000 : av_libGLESv2!glStartTilingQCOM+0x267284
+00007ffc`ed51461f     : 00000050`00000040 00000000`00000000 00000000`00000000 00000000`00000000 : av_libGLESv2!glStartTilingQCOM+0x267a51
+00007ffd`fe45e957     : 00000000`00000800 80000000`00000800 00000000`00000000 00000000`00000000 : av_libGLESv2!glStartTilingQCOM+0x356bef
+00007ffd`feb87c1c     : 00000000`00000000 00000000`00000000 00000000`00000001 000000d7`243ff000 : KERNEL32!BaseThreadInitThunk+0x17
+00000000`00000000     : 00000000`00000000 00000000`00000000 00000000`00000000 00000000`00000000 : ntdll!RtlUserThreadStart+0x2c
+
+  41  Id: bf74.cde8 Suspend: 1 Teb: 000000d7`1bc10000 Unfrozen
+RetAddr               : Args to Child                                                           : Call Site
+00007ffd`feb426de     : 00000000`00000000 00000000`00000000 00000000`00000000 00000000`00000000 : ntdll!ZwWaitForAlertByThreadId+0x14
+00007ffd`fc222ea8     : 00000000`00000000 000002a2`ab10a108 00000000`00000000 00000000`00000000 : ntdll!RtlSleepConditionVariableSRW+0x1de
+00007ffc`ed41f4d3     : 000002a2`ab10a110 00007ffc`ed41f42a 00000000`00000000 00000000`00000000 : KERNELBASE!SleepConditionVariableSRW+0x38
+00007ffc`ed3f2410     : 00000000`00000000 00007ffc`ed41ca39 00000000`00000000 00000000`00000000 : av_libGLESv2!glStartTilingQCOM+0x261aa3
+00007ffc`ed424cb4     : 000002a2`ad379c80 00000000`00000000 000002a2`ad37e8d0 00007ffd`fc2b168b : av_libGLESv2!glStartTilingQCOM+0x2349e0
+00007ffc`ed425481     : 00000000`00000000 00007ffc`ed528ced 000002a2`ad37e8d0 00000000`00000000 : av_libGLESv2!glStartTilingQCOM+0x267284
+00007ffc`ed51461f     : 00000050`00000030 00000000`00000000 00000000`00000000 00000000`00000000 : av_libGLESv2!glStartTilingQCOM+0x267a51
+00007ffd`fe45e957     : 00000000`00000000 00000000`00000000 00000000`00000000 00000000`00000000 : av_libGLESv2!glStartTilingQCOM+0x356bef
+00007ffd`feb87c1c     : 00000000`00000001 000000d7`246ff000 00000000`00000000 00000000`00000000 : KERNEL32!BaseThreadInitThunk+0x17
+00000000`00000000     : 00000000`00000000 00000000`00000000 00000000`00000000 00000000`00000000 : ntdll!RtlUserThreadStart+0x2c
+
+  42  Id: bf74.e7e0 Suspend: 1 Teb: 000000d7`1bc12000 Unfrozen
+RetAddr               : Args to Child                                                           : Call Site
+00007ffd`feb426de     : 00000000`00000000 00000000`00000000 00000000`00000000 00000000`00000000 : ntdll!ZwWaitForAlertByThreadId+0x14
+00007ffd`fc222ea8     : 00000000`00000000 000002a2`ab10a108 00000000`00000000 000002a2`ad7087d0 : ntdll!RtlSleepConditionVariableSRW+0x1de
+00007ffc`ed41f4d3     : 000002a2`ab10a110 00007ffc`ed41f42a 000000d7`2487fe50 00000000`00000000 : KERNELBASE!SleepConditionVariableSRW+0x38
+00007ffc`ed3f2410     : 00000000`00000000 00007ffc`ed41ca39 000002a2`ab10a110 000002a2`ad92bd50 : av_libGLESv2!glStartTilingQCOM+0x261aa3
+00007ffc`ed424cb4     : 000002a2`ad37e990 00000000`00000000 000002a2`ad37eea0 00007ffd`fc2b168b : av_libGLESv2!glStartTilingQCOM+0x2349e0
+00007ffc`ed425481     : 00000000`00000000 00007ffc`ed528ced 000002a2`ad37eea0 00000000`00000000 : av_libGLESv2!glStartTilingQCOM+0x267284
+00007ffc`ed51461f     : 00000050`00000030 00000000`00000000 00000000`00000000 00000000`00000000 : av_libGLESv2!glStartTilingQCOM+0x267a51
+00007ffd`fe45e957     : 00000000`00000000 00000000`00000000 00000000`00000000 00000000`00000000 : av_libGLESv2!glStartTilingQCOM+0x356bef
+00007ffd`feb87c1c     : 00000000`00000001 000000d7`249ff000 00000000`00000000 00000000`00000000 : KERNEL32!BaseThreadInitThunk+0x17
+00000000`00000000     : 00000000`00000000 00000000`00000000 00000000`00000000 00000000`00000000 : ntdll!RtlUserThreadStart+0x2c
+
+  43  Id: bf74.38ac Suspend: 1 Teb: 000000d7`1bc14000 Unfrozen
+RetAddr               : Args to Child                                                           : Call Site
+00007ffd`feb426de     : 00000000`00000000 00000000`00000000 00000000`00000000 00000000`00000000 : ntdll!ZwWaitForAlertByThreadId+0x14
+00007ffd`fc222ea8     : 00000000`00000000 000002a2`ab10a108 00000000`00000000 00000000`00000000 : ntdll!RtlSleepConditionVariableSRW+0x1de
+00007ffc`ed41f4d3     : 000002a2`ab10a110 00007ffc`ed41f42a 00000000`00000000 00000000`00000000 : KERNELBASE!SleepConditionVariableSRW+0x38
+00007ffc`ed3f2410     : 00000000`00000000 00007ffc`ed41ca39 00000000`00000000 00000000`00000000 : av_libGLESv2!glStartTilingQCOM+0x261aa3
+00007ffc`ed424cb4     : 000002a2`ad37f650 00000000`00000000 000002a2`ad37f680 00007ffd`fc2b168b : av_libGLESv2!glStartTilingQCOM+0x2349e0
+00007ffc`ed425481     : 00000000`00000000 00007ffc`ed528ced 000002a2`ad37f680 00000000`00000000 : av_libGLESv2!glStartTilingQCOM+0x267284
+00007ffc`ed51461f     : 00000050`00000030 00000000`00000000 00000000`00000000 00000000`00000000 : av_libGLESv2!glStartTilingQCOM+0x267a51
+00007ffd`fe45e957     : 00000000`00000000 00000000`00000000 00000000`00000000 00000000`00000000 : av_libGLESv2!glStartTilingQCOM+0x356bef
+00007ffd`feb87c1c     : 00000000`00000001 000000d7`24cff000 00000000`00000000 00000000`00000000 : KERNEL32!BaseThreadInitThunk+0x17
+00000000`00000000     : 00000000`00000000 00000000`00000000 00000000`00000000 00000000`00000000 : ntdll!RtlUserThreadStart+0x2c
+
+  44  Id: bf74.fd08 Suspend: 1 Teb: 000000d7`1bc16000 Unfrozen
+RetAddr               : Args to Child                                                           : Call Site
+00007ffd`feb426de     : 00000000`00000000 000002a2`ad67e4e0 000000d7`24e7fac0 00007ffc`ed52838c : ntdll!ZwWaitForAlertByThreadId+0x14
+00007ffd`fc222ea8     : 00000000`00000000 000002a2`ab10a108 00000000`00000000 000002a2`ad708f90 : ntdll!RtlSleepConditionVariableSRW+0x1de
+00007ffc`ed41f4d3     : 000002a2`ab10a110 00007ffc`ed41f42a 000000d7`24e7fb50 000002a2`ad67c838 : KERNELBASE!SleepConditionVariableSRW+0x38
+00007ffc`ed3f2410     : 000002a2`ad67e4e0 00007ffc`ed41ca39 00000000`00000000 00000000`00000000 : av_libGLESv2!glStartTilingQCOM+0x261aa3
+00007ffc`ed424cb4     : 000002a2`ad37f6b0 00000000`00000000 000002a2`ad37f6e0 00007ffd`fc2b168b : av_libGLESv2!glStartTilingQCOM+0x2349e0
+00007ffc`ed425481     : 00000000`00000000 00007ffc`ed528ced 000002a2`ad37f6e0 00000000`00000000 : av_libGLESv2!glStartTilingQCOM+0x267284
+00007ffc`ed51461f     : 00000050`00000030 00000000`00000000 00000000`00000000 00000000`00000000 : av_libGLESv2!glStartTilingQCOM+0x267a51
+00007ffd`fe45e957     : 00000000`00000000 00000000`00000000 00000000`00000000 00000000`00000000 : av_libGLESv2!glStartTilingQCOM+0x356bef
+00007ffd`feb87c1c     : 00000000`00000001 000000d7`24fff000 00000000`00000000 00000000`00000000 : KERNEL32!BaseThreadInitThunk+0x17
+00000000`00000000     : 00000000`00000000 00000000`00000000 00000000`00000000 00000000`00000000 : ntdll!RtlUserThreadStart+0x2c
+
+  45  Id: bf74.ec70 Suspend: 1 Teb: 000000d7`1bc18000 Unfrozen
+RetAddr               : Args to Child                                                           : Call Site
+00007ffd`feb426de     : 00000000`0000000f 00001799`2237fd5e 00000000`00000000 00000000`00000000 : ntdll!ZwWaitForAlertByThreadId+0x14
+00007ffd`fc222ea8     : 00000000`00000000 000002a2`ad939c20 00000000`00000000 00000000`00000000 : ntdll!RtlSleepConditionVariableSRW+0x1de
+00007ffd`f177d9ad     : 00000000`00000003 00000000`00000000 00000000`00000000 00000000`0000000f : KERNELBASE!SleepConditionVariableSRW+0x38
+00007ffd`f17ec80b     : 00000050`00000040 00000000`00000000 000002a2`ad6f2020 00000000`00000000 : igd10umt64xe!QueryDesiredMode1+0xfa87d
+00007ffd`fe45e957     : 000002a2`ad6f2020 80000000`00000800 00000000`00000000 00000000`00000000 : igd10umt64xe!QueryDesiredMode1+0x1696db
+00007ffd`feb87c1c     : 00000000`00000000 00000000`00000000 00000000`00000001 000000d7`251ff000 : KERNEL32!BaseThreadInitThunk+0x17
+00000000`00000000     : 00000000`00000000 00000000`00000000 00000000`00000000 00000000`00000000 : ntdll!RtlUserThreadStart+0x2c
+
+  46  Id: bf74.fc58 Suspend: 1 Teb: 000000d7`1bc1a000 Unfrozen
+RetAddr               : Args to Child                                                           : Call Site
+00007ffd`feb426de     : 00000000`0000000f 00001799`2217fb0e 00000000`00000000 00000000`00000000 : ntdll!ZwWaitForAlertByThreadId+0x14
+00007ffd`fc222ea8     : 00000000`00000000 000002a2`adb6e040 00000000`00000000 00000000`00000000 : ntdll!RtlSleepConditionVariableSRW+0x1de
+00007ffd`f177d9ad     : 00000000`00000003 00000000`00000000 00000000`00000000 00000000`0000000f : KERNELBASE!SleepConditionVariableSRW+0x38
+00007ffd`f17ec80b     : 00000050`00000030 00000000`00000000 000002a2`ad6f16c0 00000000`00000000 : igd10umt64xe!QueryDesiredMode1+0xfa87d
+00007ffd`fe45e957     : 000002a2`ad6f16c0 00000000`00000000 00000000`00000000 00000000`00000000 : igd10umt64xe!QueryDesiredMode1+0x1696db
+00007ffd`feb87c1c     : 00000000`00000001 000000d7`253ff000 00000000`00000000 00000000`00000000 : KERNEL32!BaseThreadInitThunk+0x17
+00000000`00000000     : 00000000`00000000 00000000`00000000 00000000`00000000 00000000`00000000 : ntdll!RtlUserThreadStart+0x2c
+
+  47  Id: bf74.128c Suspend: 1 Teb: 000000d7`1bc1c000 Unfrozen
+RetAddr               : Args to Child                                                           : Call Site
+00007ffd`feb426de     : 00000000`0000000f 00001799`2277f84e 00000000`00000000 00000000`00000000 : ntdll!ZwWaitForAlertByThreadId+0x14
+00007ffd`fc222ea8     : 00000000`00000000 000002a2`adb6dd80 00000000`00000000 00000000`00000000 : ntdll!RtlSleepConditionVariableSRW+0x1de
+00007ffd`f177d9ad     : 00000000`00000003 00000000`00000000 00000000`00000000 00000000`0000000f : KERNELBASE!SleepConditionVariableSRW+0x38
+00007ffd`f17ec80b     : 00000050`00000030 00000000`00000000 000002a2`ad6f2140 00000000`00000000 : igd10umt64xe!QueryDesiredMode1+0xfa87d
+00007ffd`fe45e957     : 000002a2`ad6f2140 00000000`00000000 00000000`00000000 00000000`00000000 : igd10umt64xe!QueryDesiredMode1+0x1696db
+00007ffd`feb87c1c     : 00000000`00000001 000000d7`255ff000 00000000`00000000 00000000`00000000 : KERNEL32!BaseThreadInitThunk+0x17
+00000000`00000000     : 00000000`00000000 00000000`00000000 00000000`00000000 00000000`00000000 : ntdll!RtlUserThreadStart+0x2c
+
+  48  Id: bf74.bda8 Suspend: 1 Teb: 000000d7`1bc1e000 Unfrozen
+RetAddr               : Args to Child                                                           : Call Site
+00007ffd`feb426de     : 00000000`0000000f 00001799`2257fafe 00000000`00000000 00000000`00000000 : ntdll!ZwWaitForAlertByThreadId+0x14
+00007ffd`fc222ea8     : 00000000`00000000 000002a2`adb6a520 00000000`00000000 00000000`00000000 : ntdll!RtlSleepConditionVariableSRW+0x1de
+00007ffd`f177d9ad     : 00000000`00000002 00000000`00000000 00000000`00000000 00000000`0000000f : KERNELBASE!SleepConditionVariableSRW+0x38
+00007ffd`f17ec80b     : 00000050`00000020 00000000`00000000 000002a2`ad6f11e0 80000000`00000800 : igd10umt64xe!QueryDesiredMode1+0xfa87d
+00007ffd`fe45e957     : 000002a2`ad6f11e0 00000000`00000000 00000000`00000000 00000000`00000000 : igd10umt64xe!QueryDesiredMode1+0x1696db
+00007ffd`feb87c1c     : 00000000`00000000 00000000`00000000 00000000`00000000 00000000`00000000 : KERNEL32!BaseThreadInitThunk+0x17
+00000000`00000000     : 00000000`00000000 00000000`00000000 00000000`00000000 00000000`00000000 : ntdll!RtlUserThreadStart+0x2c
+
+  49  Id: bf74.eec8 Suspend: 1 Teb: 000000d7`1bc20000 Unfrozen
+RetAddr               : Args to Child                                                           : Call Site
+00007ffd`feb426de     : 00000000`0000000f 00001799`22b7f46e 00000000`00000000 00000000`00000000 : ntdll!ZwWaitForAlertByThreadId+0x14
+00007ffd`fc222ea8     : 00000000`00000000 000002a2`adb6b540 00000000`00000000 00000000`00000000 : ntdll!RtlSleepConditionVariableSRW+0x1de
+00007ffd`f177d9ad     : 00000000`00000002 00000000`00000000 00000000`00000000 00000000`0000000f : KERNELBASE!SleepConditionVariableSRW+0x38
+00007ffd`f17ec80b     : 00000050`00000050 00000000`00000000 000002a2`ad6f1360 00000000`00000000 : igd10umt64xe!QueryDesiredMode1+0xfa87d
+00007ffd`fe45e957     : 000002a2`ad6f1360 00000000`00000000 00000000`00000000 80000000`00000800 : igd10umt64xe!QueryDesiredMode1+0x1696db
+00007ffd`feb87c1c     : 00000000`00000000 00000000`00000000 00000000`00000000 00000000`00000000 : KERNEL32!BaseThreadInitThunk+0x17
+00000000`00000000     : 00000000`00000000 00000000`00000000 00000000`00000000 00000000`00000000 : ntdll!RtlUserThreadStart+0x2c
+
+  50  Id: bf74.5388 Suspend: 1 Teb: 000000d7`1bc22000 Unfrozen
+RetAddr               : Args to Child                                                           : Call Site
+00007ffd`feb426de     : 00000000`0000000f 00001799`2297f5ce 00000000`00000000 00000000`00000000 : ntdll!ZwWaitForAlertByThreadId+0x14
+00007ffd`fc222ea8     : 00000000`00000000 000002a2`adb6baa0 00000000`00000000 00000000`00000000 : ntdll!RtlSleepConditionVariableSRW+0x1de
+00007ffd`f177d9ad     : 00000000`00000002 00000000`00000000 00000000`00000000 00000000`0000000f : KERNELBASE!SleepConditionVariableSRW+0x38
+00007ffd`f17ec80b     : 00000050`00000030 00000000`00000000 000002a2`ad6f21a0 00000000`00000000 : igd10umt64xe!QueryDesiredMode1+0xfa87d
+00007ffd`fe45e957     : 000002a2`ad6f21a0 00000000`00000000 00000000`00000000 00000000`00000000 : igd10umt64xe!QueryDesiredMode1+0x1696db
+00007ffd`feb87c1c     : 00000000`00000001 000000d7`25bff000 00000000`00000000 00000000`00000000 : KERNEL32!BaseThreadInitThunk+0x17
+00000000`00000000     : 00000000`00000000 00000000`00000000 00000000`00000000 00000000`00000000 : ntdll!RtlUserThreadStart+0x2c
+
+  51  Id: bf74.4e00 Suspend: 1 Teb: 000000d7`1bc24000 Unfrozen
+RetAddr               : Args to Child                                                           : Call Site
+00007ffd`feb426de     : 000000d7`25cffb00 00000000`00000001 000000d7`25cffc50 00007ffd`f17585ca : ntdll!ZwWaitForAlertByThreadId+0x14
+00007ffd`fc222ea8     : 00000000`00000000 000002a2`ad8c3b00 00000000`00000000 00000000`00000000 : ntdll!RtlSleepConditionVariableSRW+0x1de
+00007ffd`f177d9ad     : 00000000`00000002 000002a2`ab109000 000000d7`25cffc50 00000000`0000000f : KERNELBASE!SleepConditionVariableSRW+0x38
+00007ffd`f17ec80b     : 00000050`00000040 00000000`00000000 000002a2`ad6f12a0 00000000`00000000 : igd10umt64xe!QueryDesiredMode1+0xfa87d
+00007ffd`fe45e957     : 000002a2`ad6f12a0 80000000`00000800 00000000`00000000 00000000`00000000 : igd10umt64xe!QueryDesiredMode1+0x1696db
+00007ffd`feb87c1c     : 00000000`00000000 00000000`00000000 00000000`00000001 000000d7`25dff000 : KERNEL32!BaseThreadInitThunk+0x17
+00000000`00000000     : 00000000`00000000 00000000`00000000 00000000`00000000 00000000`00000000 : ntdll!RtlUserThreadStart+0x2c
+
+  52  Id: bf74.cc60 Suspend: 1 Teb: 000000d7`1bc26000 Unfrozen
+RetAddr               : Args to Child                                                           : Call Site
+00007ffd`feb426de     : 00000000`0000000f 00001799`22d7fafe 00000000`00000000 00000000`00000000 : ntdll!ZwWaitForAlertByThreadId+0x14
+00007ffd`fc222ea8     : 00000000`00000000 000002a2`ad8eab60 00000000`00000000 00000000`00000000 : ntdll!RtlSleepConditionVariableSRW+0x1de
+00007ffd`f177d9ad     : 00000000`00000002 00000000`00000000 00000000`00000000 00000000`0000000f : KERNELBASE!SleepConditionVariableSRW+0x38
+00007ffd`f17ec80b     : 00000050`00000020 00000000`00000000 000002a2`ad6f23e0 80000000`00000800 : igd10umt64xe!QueryDesiredMode1+0xfa87d
+00007ffd`fe45e957     : 000002a2`ad6f23e0 00000000`00000000 00000000`00000000 00000000`00000000 : igd10umt64xe!QueryDesiredMode1+0x1696db
+00007ffd`feb87c1c     : 00000000`00000000 00000000`00000000 00000000`00000000 00000000`00000000 : KERNEL32!BaseThreadInitThunk+0x17
+00000000`00000000     : 00000000`00000000 00000000`00000000 00000000`00000000 00000000`00000000 : ntdll!RtlUserThreadStart+0x2c
+
+  53  Id: bf74.feb0 Suspend: 1 Teb: 000000d7`1bc28000 Unfrozen
+RetAddr               : Args to Child                                                           : Call Site
+00007ffd`feb426de     : 00000000`0000000f 00001799`2137f4ae 00000000`00000000 00000000`00000000 : ntdll!ZwWaitForAlertByThreadId+0x14
+00007ffd`fc222ea8     : 00000000`00000000 000002a2`ad8e6980 00000000`00000000 00000000`00000000 : ntdll!RtlSleepConditionVariableSRW+0x1de
+00007ffd`f177d9ad     : 00000000`00000002 00000000`00000000 00000000`00000000 00000000`0000000f : KERNELBASE!SleepConditionVariableSRW+0x38
+00007ffd`f17ec80b     : 00000050`00000050 00000000`00000000 000002a2`ad6f2200 00000000`00000000 : igd10umt64xe!QueryDesiredMode1+0xfa87d
+00007ffd`fe45e957     : 000002a2`ad6f2200 00000000`00000000 00000000`00000000 80000000`00000800 : igd10umt64xe!QueryDesiredMode1+0x1696db
+00007ffd`feb87c1c     : 00000000`00000000 00000000`00000000 00000000`00000000 00000000`00000000 : KERNEL32!BaseThreadInitThunk+0x17
+00000000`00000000     : 00000000`00000000 00000000`00000000 00000000`00000000 00000000`00000000 : ntdll!RtlUserThreadStart+0x2c
+
+  54  Id: bf74.e6d4 Suspend: 1 Teb: 000000d7`1bc2a000 Unfrozen
+RetAddr               : Args to Child                                                           : Call Site
+00007ffd`feb426de     : 00000000`0000000f 00001799`2117f65e 00000000`00000000 00000000`00000000 : ntdll!ZwWaitForAlertByThreadId+0x14
+00007ffd`fc222ea8     : 00000000`00000000 000002a2`ad938c00 00000000`00000000 00000000`00000000 : ntdll!RtlSleepConditionVariableSRW+0x1de
+00007ffd`f177d9ad     : 00000000`00000001 00000000`00000000 00000000`00000000 00000000`0000000f : KERNELBASE!SleepConditionVariableSRW+0x38
+00007ffd`f17ec80b     : 00000050`00000040 00000000`00000000 000002a2`ad6f1720 00000000`00000000 : igd10umt64xe!QueryDesiredMode1+0xfa87d
+00007ffd`fe45e957     : 000002a2`ad6f1720 80000000`00000800 00000000`00000000 00000000`00000000 : igd10umt64xe!QueryDesiredMode1+0x1696db
+00007ffd`feb87c1c     : 00000000`00000000 00000000`00000000 00000000`00000001 000000d7`263ff000 : KERNEL32!BaseThreadInitThunk+0x17
+00000000`00000000     : 00000000`00000000 00000000`00000000 00000000`00000000 00000000`00000000 : ntdll!RtlUserThreadStart+0x2c
+
+  55  Id: bf74.1b54 Suspend: 1 Teb: 000000d7`1bc2c000 Unfrozen
+RetAddr               : Args to Child                                                           : Call Site
+00007ffd`feb426de     : 00000000`0000000f 00001799`2177fbde 00000000`00000000 00000000`00000000 : ntdll!ZwWaitForAlertByThreadId+0x14
+00007ffd`fc222ea8     : 00000000`00000000 000002a2`ad938ea0 00000000`00000000 00000000`00000000 : ntdll!RtlSleepConditionVariableSRW+0x1de
+00007ffd`f177d9ad     : 00000000`00000001 00000000`00000000 00000000`00000000 00000000`0000000f : KERNELBASE!SleepConditionVariableSRW+0x38
+00007ffd`f17ec80b     : 00000050`00000040 00000000`00000000 000002a2`ad6f13c0 00000000`00000000 : igd10umt64xe!QueryDesiredMode1+0xfa87d
+00007ffd`fe45e957     : 000002a2`ad6f13c0 80000000`00000800 00000000`00000000 00000000`00000000 : igd10umt64xe!QueryDesiredMode1+0x1696db
+00007ffd`feb87c1c     : 00000000`00000000 00000000`00000000 00000000`00000001 000000d7`265ff000 : KERNEL32!BaseThreadInitThunk+0x17
+00000000`00000000     : 00000000`00000000 00000000`00000000 00000000`00000000 00000000`00000000 : ntdll!RtlUserThreadStart+0x2c
+
+  56  Id: bf74.19b0 Suspend: 1 Teb: 000000d7`1bc2e000 Unfrozen
+RetAddr               : Args to Child                                                           : Call Site
+00007ffd`feb426de     : 00000000`0000000f 00001799`2157f4de 00000000`00000000 00000000`00000000 : ntdll!ZwWaitForAlertByThreadId+0x14
+00007ffd`fc222ea8     : 00000000`00000000 000002a2`ad9386a0 00000000`00000000 00000000`00000000 : ntdll!RtlSleepConditionVariableSRW+0x1de
+00007ffd`f177d9ad     : 00000000`00000001 00000000`00000000 00000000`00000000 00000000`0000000f : KERNELBASE!SleepConditionVariableSRW+0x38
+00007ffd`f17ec80b     : 00000050`00000040 00000000`00000000 000002a2`ad6f2320 00000000`00000000 : igd10umt64xe!QueryDesiredMode1+0xfa87d
+00007ffd`fe45e957     : 000002a2`ad6f2320 80000000`00000800 00000000`00000000 00000000`00000000 : igd10umt64xe!QueryDesiredMode1+0x1696db
+00007ffd`feb87c1c     : 00000000`00000000 00000000`00000000 00000000`00000001 000000d7`267ff000 : KERNEL32!BaseThreadInitThunk+0x17
+00000000`00000000     : 00000000`00000000 00000000`00000000 00000000`00000000 00000000`00000000 : ntdll!RtlUserThreadStart+0x2c
+
+  57  Id: bf74.432c Suspend: 1 Teb: 000000d7`1bc30000 Unfrozen
+RetAddr               : Args to Child                                                           : Call Site
+00007ffd`feb426de     : 00000000`0000000f 00001799`21b7f6fe 00000000`00000000 00000000`00000000 : ntdll!ZwWaitForAlertByThreadId+0x14
+00007ffd`fc222ea8     : 00000000`00000000 000002a2`adb6c800 00000000`00000000 00000000`00000000 : ntdll!RtlSleepConditionVariableSRW+0x1de
+00007ffd`f177d9ad     : 00000000`00000001 00000000`00000000 00000000`00000000 00000000`0000000f : KERNELBASE!SleepConditionVariableSRW+0x38
+00007ffd`f17ec80b     : 00000050`00000020 00000000`00000000 000002a2`ad6f2380 80000000`00000800 : igd10umt64xe!QueryDesiredMode1+0xfa87d
+00007ffd`fe45e957     : 000002a2`ad6f2380 00000000`00000000 00000000`00000000 00000000`00000000 : igd10umt64xe!QueryDesiredMode1+0x1696db
+00007ffd`feb87c1c     : 00000000`00000000 00000000`00000000 00000000`00000000 00000000`00000000 : KERNEL32!BaseThreadInitThunk+0x17
+00000000`00000000     : 00000000`00000000 00000000`00000000 00000000`00000000 00000000`00000000 : ntdll!RtlUserThreadStart+0x2c
+
+  58  Id: bf74.4d10 Suspend: 1 Teb: 000000d7`1bc32000 Unfrozen
+RetAddr               : Args to Child                                                           : Call Site
+00007ffd`feb426de     : 00000000`0000000f 00001799`2197f70e 00000000`00000000 00000000`00000000 : ntdll!ZwWaitForAlertByThreadId+0x14
+00007ffd`fc222ea8     : 00000000`00000000 000002a2`ad939960 00000000`00000000 00000000`00000000 : ntdll!RtlSleepConditionVariableSRW+0x1de
+00007ffd`f177d9ad     : 00000000`00000001 00000000`00000000 00000000`00000000 00000000`0000000f : KERNELBASE!SleepConditionVariableSRW+0x38
+00007ffd`f17ec80b     : 00000050`00000030 00000000`00000000 000002a2`ad6f1780 00000000`00000000 : igd10umt64xe!QueryDesiredMode1+0xfa87d
+00007ffd`fe45e957     : 000002a2`ad6f1780 00000000`00000000 00000000`00000000 00000000`00000000 : igd10umt64xe!QueryDesiredMode1+0x1696db
+00007ffd`feb87c1c     : 00000000`00000001 000000d7`26bff000 00000000`00000000 00000000`00000000 : KERNEL32!BaseThreadInitThunk+0x17
+00000000`00000000     : 00000000`00000000 00000000`00000000 00000000`00000000 00000000`00000000 : ntdll!RtlUserThreadStart+0x2c
+
+# 59  Id: bf74.bb4 Suspend: 1 Teb: 000000d7`1bc34000 Unfrozen
+RetAddr               : Args to Child                                                           : Call Site
+00007ffd`fec30e0e     : 00000050`00000050 00000000`00000000 00000000`00000000 00000000`00000000 : ntdll!DbgBreakPoint
+00007ffd`fe45e957     : 00000000`00000000 00000000`00000000 00000000`00000800 80000000`00000800 : ntdll!DbgUiRemoteBreakin+0x4e
+00007ffd`feb87c1c     : 00000000`00000000 00000000`00000000 00000000`00000000 00000000`00000000 : KERNEL32!BaseThreadInitThunk+0x17
+00000000`00000000     : 00000000`00000000 00000000`00000000 00000000`00000000 00000000`00000000 : ntdll!RtlUserThreadStart+0x2c
+quit:

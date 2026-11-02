@@ -1,0 +1,102 @@
+[
+  {
+    "kind": "jit-production",
+    "trial": 1,
+    "pass": true,
+    "firstFrameMs": 32868,
+    "workingSet": 324915200,
+    "privateBytes": 198004736,
+    "starts": 5,
+    "closed": 1
+  },
+  {
+    "kind": "jit-production",
+    "trial": 2,
+    "pass": true,
+    "firstFrameMs": 20403,
+    "workingSet": 322936832,
+    "privateBytes": 196931584,
+    "starts": 5,
+    "closed": 1
+  },
+  {
+    "kind": "jit-production",
+    "trial": 3,
+    "pass": true,
+    "firstFrameMs": 25629,
+    "workingSet": 342908928,
+    "privateBytes": 216440832,
+    "starts": 5,
+    "closed": 1
+  },
+  {
+    "kind": "jit-production",
+    "trial": 4,
+    "pass": true,
+    "firstFrameMs": 14496,
+    "workingSet": 341110784,
+    "privateBytes": 215764992,
+    "starts": 5,
+    "closed": 1
+  },
+  {
+    "kind": "jit-production",
+    "trial": 5,
+    "pass": true,
+    "firstFrameMs": 17816,
+    "workingSet": 324882432,
+    "privateBytes": 198103040,
+    "starts": 5,
+    "closed": 1
+  },
+  {
+    "kind": "host-aot-final",
+    "trial": 1,
+    "pass": true,
+    "firstFrameMs": 9659,
+    "workingSet": 272621568,
+    "privateBytes": 184545280,
+    "starts": 5,
+    "closed": 1
+  },
+  {
+    "kind": "host-aot-final",
+    "trial": 2,
+    "pass": true,
+    "firstFrameMs": 6616,
+    "workingSet": 270434304,
+    "privateBytes": 182841344,
+    "starts": 5,
+    "closed": 1
+  },
+  {
+    "kind": "host-aot-final",
+    "trial": 3,
+    "pass": true,
+    "firstFrameMs": 4210,
+    "workingSet": 272130048,
+    "privateBytes": 183750656,
+    "starts": 5,
+    "closed": 1
+  },
+  {
+    "kind": "host-aot-final",
+    "trial": 4,
+    "pass": true,
+    "firstFrameMs": 4598,
+    "workingSet": 274026496,
+    "privateBytes": 185352192,
+    "starts": 5,
+    "closed": 1
+  },
+  {
+    "kind": "host-aot-final",
+    "trial": 5,
+    "pass": true,
+    "firstFrameMs": 4517,
+    "workingSet": 269684736,
+    "privateBytes": 181186560,
+    "starts": 5,
+    "closed": 1
+  }
+]

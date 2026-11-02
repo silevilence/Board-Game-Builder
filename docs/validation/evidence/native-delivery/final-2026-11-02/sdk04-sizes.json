@@ -1,0 +1,22 @@
+[
+  {
+    "variant": "minimal",
+    "total": 47548760.0,
+    "exe": 27008000
+  },
+  {
+    "variant": "wasm",
+    "total": 69826103.0,
+    "exe": 27190272
+  },
+  {
+    "variant": "external",
+    "total": 47553569.0,
+    "exe": 27011584
+  },
+  {
+    "variant": "wasm-external",
+    "total": 69830928.0,
+    "exe": 27193856
+  }
+]

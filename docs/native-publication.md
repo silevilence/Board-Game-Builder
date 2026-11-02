@@ -54,13 +54,24 @@ Editor 的运行插件管理面板显式导入包；CLI 使用 `runtime.plugins.
 ```json
 {"format":1,"plugins":[
   {"id":"edit.disk"},{"id":"author.files"},
-  {"id":"author.runtime.board-application"},
+  {"id":"author.runtime.board-application"},{"id":"author.validation"},
   {"id":"author.export.package"},{"id":"author.export.player"},
   {"id":"author.export.native"}
 ]}
 ```
 
 该对象放入现有 `profiles.<name>` 并设定 `defaultProfile`。先用 CLI 自描述查询参数；`native.export` 的主要参数是 `target`（新的输出目录）、`sdk`（维护者分发目录）、`host`（桌游用 `board.desktop`，其他应用用 `application.desktop`）、`platform`（`win-x64`），以及可选 `title`、`version`、工程内 `icon`。工具链路径可用 `dotnet`、`visualStudio`、`windowsKits` 显式指定。具体 JSON 请求和 GUI 工作区定位沿用 [作者 CLI](author-cli.md)，不另建发布执行器。
+
+例如，先将 `import.json` 写为 `{"package":"C:/packages/sample-native-cpu"}`，将 `native.json` 写为 `{"target":"C:/exports/my-game","sdk":"C:/tools/native-sdk","host":"board.desktop","platform":"win-x64"}`，再用已安装的 CLI 执行：
+
+```powershell
+bgb.exe describe native.export --project C:/games/my-game
+bgb.exe call runtime.plugins.import --project C:/games/my-game --args-file import.json
+bgb.exe call project.validate --project C:/games/my-game
+bgb.exe call native.export --project C:/games/my-game --args-file native.json
+```
+
+将路径替换为实际安装与工程位置，输出目录须不存在。`author.runtime.board-application` 已包含插件安装操作；导入后仍须在游戏入口选择包返回的精确实现身份。维护者生成的 `wasm-external` 样例已经包含该选择。CLI 的 `native.export` 直接执行构建；Editor 的预检按钮另由同一导出提供者的 `Preflight` 契约提供。
 
 Editor 导出面板显示实际闭包、精确身份、后端、原生文件、工具链检查和构建日志。修改入口后需要显式重建试玩；旧会话继续标注其捕获版本。取消、切换文档、关闭或停用导出插件会取消并等待活动构建，旧代次结果不得覆盖新文档。
 
@@ -91,5 +102,7 @@ dotnet artifacts/native-delivery/bin/NativeDelivery/release/NativeDelivery.dll b
 - 缺文件、错误架构、实现指纹或内容不符：拒绝加载；专用原生入口显示路径并尝试写 `startup-error.txt`。
 
 能力依赖规定初始化可用性；`before`／`after` 规定同阶段回调顺序，两者不互相替代。无回调插件可只提供接口。图形宿主管设备，实例只有一个 update 驱动，视口只读已发布状态并拥有自己的资源。关闭时先取消、等待异步工作，再释放子视口、实例和导入 lease。细节继续遵循 [应用循环](application-loop.md)，不另定义 AOT 专用循环。
+
+图形宿主不得在 UI 线程同步调用内容准备；`ApplicationCatalog.StartAsync` 将快照重建和实例启动放在后台。原生桌游窗口将记录保存与重开串行化，关闭取消并等待活动保存；记录先写临时文件，完整写入后才发布为 JSON。视口所有者在 `Dispose` 后先从可视树移除，再等待 `Shutdown`，该等待包含 Avalonia 延后执行的原生子窗口销毁。
 
 无界面宿主使用 `HostMode.Headless`，验证所选图形插件身份而不装载设备。已有原生测试覆盖无界面核心／桌游；当前随包提供的作者宿主配置是两个桌面入口，未另承诺通用无界面 EXE 导出模板。

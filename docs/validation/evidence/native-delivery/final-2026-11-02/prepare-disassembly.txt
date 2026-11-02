@@ -1,0 +1,374 @@
+
+************* Preparing the environment for Debugger Extensions Gallery repositories **************
+   ExtensionRepository : Implicit
+   UseExperimentalFeatureForNugetShare : true
+   AllowNugetExeUpdate : true
+   NonInteractiveNuget : true
+   AllowNugetMSCredentialProviderInstall : true
+   AllowParallelInitializationOfLocalRepositories : true
+
+   EnableRedirectToV8JsProvider : false
+
+   -- Configuring repositories
+      ----> Repository : LocalInstalled, Enabled: true
+      ----> Repository : UserExtensions, Enabled: true
+
+>>>>>>>>>>>>> Preparing the environment for Debugger Extensions Gallery repositories completed, duration 0.000 seconds
+
+************* Waiting for Debugger Extensions Gallery to Initialize **************
+
+>>>>>>>>>>>>> Waiting for Debugger Extensions Gallery to Initialize completed, duration 0.016 seconds
+   ----> Repository : UserExtensions, Enabled: true, Packages count: 0
+   ----> Repository : LocalInstalled, Enabled: true, Packages count: 0
+
+Microsoft (R) Windows Debugger Version 10.0.26100.7705 AMD64
+Copyright (c) Microsoft Corporation. All rights reserved.
+
+CommandLine: artifacts/native-aot/startup-trace-04/Native.Board.Startup.exe
+Unable to add extension DLL: ntsdexts
+Unable to add extension DLL: uext
+Unable to add extension DLL: exts
+
+************* Path validation summary **************
+Response                         Time (ms)     Location
+OK                                             artifacts/native-aot/startup-trace-04
+Symbol search path is: artifacts/native-aot/startup-trace-04
+Executable search path is: 
+
++------------------------------------------------------------------------+
+| This target supports Hardware-enforced Stack Protection. A HW based    |
+| "Shadow Stack" may be available to assist in debugging and analysis.   |
+| See aka.ms/userhsp for more info.                                      |
+|                                                                        |
+| dps @ssp                                                               |
+|                                                                        |
++------------------------------------------------------------------------+
+
+ModLoad: 00007ff6`8b110000 00007ff6`8caff000   Native.Board.Startup.exe
+ModLoad: 00007ffd`feb00000 00007ffd`fed66000   ntdll.dll
+ModLoad: 00007ffd`fe430000 00007ffd`fe4f9000   C:\WINDOWS\System32\KERNEL32.DLL
+ModLoad: 00007ffd`fc200000 00007ffd`fc5fa000   C:\WINDOWS\System32\KERNELBASE.dll
+ModLoad: 00007ffd`fe510000 00007ffd`fe5c6000   C:\WINDOWS\System32\ADVAPI32.dll
+ModLoad: 00007ffd`fdd60000 00007ffd`fde09000   C:\WINDOWS\System32\msvcrt.dll
+ModLoad: 00007ffd`fe160000 00007ffd`fe20a000   C:\WINDOWS\System32\sechost.dll
+ModLoad: 00007ffd`fdff0000 00007ffd`fe108000   C:\WINDOWS\System32\RPCRT4.dll
+ModLoad: 00007ffd`fd840000 00007ffd`fd9d8000   C:\WINDOWS\System32\ole32.dll
+ModLoad: 00007ffd`fbd90000 00007ffd`fbe33000   C:\WINDOWS\System32\msvcp_win.dll
+ModLoad: 00007ffd`fbc80000 00007ffd`fbcaa000   C:\WINDOWS\SYSTEM32\bcrypt.dll
+ModLoad: 00007ffd`fbe70000 00007ffd`fbfbc000   C:\WINDOWS\System32\ucrtbase.dll
+ModLoad: 00007ffd`fdbc0000 00007ffd`fdbeb000   C:\WINDOWS\System32\GDI32.dll
+ModLoad: 00007ffd`fbe40000 00007ffd`fbe67000   C:\WINDOWS\System32\win32u.dll
+ModLoad: 00007ffd`fc600000 00007ffd`fc72b000   C:\WINDOWS\System32\gdi32full.dll
+ModLoad: 00007ffd`fd9e0000 00007ffd`fdba7000   C:\WINDOWS\System32\USER32.dll
+ModLoad: 00007ffd`fe720000 00007ffd`feaa3000   C:\WINDOWS\System32\combase.dll
+ModLoad: 00007ffd`fdc80000 00007ffd`fdd59000   C:\WINDOWS\System32\OLEAUT32.dll
+(49b8.6c74): Break instruction exception - code 80000003 (first chance)
+ntdll!RtlGetReturnAddressHijackTarget+0x6ed:
+00007ffd`fec1d78d cc              int     3
+0:000> cdb: Reading initial command 'uf Native_Board_Startup!Application_Core_BoardGame_AppRuntime_GameRuntime___c__DisplayClass5_0___Build_g__Prepare_2;q'
+*** WARNING: Unable to verify checksum for Native.Board.Startup.exe
+Native_Board_Startup!Application_Core_BoardGame_AppRuntime_GameRuntime___c__DisplayClass5_0___Build_g__Prepare_2:
+00007ff6`8b13ae00 55              push    rbp
+00007ff6`8b13ae01 4156            push    r14
+00007ff6`8b13ae03 57              push    rdi
+00007ff6`8b13ae04 56              push    rsi
+00007ff6`8b13ae05 53              push    rbx
+00007ff6`8b13ae06 4881ecb0000000  sub     rsp,0B0h
+00007ff6`8b13ae0d 488dac24d0000000 lea     rbp,[rsp+0D0h]
+00007ff6`8b13ae15 33c0            xor     eax,eax
+00007ff6`8b13ae17 48898578ffffff  mov     qword ptr [rbp-88h],rax
+00007ff6`8b13ae1e 0f57e4          xorps   xmm4,xmm4
+00007ff6`8b13ae21 48b8a0ffffffffffffff mov rax,0FFFFFFFFFFFFFFA0h
+
+Native_Board_Startup!Application_Core_BoardGame_AppRuntime_GameRuntime___c__DisplayClass5_0___Build_g__Prepare_2+0x2b:
+00007ff6`8b13ae2b 0f296405e0      movaps  xmmword ptr [rbp+rax-20h],xmm4
+00007ff6`8b13ae30 0f296405f0      movaps  xmmword ptr [rbp+rax-10h],xmm4
+00007ff6`8b13ae35 0f292428        movaps  xmmword ptr [rax+rbp],xmm4
+00007ff6`8b13ae39 4883c030        add     rax,30h
+00007ff6`8b13ae3d 75ec            jne     Native_Board_Startup!Application_Core_BoardGame_AppRuntime_GameRuntime___c__DisplayClass5_0___Build_g__Prepare_2+0x2b (00007ff6`8b13ae2b)
+
+Native_Board_Startup!Application_Core_BoardGame_AppRuntime_GameRuntime___c__DisplayClass5_0___Build_g__Prepare_2+0x3f:
+00007ff6`8b13ae3f 48894d10        mov     qword ptr [rbp+10h],rcx
+00007ff6`8b13ae43 488bda          mov     rbx,rdx
+00007ff6`8b13ae46 488b5120        mov     rdx,qword ptr [rcx+20h]
+00007ff6`8b13ae4a 488b5208        mov     rdx,qword ptr [rdx+8]
+00007ff6`8b13ae4e 488bcb          mov     rcx,rbx
+00007ff6`8b13ae51 e86a9dfeff      call    Native_Board_Startup!Application_Core_BoardGame_Runtime_RuntimeDiscovery__Validate (00007ff6`8b124bc0)
+00007ff6`8b13ae56 488b4d10        mov     rcx,qword ptr [rbp+10h]
+00007ff6`8b13ae5a 488b5120        mov     rdx,qword ptr [rcx+20h]
+00007ff6`8b13ae5e 488b5208        mov     rdx,qword ptr [rdx+8]
+00007ff6`8b13ae62 488bcb          mov     rcx,rbx
+00007ff6`8b13ae65 e826a5feff      call    Native_Board_Startup!Application_Core_BoardGame_Runtime_RuntimeDiscovery__Files (00007ff6`8b125390)
+00007ff6`8b13ae6a 488bc8          mov     rcx,rax
+00007ff6`8b13ae6d 4c8d1dac417a01  lea     r11,[Native_Board_Startup!_InterfaceDispatchCell_S_P_CoreLib_System_Collections_Generic_IEnumerable_1<String>__GetEnumerator_Application_Core_BoardGame_AppRuntime_GameRuntime___c__DisplayClass5_0___Build_g__Prepare_2 (00007ff6`8c8df020)]
+00007ff6`8b13ae74 41ff13          call    qword ptr [r11]
+00007ff6`8b13ae77 488bc8          mov     rcx,rax
+00007ff6`8b13ae7a 48894d80        mov     qword ptr [rbp-80h],rcx
+
+Native_Board_Startup!Application_Core_BoardGame_AppRuntime_GameRuntime___c__DisplayClass5_0___Build_g__Prepare_2+0x7e:
+00007ff6`8b13ae7e 4c8d1d9bae7801  lea     r11,[Native_Board_Startup!_InterfaceDispatchCell_S_P_CoreLib_System_Collections_IEnumerator__MoveNext_Application_Core_BoardGame_AppRuntime_GameRuntime___c__DisplayClass5_0___Build_g__Prepare_2 (00007ff6`8c8c5d20)]
+00007ff6`8b13ae85 41ff13          call    qword ptr [r11]
+00007ff6`8b13ae88 85c0            test    eax,eax
+00007ff6`8b13ae8a 742a            je      Native_Board_Startup!Application_Core_BoardGame_AppRuntime_GameRuntime___c__DisplayClass5_0___Build_g__Prepare_2+0xb6 (00007ff6`8b13aeb6)
+
+Native_Board_Startup!Application_Core_BoardGame_AppRuntime_GameRuntime___c__DisplayClass5_0___Build_g__Prepare_2+0x8c:
+00007ff6`8b13ae8c 488b4d80        mov     rcx,qword ptr [rbp-80h]
+00007ff6`8b13ae90 4c8d1d19497a01  lea     r11,[Native_Board_Startup!_InterfaceDispatchCell_S_P_CoreLib_System_Collections_Generic_IEnumerator_1<String>__get_Current_Application_Core_BoardGame_AppRuntime_GameRuntime___c__DisplayClass5_0___Build_g__Prepare_2 (00007ff6`8c8df7b0)]
+00007ff6`8b13ae97 41ff13          call    qword ptr [r11]
+00007ff6`8b13ae9a 4c8bc0          mov     r8,rax
+00007ff6`8b13ae9d 488b4d10        mov     rcx,qword ptr [rbp+10h]
+00007ff6`8b13aea1 488b4928        mov     rcx,qword ptr [rcx+28h]
+00007ff6`8b13aea5 488d55c0        lea     rdx,[rbp-40h]
+00007ff6`8b13aea9 3909            cmp     dword ptr [rcx],ecx
+00007ff6`8b13aeab e8c069ffff      call    Native_Board_Startup!Application_Core_BoardGame_AppRuntime_ContentSource__Read (00007ff6`8b131870)
+00007ff6`8b13aeb0 488b4d80        mov     rcx,qword ptr [rbp-80h]
+00007ff6`8b13aeb4 ebc8            jmp     Native_Board_Startup!Application_Core_BoardGame_AppRuntime_GameRuntime___c__DisplayClass5_0___Build_g__Prepare_2+0x7e (00007ff6`8b13ae7e)
+
+Native_Board_Startup!Application_Core_BoardGame_AppRuntime_GameRuntime___c__DisplayClass5_0___Build_g__Prepare_2+0xb6:
+00007ff6`8b13aeb6 488b4d80        mov     rcx,qword ptr [rbp-80h]
+00007ff6`8b13aeba 4c8d1d0f487801  lea     r11,[Native_Board_Startup!_InterfaceDispatchCell_S_P_CoreLib_System_IDisposable__Dispose_Application_Core_BoardGame_AppRuntime_GameRuntime___c__DisplayClass5_0___Build_g__Prepare_2 (00007ff6`8c8bf6d0)]
+00007ff6`8b13aec1 41ff13          call    qword ptr [r11]
+00007ff6`8b13aec4 488b4d10        mov     rcx,qword ptr [rbp+10h]
+00007ff6`8b13aec8 488b7128        mov     rsi,qword ptr [rcx+28h]
+00007ff6`8b13aecc 4c8b4120        mov     r8,qword ptr [rcx+20h]
+00007ff6`8b13aed0 4d8b4008        mov     r8,qword ptr [r8+8]
+00007ff6`8b13aed4 488d4db0        lea     rcx,[rbp-50h]
+00007ff6`8b13aed8 488bd3          mov     rdx,rbx
+00007ff6`8b13aedb e800a1feff      call    Native_Board_Startup!Application_Core_BoardGame_Runtime_RuntimeDiscovery__Definition (00007ff6`8b124fe0)
+00007ff6`8b13aee0 4c8b45b8        mov     r8,qword ptr [rbp-48h]
+00007ff6`8b13aee4 4d8b4008        mov     r8,qword ptr [r8+8]
+00007ff6`8b13aee8 488d55a0        lea     rdx,[rbp-60h]
+00007ff6`8b13aeec 488bce          mov     rcx,rsi
+00007ff6`8b13aeef 3909            cmp     dword ptr [rcx],ecx
+00007ff6`8b13aef1 e87a69ffff      call    Native_Board_Startup!Application_Core_BoardGame_AppRuntime_ContentSource__Read (00007ff6`8b131870)
+00007ff6`8b13aef6 488b4d10        mov     rcx,qword ptr [rbp+10h]
+00007ff6`8b13aefa 488b5120        mov     rdx,qword ptr [rcx+20h]
+00007ff6`8b13aefe 488b5208        mov     rdx,qword ptr [rdx+8]
+00007ff6`8b13af02 488bcb          mov     rcx,rbx
+00007ff6`8b13af05 e8d6a4feff      call    Native_Board_Startup!Application_Core_BoardGame_Runtime_RuntimeDiscovery__Preparation (00007ff6`8b1253e0)
+00007ff6`8b13af0a 488bf0          mov     rsi,rax
+00007ff6`8b13af0d 488b4d10        mov     rcx,qword ptr [rbp+10h]
+00007ff6`8b13af11 488b7920        mov     rdi,qword ptr [rcx+20h]
+00007ff6`8b13af15 488d0d642e1901  lea     rcx,[Native_Board_Startup!Application_Core___z__ReadOnlySingleElementList_1<String>::`vftable' (00007ff6`8c2cdd80)]
+00007ff6`8b13af1c e84f7cac00      call    Native_Board_Startup!RhpNewFast (00007ff6`8bc02b70)
+00007ff6`8b13af21 488b5708        mov     rdx,qword ptr [rdi+8]
+00007ff6`8b13af25 488d0dfc447201  lea     rcx,[Native_Board_Startup!_Str_definition (00007ff6`8c85f428)]
+00007ff6`8b13af2c 48894808        mov     qword ptr [rax+8],rcx
+00007ff6`8b13af30 c744242001000000 mov     dword ptr [rsp+20h],1
+00007ff6`8b13af38 33c9            xor     ecx,ecx
+00007ff6`8b13af3a 48894c2428      mov     qword ptr [rsp+28h],rcx
+00007ff6`8b13af3f 488d0d5a447201  lea     rcx,[Native_Board_Startup!_Str_default (00007ff6`8c85f3a0)]
+00007ff6`8b13af46 48894c2430      mov     qword ptr [rsp+30h],rcx
+00007ff6`8b13af4b 33c9            xor     ecx,ecx
+00007ff6`8b13af4d 48894c2438      mov     qword ptr [rsp+38h],rcx
+00007ff6`8b13af52 48894c2440      mov     qword ptr [rsp+40h],rcx
+00007ff6`8b13af57 488bce          mov     rcx,rsi
+00007ff6`8b13af5a 4c8bc0          mov     r8,rax
+00007ff6`8b13af5d 41b901000000    mov     r9d,1
+00007ff6`8b13af63 e818c2feff      call    Native_Board_Startup!Application_Core_BoardGame_Runtime_RuntimeHost__StartScopedAsync (00007ff6`8b127180)
+00007ff6`8b13af68 488bf0          mov     rsi,rax
+00007ff6`8b13af6b 8b4e34          mov     ecx,dword ptr [rsi+34h]
+00007ff6`8b13af6e 81e100000011    and     ecx,11000000h
+00007ff6`8b13af74 81f900000001    cmp     ecx,1000000h
+00007ff6`8b13af7a 740a            je      Native_Board_Startup!Application_Core_BoardGame_AppRuntime_GameRuntime___c__DisplayClass5_0___Build_g__Prepare_2+0x186 (00007ff6`8b13af86)
+
+Native_Board_Startup!Application_Core_BoardGame_AppRuntime_GameRuntime___c__DisplayClass5_0___Build_g__Prepare_2+0x17c:
+00007ff6`8b13af7c 488bce          mov     rcx,rsi
+00007ff6`8b13af7f 33d2            xor     edx,edx
+00007ff6`8b13af81 e84a275600      call    Native_Board_Startup!S_P_CoreLib_System_Runtime_CompilerServices_TaskAwaiter__HandleNonSuccessAndDebuggerNotification (00007ff6`8b69d6d0)
+
+Native_Board_Startup!Application_Core_BoardGame_AppRuntime_GameRuntime___c__DisplayClass5_0___Build_g__Prepare_2+0x186:
+00007ff6`8b13af86 488b4e38        mov     rcx,qword ptr [rsi+38h]
+00007ff6`8b13af8a 48894d88        mov     qword ptr [rbp-78h],rcx
+00007ff6`8b13af8e 488b4d88        mov     rcx,qword ptr [rbp-78h]
+00007ff6`8b13af92 488d15af4ae900  lea     rdx,[Native_Board_Startup!_GenericDict_Application_Core_BoardGame_Runtime_RuntimeHost__Service<Application_Core_BoardGame_AppRuntime_IContentLoader> (00007ff6`8bfcfa48)]
+00007ff6`8b13af99 4c8d0588447201  lea     r8,[Native_Board_Startup!_Str_definition (00007ff6`8c85f428)]
+00007ff6`8b13afa0 3909            cmp     dword ptr [rcx],ecx
+00007ff6`8b13afa2 e8690da600      call    Native_Board_Startup!Application_Core_BoardGame_Runtime_RuntimeHost__Service<System___Canon> (00007ff6`8bb9bd10)
+00007ff6`8b13afa7 488bf0          mov     rsi,rax
+00007ff6`8b13afaa 403836          cmp     byte ptr [rsi],sil
+00007ff6`8b13afad 488d0d7c227201  lea     rcx,[Native_Board_Startup!_Str_board_state_DBFFC1149476145EA531A19F8482D7FABDC55AA8DF1E2B0E846732FDBCC32710 (00007ff6`8c85d230)]
+00007ff6`8b13afb4 e8072c4c00      call    Native_Board_Startup!String__IsNullOrWhiteSpace (00007ff6`8b5fdbc0)
+00007ff6`8b13afb9 85c0            test    eax,eax
+00007ff6`8b13afbb 0f85a4010000    jne     Native_Board_Startup!Application_Core_BoardGame_AppRuntime_GameRuntime___c__DisplayClass5_0___Build_g__Prepare_2+0x365 (00007ff6`8b13b165)
+
+Native_Board_Startup!Application_Core_BoardGame_AppRuntime_GameRuntime___c__DisplayClass5_0___Build_g__Prepare_2+0x1c1:
+00007ff6`8b13afc1 488b4d10        mov     rcx,qword ptr [rbp+10h]
+00007ff6`8b13afc5 488b7928        mov     rdi,qword ptr [rcx+28h]
+00007ff6`8b13afc9 488bd3          mov     rdx,rbx
+00007ff6`8b13afcc 488d0ddd2de900  lea     rcx,[Native_Board_Startup!_GenericDict_Application_Core_BoardGame_AppRuntime_ContentJson__Copy<Application_Abstractions_BoardGame_Kernel_RuntimeStartup> (00007ff6`8bfcddb0)]
+00007ff6`8b13afd3 e87811a600      call    Native_Board_Startup!Application_Core_BoardGame_AppRuntime_ContentJson__Copy<System___Canon> (00007ff6`8bb9c150)
+00007ff6`8b13afd8 4c8bc8          mov     r9,rax
+00007ff6`8b13afdb 4c8bc7          mov     r8,rdi
+00007ff6`8b13afde 488d55d0        lea     rdx,[rbp-30h]
+00007ff6`8b13afe2 488bce          mov     rcx,rsi
+00007ff6`8b13afe5 e876f73400      call    Native_Board_Startup!BoardGame_Hosting_BoardGame_Runtime_BoardApplication_Loader__Load_0 (00007ff6`8b48a760)
+00007ff6`8b13afea 488b5dd0        mov     rbx,qword ptr [rbp-30h]
+00007ff6`8b13afee 8b75d8          mov     esi,dword ptr [rbp-28h]
+00007ff6`8b13aff1 4885db          test    rbx,rbx
+00007ff6`8b13aff4 744c            je      Native_Board_Startup!Application_Core_BoardGame_AppRuntime_GameRuntime___c__DisplayClass5_0___Build_g__Prepare_2+0x242 (00007ff6`8b13b042)
+
+Native_Board_Startup!Application_Core_BoardGame_AppRuntime_GameRuntime___c__DisplayClass5_0___Build_g__Prepare_2+0x1f6:
+00007ff6`8b13aff6 837b2c00        cmp     dword ptr [rbx+2Ch],0
+00007ff6`8b13affa 0f84fd000000    je      Native_Board_Startup!Application_Core_BoardGame_AppRuntime_GameRuntime___c__DisplayClass5_0___Build_g__Prepare_2+0x2fd (00007ff6`8b13b0fd)
+
+Native_Board_Startup!Application_Core_BoardGame_AppRuntime_GameRuntime___c__DisplayClass5_0___Build_g__Prepare_2+0x200:
+00007ff6`8b13b000 488b4b30        mov     rcx,qword ptr [rbx+30h]
+00007ff6`8b13b004 8d4608          lea     eax,[rsi+8]
+00007ff6`8b13b007 4885c9          test    rcx,rcx
+00007ff6`8b13b00a 7417            je      Native_Board_Startup!Application_Core_BoardGame_AppRuntime_GameRuntime___c__DisplayClass5_0___Build_g__Prepare_2+0x223 (00007ff6`8b13b023)
+
+Native_Board_Startup!Application_Core_BoardGame_AppRuntime_GameRuntime___c__DisplayClass5_0___Build_g__Prepare_2+0x20c:
+00007ff6`8b13b00c 8b5108          mov     edx,dword ptr [rcx+8]
+00007ff6`8b13b00f 3bd0            cmp     edx,eax
+00007ff6`8b13b011 0f82ec000000    jb      Native_Board_Startup!Application_Core_BoardGame_AppRuntime_GameRuntime___c__DisplayClass5_0___Build_g__Prepare_2+0x303 (00007ff6`8b13b103)
+
+Native_Board_Startup!Application_Core_BoardGame_AppRuntime_GameRuntime___c__DisplayClass5_0___Build_g__Prepare_2+0x217:
+00007ff6`8b13b017 448bc0          mov     r8d,eax
+00007ff6`8b13b01a 4a8d4c0110      lea     rcx,[rcx+r8+10h]
+00007ff6`8b13b01f 2bd0            sub     edx,eax
+00007ff6`8b13b021 eb0c            jmp     Native_Board_Startup!Application_Core_BoardGame_AppRuntime_GameRuntime___c__DisplayClass5_0___Build_g__Prepare_2+0x22f (00007ff6`8b13b02f)
+
+Native_Board_Startup!Application_Core_BoardGame_AppRuntime_GameRuntime___c__DisplayClass5_0___Build_g__Prepare_2+0x223:
+00007ff6`8b13b023 85c0            test    eax,eax
+00007ff6`8b13b025 0f85d8000000    jne     Native_Board_Startup!Application_Core_BoardGame_AppRuntime_GameRuntime___c__DisplayClass5_0___Build_g__Prepare_2+0x303 (00007ff6`8b13b103)
+
+Native_Board_Startup!Application_Core_BoardGame_AppRuntime_GameRuntime___c__DisplayClass5_0___Build_g__Prepare_2+0x22b:
+00007ff6`8b13b02b 33c9            xor     ecx,ecx
+00007ff6`8b13b02d 33d2            xor     edx,edx
+
+Native_Board_Startup!Application_Core_BoardGame_AppRuntime_GameRuntime___c__DisplayClass5_0___Build_g__Prepare_2+0x22f:
+00007ff6`8b13b02f 83fa04          cmp     edx,4
+00007ff6`8b13b032 0f8cd1000000    jl      Native_Board_Startup!Application_Core_BoardGame_AppRuntime_GameRuntime___c__DisplayClass5_0___Build_g__Prepare_2+0x309 (00007ff6`8b13b109)
+
+Native_Board_Startup!Application_Core_BoardGame_AppRuntime_GameRuntime___c__DisplayClass5_0___Build_g__Prepare_2+0x238:
+00007ff6`8b13b038 8b09            mov     ecx,dword ptr [rcx]
+00007ff6`8b13b03a c1e91c          shr     ecx,1Ch
+00007ff6`8b13b03d 0fb6c9          movzx   ecx,cl
+00007ff6`8b13b040 eb02            jmp     Native_Board_Startup!Application_Core_BoardGame_AppRuntime_GameRuntime___c__DisplayClass5_0___Build_g__Prepare_2+0x244 (00007ff6`8b13b044)
+
+Native_Board_Startup!Application_Core_BoardGame_AppRuntime_GameRuntime___c__DisplayClass5_0___Build_g__Prepare_2+0x242:
+00007ff6`8b13b042 33c9            xor     ecx,ecx
+
+Native_Board_Startup!Application_Core_BoardGame_AppRuntime_GameRuntime___c__DisplayClass5_0___Build_g__Prepare_2+0x244:
+00007ff6`8b13b044 e8d7e95e00      call    Native_Board_Startup!System_Text_Json_System_Text_Json_JsonReaderHelper__ToValueKind (00007ff6`8b729a20)
+00007ff6`8b13b049 85c0            test    eax,eax
+00007ff6`8b13b04b 0f84ed000000    je      Native_Board_Startup!Application_Core_BoardGame_AppRuntime_GameRuntime___c__DisplayClass5_0___Build_g__Prepare_2+0x33e (00007ff6`8b13b13e)
+
+Native_Board_Startup!Application_Core_BoardGame_AppRuntime_GameRuntime___c__DisplayClass5_0___Build_g__Prepare_2+0x251:
+00007ff6`8b13b051 83f807          cmp     eax,7
+00007ff6`8b13b054 0f84e4000000    je      Native_Board_Startup!Application_Core_BoardGame_AppRuntime_GameRuntime___c__DisplayClass5_0___Build_g__Prepare_2+0x33e (00007ff6`8b13b13e)
+
+Native_Board_Startup!Application_Core_BoardGame_AppRuntime_GameRuntime___c__DisplayClass5_0___Build_g__Prepare_2+0x25a:
+00007ff6`8b13b05a 488d05a7937601  lea     rax,[Native_Board_Startup!S_P_CoreLib_System_Text_UTF8Encoding::__NONGCSTATICS (00007ff6`8c8a4408)]
+00007ff6`8b13b061 488378f800      cmp     qword ptr [rax-8],0
+00007ff6`8b13b066 0f85a8000000    jne     Native_Board_Startup!Application_Core_BoardGame_AppRuntime_GameRuntime___c__DisplayClass5_0___Build_g__Prepare_2+0x314 (00007ff6`8b13b114)
+
+Native_Board_Startup!Application_Core_BoardGame_AppRuntime_GameRuntime___c__DisplayClass5_0___Build_g__Prepare_2+0x26c:
+00007ff6`8b13b06c 488b0d4d577701  mov     rcx,qword ptr [Native_Board_Startup!S_P_CoreLib_System_Text_UTF8Encoding::__GCSTATICS (00007ff6`8c8b07c0)]
+00007ff6`8b13b073 488b7908        mov     rdi,qword ptr [rcx+8]
+00007ff6`8b13b077 4885db          test    rbx,rbx
+00007ff6`8b13b07a 0f849e000000    je      Native_Board_Startup!Application_Core_BoardGame_AppRuntime_GameRuntime___c__DisplayClass5_0___Build_g__Prepare_2+0x31e (00007ff6`8b13b11e)
+
+Native_Board_Startup!Application_Core_BoardGame_AppRuntime_GameRuntime___c__DisplayClass5_0___Build_g__Prepare_2+0x280:
+00007ff6`8b13b080 488bcb          mov     rcx,rbx
+00007ff6`8b13b083 8bd6            mov     edx,esi
+00007ff6`8b13b085 e866995e00      call    Native_Board_Startup!System_Text_Json_System_Text_Json_JsonDocument__GetRawValueAsString (00007ff6`8b7249f0)
+00007ff6`8b13b08a 488bd0          mov     rdx,rax
+00007ff6`8b13b08d 488bcf          mov     rcx,rdi
+00007ff6`8b13b090 3909            cmp     dword ptr [rcx],ecx
+00007ff6`8b13b092 e8a9565400      call    Native_Board_Startup!S_P_CoreLib_System_Text_UTF8Encoding__GetByteCount_0 (00007ff6`8b680740)
+00007ff6`8b13b097 3d00000002      cmp     eax,2000000h
+00007ff6`8b13b09c 0f8f9c000000    jg      Native_Board_Startup!Application_Core_BoardGame_AppRuntime_GameRuntime___c__DisplayClass5_0___Build_g__Prepare_2+0x33e (00007ff6`8b13b13e)
+
+Native_Board_Startup!Application_Core_BoardGame_AppRuntime_GameRuntime___c__DisplayClass5_0___Build_g__Prepare_2+0x2a2:
+00007ff6`8b13b0a2 807b1800        cmp     byte ptr [rbx+18h],0
+00007ff6`8b13b0a6 7419            je      Native_Board_Startup!Application_Core_BoardGame_AppRuntime_GameRuntime___c__DisplayClass5_0___Build_g__Prepare_2+0x2c1 (00007ff6`8b13b0c1)
+
+Native_Board_Startup!Application_Core_BoardGame_AppRuntime_GameRuntime___c__DisplayClass5_0___Build_g__Prepare_2+0x2a8:
+00007ff6`8b13b0a8 488d5590        lea     rdx,[rbp-70h]
+00007ff6`8b13b0ac 488bcb          mov     rcx,rbx
+00007ff6`8b13b0af 448bc6          mov     r8d,esi
+00007ff6`8b13b0b2 e8899a5e00      call    Native_Board_Startup!System_Text_Json_System_Text_Json_JsonDocument__CloneElement (00007ff6`8b724b40)
+00007ff6`8b13b0b7 488b7d90        mov     rdi,qword ptr [rbp-70h]
+00007ff6`8b13b0bb 448b7598        mov     r14d,dword ptr [rbp-68h]
+00007ff6`8b13b0bf eb06            jmp     Native_Board_Startup!Application_Core_BoardGame_AppRuntime_GameRuntime___c__DisplayClass5_0___Build_g__Prepare_2+0x2c7 (00007ff6`8b13b0c7)
+
+Native_Board_Startup!Application_Core_BoardGame_AppRuntime_GameRuntime___c__DisplayClass5_0___Build_g__Prepare_2+0x2c1:
+00007ff6`8b13b0c1 488bfb          mov     rdi,rbx
+00007ff6`8b13b0c4 448bf6          mov     r14d,esi
+
+Native_Board_Startup!Application_Core_BoardGame_AppRuntime_GameRuntime___c__DisplayClass5_0___Build_g__Prepare_2+0x2c7:
+00007ff6`8b13b0c7 488d0d020cf700  lea     rcx,[Native_Board_Startup!Application_Core_BoardGame_AppRuntime_ContentPayload::`vftable' (00007ff6`8c0abcd0)]
+00007ff6`8b13b0ce e89d7aac00      call    Native_Board_Startup!RhpNewFast (00007ff6`8bc02b70)
+00007ff6`8b13b0d3 488bd8          mov     rbx,rax
+00007ff6`8b13b0d6 488d0d53217201  lea     rcx,[Native_Board_Startup!_Str_board_state_DBFFC1149476145EA531A19F8482D7FABDC55AA8DF1E2B0E846732FDBCC32710 (00007ff6`8c85d230)]
+00007ff6`8b13b0dd 48894b08        mov     qword ptr [rbx+8],rcx
+00007ff6`8b13b0e1 c7431001000000  mov     dword ptr [rbx+10h],1
+00007ff6`8b13b0e8 488d4b18        lea     rcx,[rbx+18h]
+00007ff6`8b13b0ec 488bd7          mov     rdx,rdi
+00007ff6`8b13b0ef e8dc7cac00      call    Native_Board_Startup!RhpAssignRefAVLocation (00007ff6`8bc02dd0)
+00007ff6`8b13b0f4 44897320        mov     dword ptr [rbx+20h],r14d
+00007ff6`8b13b0f8 e98f000000      jmp     Native_Board_Startup!Application_Core_BoardGame_AppRuntime_GameRuntime___c__DisplayClass5_0___Build_g__Prepare_2+0x38c (00007ff6`8b13b18c)
+
+Native_Board_Startup!Application_Core_BoardGame_AppRuntime_GameRuntime___c__DisplayClass5_0___Build_g__Prepare_2+0x2fd:
+00007ff6`8b13b0fd e83e635e00      call    Native_Board_Startup!System_Text_Json_System_Text_Json_ThrowHelper__ThrowObjectDisposedException_JsonDocument (00007ff6`8b721440)
+00007ff6`8b13b102 cc              int     3
+
+Native_Board_Startup!Application_Core_BoardGame_AppRuntime_GameRuntime___c__DisplayClass5_0___Build_g__Prepare_2+0x303:
+00007ff6`8b13b103 e878e54e00      call    Native_Board_Startup!S_P_CoreLib_System_ThrowHelper__ThrowArgumentOutOfRangeException (00007ff6`8b629680)
+00007ff6`8b13b108 cc              int     3
+
+Native_Board_Startup!Application_Core_BoardGame_AppRuntime_GameRuntime___c__DisplayClass5_0___Build_g__Prepare_2+0x309:
+00007ff6`8b13b109 b928000000      mov     ecx,28h
+00007ff6`8b13b10e e85dea4e00      call    Native_Board_Startup!S_P_CoreLib_System_ThrowHelper__ThrowArgumentOutOfRangeException_0 (00007ff6`8b629b70)
+00007ff6`8b13b113 cc              int     3
+
+Native_Board_Startup!Application_Core_BoardGame_AppRuntime_GameRuntime___c__DisplayClass5_0___Build_g__Prepare_2+0x314:
+00007ff6`8b13b114 e8136eaa00      call    Native_Board_Startup!_GetGCStaticBase_S_P_CoreLib_System_Text_UTF8Encoding (00007ff6`8bbe1f2c)
+00007ff6`8b13b119 e94effffff      jmp     Native_Board_Startup!Application_Core_BoardGame_AppRuntime_GameRuntime___c__DisplayClass5_0___Build_g__Prepare_2+0x26c (00007ff6`8b13b06c)
+
+Native_Board_Startup!Application_Core_BoardGame_AppRuntime_GameRuntime___c__DisplayClass5_0___Build_g__Prepare_2+0x31e:
+00007ff6`8b13b11e 488d0d2b87fd00  lea     rcx,[Native_Board_Startup!S_P_CoreLib_System_InvalidOperationException::`vftable' (00007ff6`8c113850)]
+00007ff6`8b13b125 e8467aac00      call    Native_Board_Startup!RhpNewFast (00007ff6`8bc02b70)
+00007ff6`8b13b12a 488bd8          mov     rbx,rax
+00007ff6`8b13b12d 488bcb          mov     rcx,rbx
+00007ff6`8b13b130 e86b464e00      call    Native_Board_Startup!S_P_CoreLib_System_InvalidOperationException___ctor (00007ff6`8b61f7a0)
+00007ff6`8b13b135 488bcb          mov     rcx,rbx
+00007ff6`8b13b138 e8f37fac00      call    Native_Board_Startup!RhpThrowEx (00007ff6`8bc03130)
+00007ff6`8b13b13d cc              int     3
+
+Native_Board_Startup!Application_Core_BoardGame_AppRuntime_GameRuntime___c__DisplayClass5_0___Build_g__Prepare_2+0x33e:
+00007ff6`8b13b13e 488d0dd3f6fd00  lea     rcx,[Native_Board_Startup!S_P_CoreLib_System_IO_InvalidDataException::`vftable' (00007ff6`8c11a818)]
+00007ff6`8b13b145 e8267aac00      call    Native_Board_Startup!RhpNewFast (00007ff6`8bc02b70)
+00007ff6`8b13b14a 488bd8          mov     rbx,rax
+00007ff6`8b13b14d 488bcb          mov     rcx,rbx
+00007ff6`8b13b150 488d15e1056d01  lea     rdx,[Native_Board_Startup!_Str_Invalid_oversized_payload_5FD75A391345A44B6444C5A06E3172B2CD11C62B12AFC9ABE53489076D800563 (00007ff6`8c80b738)]
+00007ff6`8b13b157 e844d65400      call    Native_Board_Startup!S_P_CoreLib_System_IO_InvalidDataException___ctor_0 (00007ff6`8b6887a0)
+00007ff6`8b13b15c 488bcb          mov     rcx,rbx
+00007ff6`8b13b15f e8cc7fac00      call    Native_Board_Startup!RhpThrowEx (00007ff6`8bc03130)
+00007ff6`8b13b164 cc              int     3
+
+Native_Board_Startup!Application_Core_BoardGame_AppRuntime_GameRuntime___c__DisplayClass5_0___Build_g__Prepare_2+0x365:
+00007ff6`8b13b165 488d0dacf6fd00  lea     rcx,[Native_Board_Startup!S_P_CoreLib_System_IO_InvalidDataException::`vftable' (00007ff6`8c11a818)]
+00007ff6`8b13b16c e8ff79ac00      call    Native_Board_Startup!RhpNewFast (00007ff6`8bc02b70)
+00007ff6`8b13b171 488bd8          mov     rbx,rax
+00007ff6`8b13b174 488bcb          mov     rcx,rbx
+00007ff6`8b13b177 488d15f2fb6c01  lea     rdx,[Native_Board_Startup!_Str_Invalid_payload_contract_E91057FF88EFD24F1CFFC77F0496802481E64647882BC61E28A34F0A9F9E0316 (00007ff6`8c80ad70)]
+00007ff6`8b13b17e e81dd65400      call    Native_Board_Startup!S_P_CoreLib_System_IO_InvalidDataException___ctor_0 (00007ff6`8b6887a0)
+00007ff6`8b13b183 488bcb          mov     rcx,rbx
+00007ff6`8b13b186 e8a57fac00      call    Native_Board_Startup!RhpThrowEx (00007ff6`8bc03130)
+00007ff6`8b13b18b cc              int     3
+
+Native_Board_Startup!Application_Core_BoardGame_AppRuntime_GameRuntime___c__DisplayClass5_0___Build_g__Prepare_2+0x38c:
+00007ff6`8b13b18c 488b4d88        mov     rcx,qword ptr [rbp-78h]
+00007ff6`8b13b190 e88bc7feff      call    Native_Board_Startup!Application_Core_BoardGame_Runtime_RuntimeHost__Dispose (00007ff6`8b127920)
+00007ff6`8b13b195 488bc3          mov     rax,rbx
+00007ff6`8b13b198 4881c4b0000000  add     rsp,0B0h
+00007ff6`8b13b19f 5b              pop     rbx
+00007ff6`8b13b1a0 5e              pop     rsi
+00007ff6`8b13b1a1 5f              pop     rdi
+00007ff6`8b13b1a2 415e            pop     r14
+00007ff6`8b13b1a4 5d              pop     rbp
+00007ff6`8b13b1a5 c3              ret
+quit:

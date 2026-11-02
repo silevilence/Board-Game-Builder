@@ -1,0 +1,96 @@
+[
+  {
+    "variant": "minimal",
+    "directory": "final-minimal-03",
+    "totalBytes": 47544664.0,
+    "exeBytes": 27003904,
+    "files": [
+      "av_libglesv2.dll",
+      "build-inputs.json",
+      "libHarfBuzzSharp.dll",
+      "libSkiaSharp.dll",
+      "native-release.json",
+      "Play.exe",
+      "SDL2.dll",
+      "content/card.png",
+      "content/game.start.json",
+      "content/state.json"
+    ]
+  },
+  {
+    "variant": "wasm",
+    "directory": "final-wasm-03",
+    "totalBytes": 69820471.0,
+    "exeBytes": 27184640,
+    "files": [
+      "av_libglesv2.dll",
+      "build-inputs.json",
+      "libHarfBuzzSharp.dll",
+      "libSkiaSharp.dll",
+      "native-release.json",
+      "Play.exe",
+      "SDL2.dll",
+      "wasmtime.dll",
+      "content/card.png",
+      "content/counter.wasm",
+      "content/game.start.json",
+      "content/state.json"
+    ]
+  },
+  {
+    "variant": "external",
+    "directory": "final-external-03",
+    "totalBytes": 47549472.0,
+    "exeBytes": 27007488,
+    "files": [
+      "av_libglesv2.dll",
+      "build-inputs.json",
+      "libHarfBuzzSharp.dll",
+      "libSkiaSharp.dll",
+      "native-release.json",
+      "Play.exe",
+      "SDL2.dll",
+      "content/card.png",
+      "content/game.start.json",
+      "content/state.json"
+    ]
+  },
+  {
+    "variant": "combined",
+    "directory": "board-final-02",
+    "totalBytes": 69825808.0,
+    "exeBytes": 27188736,
+    "files": [
+      "av_libglesv2.dll",
+      "build-inputs.json",
+      "libHarfBuzzSharp.dll",
+      "libSkiaSharp.dll",
+      "native-release.json",
+      "Play.exe",
+      "SDL2.dll",
+      "wasmtime.dll",
+      "content/card.png",
+      "content/counter.wasm",
+      "content/game.start.json",
+      "content/state.json"
+    ]
+  },
+  {
+    "variant": "motion",
+    "directory": "final-motion-03",
+    "totalBytes": 44421907.0,
+    "exeBytes": 23888896,
+    "files": [
+      "av_libglesv2.dll",
+      "build-inputs.json",
+      "libHarfBuzzSharp.dll",
+      "libSkiaSharp.dll",
+      "native-release.json",
+      "Play.exe",
+      "SDL2.dll",
+      "content/game.start.json",
+      "content/marker.png",
+      "content/motion.json"
+    ]
+  }
+]
