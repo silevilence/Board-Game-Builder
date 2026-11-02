@@ -252,7 +252,7 @@
 
 #### 引擎与 Editor 联合验收及使用说明
 
-2026-11-02 进度：已修复后台准备、记录保存及延后销毁原生子窗口的生命周期问题；SDK04 四种桌游与非桌游 Motion 严格构建通过，普通／原生四组合共 40 局关闭回归、GL／Motion 多视口及 Editor 三导出闭环通过。Sandbox 连接不可用，按用户要求转到 Hyper-V／mstsc；最终产物已传入虚拟机本地，但该会话缺少 MonoGame 必需的 OpenGL framebuffer 扩展，且已安装系统 .NET，不满足干净图形环境验收条件。下面两项及全范围整体审核仍不标完成。证据与续接位置见 [联合验收进度](docs/validation/native-delivery.md)，作者／维护者说明见 [原生发布说明](docs/native-publication.md)。
+2026-11-02 进度：已修复后台准备、记录保存及延后销毁原生子窗口的生命周期问题；SDK04 四种桌游与非桌游 Motion 严格构建通过，普通／原生四组合共 40 局关闭回归、GL／Motion 多视口及 Editor 三导出闭环通过。Sandbox 连接不可用，按用户要求转到 Hyper-V／mstsc；最终产物已传入虚拟机本地，但该会话缺少 MonoGame 必需的 OpenGL framebuffer 扩展，且已安装系统 .NET，不满足干净图形环境验收条件。用户决定暂时保留现状，暂停此部分验收；保留现有实现、测试包与诊断证据，待有合适环境后继续。下面两项及全范围整体审核仍不标完成。证据与续接位置见 [联合验收进度](docs/validation/native-delivery.md)，作者／维护者说明见 [原生发布说明](docs/native-publication.md)。
 
 - [ ] **完成原生发行、外部插件与裁剪效果验收**（约 2～3 天）
     - 依赖：接入 Editor NativeAOT 发布插件、贯通外部运行插件的内容身份与普通发行。
