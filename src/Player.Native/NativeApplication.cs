@@ -46,6 +46,6 @@ public static class NativeApplicationEntry
     {
         var catalog=new ApplicationCatalog(plugins);var content=catalog.Load(source);
         var graphics=NativeApplication.Graphics(catalog,content);
-        return NativeApplication.Run(()=>new ApplicationWindow(catalog,graphics,source){Title=title});
+        return NativeApplication.Run(()=>new ApplicationWindow(catalog,graphics,source,title));
     }
 }

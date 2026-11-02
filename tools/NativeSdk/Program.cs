@@ -24,8 +24,10 @@ if(args[0]=="pack")
         var common=Closure(typeof(NativeApplicationEntry).Assembly,typeof(PluginRegistration).Assembly);
         var hostFiles=common.Values.Select(a=>Copy(a.Location,destination,"hosts/application", "managed")).ToList();
         foreach(var name in new[]{"av_libglesv2.dll","libHarfBuzzSharp.dll","libSkiaSharp.dll"})hostFiles.Add(Copy(Native(name),destination,"hosts/application","native"));
+        foreach(var name in new[]{"MonoGame.LICENSE.txt","CordiSharp.LICENSE.txt"})
+            hostFiles.Add(Copy(Path.Combine(AppContext.BaseDirectory,name),destination,"licenses","content"));
         var boardFiles=Closure(typeof(NativeBoardEntry).Assembly,typeof(PluginRegistration).Assembly).Values.Select(a=>Copy(a.Location,destination,"hosts/board","managed")).ToList();
-        boardFiles.AddRange(hostFiles.Where(f=>f.Role=="native"));
+        boardFiles.AddRange(hostFiles.Where(f=>f.Role is "native" or "content"));
         var packages=new List<string>();
         void Add(Type type,string method,params string[] native)
         {
@@ -76,7 +78,7 @@ static Dictionary<string,Assembly> Closure(params Assembly[] roots)
     var result=new Dictionary<string,Assembly>(StringComparer.Ordinal);
     void Visit(Assembly assembly)
     {
-        if(string.Equals(Path.GetDirectoryName(assembly.Location),Path.TrimEndingDirectorySeparator(System.Runtime.InteropServices.RuntimeEnvironment.GetRuntimeDirectory()),StringComparison.OrdinalIgnoreCase))return;
+        if(PluginStore.IsFrameworkAssembly(assembly.GetName().Name!))return;
         if(!result.TryAdd(assembly.GetName().Name!,assembly))return;
         foreach(var reference in assembly.GetReferencedAssemblies())Visit(Assembly.Load(reference));
     }

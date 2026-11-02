@@ -1,0 +1,104 @@
+test_compacted_package_has_all_dependencies_with_one_copy (test_compact_toolkit.CompactToolkitTests.test_compacted_package_has_all_dependencies_with_one_copy) ... ok
+test_invalid_canonical_reference_and_unknown_layout (test_compact_toolkit.CompactToolkitTests.test_invalid_canonical_reference_and_unknown_layout) ... ok
+test_both_packages_and_export_closure_verified_before_writes (test_component_release.PreparationTests.test_both_packages_and_export_closure_verified_before_writes) ... ok
+test_github_asset_limits (test_component_release.PreparationTests.test_github_asset_limits) ... ok
+test_corrupt_component_or_conflict_never_overwrites_public_assets (test_component_release.PublicationTests.test_corrupt_component_or_conflict_never_overwrites_public_assets) ... ok
+test_dependency_disappearing_before_visibility_keeps_product_draft (test_component_release.PublicationTests.test_dependency_disappearing_before_visibility_keeps_product_draft) ... ok
+test_empty_draft_upload_placeholder_is_retryable (test_component_release.PublicationTests.test_empty_draft_upload_placeholder_is_retryable) ... ok
+test_interruption_resumes_without_replacing_uploaded_assets (test_component_release.PublicationTests.test_interruption_resumes_without_replacing_uploaded_assets) ... ok
+test_missing_external_component_does_not_write_another_repository (test_component_release.PublicationTests.test_missing_external_component_does_not_write_another_repository) ... ok
+test_rebuild_conflict_is_rejected_before_new_component_publication (test_component_release.PublicationTests.test_rebuild_conflict_is_rejected_before_new_component_publication) ... ok
+test_two_versions_reuse_one_component_and_rerun_is_idempotent (test_component_release.PublicationTests.test_two_versions_reuse_one_component_and_rerun_is_idempotent) ... ok
+test_concurrent_first_launch (test_native_entry.NativeEntryTests.test_concurrent_first_launch) ... ok
+test_corruption_is_rejected_before_start (test_native_entry.NativeEntryTests.test_corruption_is_rejected_before_start) ... ok
+test_existing_copied_alias_is_not_reported_as_shared (test_native_entry.NativeEntryTests.test_existing_copied_alias_is_not_reported_as_shared) ... ok
+test_exit_output_cwd_repeat_and_physical_identity (test_native_entry.NativeEntryTests.test_exit_output_cwd_repeat_and_physical_identity) ... ok
+test_path_escape_duplicate_and_unknown_layout_are_rejected (test_native_entry.NativeEntryTests.test_path_escape_duplicate_and_unknown_layout_are_rejected) ... ok
+test_standard_input_is_forwarded (test_native_entry.NativeEntryTests.test_standard_input_is_forwarded) ... ok
+test_rebuild_ignores_metadata_order_and_file_timestamps (test_release.ArchiveTests.test_rebuild_ignores_metadata_order_and_file_timestamps) ... ok
+test_transient_windows_archive_lock_is_retryable (test_release.ArchiveTests.test_transient_windows_archive_lock_is_retryable) ... ok
+test_all_positions_and_casing (test_release.MetadataTests.test_all_positions_and_casing) ... ok
+test_invalid_versions (test_release.MetadataTests.test_invalid_versions) ... ok
+test_missing_duplicate_empty (test_release.MetadataTests.test_missing_duplicate_empty) ... ok
+test_product_mismatch_and_missing_file (test_release.MetadataTests.test_product_mismatch_and_missing_file) ... ok
+test_alias_reuses_existing_release (test_release.PublicationTests.test_alias_reuses_existing_release) ... ok
+test_bad_local_checksum_creates_no_draft (test_release.PublicationTests.test_bad_local_checksum_creates_no_draft) ... ok
+test_build_failure_creates_no_draft (test_release.PublicationTests.test_build_failure_creates_no_draft) ... ok
+test_conflicting_alias_rejected_before_mutation (test_release.PublicationTests.test_conflicting_alias_rejected_before_mutation) ... ok
+test_corrupt_existing_asset_never_overwritten (test_release.PublicationTests.test_corrupt_existing_asset_never_overwritten) ... ok
+test_existing_windows_newlines_match (test_release.PublicationTests.test_existing_windows_newlines_match) ... ok
+test_interrupted_upload_resumes_draft (test_release.PublicationTests.test_interrupted_upload_resumes_draft) ... ok
+test_new_format_invalid_artifacts_never_create_component_or_product (test_release.PublicationTests.test_new_format_invalid_artifacts_never_create_component_or_product) ... ok
+test_new_format_uses_complete_dependency_publication (test_release.PublicationTests.test_new_format_uses_complete_dependency_publication) ... ok
+test_success_and_idempotent_rerun (test_release.PublicationTests.test_success_and_idempotent_rerun) ... ok
+test_investigator_generator_declares_rendering (test_sample_generation.SampleGenerationTests.test_investigator_generator_declares_rendering) ... ok
+test_incomplete_export_and_mismatched_descriptor_rejected (test_slim_toolkit.SlimToolkitTests.test_incomplete_export_and_mismatched_descriptor_rejected) ... ok
+test_same_build_bytes_without_private_runtime_and_locked_export (test_slim_toolkit.SlimToolkitTests.test_same_build_bytes_without_private_runtime_and_locked_export) ... ok
+test_complete_inventory_and_offline_dependency_resolution (test_toolkit_manifest.ManifestTests.test_complete_inventory_and_offline_dependency_resolution) ... ok
+test_corrupt_component_and_duplicate_json_keys (test_toolkit_manifest.ManifestTests.test_corrupt_component_and_duplicate_json_keys) ... ok
+test_illegal_dependency_and_runtime_policy (test_toolkit_manifest.ManifestTests.test_illegal_dependency_and_runtime_policy) ... ok
+test_invalid_or_conflicting_paths (test_toolkit_manifest.ManifestTests.test_invalid_or_conflicting_paths) ... ok
+test_legacy_is_explicit_and_never_inferred_as_shared (test_toolkit_manifest.ManifestTests.test_legacy_is_explicit_and_never_inferred_as_shared) ... ok
+test_missing_extra_changed_and_same_name_different_content (test_toolkit_manifest.ManifestTests.test_missing_extra_changed_and_same_name_different_content) ... ok
+test_rebuild_stable_and_only_changed_component_replaced (test_toolkit_manifest.ManifestTests.test_rebuild_stable_and_only_changed_component_replaced) ... ok
+test_corrupt_or_missing_inputs_rejected (test_validate_native_toolkit.NativeToolkitTests.test_corrupt_or_missing_inputs_rejected) ... ok
+test_invalid_paths_and_duplicate_or_empty_file_lists_rejected (test_validate_native_toolkit.NativeToolkitTests.test_invalid_paths_and_duplicate_or_empty_file_lists_rejected) ... ok
+test_missing_duplicate_hosts_packages_and_aot_rejected (test_validate_native_toolkit.NativeToolkitTests.test_missing_duplicate_hosts_packages_and_aot_rejected) ... ok
+test_native_sdk_paths_match_host_and_package_roots (test_validate_native_toolkit.NativeToolkitTests.test_native_sdk_paths_match_host_and_package_roots) ... ok
+test_slim_and_compact_preserve_native_capabilities (test_validate_native_toolkit.NativeToolkitTests.test_slim_and_compact_preserve_native_capabilities) ... ok
+test_anonymous_download_verified_and_reused (test_verify_published_release.PublishedDownloadTests.test_anonymous_download_verified_and_reused) ... ok
+test_corrupt_download_does_not_replace_existing_file (test_verify_published_release.PublishedDownloadTests.test_corrupt_download_does_not_replace_existing_file) ... ok
+test_interruption_retries_without_exposing_partial_content (test_verify_published_release.PublishedDownloadTests.test_interruption_retries_without_exposing_partial_content) ... ok
+
+----------------------------------------------------------------------
+Ran 51 tests in 11.823s
+
+OK
+{
+  "logicalBytes": 20314,
+  "storedBytes": 17913,
+  "logicalFiles": 40,
+  "storedFiles": 22,
+  "runtimeCoreIdentities": [
+    "7fc5036745ec73b6169495830cf3ef3b58127addf27fcc0d0b8fe87b4de5808c"
+  ]
+}
+{
+  "logicalBytes": 20870,
+  "storedBytes": 18469,
+  "logicalFiles": 40,
+  "storedFiles": 22,
+  "runtimeCoreIdentities": [
+    "7fc5036745ec73b6169495830cf3ef3b58127addf27fcc0d0b8fe87b4de5808c"
+  ]
+}
+{
+  "logicalBytes": 27418,
+  "storedBytes": 25509,
+  "logicalFiles": 36,
+  "storedFiles": 22,
+  "runtimeCoreIdentities": []
+}
+
+
+
+
+
+
+https://example.test/release
+
+
+{
+  "logicalBytes": 27418,
+  "storedBytes": 25509,
+  "logicalFiles": 36,
+  "storedFiles": 22,
+  "runtimeCoreIdentities": []
+}
+{
+  "logicalBytes": 53928,
+  "storedBytes": 46032,
+  "logicalFiles": 71,
+  "storedFiles": 35,
+  "runtimeCoreIdentities": []
+}

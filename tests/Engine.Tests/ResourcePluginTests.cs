@@ -61,7 +61,16 @@ public static class ResourcePluginTests
             Check.That(GameRuntime.Load("samples/state-minimal").Resources!.Images.Count==0);
         }
         finally {if(Directory.Exists(folder))Directory.Delete(folder,true);}
+        var validated=0;
         foreach(var source in Directory.GetDirectories("samples").Where(p=>File.Exists(Path.Combine(p,GameRuntime.Entry))))
-        {var loaded=GameRuntime.Load(source);GameRuntime.ValidateSnapshot(Wire.Read<LoadedModule>(Wire.Json(loaded)));}
+        {
+            var startup=Wire.Read<RuntimeStartup>(File.ReadAllText(Path.Combine(source,GameRuntime.Entry)));
+            // LoadedModule snapshots belong to the board definition contract.
+            // Generic applications exercise their GameContent/resources in their own catalog tests.
+            var definitions=GameRuntime.Describe(startup).Where(p=>p.Provides.Contains("definition")).Select(p=>p.Id).ToHashSet(StringComparer.Ordinal);
+            if(!startup.Plugins.Any(p=>definitions.Contains(p.Id)))continue;
+            var loaded=GameRuntime.Load(source);GameRuntime.ValidateSnapshot(Wire.Read<LoadedModule>(Wire.Json(loaded)));validated++;
+        }
+        Check.That(validated>0,"No board resource snapshots were validated");
     }
 }

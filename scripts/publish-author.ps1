@@ -1,4 +1,4 @@
-param([string]$Output = 'artifacts/author-release', [string]$PlayerRelease)
+param([string]$Output = 'artifacts/author-release', [string]$PlayerRelease, [bool]$IncludeDesktopGlBackend=$false)
 $ErrorActionPreference = 'Stop'
 $repo = Split-Path $PSScriptRoot -Parent
 $target = [IO.Path]::GetFullPath($Output)
@@ -9,7 +9,7 @@ if ($LASTEXITCODE -ne 0) { throw 'CLI publish failed; staging retained for diagn
 dotnet publish "$repo/src/Lua/Lua.csproj" -c Release -r win-x64 --self-contained true -p:PublishSingleFile=false -p:DebugType=None -p:DebugSymbols=false -o "$staging/worker"
 if ($LASTEXITCODE -ne 0) { throw 'Lua worker publish failed; staging retained for diagnosis.' }
 if ($PlayerRelease) { Copy-Item -LiteralPath ([IO.Path]::GetFullPath($PlayerRelease)) -Destination "$staging/player" -Recurse }
-else { & "$repo/scripts/publish-player.ps1" -Output "$staging/player" }
+else { & "$repo/scripts/publish-player.ps1" -Output "$staging/player" -IncludeDesktopGlBackend $IncludeDesktopGlBackend }
 if ($LASTEXITCODE -ne 0) { throw 'Player preparation failed.' }
 & "$staging/bgb.exe" docs entry | Out-Null
 if ($LASTEXITCODE -ne 0) { throw 'Published CLI documentation check failed.' }

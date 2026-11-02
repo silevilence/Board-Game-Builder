@@ -21,6 +21,8 @@ public sealed class PluginStore
     private readonly Dictionary<string,RuntimePluginDefinition[]> builtinSources=new(StringComparer.Ordinal);
     public string DirectoryPath=>root;
     private static readonly HashSet<string> platformAssemblies=FrameworkAssemblies();
+    /// <summary>Framework identities exclude application assemblies beside a self-contained runtime.</summary>
+    public static bool IsFrameworkAssembly(string name)=>platformAssemblies.Contains(name);
     private static HashSet<string> FrameworkAssemblies()
     {
         var result=new HashSet<string>(StringComparer.OrdinalIgnoreCase){"System.Private.CoreLib"};
@@ -281,7 +283,7 @@ public sealed class PluginStore
             foreach(var handle in metadata.AssemblyReferences)
             {
                 var reference=metadata.GetAssemblyReference(handle);var name=metadata.GetString(reference.Name);
-                if(Framework(name))continue;
+                if(IsFrameworkAssembly(name))continue;
                 var installed=shared.Select(a=>a.GetName()).FirstOrDefault(a=>a.Name==name);
                 if(installed==null && managed.TryGetValue(name,out var dependency))installed=dependency.Name;
                 if(installed==null || installed.Version!=reference.Version)throw new InvalidDataException(item.File.Path+": missing/incompatible managed dependency "+name+" "+reference.Version);
@@ -299,7 +301,6 @@ public sealed class PluginStore
         return metadata.GetString(type.Namespace)=="System.Runtime.CompilerServices" && metadata.GetString(type.Name)=="ReferenceAssemblyAttribute";
     });
     private static bool EditorOnly(string name)=>name is "Editor" or "Editor.Core" || name.StartsWith("CordiSharp.Plugins.Avalonia",StringComparison.Ordinal);
-    internal static bool Framework(string name)=>platformAssemblies.Contains(name);
     private static IEnumerable<string> EnumerateSafe(string directory)
     {
         foreach(var entry in Directory.EnumerateFileSystemEntries(directory))
@@ -383,7 +384,7 @@ internal sealed class PackageLoadContext : AssemblyLoadContext
         var contract=shared.SingleOrDefault(a=>a.GetName().Name==name.Name);
         if(contract!=null)return contract;
         if(managed.TryGetValue(name.Name!,out var file))return LoadManaged(file.Path);
-        if(PluginStore.Framework(name.Name!))return null;
+        if(PluginStore.IsFrameworkAssembly(name.Name!))return null;
         throw new FileNotFoundException("Unapproved plugin assembly: "+name.Name);
     }
     protected override nint LoadUnmanagedDll(string name)

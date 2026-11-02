@@ -1,0 +1,21 @@
+{
+  "ok": true,
+  "requestId": "954aa5bce05d4522b6b9eb36f3ad8976",
+  "result": {
+    "source": {
+      "identity": {
+        "directory": "C:\\code\\dotnet\\Board-Game-Builder\\artifacts\\v050-cli-project",
+        "profile": "motion",
+        "mode": "disk",
+        "workspace": null,
+        "generation": 0
+      },
+      "version": "04B4FC39E3E9FA3C2B6977F345ADB9E371C4D05D7C4A3DE32142D61DD63232B1"
+    },
+    "target": "C:\\code\\dotnet\\Board-Game-Builder\\artifacts\\v050-cli-native",
+    "kind": "native-directory",
+    "fingerprint": "9D76956926FFB142A7447DDDE2505CC6FEF6D316F081A119503536BE4942733B",
+    "warnings": [],
+    "log": "C:\\Users\\silev\\AppData\\Local\\Temp\\bgb-native-build-logs\\0193aa1f4a124a8c9d2157e9b08d22a5\\build.log"
+  }
+}

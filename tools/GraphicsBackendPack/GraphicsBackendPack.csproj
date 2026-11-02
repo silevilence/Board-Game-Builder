@@ -4,4 +4,5 @@
     <ProjectReference Include="../../src/Rendering.DesktopGL/Rendering.DesktopGL.csproj" />
     <ProjectReference Include="../../src/Runtime.Plugins/Runtime.Plugins.csproj" />
   </ItemGroup>
+  <ItemGroup><Content Include="../../third_party/MonoGame/LICENSE.txt" Link="MonoGame.LICENSE.txt" CopyToOutputDirectory="PreserveNewest" /></ItemGroup>
 </Project>

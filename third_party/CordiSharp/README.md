@@ -6,6 +6,8 @@
 
 `build-static.ps1` 校验上游 ZIP、适配生成器及可审阅 diff 的固定 SHA-256，
 只在新的 scratch 目录编译。输出 DLL、许可和 build-manifest.json。
+编译路径映射为固定的 `/_/cordisharp`，避免随机临时目录改变程序集／PDB 身份；
+正式发布的 `scripts/test-native-repro.ps1` 会在两个独立目录重建并核对 DLL 哈希。
 研究依据和支持边界见 [原型报告](../../docs/validation/native-aot-core-prototype.md)。
 
 仅原生构建通过 `UseStaticRuntime=true` 显式引用此实现；普通宿主默认仍引用原 NuGet 包。

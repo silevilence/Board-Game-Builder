@@ -8,4 +8,8 @@
     <ProjectReference Include="../../src/Rendering.DesktopGL/Rendering.DesktopGL.csproj" />
     <ProjectReference Include="../../samples/Sample.Motion/Sample.Motion.csproj" />
   </ItemGroup>
+  <ItemGroup>
+    <Content Include="../../third_party/MonoGame/LICENSE.txt" Link="MonoGame.LICENSE.txt" CopyToOutputDirectory="PreserveNewest" />
+    <Content Include="../../third_party/CordiSharp/LICENSE.txt" Link="CordiSharp.LICENSE.txt" CopyToOutputDirectory="PreserveNewest" />
+  </ItemGroup>
 </Project>

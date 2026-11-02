@@ -1,0 +1,2 @@
+PASS native author build: active provider protection, compiler cancellation, retry, snapshot publication and result identity: C:\code\dotnet\Board-Game-Builder\artifacts\native-aot\author\52f3011d7d144fb2b6b1c7f7a8bc5b20
+PASS independent native export provider: three providers, unavailable toolchain, explicit backend, optional activation and untouched source

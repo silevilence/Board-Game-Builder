@@ -1,0 +1,4 @@
+PASS script support declarations: fixed version/target, indirect flow dependency, no managed worker fallback, missing native library
+PASS publication plan: complete presets, exact identity, static references, optional omission, headless graphics, backend conflicts, managed closure and tamper rejection
+PASS actual no-script/WASM board plans, full native/managed closure, script exclusion and isolated release identity pinning
+PASS native release integrity: embedded identity, mutable sidecar rejection, content tamper, missing file and traversal

@@ -1,0 +1,19 @@
+{
+  "success": true,
+  "errors": [],
+  "screenshots": [
+    "C:\\code\\dotnet\\Board-Game-Builder\\artifacts\\v050-Rendering.DesktopGL.Tests.0.png",
+    "C:\\code\\dotnet\\Board-Game-Builder\\artifacts\\v050-Rendering.DesktopGL.Tests.1.png",
+    "C:\\code\\dotnet\\Board-Game-Builder\\artifacts\\v050-Rendering.DesktopGL.Tests.2.png"
+  ],
+  "input": [
+    "down",
+    "up",
+    "a",
+    "cancel",
+    "cancel"
+  ],
+  "devices": 0,
+  "backends": 0,
+  "nativeWindows": 0
+}

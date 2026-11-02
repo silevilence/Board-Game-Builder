@@ -5,7 +5,7 @@
 - `Board-Game-Builder-V<版本>-standalone-win-x64.zip`：独立包，自带运行依赖，可离线解压运行，无需安装 .NET SDK／Runtime。
 - `Board-Game-Builder-V<版本>-slim-win-x64.zip`：精简包，使用系统安装的兼容 x64 .NET Runtime。各入口在启动前检查实际清单要求；图形程序还需要 Desktop Runtime。允许同主次版本的新补丁，不跨主次版本替换。无需 SDK。
 
-用 `Get-FileHash <ZIP> -Algorithm SHA256` 核对后解压。图形界面需要 Direct3D 11 图形设备。不要下载 GitHub 自动生成的源码包或把 `components-...` 附件当作产品包。原 V0.1.0 的 `Board-Game-Builder-V0.1.0-win-x64.zip` 保持原样；新格式的上线状态以实际 Release 附件为准，本地构建候选不代表已发布。
+用 `Get-FileHash <ZIP> -Algorithm SHA256` 核对后解压。默认图形后端需要 Direct3D 11；可选 DesktopGL 随包提供，需要支持 MonoGame framebuffer 扩展的 OpenGL 驱动。不要下载 GitHub 自动生成的源码包或把 `components-...` 附件当作产品包。原 V0.1.0 的 `Board-Game-Builder-V0.1.0-win-x64.zip` 保持原样；新格式的上线状态以实际 Release 附件为准，本地构建候选不代表已发布。
 
 双击 `editor/Editor.exe` 打开编辑器；命令行入口为根目录 `bgb.exe`，例如 `./bgb.exe docs entry`、`./bgb.exe help`。完整本地作者说明位于 `docs/author`，可运行示例位于 `docs/author/example`。新建工程、资源导入、编辑、保存及试玩均由 Editor 内置插件提供；外部试玩自动使用 `debug-player`，正式导出自动使用 `player`。工程、日志及导出目录保存在用户目录，选择工程保存目录时不要放进产品安装目录。
 
@@ -16,6 +16,8 @@
 精简包的正式游戏导出仍自带完整运行依赖。首次导出按固定组件清单下载并校验缺少的可再分发文件，之后本地复用；不复制系统安装作为游戏依赖。断网缺依赖时导出会失败且不生成半成品，可改用独立包或提供已下载的组件目录：`bgb.exe call player.export --project <工程> --args-file <参数.json>`，参数含 `target`、`components` 和 `offline: true`。可选 `dependencyCache` 指定同卷、支持硬链接的缓存位置。正常精简包将缓存保存到包内 `.state/export-dependencies`；该缓存可删除，之后导出须重新获取缺失组件。
 
 ## 启动与导出故障排查
+
+V0.5.0 起，CLI 和 Editor 附带匹配的预编译原生 SDK；Editor、正式 Player 和调试 Player 均附带可选 DesktopGL 后端。普通 Player 导出无需编译；选择 `author.export.native` 原生导出时，作者机器须安装 .NET SDK 10.0.112、x64 Visual Studio C++ 工具链及 Windows SDK。玩家运行原生游戏无需 .NET。支持范围、外部插件和参数见 [原生发布说明](author/native.md)，也可运行 `bgb.exe docs native`。
 
 需要同时保留多个版本时，可使用[独立启动器](launcher.md)按固定组件安装或导入原始 ZIP。工程绑定、CLI／SKILL 路由和共享维护均由启动器管理，直接入口仍然可用。启动器自身单独构建、按完整目录手动更新，不通过更改引擎标签覆盖旧版本。
 

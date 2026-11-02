@@ -10,6 +10,7 @@ public sealed class ApplicationWindow : Window
     private readonly ApplicationCatalog catalog;
     private readonly GraphicsConfiguration graphics;
     private readonly string source;
+    private readonly string? title;
     private Task? opening;
     private bool closing, released;
     public RuntimeHost? Instance {get;private set;}
@@ -17,10 +18,10 @@ public sealed class ApplicationWindow : Window
     public ApplicationViewport? Viewport {get;private set;}
     public string? Error {get;private set;}
     public Task Ready=>opening ?? Task.CompletedTask;
-    public ApplicationWindow(ApplicationCatalog catalog,GraphicsConfiguration graphics,string source)
+    public ApplicationWindow(ApplicationCatalog catalog,GraphicsConfiguration graphics,string source,string? title=null)
     {
-        this.catalog=catalog;this.graphics=graphics;this.source=source;
-        Title="Player";Width=900;Height=600;
+        this.catalog=catalog;this.graphics=graphics;this.source=source;this.title=title;
+        Title=title ?? "Player";Width=900;Height=600;
         Content=new TextBlock{Text="Loading…",Margin=new(24)};
         Opened+=(_,_)=>opening=Open();
         Closing+=async(_,e)=>
@@ -52,7 +53,7 @@ public sealed class ApplicationWindow : Window
             Instance=await catalog.StartAsync(content);
             if(closing)return;
             var description=Instance.Service<IApplicationView>(ApplicationViewPlugin.Capability).Description;
-            Title=description.Title;
+            Title=title ?? description.Title;
             Viewport=new(graphics,Instance);
             Viewport.ApplicationError+=ShowError;
             Content=Viewport;Pump=new(Instance.Driver);

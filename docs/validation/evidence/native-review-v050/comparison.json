@@ -1,0 +1,34 @@
+[
+  {
+    "ordinary": "343D7576BE0CB1408759DA36AF58CA8A9242B568EE5686A06A183E8253E98C70",
+    "equal": true,
+    "nativeStarts": 5,
+    "variant": "minimal",
+    "ordinaryStarts": 2,
+    "native": "343D7576BE0CB1408759DA36AF58CA8A9242B568EE5686A06A183E8253E98C70"
+  },
+  {
+    "ordinary": "38DDCEC184BBC896A8FFF968C131A67119F319B17A2D1122A9B863606F75E2EC",
+    "equal": true,
+    "nativeStarts": 5,
+    "variant": "wasm",
+    "ordinaryStarts": 2,
+    "native": "38DDCEC184BBC896A8FFF968C131A67119F319B17A2D1122A9B863606F75E2EC"
+  },
+  {
+    "ordinary": "8229572F41D3BF700732BEF3BF572BDDB400CB9A3CD93042B07590A1B593B949",
+    "equal": true,
+    "nativeStarts": 5,
+    "variant": "external",
+    "ordinaryStarts": 2,
+    "native": "8229572F41D3BF700732BEF3BF572BDDB400CB9A3CD93042B07590A1B593B949"
+  },
+  {
+    "ordinary": "C568238ECD1F6E7C80A360132C32D14E0CED6DE53787D277B56FED64AED9BF30",
+    "equal": true,
+    "nativeStarts": 5,
+    "variant": "wasm-external",
+    "ordinaryStarts": 2,
+    "native": "C568238ECD1F6E7C80A360132C32D14E0CED6DE53787D277B56FED64AED9BF30"
+  }
+]

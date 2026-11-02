@@ -31,4 +31,6 @@ foreach ($entry in @('bgb.dll','editor/Editor.dll','player/Player.dll','debug-pl
     $expected = $manifest.version
     if ($actual -ne $expected) { throw "Version mismatch: $entry $actual != $expected" }
 }
+python "$PSScriptRoot/validate_native_toolkit.py" $payload | Set-Content -LiteralPath "$evidencePath/native-capabilities.json"
+if ($LASTEXITCODE -ne 0) { throw 'Published native capabilities are incomplete.' }
 @{ success=$true; toolkit=$rootPath; version=$expected; export=$export } | ConvertTo-Json | Set-Content -LiteralPath "$evidencePath/result.json"

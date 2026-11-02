@@ -1,0 +1,5 @@
+PASS script support declarations: fixed version/target, indirect flow dependency, no managed worker fallback, missing native library
+Unhandled exception. System.Exception: Expected rejection: CordiSharp
+   at PlannerTests.Reject(Action action, String text) in C:\code\dotnet\Board-Game-Builder\tests\Runtime.Publishing.Tests\PlannerTests.cs:line 89
+   at PlannerTests.Run(Func`2 native) in C:\code\dotnet\Board-Game-Builder\tests\Runtime.Publishing.Tests\PlannerTests.cs:line 78
+   at Program.<Main>$(String[] args) in C:\code\dotnet\Board-Game-Builder\tests\Runtime.Publishing.Tests\Program.cs:line 26

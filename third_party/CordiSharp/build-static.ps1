@@ -20,7 +20,9 @@ python "$PSScriptRoot/prepare-static.py" "$work/upstream/CordiSharp-$commit" "$w
 if($LASTEXITCODE -ne 0){throw 'CordiSharp static adaptation failed'}
 if((Get-FileHash -LiteralPath "$work/patched/CordiSharp.patch").Hash -ne $patchHash){throw 'Generated adaptation differs from reviewed patch.'}
 New-Item -ItemType Directory -Path $destination -Force | Out-Null
-dotnet build "$work/patched/CordiSharp.Patched.csproj" -c Release -o "$work/bin" --nologo *> "$destination/build.log"
+# Scratch directories are intentionally unique. Normalize compiler source/PDB paths
+# so retrying a release from the same commit does not change component identities.
+dotnet build "$work/patched/CordiSharp.Patched.csproj" -c Release -o "$work/bin" "-p:PathMap=$work=/_/cordisharp" --nologo *> "$destination/build.log"
 if($LASTEXITCODE -ne 0){throw "CordiSharp build failed: $destination/build.log"}
 Copy-Item -LiteralPath "$work/bin/CordiSharp.dll" -Destination "$destination/CordiSharp.dll"
 Copy-Item -LiteralPath "$PSScriptRoot/LICENSE.txt" -Destination "$destination/CordiSharp.LICENSE.txt"

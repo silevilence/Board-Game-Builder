@@ -1,0 +1,5 @@
+Human + CPU latency ms: 62.5, 299.1, 83.4, 70.4, 32.3, 313.1, 84.7, 88.6
+Lua (rules.lua, actions): count=20 mean=33.5 ms max=237.7 ms (includes IPC/startup)
+Lua (rules.lua, decide): count=14 mean=14.2 ms max=32.4 ms (includes IPC/startup)
+Lua (cpu.lua, decide): count=6 mean=85.0 ms max=238.0 ms (includes IPC/startup)
+PASS latency

@@ -1,0 +1,100 @@
+PASS resource-plugins
+UNO 4 seats seed 1: True, 32 steps
+UNO 4 seats seed 2: True, 44 steps
+UNO 4 seats seed 3: True, 104 steps
+UNO 4 seats seed 4: True, 51 steps
+UNO 4 seats seed 5: True, 49 steps
+UNO 4 seats seed 6: True, 40 steps
+UNO 4 seats seed 7: True, 36 steps
+UNO 4 seats seed 8: True, 77 steps
+UNO 4 seats seed 9: True, 32 steps
+UNO 4 seats seed 10: True, 65 steps
+UNO 4 seats seed 11: True, 33 steps
+UNO 4 seats seed 12: True, 102 steps
+UNO 4 seats seed 13: True, 111 steps
+UNO 4 seats seed 14: True, 30 steps
+UNO 4 seats seed 15: True, 59 steps
+UNO 4 seats seed 16: True, 39 steps
+UNO 4 seats seed 17: True, 42 steps
+UNO 4 seats seed 18: True, 54 steps
+UNO 4 seats seed 19: True, 95 steps
+UNO 4 seats seed 20: True, 54 steps
+UNO 5 seats seed 1: True, 46 steps
+UNO 5 seats seed 2: True, 45 steps
+UNO 5 seats seed 3: True, 127 steps
+UNO 5 seats seed 4: True, 68 steps
+UNO 5 seats seed 5: True, 120 steps
+UNO 5 seats seed 6: True, 51 steps
+UNO 5 seats seed 7: True, 36 steps
+UNO 5 seats seed 8: True, 58 steps
+UNO 5 seats seed 9: True, 44 steps
+UNO 5 seats seed 10: True, 68 steps
+UNO 5 seats seed 11: True, 44 steps
+UNO 5 seats seed 12: True, 47 steps
+UNO 5 seats seed 13: True, 74 steps
+UNO 5 seats seed 14: True, 42 steps
+UNO 5 seats seed 15: True, 57 steps
+UNO 5 seats seed 16: True, 59 steps
+UNO 5 seats seed 17: True, 45 steps
+UNO 5 seats seed 18: True, 42 steps
+UNO 5 seats seed 19: True, 80 steps
+UNO 5 seats seed 20: True, 130 steps
+UNO 6 seats seed 1: True, 48 steps
+UNO 6 seats seed 2: True, 69 steps
+UNO 6 seats seed 3: True, 56 steps
+UNO 6 seats seed 4: True, 65 steps
+UNO 6 seats seed 5: True, 49 steps
+UNO 6 seats seed 6: True, 67 steps
+UNO 6 seats seed 7: True, 135 steps
+UNO 6 seats seed 8: True, 86 steps
+UNO 6 seats seed 9: True, 60 steps
+UNO 6 seats seed 10: True, 52 steps
+UNO 6 seats seed 11: True, 67 steps
+UNO 6 seats seed 12: True, 104 steps
+UNO 6 seats seed 13: True, 104 steps
+UNO 6 seats seed 14: True, 57 steps
+UNO 6 seats seed 15: True, 63 steps
+UNO 6 seats seed 16: True, 53 steps
+UNO 6 seats seed 17: True, 51 steps
+UNO 6 seats seed 18: True, 64 steps
+UNO 6 seats seed 19: True, 119 steps
+UNO 6 seats seed 20: True, 64 steps
+PASS poker-uno-batch
+PASS poker-uno-modes
+UNO online 4: completed with p1 CPU, two humans, spectator and recovery
+UNO online 5: completed with p1 CPU, two humans, spectator and recovery
+UNO online 6: completed with p1 CPU, two humans, spectator and recovery
+PASS poker-uno-online
+PASS online-identity
+PASS online-identity-persistence
+PASS online-ordering
+PASS online-reconnect
+PASS online-audience
+PASS online-secrets
+PASS online-http
+PASS online-processes
+PASS online-faults
+PASS online-review
+PASS online-client-review
+PASS online-followup
+PASS online-cursor
+PASS runtime-host
+PASS review-followup
+PASS startup
+PASS definition-plugins
+PASS runtime-recording
+PASS runtime-entry
+PASS alternative-definition
+Island seed 42: 135 commands, winners p4
+PASS island
+Island: directory/package, both Play modes, replay and mixed hotseat/split sessions passed.
+PASS island-modes
+PASS local-table
+PASS secrets
+PASS auction
+PASS wasm
+PASS wasm-extensions
+PASS wasm-isolation
+PASS image-import
+PASS tts-import
+PASS print

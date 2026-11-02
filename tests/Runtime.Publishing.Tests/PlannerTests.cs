@@ -34,11 +34,13 @@ internal static class PlannerTests
             void Include(Assembly assembly)
             {
                 var identity=assembly.GetName().Name!;
-                if(Path.GetDirectoryName(assembly.Location)==Path.TrimEndingDirectorySeparator(System.Runtime.InteropServices.RuntimeEnvironment.GetRuntimeDirectory()))return;
+                if(PluginStore.IsFrameworkAssembly(identity))return;
                 if(!shared.TryAdd(identity,new(assembly.Location,Path.GetFileName(assembly.Location),Hash(assembly.Location),"managed","shared")))return;
                 foreach(var reference in assembly.GetReferencedAssemblies())Include(Assembly.Load(reference));
             }
             Include(typeof(ApplicationCatalog).Assembly);Include(typeof(PluginRegistration).Assembly);
+            Check(!PluginStore.IsFrameworkAssembly("CordiSharp") && !PluginStore.IsFrameworkAssembly("Application.Core"),"Application dependency mistaken for framework");
+            Check(PluginStore.IsFrameworkAssembly("System.Runtime"),"Core framework not recognized");
             PublicationPlan Plan(AvailablePlugin[]? source=null,RuntimePluginSelection[]? host=null,HostMode mode=HostMode.Headless)=>PublicationPlanner.Analyze(content,source ?? available,host ?? [],shared.Values,"win-x64",mode);
             var plan=Plan();Check(plan.Content.ExportSnapshot().Files.ContainsKey("other.json"),"Unplayed preset dropped");
             var prepared=PublicationInputs.Create(plan,Path.Combine(directory,"inputs")).GetAwaiter().GetResult();

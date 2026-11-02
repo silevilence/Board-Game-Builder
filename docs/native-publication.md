@@ -49,6 +49,8 @@ Editor 的运行插件管理面板显式导入包；CLI 使用 `runtime.plugins.
 
 桌游图形入口显式选择 `board.render`、`board.visual-input`、`platform.viewport` 和唯一后端。宿主向已选择的可视输入能力绑定已发布投影；render 不驱动规则。`board.desktop` 的宿主闭包包含桌游契约，`application.desktop` 的闭包不包含它们。游戏规则和 CPU 决策来自配置、模块或外部样例插件，不按游戏名称分支。
 
+有两个及以上真人席位时，桌游窗口在开局和交接时隐藏旧投影，由当前席位确认接手后显示其私有内容；等待期间不能提交动作。单真人加 CPU 保留真人视角，全 CPU 使用公共观众投影。普通桌游应用入口与原生入口共用这一行为。
+
 ## 作者操作示例
 
 在 profile 的 `plugins` 中添加所需作者插件，例如：
@@ -62,7 +64,7 @@ Editor 的运行插件管理面板显式导入包；CLI 使用 `runtime.plugins.
 ]}
 ```
 
-该对象放入现有 `profiles.<name>` 并设定 `defaultProfile`。先用 CLI 自描述查询参数；`native.export` 的主要参数是 `target`（新的输出目录）、`sdk`（维护者分发目录）、`host`（桌游用 `board.desktop`，其他应用用 `application.desktop`）、`platform`（`win-x64`），以及可选 `title`、`version`、工程内 `icon`。工具链路径可用 `dotnet`、`visualStudio`、`windowsKits` 显式指定。具体 JSON 请求和 GUI 工作区定位沿用 [作者 CLI](author-cli.md)，不另建发布执行器。
+该对象放入现有 `profiles.<name>` 并设定 `defaultProfile`。先用 CLI 自描述查询参数；`native.export` 的主要参数是 `target`（新的输出目录）、可选 `sdk`（默认使用 CLI／Editor 随包提供的匹配版本）、`host`（桌游用 `board.desktop`，其他应用用 `application.desktop`）、`platform`（`win-x64`），以及可选 `title`、`version`、工程内 `icon`。工具链路径可用 `dotnet`、`visualStudio`、`windowsKits` 显式指定。具体 JSON 请求和 GUI 工作区定位沿用 [作者 CLI](author-cli.md)，不另建发布执行器。
 
 例如，先将 `import.json` 写为 `{"package":"C:/packages/sample-native-cpu"}`，将 `native.json` 写为 `{"target":"C:/exports/my-game","sdk":"C:/tools/native-sdk","host":"board.desktop","platform":"win-x64"}`，再用已安装的 CLI 执行：
 

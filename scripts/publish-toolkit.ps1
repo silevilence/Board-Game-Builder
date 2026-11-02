@@ -7,12 +7,23 @@ $target = [IO.Path]::GetFullPath($Output)
 if (Test-Path -LiteralPath $target) { throw 'Toolkit output already exists.' }
 if (Test-Path -LiteralPath ($target+'.slim')) { throw 'Slim toolkit output already exists.' }
 $staging = $target + '.staging-' + [guid]::NewGuid()
-& "$PSScriptRoot/publish-author.ps1" -Output $staging
+# Build pinned dependencies before any consumer; use isolated static outputs so
+# the ordinary Editor/CLI keep the normal CordiSharp implementation.
+& "$repo/third_party/MonoGame/build-patched.ps1"
+& "$repo/third_party/CordiSharp/build-static.ps1"
+& "$PSScriptRoot/publish-author.ps1" -Output $staging -IncludeDesktopGlBackend $true
 foreach ($component in @(@('Editor','editor','true'), @('Player','debug-player','true'))) {
     dotnet publish "$repo/src/$($component[0])/$($component[0]).csproj" -c Release -r win-x64 --self-contained true -p:EnableEditorDebug=$($component[2]) -p:PublishSingleFile=false -p:DebugType=None -p:DebugSymbols=false -o "$staging/$($component[1])"
     if ($LASTEXITCODE -ne 0) { throw "Publish failed: $($component[0])" }
     Copy-Item -LiteralPath "$staging/worker" -Destination "$staging/$($component[1])/worker" -Recurse
+    Copy-Item -LiteralPath "$staging/player/backends" -Destination "$staging/$($component[1])/backends" -Recurse
 }
+$nativeBuild = $staging + '.native-build'
+dotnet build "$repo/tools/NativeSdk/NativeSdk.csproj" -c Release -p:UseStaticRuntime=true --artifacts-path $nativeBuild
+if ($LASTEXITCODE -ne 0) { throw 'Static runtime SDK build failed.' }
+dotnet "$nativeBuild/bin/NativeSdk/release/NativeSdk.dll" pack "$staging/native-sdk"
+if ($LASTEXITCODE -ne 0) { throw 'Native runtime SDK packaging failed.' }
+Copy-Item -LiteralPath "$staging/native-sdk" -Destination "$staging/editor/native-sdk" -Recurse
 $commit = git -C $repo rev-parse HEAD
 if ($LASTEXITCODE -ne 0) { throw 'Cannot resolve source commit.' }
 @{ api=1; version=$Tag.Substring(1); platform='win-x64'; commit=$commit; entries=@{

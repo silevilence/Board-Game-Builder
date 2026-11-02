@@ -10,7 +10,7 @@ var stage=Path.Combine(parent,".backend-"+Guid.NewGuid().ToString("N"));Director
 try
 {
     var files=new List<PluginFile>();
-    foreach(var (name,role) in new[]{("Rendering.DesktopGL.dll","implementation"),("MonoGame.Framework.dll","managed"),("NVorbis.dll","managed"),("SkiaSharp.dll","managed"),("SDL2.dll","native"),("libSkiaSharp.dll","native")})
+    foreach(var (name,role) in new[]{("Rendering.DesktopGL.dll","implementation"),("MonoGame.Framework.dll","managed"),("NVorbis.dll","managed"),("SkiaSharp.dll","managed"),("SDL2.dll","native"),("libSkiaSharp.dll","native"),("MonoGame.LICENSE.txt","content")})
     {
         var path=Path.Combine(AppContext.BaseDirectory,name);
         if(!File.Exists(path))path=Path.Combine(AppContext.BaseDirectory,"runtimes/win-x64/native",name);

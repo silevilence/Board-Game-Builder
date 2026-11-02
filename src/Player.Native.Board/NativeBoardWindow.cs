@@ -26,6 +26,10 @@ public sealed class NativeBoardWindow : Window
     private bool closing,released;
     private long revision=-1;
     private string seat="";
+    private string[] humans=[];
+    private Task viewportShutdown=Task.CompletedTask;
+    public string? WaitingFor {get;private set;}
+    public string? VisibleSeat=>Table==null?null:humans.Length==0?SeatView.AudienceSeat:seat;
     public RuntimeHost? Instance {get;private set;}
     public IGameSession? Session {get;private set;}
     public ApplicationPump? Pump {get;private set;}
@@ -61,6 +65,21 @@ public sealed class NativeBoardWindow : Window
         if(closing || !pending.IsCompleted)return pending;
         pending=SaveRecordingCore();return pending;
     }
+    public Task ConfirmHandoff()
+    {
+        if(closing || !pending.IsCompleted || WaitingFor==null)return pending;
+        pending=TakeSeat(WaitingFor);return pending;
+    }
+    private async Task TakeSeat(string next)
+    {
+        try
+        {
+            await viewportShutdown;
+            if(closing || Session==null || WaitingFor!=next || Session.CurrentSeat!=next || Session.IsCpu || Session.Ended)return;
+            seat=next;WaitingFor=null;CreateTable();revision=-1;Refresh();
+        }
+        catch(Exception error){ShowError(error);}
+    }
     private async Task SaveRecordingCore()
     {
         try
@@ -90,45 +109,72 @@ public sealed class NativeBoardWindow : Window
             Instance=await catalog.StartAsync(content);if(closing)return;
             Session=Instance.Service<IGameSession>("session");var module=board.Module(content);
             var controllers=board.Controllers(content);
-            seat=module.Initial.Seats.FirstOrDefault(s=>controllers[s.Id]=="human")?.Id ?? module.Initial.Seats[0].Id;
-            var definitions=catalog.Content.Plugins.Where(p=>p.Execution.Scope==RuntimeScope.Viewport).ToArray();
-            var selections=content.Identity.Startup.Plugins.Where(s=>definitions.Any(d=>d.Id==s.Id)).ToArray();
-            Table=new(graphics,BoardRenderContract.Require(content.Identity.Startup),new(selections,definitions));
-            Table.RenderingError+=message=>ShowError(new InvalidOperationException(message));
-            Table.Shortcut+=async key=>{if(key is "restart" or "new-game")await Restart();};
-            surface.Content=Table;revision=-1;Error=null;Refresh();refresh.Start();Pump=new(Instance.Driver);_=Observe(Pump);
+            humans=module.Initial.Seats.Where(s=>controllers[s.Id]=="human").Select(s=>s.Id).ToArray();
+            seat=humans.Length==1?humans[0]:"";WaitingFor=null;
+            if(humans.Length<=1)CreateTable();
+            revision=-1;Error=null;Refresh();refresh.Start();Pump=new(Instance.Driver);_=Observe(Pump);
         }
         catch(Exception error){ShowError(error);await Release();}
     }
     private async Task Observe(ApplicationPump pump)
     {try{await pump.Completion;}catch(Exception error){if(!closing)await Dispatcher.UIThread.InvokeAsync(()=>ShowError(error));}}
+    private void CreateTable()
+    {
+        var definitions=catalog.Content.Plugins.Where(p=>p.Execution.Scope==RuntimeScope.Viewport).ToArray();
+        var selections=content.Identity.Startup.Plugins.Where(s=>definitions.Any(d=>d.Id==s.Id)).ToArray();
+        Table=new(graphics,BoardRenderContract.Require(content.Identity.Startup),new(selections,definitions));
+        Table.RenderingError+=message=>ShowError(new InvalidOperationException(message));
+        Table.Shortcut+=async key=>{if(key is "restart" or "new-game")await Restart();};
+        surface.Content=Table;
+    }
+    private void HideTable()
+    {
+        // Destroy the prior projection and its animation cache before another seat can take over.
+        var table=Table;Table=null;table?.Dispose();surface.Content=null;
+        if(table!=null)viewportShutdown=Task.WhenAll(viewportShutdown,table.Shutdown);
+        actions.Children.Clear();
+    }
     private async Task Release()
     {
         var pump=Pump;Pump=null;try{if(pump!=null)await pump.DisposeAsync();}
         finally
         {
-            var table=Table;Table=null;table?.Dispose();surface.Content=null;
-            try{if(table!=null)await table.Shutdown;}
+            WaitingFor=null;HideTable();
+            try{await viewportShutdown;}
             finally{var instance=Instance;Instance=null;Session=null;if(instance!=null)await instance.DisposeAsync();}
         }
     }
     private void ShowError(Exception error){Error=error.Message;status.Text=error.Message;if(Instance!=null)Instance.Driver.Paused=true;}
     public void Submit(Command command)
     {
-        if(Session==null || Instance==null || closing)return;
+        Refresh();
+        if(Session==null || Instance==null || closing || Table==null || WaitingFor!=null || humans.Length==0 || Session.IsCpu || Session.CurrentSeat!=seat)return;
         Instance.Driver.Enqueue("board.command",JsonSerializer.SerializeToUtf8Bytes(new BoardUpdateRequest(Session.ExportAuthorityLog().EntryCount,seat,command),NativeBoardJson.Default.BoardUpdateRequest));
     }
     public void Refresh()
     {
-        if(Session==null || Table==null || closing)return;
+        if(Session==null || closing)return;
         try
         {
-            if(Session.Fault is {} fault){status.Text=fault.ToString();return;}
+            if(Session.Fault is {} fault){status.Text=humans.Length==0?"规则或 CPU 执行失败，请重新开局。":fault.ToString();return;}
             var current=Session.ExportAuthorityLog().EntryCount;if(current==revision)return;revision=current;
-            var view=Session.View(seat);Table.Show(TableScene.From(view,board.Module(content).Resources));
-            status.Text=$"席位 {seat} · 当前 {view.CurrentSeat} · 步数 {Session.Steps}"+(Session.Ended?" · 已结束":"");
+            if(humans.Length>1 && (seat!=Session.CurrentSeat || Session.IsCpu || Table==null))
+            {
+                HideTable();seat="";
+                WaitingFor=!Session.IsCpu && !Session.Ended?Session.CurrentSeat:null;
+                status.Text=WaitingFor is {} next?$"请交给席位 {next}；确认接手后显示其牌桌。":Session.Ended?"对局已结束。":"CPU 正在行动；牌桌已隐藏。";
+                if(WaitingFor is {} waiting)
+                {
+                    var take=new Button{Content=$"我是 {waiting}，确认接手"};take.Click+=async(_,_)=>await ConfirmHandoff();actions.Children.Add(take);
+                }
+                return;
+            }
+            if(Table==null)return;
+            var view=humans.Length==0?GameEngine.ProjectAudienceSnapshot(Session.ExportAuthorityState()):Session.View(seat);
+            Table.Show(TableScene.From(view,board.Module(content).Resources));
+            status.Text=$"席位 {view.Seat} · 当前 {view.CurrentSeat} · 步数 {Session.Steps}"+(Session.Ended?" · 已结束":"");
             actions.Children.Clear();
-            if(!Session.Ended && !Session.IsCpu)foreach(var offer in Session.Actions(seat))
+            if(humans.Length>0 && !Session.Ended && !Session.IsCpu)foreach(var offer in Session.Actions(seat))
             {
                 var button=new Button{Content=offer.Label};button.Click+=(_,_)=>Submit(offer.Command);actions.Children.Add(button);
             }

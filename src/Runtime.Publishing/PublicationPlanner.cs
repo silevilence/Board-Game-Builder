@@ -124,9 +124,6 @@ public static class PublicationPlanner
             if(Forbidden(name.Name!))throw new InvalidDataException(file.Owner+": author/editor implementation in runtime: "+name.Name);
             if(!managed.TryAdd(name.Name!,(name,file)))throw new InvalidDataException("Conflicting assembly identity: "+name.Name);
         }
-        var framework=((string?)AppContext.GetData("TRUSTED_PLATFORM_ASSEMBLIES") ?? "").Split(Path.PathSeparator,StringSplitOptions.RemoveEmptyEntries)
-            .Where(p=>string.Equals(Path.GetDirectoryName(p),Path.TrimEndingDirectorySeparator(System.Runtime.InteropServices.RuntimeEnvironment.GetRuntimeDirectory()),StringComparison.OrdinalIgnoreCase))
-            .Select(Path.GetFileNameWithoutExtension).OfType<string>().ToHashSet(StringComparer.OrdinalIgnoreCase);
         foreach(var item in managed.Values)
         {
             using var stream=File.OpenRead(item.File.Source);using var pe=new PEReader(stream);var metadata=pe.GetMetadataReader();
@@ -134,7 +131,7 @@ public static class PublicationPlanner
             {
                 var identity=metadata.GetAssemblyReference(reference);var name=metadata.GetString(identity.Name);
                 if(Forbidden(name))throw new InvalidDataException(item.File.Owner+": forbidden runtime reference "+name);
-                if(framework.Contains(name))continue;
+                if(PluginStore.IsFrameworkAssembly(name))continue;
                 if(!managed.TryGetValue(name,out var dependency) || dependency.Name.Version!=identity.Version)
                     throw new InvalidDataException(item.File.Owner+" -> "+item.Name.Name+" -> "+name+": missing/incompatible managed dependency "+identity.Version);
             }

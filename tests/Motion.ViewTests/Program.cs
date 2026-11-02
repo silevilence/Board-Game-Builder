@@ -73,9 +73,11 @@ public sealed class Probe : Avalonia.Application
             Check(!deps.Contains("Kernel.Abstractions/") && !deps.Contains("BoardGame.Core/") && !deps.Contains("View.MonoGame/"),"Graphical host links board implementation");
             for(var cycle=0;cycle<2;cycle++)
             {
-                var app=new ApplicationWindow(catalog,graphics,"samples/motion-lab");app.Show();await app.Ready;
+                var customTitle=cycle==0?"Published custom title":null;
+                var app=new ApplicationWindow(catalog,graphics,"samples/motion-lab",customTitle);app.Show();await app.Ready;
                 await Until(()=>app.Viewport?.Frames>0 || app.Error!=null,"Application window did not start");
                 Check(app.Error==null,app.Error ?? "");
+                Check(app.Title==(customTitle ?? content.Payload.Data.GetProperty("settings").GetProperty("title").GetString()),"Published/default window title was overwritten");
                 var closed=false;app.Closed+=(_,_)=>closed=true;app.Close();
                 await Until(()=>closed,"Application window did not close");Check(app.Error==null,app.Error ?? "");
             }

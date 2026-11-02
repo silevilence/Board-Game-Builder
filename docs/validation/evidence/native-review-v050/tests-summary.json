@@ -1,0 +1,297 @@
+{
+  "engineGroups": 125,
+  "success": true,
+  "semanticComparisons": 72,
+  "toolkitVariants": [
+    "standalone",
+    "slim"
+  ],
+  "ordinaryStarts": 8,
+  "projects": [
+    {
+      "initialExitCode": 0,
+      "rerun": false,
+      "finalExitCode": 0,
+      "project": "Application.Tests"
+    },
+    {
+      "initialExitCode": 0,
+      "rerun": false,
+      "finalExitCode": 0,
+      "project": "Application.Hosting.Tests"
+    },
+    {
+      "initialExitCode": 0,
+      "rerun": false,
+      "finalExitCode": 0,
+      "project": "BoardGame.Hosting.Tests"
+    },
+    {
+      "initialExitCode": 0,
+      "rerun": false,
+      "finalExitCode": 0,
+      "project": "BoardGame.Interaction.Tests"
+    },
+    {
+      "initialExitCode": 0,
+      "rerun": false,
+      "finalExitCode": 0,
+      "project": "BoardGame.Presentation.Tests"
+    },
+    {
+      "initialExitCode": 0,
+      "rerun": false,
+      "finalExitCode": 0,
+      "project": "BoardGame.ScriptHosting.Tests"
+    },
+    {
+      "initialExitCode": 0,
+      "rerun": false,
+      "finalExitCode": 0,
+      "project": "BoardGame.WasmHosting.Tests"
+    },
+    {
+      "initialExitCode": 0,
+      "rerun": false,
+      "finalExitCode": 0,
+      "project": "Rendering.Tests"
+    },
+    {
+      "initialExitCode": 0,
+      "rerun": false,
+      "finalExitCode": 0,
+      "project": "Runtime.Plugins.Tests"
+    },
+    {
+      "initialExitCode": -532462766,
+      "rerun": true,
+      "finalExitCode": 0,
+      "project": "Runtime.PluginImport.Tests"
+    },
+    {
+      "initialExitCode": 0,
+      "rerun": false,
+      "finalExitCode": 0,
+      "project": "Runtime.PluginDelivery.Tests"
+    },
+    {
+      "initialExitCode": 0,
+      "rerun": false,
+      "finalExitCode": 0,
+      "project": "Runtime.StaticRegistration.Tests"
+    },
+    {
+      "initialExitCode": 0,
+      "rerun": false,
+      "finalExitCode": 0,
+      "project": "Runtime.Publishing.Tests"
+    },
+    {
+      "initialExitCode": 0,
+      "rerun": false,
+      "finalExitCode": 0,
+      "project": "Resources.Tests"
+    },
+    {
+      "initialExitCode": 0,
+      "rerun": false,
+      "finalExitCode": 0,
+      "project": "Motion.Tests"
+    },
+    {
+      "initialExitCode": 0,
+      "rerun": false,
+      "finalExitCode": 0,
+      "project": "Motion.Authoring.Tests"
+    },
+    {
+      "initialExitCode": 0,
+      "rerun": false,
+      "finalExitCode": 0,
+      "project": "Presentation.Tests"
+    },
+    {
+      "initialExitCode": 0,
+      "rerun": false,
+      "finalExitCode": 0,
+      "project": "Presentation.Avalonia.Tests"
+    },
+    {
+      "initialExitCode": 0,
+      "rerun": false,
+      "finalExitCode": 0,
+      "project": "Player.Hosting.Tests"
+    },
+    {
+      "initialExitCode": 0,
+      "rerun": false,
+      "finalExitCode": 0,
+      "project": "Launcher.Tests"
+    },
+    {
+      "initialExitCode": 0,
+      "rerun": false,
+      "finalExitCode": 0,
+      "project": "Wasm.Execution.Tests"
+    },
+    {
+      "initialExitCode": -532462766,
+      "rerun": true,
+      "finalExitCode": 0,
+      "project": "Native.Board.Tests"
+    },
+    {
+      "initialExitCode": 0,
+      "rerun": false,
+      "finalExitCode": 0,
+      "project": "View.Tests"
+    },
+    {
+      "initialExitCode": 0,
+      "rerun": false,
+      "finalExitCode": 0,
+      "project": "CursedInvestigators.Tests"
+    },
+    {
+      "initialExitCode": 1,
+      "rerun": true,
+      "finalExitCode": 0,
+      "project": "Engine.Tests"
+    }
+  ],
+  "enginePassed": [
+    "cordi",
+    "cordi-dispatch",
+    "freecell",
+    "freecell-shortcuts",
+    "freecell-modes",
+    "debug-external",
+    "hex",
+    "observers",
+    "timeline",
+    "debug-play",
+    "reload",
+    "medium",
+    "layouts",
+    "media",
+    "prototypes",
+    "documents",
+    "worker",
+    "latency",
+    "packages",
+    "interaction",
+    "view",
+    "modules",
+    "commands",
+    "visibility",
+    "replay",
+    "turns",
+    "lua",
+    "sandbox",
+    "cpu",
+    "sample",
+    "batch",
+    "review",
+    "application-baseline",
+    "samples-release",
+    "application-migration",
+    "application-regression",
+    "board-author-media",
+    "online-capabilities",
+    "author-export-contract",
+    "content-discovery",
+    "board-kernel-plugin",
+    "board-recording",
+    "board-update",
+    "session-driver",
+    "lua-executor",
+    "wasm-executor",
+    "board-actions",
+    "resource-font",
+    "animation-runtime",
+    "resource-documents",
+    "animation-author",
+    "flow-editor-lifetime",
+    "flow-editor-model",
+    "flow-editor-canvas",
+    "flow-editor-properties",
+    "flow-editor-validation",
+    "flow-editor-playback",
+    "flow-editor-conflicts",
+    "flow-contract",
+    "flow-validation",
+    "flow-runtime",
+    "flow-progression",
+    "flow-systems",
+    "flow-players",
+    "flow-protection",
+    "flow-restoration",
+    "flow-delivery",
+    "flow-review",
+    "export-dependencies",
+    "system-runtime",
+    "author-contract",
+    "author-profiles",
+    "author-operations",
+    "author-cli",
+    "author-connection-lifetime",
+    "author-disk",
+    "author-recovery",
+    "author-templates",
+    "author-resources",
+    "author-validation",
+    "author-runs",
+    "author-exports",
+    "author-workspace",
+    "author-connections",
+    "author-external",
+    "author-docs",
+    "author-skill-template",
+    "author-skill-install",
+    "poker-uno",
+    "atlas",
+    "resource-plugins",
+    "poker-uno-batch",
+    "poker-uno-modes",
+    "poker-uno-online",
+    "online-identity",
+    "online-identity-persistence",
+    "online-ordering",
+    "online-reconnect",
+    "online-audience",
+    "online-secrets",
+    "online-http",
+    "online-processes",
+    "online-faults",
+    "online-review",
+    "online-client-review",
+    "online-followup",
+    "online-cursor",
+    "runtime-host",
+    "review-followup",
+    "startup",
+    "definition-plugins",
+    "runtime-recording",
+    "runtime-entry",
+    "alternative-definition",
+    "island",
+    "island-modes",
+    "local-table",
+    "secrets",
+    "auction",
+    "wasm",
+    "wasm-extensions",
+    "wasm-isolation",
+    "image-import",
+    "tts-import",
+    "print"
+  ],
+  "pythonTests": 51,
+  "graphicsSuites": [
+    "Motion.ViewTests",
+    "Rendering.WindowsDX.Tests",
+    "Rendering.DesktopGL.Tests",
+    "Rendering.Games.Tests"
+  ],
+  "nativeStarts": 35
+}

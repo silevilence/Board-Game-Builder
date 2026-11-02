@@ -76,7 +76,7 @@ internal static class BoardPlannerTests
         var result=new Dictionary<string,Assembly>(StringComparer.Ordinal);
         void Visit(Assembly assembly)
         {
-            if(Path.GetDirectoryName(assembly.Location)==Path.TrimEndingDirectorySeparator(System.Runtime.InteropServices.RuntimeEnvironment.GetRuntimeDirectory()))return;
+            if(PluginStore.IsFrameworkAssembly(assembly.GetName().Name!))return;
             if(!result.TryAdd(assembly.GetName().Name!,assembly))return;
             foreach(var reference in assembly.GetReferencedAssemblies())Visit(Assembly.Load(reference));
         }
