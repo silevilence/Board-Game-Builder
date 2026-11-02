@@ -1,5 +1,32 @@
 # 原生发行联合验收进度
 
+## 2026-11-02 GPU 启用后的最终干净环境验收
+
+用户启用 Sandbox GPU 后，在新会话 `b9aef2da-c531-4301-b2b5-026434ed1929` 重新复制最终产物并验证。主机 `AllowVGPU=1`，客机枚举到 Intel Graphics；Win32 探针对 PATH、标准系统／用户 .NET 目录和安装登记的检查均为 false。沙盒只接收发行包、测试探针、游戏数据及证据目录，没有引擎源码、SDK 或 Editor 安装。测试期间没有安装系统 .NET。
+
+SDK04 最终四种桌游组合及 Motion 的环境阻塞已解除，证据见 [GPU 沙盒最终验收](evidence/native-delivery/sandbox-gpu-2026-11-02/)。以下分别记录自动探针与正式发行程序，不将二者混为同一测量：
+
+- `board-regression-11` 对无脚本、WASM、外部 CPU、WASM＋外部 CPU 各完成 5 局，共 20 局；包含真实第三帧、隐私投影、暂停后绘制不推进更新、固定种子重开、完整对局、记录回放、保存中关闭及原生窗口释放检查。
+- 同份代码生成普通自包含探针，在同一沙盒再完成 20 局；四组合记录哈希与原生探针逐一相同，见 `comparison.json`。这是相同输入与宿主逻辑的普通／原生对照，不声称泛用 Player 与专用入口的全部文件身份相同。
+- 四个 SDK04 正式 `Play.exe` 均实际显示牌桌、响应鼠标并正常退出。最小版完整完成洗牌、抽牌、结束、保存与回放；组合版完整完成洗牌、抽牌、WASM 加二、外部 CPU 结束、保存与回放，并实际重新开局。独立 WASM 版验证加二，独立 CPU 版验证交给 CPU 后结束；完整五局回归由对应探针覆盖。
+- Editor 最终草稿原生导出实际显示中文计数和图片，WASM 输入更新为 2；同一草稿普通独立包也显示相同内容，完成 WASM、CPU、保存与回放。此前 `editor-author-final04.json` 保留导入、未保存草稿、三导出、Undo/Redo、保存重开与源文件保护证据。
+- `final-motion-05` 在干净沙盒实际显示，方向键使圆点移动，空格使其复位，正常关闭。独立／多嵌入视口、持续输入到目标、暂停绘制、单步、焦点取消与关闭中加载的完整自动回归仍引用 `motion-lifecycle-fixed.json`，不把本次短按键操作描述为持续按键测试。
+- 七个正式窗口（四组合、Motion、草稿原生、草稿普通）均正常关闭，CLI 返回 0；最后查询 Play、Player 与 Native.Board.Startup 进程数量为 0。正式记录和截图已保存，客机 EXE 哈希见 `guest-binary-hashes.json`。
+
+新进程第三帧测量：四组合原生分别为 4759／4375／3815／3878 ms，普通探针为 5903／5571／5552／5219 ms；对应工作集与私有内存见 `measurements.json`。这是虚拟机各组合单个新进程样本，含图形初始化，系统缓存未清空且主机曾并行构建普通探针，不用于宣称可重复的性能收益。包体积、严格构建日志、闭包／裁剪和未选依赖排除继续引用 SDK04 报告。
+
+本轮联合发行验收通过；Lua 原生路径仍明确不支持，不能由 WASM 组合通过推导其可用。全范围整体审核是后续独立步骤，尚未完成。以下失败、暂停及中间版本记录作为历史证据保留，不覆盖本节最终结果。
+
+## 2026-11-02 Sandbox 恢复连接后的复验（13:00）
+
+用户恢复 Sandbox 连接后继续验收。当前会话可操作，官方 `wsb` CLI 已将最终测试包复制至沙盒本地 `C:\NativeValidation`（515 个文件，复制失败数为 0）。独立 Win32 环境探针未发现 PATH、标准系统／用户目录及 x64 安装登记中的现代 .NET；这证明本次检查范围内无系统 .NET，不代表已完成图形验收。
+
+最终 `board-regression-11` 探针对最小无脚本组合执行 `--play`，在图形初始化阶段报告缺少 `ARB_framebuffer_object`／`EXT_framebuffer_object`，退出码为 1，未得到首帧或完整对局。SDK04 最终 `release-minimal-05` 的 `Play.exe` 也实际打开并显示同一诊断，随后正常关闭（退出码 0）；不能把错误窗口或零退出码记作游戏运行通过。测试包中的正式 EXE 与最终产物哈希一致。
+
+主机只读查询发现 `HKLM\SOFTWARE\Policies\Microsoft\Windows\Sandbox\AllowVGPU = 0`；沙盒枚举到 `Microsoft Remote Display Adapter`。微软说明禁用 vGPU 后使用 WARP 软件绘制（[配置说明](https://learn.microsoft.com/windows/security/application-security/application-isolation/windows-sandbox/windows-sandbox-configure-using-wsb-file)）。用户确认是为解决 Sandbox 连接问题而禁用 vGPU，因此保留该设置，不为继续测试重新启用。此次桌面连接成功不等于满足 MonoGame DesktopGL 的 OpenGL 要求；主机策略、显卡驱动和渲染后端均未修改，图形验收等待合适环境。
+
+沙盒默认拒绝执行 PowerShell 脚本，未更改执行策略；环境探针、复制及游戏分别经 CLI 直接执行，仅以只读命令查询显示适配器。原始报告、阶段 CSV、二进制哈希、策略值和正式游戏诊断截图见 [本次 Sandbox 证据](evidence/native-delivery/sandbox-2026-11-02/)。其余图形组合没有重复执行已知失败的设备初始化，最后两项与整体审核继续保持未完成。
+
 ## 2026-11-02 续接结果
 
 用户已要求继续完成。此前 SDK02 的四个桌游组合和 Motion 均严格原生编译通过；对应预编译 Player 与 Editor 草稿三导出、撤销重做、保存重开回归通过。真实构建服务与作者提供者的编译失败、活动取消、重试、源输入保护和输出原子性回归通过。项目依赖边界检查通过。

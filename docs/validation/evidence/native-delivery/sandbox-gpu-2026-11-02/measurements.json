@@ -1,0 +1,58 @@
+[
+  {
+    "variant": "minimal",
+    "kind": "native",
+    "elapsedMs": 4759,
+    "workingSet": 137482240,
+    "privateBytes": 96579584
+  },
+  {
+    "variant": "minimal",
+    "kind": "jit",
+    "elapsedMs": 5903,
+    "workingSet": 178462720,
+    "privateBytes": 111554560
+  },
+  {
+    "variant": "wasm",
+    "kind": "native",
+    "elapsedMs": 4375,
+    "workingSet": 134742016,
+    "privateBytes": 98979840
+  },
+  {
+    "variant": "wasm",
+    "kind": "jit",
+    "elapsedMs": 5571,
+    "workingSet": 193081344,
+    "privateBytes": 120483840
+  },
+  {
+    "variant": "external",
+    "kind": "native",
+    "elapsedMs": 3815,
+    "workingSet": 125476864,
+    "privateBytes": 93442048
+  },
+  {
+    "variant": "external",
+    "kind": "jit",
+    "elapsedMs": 5552,
+    "workingSet": 178266112,
+    "privateBytes": 111689728
+  },
+  {
+    "variant": "wasm-external",
+    "kind": "native",
+    "elapsedMs": 3878,
+    "workingSet": 134111232,
+    "privateBytes": 99123200
+  },
+  {
+    "variant": "wasm-external",
+    "kind": "jit",
+    "elapsedMs": 5219,
+    "workingSet": 191000576,
+    "privateBytes": 119382016
+  }
+]

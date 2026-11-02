@@ -1,0 +1,26 @@
+[
+  {
+    "variant": "minimal",
+    "aot": "PASS 5 starts, rendered frames, awaited close; gameplay/recording=343D7576BE0CB1408759DA36AF58CA8A9242B568EE5686A06A183E8253E98C70",
+    "jit": "PASS 5 starts, rendered frames, awaited close; gameplay/recording=343D7576BE0CB1408759DA36AF58CA8A9242B568EE5686A06A183E8253E98C70",
+    "equal": true
+  },
+  {
+    "variant": "wasm",
+    "aot": "PASS 5 starts, rendered frames, awaited close; gameplay/recording=38DDCEC184BBC896A8FFF968C131A67119F319B17A2D1122A9B863606F75E2EC",
+    "jit": "PASS 5 starts, rendered frames, awaited close; gameplay/recording=38DDCEC184BBC896A8FFF968C131A67119F319B17A2D1122A9B863606F75E2EC",
+    "equal": true
+  },
+  {
+    "variant": "external",
+    "aot": "PASS 5 starts, rendered frames, awaited close; gameplay/recording=12261501C182D89721A6E156F91F22DB37F44C305B3EC9E5698D778D7A897036",
+    "jit": "PASS 5 starts, rendered frames, awaited close; gameplay/recording=12261501C182D89721A6E156F91F22DB37F44C305B3EC9E5698D778D7A897036",
+    "equal": true
+  },
+  {
+    "variant": "wasm-external",
+    "aot": "PASS 5 starts, rendered frames, awaited close; gameplay/recording=A698B56E49A77C1358D36C4640EB86C35FC0A5101D1A66349B4DEED739101FBC",
+    "jit": "PASS 5 starts, rendered frames, awaited close; gameplay/recording=A698B56E49A77C1358D36C4640EB86C35FC0A5101D1A66349B4DEED739101FBC",
+    "equal": true
+  }
+]

@@ -1,0 +1,14 @@
+[
+  {
+    "Path": "C:\\code\\dotnet\\Board-Game-Builder\\artifacts\\HyperVValidation\\NativeValidation\\minimal\\Play.exe",
+    "Hash": "5DC16D47EE2FB365831BE9126AD153B6A859D50C4FAC8E730478A111232CB82D"
+  },
+  {
+    "Path": "C:\\code\\dotnet\\Board-Game-Builder\\artifacts\\HyperVValidation\\NativeValidation\\probe\\Native.Board.Startup.exe",
+    "Hash": "92AB008C64448EE03DB2847331F5AEEEB9DDBD6CA3BD3882D4F06964ED4C9AC3"
+  },
+  {
+    "Path": "C:\\code\\dotnet\\Board-Game-Builder\\artifacts\\native-aot\\release-minimal-05\\Play.exe",
+    "Hash": "5DC16D47EE2FB365831BE9126AD153B6A859D50C4FAC8E730478A111232CB82D"
+  }
+]

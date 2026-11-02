@@ -1,0 +1,2 @@
+System.InvalidOperationException: MonoGame requires either ARB_framebuffer_object or EXT_framebuffer_object.Try updating your graphics drivers.
+   at Program.<>c__DisplayClass0_1.<<Main>b__5>d.MoveNext() + 0x1074

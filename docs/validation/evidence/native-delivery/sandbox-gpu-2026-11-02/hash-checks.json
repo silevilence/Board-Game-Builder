@@ -1,0 +1,37 @@
+[
+  {
+    "file": "editor-native\\Play.exe",
+    "sha256": "A6671043DEA0D5C3F7C916A074E4324DD478ED22AFE8104EB36E9421DE4263C3",
+    "guestMatches": true
+  },
+  {
+    "file": "external\\Play.exe",
+    "sha256": "CECD3146C2D48E4F8C53EA07F0E6C3A2DDEF4E4B7DE8D6D95B0CA7FEF6DD0690",
+    "guestMatches": true
+  },
+  {
+    "file": "minimal\\Play.exe",
+    "sha256": "5DC16D47EE2FB365831BE9126AD153B6A859D50C4FAC8E730478A111232CB82D",
+    "guestMatches": true
+  },
+  {
+    "file": "motion\\Play.exe",
+    "sha256": "E6EE3A423D8C01425673BF7EDDA07E5F7E403D62CE18B08826330D6C83A5AB5E",
+    "guestMatches": true
+  },
+  {
+    "file": "ordinary\\Play.exe",
+    "sha256": "C51C8D1C6D3E37B7B2BEF454F4242422D4230B137CAA5C9D23B40BEEF386361B",
+    "guestMatches": true
+  },
+  {
+    "file": "wasm\\Play.exe",
+    "sha256": "CE1833D588F98AEC1DC85F11EA1E0289018B1DF5D158CA0D74E7923274CA7DEE",
+    "guestMatches": true
+  },
+  {
+    "file": "wasm-external\\Play.exe",
+    "sha256": "2766EE05CB87B951B8D33A92D815B35F4E390A852E10B5C68067F7D38A9F29B0",
+    "guestMatches": true
+  }
+]
