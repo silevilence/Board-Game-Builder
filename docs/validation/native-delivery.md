@@ -18,6 +18,12 @@ SDK04 的非桌游 Motion 最终产物为 `final-motion-05`，严格构建零诊
 
 已准备 `artifacts/HyperVValidation/NativeValidation`：四种 SDK04 原生游戏、Motion、Editor 的普通／原生导出、原生回归探针及四个测试快捷方式。整个目录复制到虚拟机 `C:\NativeValidation` 后可运行；快捷方式固定指向此位置，报告写在目录根部。RDP 文件管理器的“粘贴”菜单为灰色，等待用户提供共享目录或启用驱动器重定向。不要为此改变 Hyper-V 权限、安全设置或虚拟机已有应用。
 
+### Hyper-V 续接结果（10:39～10:51）
+
+用户启用 RDP 驱动器重定向后，完整测试包已从 `\\tsclient\C` 复制到虚拟机本地 `C:\NativeValidation`。运行本地 `test-minimal.lnk` 后，真实 AOT 探针进入图形初始化并报告：`MonoGame requires either ARB_framebuffer_object or EXT_framebuffer_object`。未得到首帧和完整游戏结果，不计作通过；报告没有触发探针的原生窗口残留检查。
+
+独立 Win32 环境探针检查 PATH、标准系统／用户 .NET 目录和安装登记：`dotnetOnPath`、`programFilesDotnet`、`dotnetInstalledRegistry` 均为 true。因此这台现有虚拟机也不能证明无系统 .NET 发行；没有卸载其现有软件、安装驱动或更换后端。两项阻塞分别是图形能力不足与干净环境条件不符，不能用一次原生进程成功启动替代验收。原始报告、环境探针源码和可见诊断保存在 [Hyper-V 证据](evidence/native-delivery/hyperv-2026-11-02/)。待用户提供具备所需 OpenGL 能力且无系统 .NET／SDK／作者工具的环境后继续最终产物验证。
+
 本机普通与原生探针各 5 次冷启动，每个进程完成 5 次启动／重开和等待关闭，共 50 次首帧检查；另一个真实原生探针对无脚本、WASM、外部 CPU、WASM＋CPU 四种组合分别完成 5 局洗牌／抽牌／结束、脚本效果、CPU、秘密投影、暂停绘制、固定种子记录与回放校验。证据见 [最终回归目录](evidence/native-delivery/final-2026-11-02/)。
 
 | 最终原生产物 | 完整目录字节 | EXE 字节 |

@@ -31,6 +31,8 @@ Wasmtime 可以在原生执行器内部 JIT 编译 WASM；`.NET NativeAOT` 不�
 
 兼容矩阵只覆盖确切版本和已测路径。详细版本、官方依据及失败证据见 [平台研究](research/native-aot-support-matrix.md)、[Lua](validation/native-aot-lua.md)、[WASM](validation/native-aot-wasm.md)、[GL 后端](validation/desktopgl-integration.md)。
 
+DesktopGL 还要求目标会话的 OpenGL 驱动提供 MonoGame 必需能力，包括 framebuffer object 扩展；仅满足 Windows x64 并不足以保证图形设备可用。2026-11-02 的 Hyper-V／RDP 环境缺少 `ARB_framebuffer_object` 和 `EXT_framebuffer_object`，原生程序启动后明确报告设备初始化失败。该环境不计为图形验收通过，也不会自动改用 WindowsDX。Avalonia 自带的 ANGLE 库不等于 MonoGame 已获得可用的桌面 OpenGL 驱动。
+
 ## 导入与普通／静态双装配
 
 插件发布者提供 `runtime.plugin.json`、实现 DLL 及完整依赖；不要求交付源码。入口为无参 `public static ApprovedApplicationPlugin Create()`，空内容只描述稳定能力，绑定内容后不能改变清单中的能力和阶段。声明 `IsAotCompatible=true` 并运行分析器；清单 `aot.compatible=true` 只是准入声明，不能覆盖真实 ILLink／ILC 错误。
