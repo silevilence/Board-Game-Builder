@@ -1,0 +1,1297 @@
+{
+  "format": 1,
+  "resources": {},
+  "seats": [
+    {
+      "id": "p1",
+      "team": "solo",
+      "controller": "human"
+    }
+  ],
+  "phases": [
+    "puzzle"
+  ],
+  "layout": {
+    "kind": "square",
+    "size": 64,
+    "originX": 80,
+    "originY": 100
+  },
+  "prototypes": [
+    {
+      "id": "cell",
+      "components": [
+        {
+          "type": "owner",
+          "data": {
+            "seat": "p1"
+          }
+        },
+        {
+          "type": "visibility",
+          "data": {
+            "mode": "public"
+          }
+        },
+        {
+          "type": "properties",
+          "data": {
+            "viewStyle": 1,
+            "viewWidth": 58,
+            "viewHeight": 58,
+            "viewLayer": 2,
+            "viewLabel": 0,
+            "viewLabelY": -8,
+            "viewColor": 16777215,
+            "material": 1
+          }
+        },
+        {
+          "type": "faces",
+          "data": {
+            "names": [
+              "Cell"
+            ],
+            "resources": [
+              "I"
+            ],
+            "up": true
+          }
+        }
+      ]
+    }
+  ],
+  "entities": [
+    {
+      "id": "slot-0-0",
+      "components": [
+        {
+          "type": "position",
+          "data": {
+            "x": 0,
+            "y": 0
+          }
+        },
+        {
+          "type": "faces",
+          "data": {
+            "names": [
+              "Slot"
+            ],
+            "resources": [
+              "slot"
+            ],
+            "up": true
+          }
+        },
+        {
+          "type": "properties",
+          "data": {
+            "viewStyle": 1,
+            "viewWidth": 62,
+            "viewHeight": 62,
+            "viewPassive": 1
+          }
+        }
+      ]
+    },
+    {
+      "id": "slot-1-0",
+      "components": [
+        {
+          "type": "position",
+          "data": {
+            "x": 1,
+            "y": 0
+          }
+        },
+        {
+          "type": "faces",
+          "data": {
+            "names": [
+              "Slot"
+            ],
+            "resources": [
+              "slot"
+            ],
+            "up": true
+          }
+        },
+        {
+          "type": "properties",
+          "data": {
+            "viewStyle": 1,
+            "viewWidth": 62,
+            "viewHeight": 62,
+            "viewPassive": 1
+          }
+        }
+      ]
+    },
+    {
+      "id": "slot-2-0",
+      "components": [
+        {
+          "type": "position",
+          "data": {
+            "x": 2,
+            "y": 0
+          }
+        },
+        {
+          "type": "faces",
+          "data": {
+            "names": [
+              "Slot"
+            ],
+            "resources": [
+              "slot"
+            ],
+            "up": true
+          }
+        },
+        {
+          "type": "properties",
+          "data": {
+            "viewStyle": 1,
+            "viewWidth": 62,
+            "viewHeight": 62,
+            "viewPassive": 1
+          }
+        }
+      ]
+    },
+    {
+      "id": "slot-3-0",
+      "components": [
+        {
+          "type": "position",
+          "data": {
+            "x": 3,
+            "y": 0
+          }
+        },
+        {
+          "type": "faces",
+          "data": {
+            "names": [
+              "Slot"
+            ],
+            "resources": [
+              "slot"
+            ],
+            "up": true
+          }
+        },
+        {
+          "type": "properties",
+          "data": {
+            "viewStyle": 1,
+            "viewWidth": 62,
+            "viewHeight": 62,
+            "viewPassive": 1
+          }
+        }
+      ]
+    },
+    {
+      "id": "slot-0-1",
+      "components": [
+        {
+          "type": "position",
+          "data": {
+            "x": 0,
+            "y": 1
+          }
+        },
+        {
+          "type": "faces",
+          "data": {
+            "names": [
+              "Slot"
+            ],
+            "resources": [
+              "slot"
+            ],
+            "up": true
+          }
+        },
+        {
+          "type": "properties",
+          "data": {
+            "viewStyle": 1,
+            "viewWidth": 62,
+            "viewHeight": 62,
+            "viewPassive": 1
+          }
+        }
+      ]
+    },
+    {
+      "id": "slot-1-1",
+      "components": [
+        {
+          "type": "position",
+          "data": {
+            "x": 1,
+            "y": 1
+          }
+        },
+        {
+          "type": "faces",
+          "data": {
+            "names": [
+              "Slot"
+            ],
+            "resources": [
+              "slot"
+            ],
+            "up": true
+          }
+        },
+        {
+          "type": "properties",
+          "data": {
+            "viewStyle": 1,
+            "viewWidth": 62,
+            "viewHeight": 62,
+            "viewPassive": 1
+          }
+        }
+      ]
+    },
+    {
+      "id": "slot-2-1",
+      "components": [
+        {
+          "type": "position",
+          "data": {
+            "x": 2,
+            "y": 1
+          }
+        },
+        {
+          "type": "faces",
+          "data": {
+            "names": [
+              "Slot"
+            ],
+            "resources": [
+              "slot"
+            ],
+            "up": true
+          }
+        },
+        {
+          "type": "properties",
+          "data": {
+            "viewStyle": 1,
+            "viewWidth": 62,
+            "viewHeight": 62,
+            "viewPassive": 1
+          }
+        }
+      ]
+    },
+    {
+      "id": "slot-3-1",
+      "components": [
+        {
+          "type": "position",
+          "data": {
+            "x": 3,
+            "y": 1
+          }
+        },
+        {
+          "type": "faces",
+          "data": {
+            "names": [
+              "Slot"
+            ],
+            "resources": [
+              "slot"
+            ],
+            "up": true
+          }
+        },
+        {
+          "type": "properties",
+          "data": {
+            "viewStyle": 1,
+            "viewWidth": 62,
+            "viewHeight": 62,
+            "viewPassive": 1
+          }
+        }
+      ]
+    },
+    {
+      "id": "slot-0-2",
+      "components": [
+        {
+          "type": "position",
+          "data": {
+            "x": 0,
+            "y": 2
+          }
+        },
+        {
+          "type": "faces",
+          "data": {
+            "names": [
+              "Slot"
+            ],
+            "resources": [
+              "slot"
+            ],
+            "up": true
+          }
+        },
+        {
+          "type": "properties",
+          "data": {
+            "viewStyle": 1,
+            "viewWidth": 62,
+            "viewHeight": 62,
+            "viewPassive": 1
+          }
+        }
+      ]
+    },
+    {
+      "id": "slot-1-2",
+      "components": [
+        {
+          "type": "position",
+          "data": {
+            "x": 1,
+            "y": 2
+          }
+        },
+        {
+          "type": "faces",
+          "data": {
+            "names": [
+              "Slot"
+            ],
+            "resources": [
+              "slot"
+            ],
+            "up": true
+          }
+        },
+        {
+          "type": "properties",
+          "data": {
+            "viewStyle": 1,
+            "viewWidth": 62,
+            "viewHeight": 62,
+            "viewPassive": 1
+          }
+        }
+      ]
+    },
+    {
+      "id": "slot-2-2",
+      "components": [
+        {
+          "type": "position",
+          "data": {
+            "x": 2,
+            "y": 2
+          }
+        },
+        {
+          "type": "faces",
+          "data": {
+            "names": [
+              "Slot"
+            ],
+            "resources": [
+              "slot"
+            ],
+            "up": true
+          }
+        },
+        {
+          "type": "properties",
+          "data": {
+            "viewStyle": 1,
+            "viewWidth": 62,
+            "viewHeight": 62,
+            "viewPassive": 1
+          }
+        }
+      ]
+    },
+    {
+      "id": "slot-3-2",
+      "components": [
+        {
+          "type": "position",
+          "data": {
+            "x": 3,
+            "y": 2
+          }
+        },
+        {
+          "type": "faces",
+          "data": {
+            "names": [
+              "Slot"
+            ],
+            "resources": [
+              "slot"
+            ],
+            "up": true
+          }
+        },
+        {
+          "type": "properties",
+          "data": {
+            "viewStyle": 1,
+            "viewWidth": 62,
+            "viewHeight": 62,
+            "viewPassive": 1
+          }
+        }
+      ]
+    },
+    {
+      "id": "slot-0-3",
+      "components": [
+        {
+          "type": "position",
+          "data": {
+            "x": 0,
+            "y": 3
+          }
+        },
+        {
+          "type": "faces",
+          "data": {
+            "names": [
+              "Slot"
+            ],
+            "resources": [
+              "slot"
+            ],
+            "up": true
+          }
+        },
+        {
+          "type": "properties",
+          "data": {
+            "viewStyle": 1,
+            "viewWidth": 62,
+            "viewHeight": 62,
+            "viewPassive": 1
+          }
+        }
+      ]
+    },
+    {
+      "id": "slot-1-3",
+      "components": [
+        {
+          "type": "position",
+          "data": {
+            "x": 1,
+            "y": 3
+          }
+        },
+        {
+          "type": "faces",
+          "data": {
+            "names": [
+              "Slot"
+            ],
+            "resources": [
+              "slot"
+            ],
+            "up": true
+          }
+        },
+        {
+          "type": "properties",
+          "data": {
+            "viewStyle": 1,
+            "viewWidth": 62,
+            "viewHeight": 62,
+            "viewPassive": 1
+          }
+        }
+      ]
+    },
+    {
+      "id": "slot-2-3",
+      "components": [
+        {
+          "type": "position",
+          "data": {
+            "x": 2,
+            "y": 3
+          }
+        },
+        {
+          "type": "faces",
+          "data": {
+            "names": [
+              "Slot"
+            ],
+            "resources": [
+              "slot"
+            ],
+            "up": true
+          }
+        },
+        {
+          "type": "properties",
+          "data": {
+            "viewStyle": 1,
+            "viewWidth": 62,
+            "viewHeight": 62,
+            "viewPassive": 1
+          }
+        }
+      ]
+    },
+    {
+      "id": "slot-3-3",
+      "components": [
+        {
+          "type": "position",
+          "data": {
+            "x": 3,
+            "y": 3
+          }
+        },
+        {
+          "type": "faces",
+          "data": {
+            "names": [
+              "Slot"
+            ],
+            "resources": [
+              "slot"
+            ],
+            "up": true
+          }
+        },
+        {
+          "type": "properties",
+          "data": {
+            "viewStyle": 1,
+            "viewWidth": 62,
+            "viewHeight": 62,
+            "viewPassive": 1
+          }
+        }
+      ]
+    },
+    {
+      "id": "I-0",
+      "prototype": "cell",
+      "components": [
+        {
+          "type": "position",
+          "data": {
+            "x": 5,
+            "y": 0
+          }
+        },
+        {
+          "type": "properties",
+          "data": {
+            "piece": 1,
+            "cell": 0,
+            "dx": 0,
+            "dy": 0,
+            "rotation": 0,
+            "placed": 0,
+            "trayX": 5,
+            "trayY": 0,
+            "goalX": 0,
+            "goalY": 0,
+            "goalR": 1,
+            "anchorX": 5,
+            "anchorY": 0
+          }
+        },
+        {
+          "type": "faces",
+          "data": {
+            "names": [
+              "I*"
+            ],
+            "resources": [
+              "I-handle"
+            ]
+          }
+        }
+      ]
+    },
+    {
+      "id": "I-1",
+      "prototype": "cell",
+      "components": [
+        {
+          "type": "position",
+          "data": {
+            "x": 6,
+            "y": 0
+          }
+        },
+        {
+          "type": "properties",
+          "data": {
+            "piece": 1,
+            "cell": 1,
+            "dx": 1,
+            "dy": 0
+          }
+        },
+        {
+          "type": "faces",
+          "data": {
+            "names": [
+              "I"
+            ],
+            "resources": [
+              "I"
+            ]
+          }
+        }
+      ]
+    },
+    {
+      "id": "I-2",
+      "prototype": "cell",
+      "components": [
+        {
+          "type": "position",
+          "data": {
+            "x": 7,
+            "y": 0
+          }
+        },
+        {
+          "type": "properties",
+          "data": {
+            "piece": 1,
+            "cell": 2,
+            "dx": 2,
+            "dy": 0
+          }
+        },
+        {
+          "type": "faces",
+          "data": {
+            "names": [
+              "I"
+            ],
+            "resources": [
+              "I"
+            ]
+          }
+        }
+      ]
+    },
+    {
+      "id": "I-3",
+      "prototype": "cell",
+      "components": [
+        {
+          "type": "position",
+          "data": {
+            "x": 8,
+            "y": 0
+          }
+        },
+        {
+          "type": "properties",
+          "data": {
+            "piece": 1,
+            "cell": 3,
+            "dx": 3,
+            "dy": 0
+          }
+        },
+        {
+          "type": "faces",
+          "data": {
+            "names": [
+              "I"
+            ],
+            "resources": [
+              "I"
+            ]
+          }
+        }
+      ]
+    },
+    {
+      "id": "O-0",
+      "prototype": "cell",
+      "components": [
+        {
+          "type": "position",
+          "data": {
+            "x": 5,
+            "y": 5
+          }
+        },
+        {
+          "type": "properties",
+          "data": {
+            "piece": 2,
+            "cell": 0,
+            "dx": 0,
+            "dy": 0,
+            "rotation": 0,
+            "placed": 0,
+            "trayX": 5,
+            "trayY": 5,
+            "goalX": 1,
+            "goalY": 0,
+            "goalR": 0,
+            "anchorX": 5,
+            "anchorY": 5
+          }
+        },
+        {
+          "type": "faces",
+          "data": {
+            "names": [
+              "O*"
+            ],
+            "resources": [
+              "O-handle"
+            ]
+          }
+        }
+      ]
+    },
+    {
+      "id": "O-1",
+      "prototype": "cell",
+      "components": [
+        {
+          "type": "position",
+          "data": {
+            "x": 6,
+            "y": 5
+          }
+        },
+        {
+          "type": "properties",
+          "data": {
+            "piece": 2,
+            "cell": 1,
+            "dx": 1,
+            "dy": 0
+          }
+        },
+        {
+          "type": "faces",
+          "data": {
+            "names": [
+              "O"
+            ],
+            "resources": [
+              "O"
+            ]
+          }
+        }
+      ]
+    },
+    {
+      "id": "O-2",
+      "prototype": "cell",
+      "components": [
+        {
+          "type": "position",
+          "data": {
+            "x": 5,
+            "y": 6
+          }
+        },
+        {
+          "type": "properties",
+          "data": {
+            "piece": 2,
+            "cell": 2,
+            "dx": 0,
+            "dy": 1
+          }
+        },
+        {
+          "type": "faces",
+          "data": {
+            "names": [
+              "O"
+            ],
+            "resources": [
+              "O"
+            ]
+          }
+        }
+      ]
+    },
+    {
+      "id": "O-3",
+      "prototype": "cell",
+      "components": [
+        {
+          "type": "position",
+          "data": {
+            "x": 6,
+            "y": 6
+          }
+        },
+        {
+          "type": "properties",
+          "data": {
+            "piece": 2,
+            "cell": 3,
+            "dx": 1,
+            "dy": 1
+          }
+        },
+        {
+          "type": "faces",
+          "data": {
+            "names": [
+              "O"
+            ],
+            "resources": [
+              "O"
+            ]
+          }
+        }
+      ]
+    },
+    {
+      "id": "A-0",
+      "prototype": "cell",
+      "components": [
+        {
+          "type": "position",
+          "data": {
+            "x": 10,
+            "y": 0
+          }
+        },
+        {
+          "type": "properties",
+          "data": {
+            "piece": 3,
+            "cell": 0,
+            "dx": 1,
+            "dy": 0,
+            "rotation": 0,
+            "placed": 0,
+            "trayX": 9,
+            "trayY": 0,
+            "goalX": 2,
+            "goalY": 0,
+            "goalR": 0,
+            "anchorX": 9,
+            "anchorY": 0
+          }
+        },
+        {
+          "type": "faces",
+          "data": {
+            "names": [
+              "A*"
+            ],
+            "resources": [
+              "A-handle"
+            ]
+          }
+        }
+      ]
+    },
+    {
+      "id": "A-1",
+      "prototype": "cell",
+      "components": [
+        {
+          "type": "position",
+          "data": {
+            "x": 10,
+            "y": 1
+          }
+        },
+        {
+          "type": "properties",
+          "data": {
+            "piece": 3,
+            "cell": 1,
+            "dx": 1,
+            "dy": 1
+          }
+        },
+        {
+          "type": "faces",
+          "data": {
+            "names": [
+              "A"
+            ],
+            "resources": [
+              "A"
+            ]
+          }
+        }
+      ]
+    },
+    {
+      "id": "A-2",
+      "prototype": "cell",
+      "components": [
+        {
+          "type": "position",
+          "data": {
+            "x": 10,
+            "y": 2
+          }
+        },
+        {
+          "type": "properties",
+          "data": {
+            "piece": 3,
+            "cell": 2,
+            "dx": 1,
+            "dy": 2
+          }
+        },
+        {
+          "type": "faces",
+          "data": {
+            "names": [
+              "A"
+            ],
+            "resources": [
+              "A"
+            ]
+          }
+        }
+      ]
+    },
+    {
+      "id": "A-3",
+      "prototype": "cell",
+      "components": [
+        {
+          "type": "position",
+          "data": {
+            "x": 9,
+            "y": 2
+          }
+        },
+        {
+          "type": "properties",
+          "data": {
+            "piece": 3,
+            "cell": 3,
+            "dx": 0,
+            "dy": 2
+          }
+        },
+        {
+          "type": "faces",
+          "data": {
+            "names": [
+              "A"
+            ],
+            "resources": [
+              "A"
+            ]
+          }
+        }
+      ]
+    },
+    {
+      "id": "B-0",
+      "prototype": "cell",
+      "components": [
+        {
+          "type": "position",
+          "data": {
+            "x": 10,
+            "y": 5
+          }
+        },
+        {
+          "type": "properties",
+          "data": {
+            "piece": 4,
+            "cell": 0,
+            "dx": 1,
+            "dy": 0,
+            "rotation": 0,
+            "placed": 0,
+            "trayX": 9,
+            "trayY": 5,
+            "goalX": 1,
+            "goalY": 2,
+            "goalR": 1,
+            "anchorX": 9,
+            "anchorY": 5,
+            "material": 2
+          }
+        },
+        {
+          "type": "faces",
+          "data": {
+            "names": [
+              "B*"
+            ],
+            "resources": [
+              "B-handle"
+            ]
+          }
+        }
+      ]
+    },
+    {
+      "id": "B-1",
+      "prototype": "cell",
+      "components": [
+        {
+          "type": "position",
+          "data": {
+            "x": 10,
+            "y": 6
+          }
+        },
+        {
+          "type": "properties",
+          "data": {
+            "piece": 4,
+            "cell": 1,
+            "dx": 1,
+            "dy": 1,
+            "material": 2
+          }
+        },
+        {
+          "type": "faces",
+          "data": {
+            "names": [
+              "B"
+            ],
+            "resources": [
+              "B"
+            ]
+          }
+        }
+      ]
+    },
+    {
+      "id": "B-2",
+      "prototype": "cell",
+      "components": [
+        {
+          "type": "position",
+          "data": {
+            "x": 10,
+            "y": 7
+          }
+        },
+        {
+          "type": "properties",
+          "data": {
+            "piece": 4,
+            "cell": 2,
+            "dx": 1,
+            "dy": 2,
+            "material": 2
+          }
+        },
+        {
+          "type": "faces",
+          "data": {
+            "names": [
+              "B"
+            ],
+            "resources": [
+              "B"
+            ]
+          }
+        }
+      ]
+    },
+    {
+      "id": "B-3",
+      "prototype": "cell",
+      "components": [
+        {
+          "type": "position",
+          "data": {
+            "x": 9,
+            "y": 7
+          }
+        },
+        {
+          "type": "properties",
+          "data": {
+            "piece": 4,
+            "cell": 3,
+            "dx": 0,
+            "dy": 2,
+            "material": 2
+          }
+        },
+        {
+          "type": "faces",
+          "data": {
+            "names": [
+              "B"
+            ],
+            "resources": [
+              "B"
+            ]
+          }
+        }
+      ]
+    },
+    {
+      "id": "puzzle",
+      "components": [
+        {
+          "type": "position",
+          "data": {
+            "x": 0,
+            "y": 0
+          }
+        },
+        {
+          "type": "faces",
+          "data": {
+            "names": [
+              "当前骨牌 {active}（1=I 2=O 3=A 4=B） · 已放 {placed}/4 · 操作 {moves}"
+            ],
+            "resources": [],
+            "up": true
+          }
+        },
+        {
+          "type": "properties",
+          "data": {
+            "viewHidden": 1,
+            "active": 1,
+            "placed": 0,
+            "moves": 0,
+            "width": 4,
+            "height": 4
+          }
+        }
+      ]
+    },
+    {
+      "id": "board-title",
+      "components": [
+        {
+          "type": "position",
+          "data": {
+            "x": 1.5,
+            "y": -1
+          }
+        },
+        {
+          "type": "faces",
+          "data": {
+            "names": [
+              "POLYOMINO / 4 x 4"
+            ],
+            "resources": [],
+            "up": true
+          }
+        },
+        {
+          "type": "properties",
+          "data": {
+            "viewStyle": 3,
+            "viewLabel": 1,
+            "viewPassive": 1,
+            "viewWidth": 252,
+            "viewHeight": 42,
+            "viewLayer": 1,
+            "viewColor": 15055195
+          }
+        }
+      ]
+    },
+    {
+      "id": "tray-title",
+      "components": [
+        {
+          "type": "position",
+          "data": {
+            "x": 8.5,
+            "y": -1
+          }
+        },
+        {
+          "type": "faces",
+          "data": {
+            "names": [
+              "PIECES / * = drag handle"
+            ],
+            "resources": [],
+            "up": true
+          }
+        },
+        {
+          "type": "properties",
+          "data": {
+            "viewStyle": 3,
+            "viewLabel": 1,
+            "viewPassive": 1,
+            "viewWidth": 508,
+            "viewHeight": 42,
+            "viewLayer": 1,
+            "viewColor": 15055195
+          }
+        }
+      ]
+    },
+    {
+      "id": "instructions",
+      "components": [
+        {
+          "type": "position",
+          "data": {
+            "x": 1.5,
+            "y": 5
+          }
+        },
+        {
+          "type": "faces",
+          "data": {
+            "names": [
+              "Select > Rotate > Place\nReturn a piece to try again\nBoard coordinates: 0 - 3"
+            ],
+            "resources": [],
+            "up": true
+          }
+        },
+        {
+          "type": "properties",
+          "data": {
+            "viewStyle": 3,
+            "viewLabel": 1,
+            "viewPassive": 1,
+            "viewWidth": 252,
+            "viewHeight": 110,
+            "viewLayer": 1,
+            "viewColor": 15055195
+          }
+        }
+      ]
+    }
+  ]
+}

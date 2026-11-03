@@ -1,0 +1,139 @@
+{
+  "format": 1,
+  "resources": {},
+  "seats": [
+    {
+      "id": "p1",
+      "team": "courier",
+      "controller": "human"
+    }
+  ],
+  "phases": [
+    "delivery"
+  ],
+  "layout": {
+    "kind": "free",
+    "size": 64,
+    "originX": 0,
+    "originY": 0
+  },
+  "entities": [
+    {
+      "id": "kit",
+      "components": [
+        {
+          "type": "position",
+          "data": {
+            "x": 300,
+            "y": 145
+          }
+        },
+        {
+          "type": "faces",
+          "data": {
+            "names": [
+              "装备 {choice}：0=无 / 1=绳索 / 2=提灯"
+            ],
+            "resources": [],
+            "up": true
+          }
+        },
+        {
+          "type": "properties",
+          "data": {
+            "viewStyle": 3,
+            "viewLabel": 1,
+            "viewWidth": 500,
+            "viewHeight": 70,
+            "viewColor": 15055195,
+            "choice": 0
+          }
+        }
+      ]
+    },
+    {
+      "id": "weather",
+      "components": [
+        {
+          "type": "position",
+          "data": {
+            "x": 300,
+            "y": 240
+          }
+        },
+        {
+          "type": "faces",
+          "data": {
+            "names": [
+              "天气：确认装备、出发后才掷骰",
+              "天气 {value}：1~3 风雨 / 4~6 晴朗"
+            ],
+            "resources": [],
+            "up": true
+          }
+        },
+        {
+          "type": "properties",
+          "data": {
+            "viewStyle": 3,
+            "viewLabel": 1,
+            "viewWidth": 500,
+            "viewHeight": 70,
+            "viewColor": 15055195,
+            "value": 1
+          }
+        },
+        {
+          "type": "dice",
+          "data": {
+            "values": [
+              1,
+              2,
+              3,
+              4,
+              5,
+              6
+            ]
+          }
+        }
+      ]
+    },
+    {
+      "id": "status",
+      "components": [
+        {
+          "type": "position",
+          "data": {
+            "x": 300,
+            "y": 355
+          }
+        },
+        {
+          "type": "faces",
+          "data": {
+            "names": [
+              "营地：选一件装备，可反复更换。\n确认后才会掷骰决定天气。",
+              "查看天气，选择海路或山路。\n装备匹配时可应对风雨，也可返回。",
+              "额外嘉奖！晴天且装备匹配。\n两条条件同时成立，优先级 20 获选。",
+              "补给送达，灯塔重新亮起。\n天气或装备满足通行条件。",
+              "风雨阻路，补给未能送达。\n条件均不成立，进入默认出口。",
+              "已返回营地，本局结束。\n下次可以准备不同装备再出发。"
+            ],
+            "resources": [],
+            "up": true
+          }
+        },
+        {
+          "type": "properties",
+          "data": {
+            "viewStyle": 3,
+            "viewLabel": 1,
+            "viewWidth": 500,
+            "viewHeight": 110,
+            "viewColor": 15055195
+          }
+        }
+      ]
+    }
+  ]
+}

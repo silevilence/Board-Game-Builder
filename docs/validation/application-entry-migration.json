@@ -71,6 +71,16 @@
       "action": "explicit-board-render",
       "before": "{\"format\":1,\"id\":\"wasm-counter\",\"version\":\"1\",\"plugins\":[{\"id\":\"kernel\",\"version\":\"1\",\"api\":1,\"configuration\":{}},{\"id\":\"session.local\",\"version\":\"1\",\"api\":1,\"configuration\":{}},{\"id\":\"definition.module\",\"version\":\"1\",\"api\":1,\"configuration\":{\"path\":\"module.json\"}},{\"id\":\"lua.rules\",\"version\":\"1\",\"api\":1,\"configuration\":{\"file\":\"rules.lua\"}},{\"id\":\"lua.cpu\",\"version\":\"1\",\"api\":1,\"configuration\":{\"file\":\"cpu.lua\"}},{\"id\":\"recording\",\"version\":\"1\",\"api\":1,\"configuration\":{}},{\"id\":\"wasm\",\"version\":\"1\",\"api\":1,\"configuration\":{\"extensions\":[{\"id\":\"counter\",\"version\":\"1\",\"api\":1,\"editor_only\":false,\"kind\":\"wasm\",\"file\":\"counter.wasm\",\"sha256\":\"386DD6D65D4753BDD831857013B50AAD30CCC2C2A6938CBC01142B13C50D3C26\",\"permissions\":[\"component\",\"command\"]}]}}]}",
       "afterTextSha256": "1118620032964ca005dcf6b68cf51bde332b66fc0a44db5e73c7f8e10a65afda"
+    },
+    {
+      "path": "samples/polyomino/game.start.json",
+      "action": "authored-explicit-board-render",
+      "textSha256": "e21d24fbd2c717f0ba5e6aee076765779360c4737d9cb96c486dc2af1efc7fcc"
+    },
+    {
+      "path": "samples/flow-supply/game.start.json",
+      "action": "authored-explicit-board-render",
+      "textSha256": "9902655849112206c6cad16d0c32cd153a20ebb6d2cac92f987f2365573bb2c6"
     }
   ]
 }

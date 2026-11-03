@@ -11,6 +11,7 @@ using BoardGame.View;
 using Sample.Motion;
 
 Probe.AllSamples=args.FirstOrDefault()=="--samples";
+Probe.SampleNames=Probe.AllSamples?args.Skip(2).ToArray():[];
 Probe.Output=Path.GetFullPath((Probe.AllSamples?args.ElementAtOrDefault(1):args.FirstOrDefault()) ?? ".scratch/application-loop/player-host.json");
 AppBuilder.Configure<Probe>().UsePlatformDetect().StartWithClassicDesktopLifetime([]);
 return Probe.Failed?1:0;
@@ -18,6 +19,7 @@ return Probe.Failed?1:0;
 public sealed class Probe : Avalonia.Application
 {
     public static string Output="";public static bool Failed,AllSamples;
+    public static string[] SampleNames=[];
     public override void Initialize()=>Styles.Add(new FluentTheme());
     public override void OnFrameworkInitializationCompleted()
     {
@@ -44,8 +46,8 @@ public sealed class Probe : Avalonia.Application
             var catalog=new PlayerCatalog([board,motion]);
             if(AllSamples)
             {
-                await SamplesVerification.Run(catalog,motionCatalog,Output);
-                checks.Add("all-sample-directories-and-packages-render-interact-and-close");
+                await SamplesVerification.Run(catalog,motionCatalog,Output,SampleNames);
+                checks.Add((SampleNames.Length==0?"all":"selected")+"-sample-directories-and-packages-render-interact-and-close");
                 return;
             }
             var forbidden=new[]{"Kernel", "BoardGame.Core", "Runtime", "Player.Board", "Sample.Motion"};

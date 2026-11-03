@@ -16,8 +16,10 @@
 | flow-cards | definition.module | flow、Lua CPU | 自动节点、动作与终局回放 |
 | cursed-investigators | definition.module | Lua 规则／CPU、字体、动画、分页文档 | 资源、展示及完整规则回归 |
 | motion-lab | motion.definition | motion.loop、motion.view、图片资源 | 非桌游实时输入、固定时钟、多视口和独立发行 |
+| [polyomino](polyomino/README.md) | definition.module | Lua 规则／CPU、方格布局、原型继承 | 4×4 拼板、整块旋转／放置、继承覆盖、完整解与回放 |
+| [flow-supply](flow-supply/README.md) | definition.module | flow，纯配置、无脚本 | 静态玩家动作、停留、条件／优先级／默认出口、54 条路径 |
 
-11 个桌游示例显式声明 kernel、session.local、recording 和 board.render；motion-lab 不装配桌游能力。作者插件选择独立放在 author.profile.json，不进入运行包。`tests/Engine.Tests` 的 `application-migration` 验证迁移清单、目录／包和作者依赖；`application-regression` 比较新旧完整语义；`freecell-modes` 等复查两种试玩与原验收路径。
+13 个桌游示例显式声明 kernel、session.local、recording 和 board.render；motion-lab 不装配桌游能力。作者插件选择独立放在 author.profile.json，不进入运行包。`tests/Engine.Tests` 的 `application-migration` 验证迁移清单、目录／包和作者依赖；`application-regression` 比较新旧完整语义；`freecell-modes` 等复查两种试玩与原验收路径。
 
 `Editor.SamplePlugin` 是编辑器扩展，不是游戏运行插件；`tts-subset` 是导入来源，不直接作为游戏启动。导入使用新建游戏模板，再通过作者格式接口写入实体／资源，生成的游戏同样可试玩和导出。资源生成脚本共同使用 `scripts/runtime_startup.py` 输出新入口，避免重建资源后退回旧格式。
 

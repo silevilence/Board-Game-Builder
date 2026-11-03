@@ -12,11 +12,18 @@ internal static class SamplesVerification
 {
     private static async Task Until(Func<bool> ready,string message)
     {for(var i=0;i<1200;i++){if(ready())return;await Task.Delay(25);}throw new Exception(message);}
-    public static async Task Run(PlayerCatalog catalog,ApplicationCatalog motionCatalog,string output)
+    public static async Task Run(PlayerCatalog catalog,ApplicationCatalog motionCatalog,string output,string[]? names=null)
     {
         var directory=Path.GetDirectoryName(output)!;Directory.CreateDirectory(directory);
         var results=new List<object>();
-        foreach(var entry in Directory.GetFiles("samples","game.start.json",SearchOption.AllDirectories).Order())
+        var entries=Directory.GetFiles("samples","game.start.json",SearchOption.AllDirectories).Order().ToArray();
+        if(names is {Length:>0})
+        {
+            foreach(var name in names)
+                if(!entries.Any(e=>Path.GetFileName(Path.GetDirectoryName(e))==name))throw new Exception("Unknown sample: "+name);
+            entries=entries.Where(e=>names.Contains(Path.GetFileName(Path.GetDirectoryName(e)))).ToArray();
+        }
+        foreach(var entry in entries)
         {
             var source=Path.GetDirectoryName(entry)!;var name=Path.GetFileName(source);var package=Path.Combine(directory,name+".bgm");
             // The same installed content catalog decides which package protocol applies.
@@ -82,6 +89,12 @@ internal static class SamplesVerification
                             await Until(()=>table.RenderedFrames>2 && (board.Frame.Actions.Count>0 || board.Frame.View.Ended || board.Frame.Fault!=null),name+": no playable frame");
                             if(board.Frame.Fault!=null)throw new Exception(name+": "+board.Frame.Fault.Detail);
                             await Until(()=>!table.AnimationBusy,name+": presentation did not finish");
+                            if(name is "polyomino" or "flow-supply")
+                            {
+                                var imagePrefix=Path.Combine(directory,name+(path==source?"-directory":"-package"));
+                                table.SaveImage(imagePrefix+"-initial.png");
+                                await TeachingSamplesVerification.Play(name,board,table,window.Window,imagePrefix);
+                            }
                             var revision=board.Frame.Revision;
                             if(!board.Frame.View.Ended)
                             {
@@ -98,7 +111,7 @@ internal static class SamplesVerification
                             }
                             await Until(()=>!table.AnimationBusy,name+": animation did not finish");
                             table.SaveImage(Path.Combine(directory,name+(path==source?"-directory":"-package")+".png"));
-                            frames=table.RenderedFrames;kind="board-action";
+                            frames=table.RenderedFrames;kind=name is "polyomino" or "flow-supply"?"board-complete-win-and-resize":"board-action";
                         }
                     }
                 }

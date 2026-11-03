@@ -1,0 +1,22 @@
+{
+  "format": 1,
+  "captions": [
+    {
+      "text": "LIGHTHOUSE / SUPPLY RUN",
+      "x": 50,
+      "y": 35,
+      "size": 24
+    },
+    {
+      "text": "PACK  >  WEATHER  >  ROUTE  >  DELIVERY",
+      "x": 50,
+      "y": 80
+    },
+    {
+      "text": "A configuration-only adventure",
+      "x": 50,
+      "y": 450,
+      "size": 16
+    }
+  ]
+}

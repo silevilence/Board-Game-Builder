@@ -1,0 +1,394 @@
+{
+  "format": 1,
+  "nodes": [
+    {
+      "id": "start",
+      "kind": "start",
+      "commands": [
+        {
+          "kind": "flip",
+          "entity": "status",
+          "value": 0
+        },
+        {
+          "kind": "reveal",
+          "entity": "status",
+          "visibility": "public"
+        }
+      ]
+    },
+    {
+      "id": "pack",
+      "kind": "player",
+      "seat": {
+        "fixed": "p1"
+      },
+      "actions": [
+        {
+          "id": "depart",
+          "label": "确认装备，出发",
+          "commands": [],
+          "complete": true,
+          "result": "done"
+        },
+        {
+          "id": "rope",
+          "label": "携带绳索（适合山路）",
+          "commands": [
+            {
+              "kind": "set",
+              "entity": "kit",
+              "property": "choice",
+              "value": 1
+            }
+          ],
+          "complete": false,
+          "result": "done"
+        },
+        {
+          "id": "lamp",
+          "label": "携带提灯（适合海路）",
+          "commands": [
+            {
+              "kind": "set",
+              "entity": "kit",
+              "property": "choice",
+              "value": 2
+            }
+          ],
+          "complete": false,
+          "result": "done"
+        },
+        {
+          "id": "empty",
+          "label": "放下装备，轻装出发",
+          "commands": [
+            {
+              "kind": "set",
+              "entity": "kit",
+              "property": "choice",
+              "value": 0
+            }
+          ],
+          "complete": false,
+          "result": "done"
+        }
+      ]
+    },
+    {
+      "id": "weather",
+      "kind": "system",
+      "commands": [
+        {
+          "kind": "roll",
+          "entity": "weather"
+        },
+        {
+          "kind": "flip",
+          "entity": "weather",
+          "value": 1
+        },
+        {
+          "kind": "reveal",
+          "entity": "weather",
+          "visibility": "public"
+        },
+        {
+          "kind": "flip",
+          "entity": "status",
+          "value": 1
+        },
+        {
+          "kind": "reveal",
+          "entity": "status",
+          "visibility": "public"
+        }
+      ]
+    },
+    {
+      "id": "route",
+      "kind": "player",
+      "seat": {
+        "current": true
+      },
+      "results": [
+        "done",
+        "coast",
+        "ridge",
+        "home"
+      ],
+      "actions": [
+        {
+          "id": "coast",
+          "label": "走海路：提灯可应对坏天气",
+          "commands": [],
+          "complete": true,
+          "result": "coast"
+        },
+        {
+          "id": "ridge",
+          "label": "走山路：绳索可应对坏天气",
+          "commands": [],
+          "complete": true,
+          "result": "ridge"
+        },
+        {
+          "id": "home",
+          "label": "返回营地，本局结束",
+          "commands": [],
+          "complete": true,
+          "result": "home"
+        }
+      ]
+    },
+    {
+      "id": "judge-coast",
+      "kind": "system"
+    },
+    {
+      "id": "judge-ridge",
+      "kind": "system"
+    },
+    {
+      "id": "bright",
+      "kind": "end",
+      "commands": [
+        {
+          "kind": "flip",
+          "entity": "status",
+          "value": 2
+        },
+        {
+          "kind": "reveal",
+          "entity": "status",
+          "visibility": "public"
+        }
+      ],
+      "winners": [
+        "p1"
+      ]
+    },
+    {
+      "id": "delivered",
+      "kind": "end",
+      "commands": [
+        {
+          "kind": "flip",
+          "entity": "status",
+          "value": 3
+        },
+        {
+          "kind": "reveal",
+          "entity": "status",
+          "visibility": "public"
+        }
+      ],
+      "winners": [
+        "p1"
+      ]
+    },
+    {
+      "id": "failed",
+      "kind": "end",
+      "commands": [
+        {
+          "kind": "flip",
+          "entity": "status",
+          "value": 4
+        },
+        {
+          "kind": "reveal",
+          "entity": "status",
+          "visibility": "public"
+        }
+      ],
+      "winners": []
+    },
+    {
+      "id": "retreat",
+      "kind": "end",
+      "commands": [
+        {
+          "kind": "flip",
+          "entity": "status",
+          "value": 5
+        },
+        {
+          "kind": "reveal",
+          "entity": "status",
+          "visibility": "public"
+        }
+      ],
+      "winners": []
+    }
+  ],
+  "edges": [
+    {
+      "id": "begin",
+      "from": "start",
+      "to": "pack"
+    },
+    {
+      "id": "packed",
+      "from": "pack",
+      "to": "weather"
+    },
+    {
+      "id": "forecast",
+      "from": "weather",
+      "to": "route"
+    },
+    {
+      "id": "route-coast",
+      "from": "route",
+      "to": "judge-coast",
+      "result": "coast"
+    },
+    {
+      "id": "route-ridge",
+      "from": "route",
+      "to": "judge-ridge",
+      "result": "ridge"
+    },
+    {
+      "id": "route-home",
+      "from": "route",
+      "to": "retreat",
+      "result": "home"
+    },
+    {
+      "id": "route-done",
+      "from": "route",
+      "to": "retreat",
+      "result": "done"
+    },
+    {
+      "id": "coast-bonus",
+      "from": "judge-coast",
+      "to": "bright",
+      "priority": 20,
+      "condition": {
+        "op": "all",
+        "items": [
+          {
+            "op": "ge",
+            "left": {
+              "path": "/state/entities/weather/properties/value"
+            },
+            "right": {
+              "literal": 4
+            }
+          },
+          {
+            "op": "eq",
+            "left": {
+              "path": "/state/entities/kit/properties/choice"
+            },
+            "right": {
+              "literal": 2
+            }
+          }
+        ]
+      }
+    },
+    {
+      "id": "coast-safe",
+      "from": "judge-coast",
+      "to": "delivered",
+      "priority": 10,
+      "condition": {
+        "op": "any",
+        "items": [
+          {
+            "op": "ge",
+            "left": {
+              "path": "/state/entities/weather/properties/value"
+            },
+            "right": {
+              "literal": 4
+            }
+          },
+          {
+            "op": "eq",
+            "left": {
+              "path": "/state/entities/kit/properties/choice"
+            },
+            "right": {
+              "literal": 2
+            }
+          }
+        ]
+      }
+    },
+    {
+      "id": "coast-blocked",
+      "from": "judge-coast",
+      "to": "failed",
+      "default": true
+    },
+    {
+      "id": "ridge-bonus",
+      "from": "judge-ridge",
+      "to": "bright",
+      "priority": 20,
+      "condition": {
+        "op": "all",
+        "items": [
+          {
+            "op": "ge",
+            "left": {
+              "path": "/state/entities/weather/properties/value"
+            },
+            "right": {
+              "literal": 4
+            }
+          },
+          {
+            "op": "eq",
+            "left": {
+              "path": "/state/entities/kit/properties/choice"
+            },
+            "right": {
+              "literal": 1
+            }
+          }
+        ]
+      }
+    },
+    {
+      "id": "ridge-safe",
+      "from": "judge-ridge",
+      "to": "delivered",
+      "priority": 10,
+      "condition": {
+        "op": "any",
+        "items": [
+          {
+            "op": "ge",
+            "left": {
+              "path": "/state/entities/weather/properties/value"
+            },
+            "right": {
+              "literal": 4
+            }
+          },
+          {
+            "op": "eq",
+            "left": {
+              "path": "/state/entities/kit/properties/choice"
+            },
+            "right": {
+              "literal": 1
+            }
+          }
+        ]
+      }
+    },
+    {
+      "id": "ridge-blocked",
+      "from": "judge-ridge",
+      "to": "failed",
+      "default": true
+    }
+  ]
+}

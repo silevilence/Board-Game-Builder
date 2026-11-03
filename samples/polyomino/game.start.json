@@ -1,0 +1,85 @@
+{
+  "format": 1,
+  "id": "polyomino",
+  "version": "1.0.0",
+  "plugins": [
+    {
+      "id": "definition.module",
+      "version": "1",
+      "api": 1,
+      "configuration": {
+        "path": "module.json"
+      }
+    },
+    {
+      "id": "kernel",
+      "version": "1",
+      "api": 1,
+      "configuration": {}
+    },
+    {
+      "id": "lua.rules",
+      "version": "1",
+      "api": 1,
+      "configuration": {
+        "file": "rules.lua"
+      }
+    },
+    {
+      "id": "lua.cpu",
+      "version": "1",
+      "api": 1,
+      "configuration": {
+        "file": "cpu.lua"
+      }
+    },
+    {
+      "id": "session.local",
+      "version": "1",
+      "api": 1,
+      "configuration": {}
+    },
+    {
+      "id": "recording",
+      "version": "1",
+      "api": 1,
+      "configuration": {}
+    },
+    {
+      "id": "resources",
+      "version": "1",
+      "api": 1,
+      "configuration": {
+        "sources": [
+          {
+            "path": "player.json",
+            "name": "player.presentation"
+          },
+          {
+            "path": "board.json",
+            "name": "board.presentation"
+          }
+        ]
+      }
+    },
+    {
+      "id": "board.render",
+      "version": "1",
+      "api": 1,
+      "configuration": {}
+    },
+    {
+      "id": "resources.images",
+      "version": "1",
+      "api": 1,
+      "configuration": {
+        "sources": [
+          {
+            "path": "assets",
+            "pattern": "*.png"
+          }
+        ]
+      }
+    }
+  ]
+}
